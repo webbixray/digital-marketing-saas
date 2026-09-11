@@ -82,8 +82,11 @@ class AbTestController extends Controller
     /**
      * Show single test.
      */
-    public function show(AbTest $test)
+    public function show(Request $request, AbTest $test)
     {
+        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
         $test->load('socialAccount');
         return view('ab-testing.show', compact('test'));
     }
@@ -93,6 +96,9 @@ class AbTestController extends Controller
      */
     public function start(Request $request, AbTest $test)
     {
+        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
         if ($test->status !== 'draft') {
             return back()->with('error', 'Test can only be started from draft status.');
         }
@@ -110,6 +116,9 @@ class AbTestController extends Controller
      */
     public function pause(Request $request, AbTest $test)
     {
+        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
         if ($test->status !== 'running') {
             return back()->with('error', 'Only running tests can be paused.');
         }
@@ -124,8 +133,11 @@ class AbTestController extends Controller
      */
     public function complete(Request $request, AbTest $test)
     {
-        if (!in_array($test->status, ['running', 'paused'])) {
-            return back()->with('error', 'Only running or paused tests can be completed.');
+        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
+        if ($test->status !== 'running') {
+            return back()->with('error', 'Only running tests can be completed.');
         }
 
         $winner = $test->determineWinner();

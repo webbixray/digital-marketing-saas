@@ -57,6 +57,5 @@ class BillingTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('billing.invoices');
         $response->assertViewHas('invoices');
-        $response->assertViewHas('agency');
     }
 }

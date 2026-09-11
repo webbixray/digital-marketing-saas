@@ -19,10 +19,11 @@ class BillingController extends Controller
 
     public function index(Request $request)
     {
-        $agency = $request->user()->agency;
-
         try {
-            $invoices = Invoice::where('agency_id', $agency->id)
+            $user = $request->user();
+            $agency = $user->agency;
+            $agencyId = $agency->id;
+            $invoices = Invoice::where('agency_id', $agencyId)
                 ->with('client')
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
@@ -33,7 +34,7 @@ class BillingController extends Controller
             return view('billing.index', compact('agency', 'invoices', 'plans', 'currentPlan'));
         } catch (\Exception $e) {
             Log::error('Failed to load billing page', [
-                'agency_id' => $agency->id,
+                'agency_id' => $request->user()->agency_id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -44,11 +45,10 @@ class BillingController extends Controller
     public function upgrade(Request $request)
     {
         try {
-            $agency = $request->user()->agency;
             $plans = config('stripe.plans');
-            $currentPlan = $agency->subscription_plan ?? 'free';
+            $currentPlan = $request->user()->subscription_plan ?? 'free';
 
-            return view('billing.upgrade', compact('agency', 'plans', 'currentPlan'));
+            return view('billing.upgrade', compact('plans', 'currentPlan'));
         } catch (\Exception $e) {
             Log::error('Failed to load upgrade page', [
                 'error' => $e->getMessage(),
@@ -96,9 +96,7 @@ class BillingController extends Controller
     public function success(Request $request)
     {
         try {
-            $agency = $request->user()->agency;
-
-            return view('billing.success', compact('agency'));
+            return view('billing.success');
         } catch (\Exception $e) {
             Log::error('Failed to load success page', [
                 'error' => $e->getMessage(),
@@ -136,18 +134,12 @@ class BillingController extends Controller
 
     public function downloadInvoice(Request $request, Invoice $invoice)
     {
+        $agency = $request->user()->agency_id;
+        if ((int) $invoice->agency_id !== (int) $agency) {
+            abort(403);
+        }
+
         try {
-            $agency = $request->user()->agency;
-            if ($invoice->agency_id !== $agency->id) {
-                $this->logSecurity('unauthorized_invoice_access', [
-                    'agency_id' => $agency->id,
-                    'invoice_id' => $invoice->id,
-                    'invoice_agency_id' => $invoice->agency_id,
-                ]);
-
-                abort(403);
-            }
-
             return redirect()->route('agency.invoices')
                 ->with('info', 'Invoice download coming soon.');
         } catch (\Exception $e) {
@@ -155,7 +147,6 @@ class BillingController extends Controller
                 'invoice_id' => $invoice->id,
                 'error' => $e->getMessage(),
             ]);
-
             return back()->with('error', 'Failed to download invoice. Please try again.');
         }
     }
