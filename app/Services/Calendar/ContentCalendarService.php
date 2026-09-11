@@ -105,7 +105,7 @@ class ContentCalendarService
             'linkedin' => '#0077b5',
             'tiktok' => '#000000',
             'pinterest' => '#bd081c',
-            default: '#6c757d',
-        };
+            default => '#6c757d',
+                    };
     }
 }
