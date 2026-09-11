@@ -33,6 +33,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'agency' => EnsureAgencyAccess::class,
             'feature' => FeatureGate::class,
             'quota' => EnforceQuota::class,
+            '2fa' => \App\Http\Middleware\Enforce2FA::class,
+            'platform.rate_limit' => \App\Http\Middleware\EnforcePlatformRateLimit::class,
             'agent.rate_limit' => \App\Http\Middleware\AgentRateLimit::class,
         ]);
 

@@ -35,6 +35,8 @@ class SocialAccount extends Model
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
         'token_expires_at' => 'datetime',
+        'access_token' => 'encrypted',
+        'refresh_token' => 'encrypted',
     ];
 
     protected $appends = ['platform_name', 'connection_name'];

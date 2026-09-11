@@ -132,10 +132,12 @@ class FormController extends Controller
         return redirect()->route('forms.index')->with('success', 'Form status updated.');
     }
 
-    public function render($slug)
+    public function render(Request $request, $slug)
     {
+        $agency = $request->user()->agency;
         $form = Form::where('slug', $slug)
             ->where('is_published', true)
+            ->where('agency_id', $agency->id)
             ->firstOrFail();
 
         return view('public.form', compact('form'));
@@ -143,8 +145,10 @@ class FormController extends Controller
 
     public function submit(Request $request, $slug)
     {
+        $agency = $request->user()->agency;
         $form = Form::where('slug', $slug)
             ->where('is_published', true)
+            ->where('agency_id', $agency->id)
             ->firstOrFail();
 
         $rules = [];

@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 
 class MediaLibraryController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly MediaUploadService $mediaService,
+    ) {
         $this->middleware(['auth', 'agency']);
     }
 
@@ -121,7 +122,7 @@ class MediaLibraryController extends Controller
             ->whereIn('id', $request->ids)
             ->chunk(100, function ($assets) use (&$deletedCount) {
                 foreach ($assets as $asset) {
-                    app(MediaUploadService::class)->delete($asset);
+                    $this->mediaService->delete($asset);
                     $deletedCount++;
                 }
             });

@@ -11,15 +11,15 @@ use Illuminate\Http\Request;
 
 class AiContentController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly QuotaService $quotaService,
+    ) {
         $this->middleware(['auth', 'agency']);
     }
 
     public function index(Request $request)
     {
         $agency = $request->user()->agency;
-        $quotaService = app(QuotaService::class);
 
         // Get recent generations
         $recentGenerations = AiContentLog::where('agency_id', $agency->id)
@@ -29,7 +29,7 @@ class AiContentController extends Controller
 
         return view('ai.index', [
             'agency' => $agency,
-            'remaining' => $quotaService->remainingAiGenerations($agency),
+            'remaining' => $this->quotaService->remainingAiGenerations($agency),
             'recentGenerations' => $recentGenerations,
         ]);
     }
@@ -103,7 +103,7 @@ class AiContentController extends Controller
 
                 return view('ai.index', [
                     'agency' => $agency,
-                    'remaining' => app(QuotaService::class)->remainingAiGenerations($agency),
+                    'remaining' => $this->quotaService->remainingAiGenerations($agency),
                     'recentGenerations' => $recentGenerations,
                     'generatedContent' => $result->output,
                     'tokensUsed' => $result->tokensUsed,

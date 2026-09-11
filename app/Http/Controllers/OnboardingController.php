@@ -237,6 +237,31 @@ class OnboardingController extends Controller
     }
 
     /**
+     * Quick start - create sample content and skip to dashboard.
+     */
+    public function quickStart()
+    {
+        $agency = Auth::user()->agency;
+
+        // Create sample posts
+        $sampleService = app(SampleContentService::class);
+        $sampleService->createSamplePosts($agency, 'instagram');
+        $sampleService->createSamplePosts($agency, 'twitter');
+
+        // Mark onboarding complete
+        $settings = $agency->custom_settings ?? [];
+        $settings['onboarding_completed'] = true;
+        $settings['onboarding_completed_at'] = now()->toISOString();
+        $settings['quick_start'] = true;
+        $agency->update(['custom_settings' => $settings]);
+
+        session()->forget('onboarding_step');
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Welcome! We\'ve created some sample posts to get you started. Check them out!');
+    }
+
+    /**
      * Complete onboarding and redirect to dashboard.
      */
     public function complete()

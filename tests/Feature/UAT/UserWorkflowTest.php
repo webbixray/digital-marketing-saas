@@ -33,7 +33,7 @@ class UserWorkflowTest extends TestCase
             'password_confirmation' => 'securepassword123',
         ]);
 
-        $response->assertRedirect('/dashboard');
+        $response->assertRedirect(route('verification.notice'));
         $this->assertAuthenticated();
         $this->assertDatabaseHas('agencies', ['name' => 'New Test Agency']);
     }
@@ -307,6 +307,15 @@ class UserWorkflowTest extends TestCase
             'social_account_id' => $account->id,
             'status' => 'draft',
         ]);
+
+        // Mock the SocialApiService to avoid real API calls
+        $mock = \Mockery::mock(\App\Services\Social\SocialApiService::class);
+        $mock->shouldReceive('publish')->once()->andReturn([
+            'success' => true,
+            'platform_post_id' => 'mock_123',
+            'url' => 'https://example.com/mock',
+        ]);
+        $this->app->instance(\App\Services\Social\SocialApiService::class, $mock);
 
         $response = $this->post("/social/posts/{$post->id}/publish");
         $response->assertRedirect('/social/posts');

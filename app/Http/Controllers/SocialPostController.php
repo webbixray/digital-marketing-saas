@@ -10,14 +10,18 @@ use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\ContentQualityScorer;
+use App\Services\FeatureFlagService;
 use App\Services\Social\SocialPostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SocialPostController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly SocialPostService $postService,
+        private readonly ContentQualityScorer $scorer,
+        private readonly FeatureFlagService $featureFlag,
+    ) {
         $this->middleware(['auth', 'agency']);
     }
 
@@ -60,9 +64,15 @@ class SocialPostController extends Controller
         return view('social.posts.create', compact('agencyId', 'accounts', 'campaigns'));
     }
 
-    public function store(Request $request, SocialPostService $postService)
+    public function store(Request $request)
     {
         $agencyId = $request->user()->agency_id;
+
+        // Check if AI content generation is enabled
+        $agency = $request->user()->agency;
+        if (!$this->featureFlag->isEnabled($agency, 'ai_content_generation')) {
+            return back()->with('error', 'AI content generation is not available on your plan.');
+        }
 
         $validated = $request->validate([
             'social_account_id' => 'required|exists:social_accounts,id',
@@ -80,15 +90,14 @@ class SocialPostController extends Controller
         }
 
         // Quality scoring
-        $scorer = app(ContentQualityScorer::class);
-        $qualityScore = $scorer->score(new SocialPost([
+        $qualityScore = $this->scorer->score(new SocialPost([
             'content' => $validated['content'],
             'platform' => $account->platform,
             'media' => $validated['media'] ?? [],
             'hashtags' => $validated['hashtags'] ?? [],
         ]));
 
-        $post = $postService->createPost($agencyId, [
+        $post = $this->postService->createPost($agencyId, [
             'social_account_id' => $validated['social_account_id'],
             'platform' => $account->platform,
             'content' => $validated['content'],
@@ -186,7 +195,7 @@ class SocialPostController extends Controller
             ->with('success', 'Post deleted.');
     }
 
-    public function publish(Request $request, $postId, SocialPostService $postService)
+    public function publish(Request $request, $postId)
     {
         $agencyId = $request->user()->agency_id;
 
@@ -196,7 +205,7 @@ class SocialPostController extends Controller
             abort(403);
         }
 
-        $result = $postService->publishPost($post);
+        $result = $this->postService->publishPost($post);
 
         if ($result['success']) {
             return redirect()->route('social.posts.index')->with('success', 'Post published successfully!');
@@ -205,7 +214,7 @@ class SocialPostController extends Controller
         return back()->with('error', 'Failed to publish: '.$result['message']);
     }
 
-    public function retry(Request $request, $postId, SocialPostService $postService)
+    public function retry(Request $request, $postId)
     {
         $agencyId = $request->user()->agency_id;
 
@@ -215,7 +224,7 @@ class SocialPostController extends Controller
             abort(403);
         }
 
-        $result = $postService->retryPost($post);
+        $result = $this->postService->retryPost($post);
 
         if ($result['success']) {
             return redirect()->route('social.posts.index')->with('success', 'Post retried successfully!');
@@ -224,7 +233,7 @@ class SocialPostController extends Controller
         return back()->with('error', $result['message']);
     }
 
-    public function score(Request $request, $postId, ContentQualityScorer $scorer)
+    public function score(Request $request, $postId)
     {
         $agencyId = $request->user()->agency_id;
 
@@ -234,8 +243,8 @@ class SocialPostController extends Controller
             abort(403);
         }
 
-        $score = $scorer->score($post);
-        $label = $scorer->getLabel($score);
+        $score = $this->scorer->score($post);
+        $label = $this->scorer->getLabel($score);
 
         $post->update(['quality_score' => $score]);
 

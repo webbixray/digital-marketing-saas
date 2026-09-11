@@ -28,7 +28,7 @@ class RegistrationTest extends TestCase
             'agency_name' => 'Test Agency',
         ]);
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('verification.notice'));
         $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
         $this->assertDatabaseHas('agencies', ['name' => 'Test Agency']);
     }

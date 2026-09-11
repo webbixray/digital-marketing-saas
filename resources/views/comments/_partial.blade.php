@@ -5,6 +5,7 @@
     <div class="card-body">
         <!-- Comment Form -->
         <form id="commentForm" class="mb-4" onsubmit="submitComment(event)">
+            @csrf
             <div class="d-flex gap-2">
                 <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=random&size=40" class="rounded-circle" width="40" height="40" alt="">
                 <div class="flex-grow-1">

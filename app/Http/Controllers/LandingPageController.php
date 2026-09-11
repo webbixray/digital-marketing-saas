@@ -152,10 +152,12 @@ class LandingPageController extends Controller
     /**
      * Public render endpoint for published landing pages.
      */
-    public function render($slug)
+    public function render(Request $request, $slug)
     {
+        $agency = $request->user()->agency;
         $page = LandingPage::where('slug', $slug)
             ->where('is_published', true)
+            ->where('agency_id', $agency->id)
             ->firstOrFail();
 
         $page->incrementViews();

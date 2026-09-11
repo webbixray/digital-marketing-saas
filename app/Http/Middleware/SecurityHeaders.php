@@ -35,7 +35,7 @@ class SecurityHeaders
 
         // Content Security Policy for HTML responses
         if ($response->headers->get('Content-Type') && str_contains($response->headers->get('Content-Type'), 'text/html')) {
-            $nonce = $request->attributes->get('csp-nonce', 'static');
+            $nonce = base64_encode(random_bytes(16));
             $csp = "default-src 'self'; ";
             $csp .= "script-src 'self' 'nonce-{$nonce}' https://cdn.adminlte.io https://cdn.jsdelivr.net https://code.jquery.com; ";
             $csp .= "style-src 'self' 'nonce-{$nonce}' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.adminlte.io; ";
@@ -48,6 +48,8 @@ class SecurityHeaders
             $csp .= "object-src 'none'; ";
             $csp .= "upgrade-insecure-requests'";
             $response->headers->set('Content-Security-Policy', $csp);
+            // Share nonce with views for script/style tags
+            view()->share('cspNonce', $nonce);
         }
 
         return $response;

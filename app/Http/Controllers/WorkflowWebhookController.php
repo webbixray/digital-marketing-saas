@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class WorkflowWebhookController extends Controller
 {
+    public function __construct(
+        private readonly WorkflowEngine $engine,
+    ) {}
+
     /**
      * Handle incoming webhook for a workflow.
      */
@@ -38,7 +42,7 @@ class WorkflowWebhookController extends Controller
 
         try {
             // Execute the workflow
-            $engine = app(WorkflowEngine::class);
+            $engine = $this->engine;
             $execution = $engine->execute($workflow, $request->all());
 
             $log->markAsProcessed('Workflow executed successfully');

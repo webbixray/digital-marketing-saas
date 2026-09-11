@@ -3,12 +3,15 @@
 namespace App\Services\Social;
 
 use App\Enums\PostStatus;
+use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SocialPostService
 {
+    public function __construct(private SocialApiService $apiService) {}
+
     /**
      * Create a new social post (draft or scheduled).
      */
@@ -90,82 +93,22 @@ class SocialPostService
 
     /**
      * Publish to the social media platform.
-     * (Stub — replace with actual API calls)
      */
     protected function publishToPlatform(SocialPost $post): array
     {
-        $platform = $post->platform;
+        $account = $post->socialAccount;
+        
+        if (!$account) {
+            throw new \RuntimeException("Social account not found for post #{$post->id}");
+        }
 
-        // In production, this would call the platform's API
-        return match ($platform) {
-            'facebook' => $this->publishToFacebook($post),
-            'instagram' => $this->publishToInstagram($post),
-            'twitter' => $this->publishToTwitter($post),
-            'linkedin' => $this->publishToLinkedIn($post),
-            'tiktok' => $this->publishToTikTok($post),
-            'pinterest' => $this->publishToPinterest($post),
-            default => throw new \RuntimeException("Unsupported platform: {$platform}"),
-        };
-    }
+        $result = $this->apiService->publish($account, $post);
 
-    protected function publishToFacebook(SocialPost $post): array
-    {
-        // Facebook Graph API integration
-        return [
-            'id' => 'fb_'.uniqid(),
-            'platform' => 'facebook',
-            'status' => 'published',
-        ];
-    }
+        if (!$result['success']) {
+            throw new \RuntimeException($result['error'] ?? 'Unknown error');
+        }
 
-    protected function publishToInstagram(SocialPost $post): array
-    {
-        // Instagram Graph API integration
-        return [
-            'id' => 'ig_'.uniqid(),
-            'platform' => 'instagram',
-            'status' => 'published',
-        ];
-    }
-
-    protected function publishToTwitter(SocialPost $post): array
-    {
-        // Twitter/X API v2 integration
-        return [
-            'id' => 'tw_'.uniqid(),
-            'platform' => 'twitter',
-            'status' => 'published',
-        ];
-    }
-
-    protected function publishToLinkedIn(SocialPost $post): array
-    {
-        // LinkedIn API integration
-        return [
-            'id' => 'li_'.uniqid(),
-            'platform' => 'linkedin',
-            'status' => 'published',
-        ];
-    }
-
-    protected function publishToTikTok(SocialPost $post): array
-    {
-        // TikTok API integration
-        return [
-            'id' => 'tt_'.uniqid(),
-            'platform' => 'tiktok',
-            'status' => 'published',
-        ];
-    }
-
-    protected function publishToPinterest(SocialPost $post): array
-    {
-        // Pinterest API integration
-        return [
-            'id' => 'pt_'.uniqid(),
-            'platform' => 'pinterest',
-            'status' => 'published',
-        ];
+        return $result;
     }
 
     /**

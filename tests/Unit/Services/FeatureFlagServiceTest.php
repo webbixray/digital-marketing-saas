@@ -22,13 +22,13 @@ class FeatureFlagServiceTest extends TestCase
     public function test_is_enabled_returns_true_for_enterprise_plan(): void
     {
         $agency = Agency::factory()->create(['subscription_plan' => 'enterprise']);
-        $this->assertTrue($this->service->isEnabled($agency, 'workflow_engine'));
+        $this->assertTrue($this->service->isEnabled($agency, 'white_label'));
     }
 
     public function test_is_enabled_returns_true_for_feature_in_plan(): void
     {
         $agency = Agency::factory()->create(['subscription_plan' => 'starter']);
-        $this->assertTrue($this->service->isEnabled($agency, 'analytics'));
+        $this->assertTrue($this->service->isEnabled($agency, 'workflow_automation'));
     }
 
     public function test_is_enabled_returns_false_for_feature_not_in_plan(): void

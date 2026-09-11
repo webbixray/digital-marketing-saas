@@ -20,6 +20,7 @@ class ApiAgentController extends Controller
     public function __construct(
         private readonly AgentOrchestrator $orchestrator,
         private readonly AgentHealthMonitor $healthMonitor,
+        private readonly AgentMemory $memory,
     ) {
         $this->middleware(['auth', 'agency']);
     }
@@ -377,7 +378,7 @@ class ApiAgentController extends Controller
     private function getAgentHistory(string $name, int $limit = 50, int $offset = 0): array
     {
         try {
-            $memory = app(\App\Services\AI\Agent\AgentMemory::class);
+            $memory = $this->memory;
             $allHistory = $memory->getHistory();
 
             // Filter history for this agent

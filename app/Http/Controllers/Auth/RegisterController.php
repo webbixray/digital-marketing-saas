@@ -6,6 +6,8 @@ use App\Concerns\StructuredLogger;
 use App\Http\Controllers\Controller;
 use App\Models\Agency;
 use App\Models\User;
+use App\Services\ReferralService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +34,10 @@ class RegisterController extends Controller
         ]);
 
         try {
-            $user = DB::transaction(function () use ($validated) {
+            $referralService = app(ReferralService::class);
+            $referralCode = $request->query('ref') ?? session('referral_code');
+
+            $user = DB::transaction(function () use ($validated, $referralService, $referralCode) {
                 $agency = Agency::create([
                     'name' => $validated['agency_name'],
                     'slug' => Str::slug($validated['agency_name']).'-'.uniqid(),
@@ -43,7 +48,7 @@ class RegisterController extends Controller
                     'is_active' => true,
                 ]);
 
-                return User::create([
+                $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'password' => Hash::make($validated['password']),
@@ -52,9 +57,23 @@ class RegisterController extends Controller
                     'is_active' => true,
                     'is_approved' => true,
                 ]);
+
+                // Assign referral code to user
+                $referralService->assignCode($user);
+                $referralService->assignCodeToAgency($agency);
+
+                // Process referral if code exists
+                if ($referralCode) {
+                    $referralService->processReferral($referralCode, $user);
+                }
+
+                return $user;
             });
 
             Auth::login($user);
+
+            // Trigger email verification notification
+            event(new Registered($user));
 
             $this->logAuth('registration', [
                 'user_id' => $user->id,
@@ -63,7 +82,7 @@ class RegisterController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return redirect()->route('dashboard')->with('success', 'Welcome! Your agency has been created.');
+            return redirect()->route('verification.notice')->with('success', 'Welcome! Your agency has been created. Please verify your email address. After that, we\'ll help you get set up in 5 easy steps.');
         } catch (\Exception $e) {
             Log::error('Registration failed', [
                 'email' => $validated['email'],

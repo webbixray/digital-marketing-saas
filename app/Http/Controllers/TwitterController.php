@@ -14,8 +14,9 @@ use Illuminate\Support\Str;
 
 class TwitterController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly TwitterApiService $twitter,
+    ) {
         $this->middleware(['auth', 'agency']);
     }
 
@@ -191,7 +192,7 @@ class TwitterController extends Controller
             ->where('platform', 'twitter')
             ->firstOrFail();
         
-        $twitter = new TwitterApiService();
+        $twitter = $this->twitter;
         
         // Use account's access token for user-context requests
         $metrics = $twitter->getUserMetrics($account->platform_username);
@@ -216,7 +217,7 @@ class TwitterController extends Controller
             ->where('platform', 'twitter')
             ->firstOrFail();
         
-        $twitter = new TwitterApiService();
+        $twitter = $this->twitter;
         $result = $twitter->postTweet($request->text);
         
         if ($result['success']) {
@@ -249,7 +250,7 @@ class TwitterController extends Controller
         $agencyId = $request->user()->agency_id;
         
         $account = SocialAccount::where('id', $accountId)
-            ->where('agency_id' => $agencyId)
+            ->where('agency_id', $agencyId)
             ->where('platform', 'twitter')
             ->firstOrFail();
         

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AI\Gateway\AiGateway;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,10 @@ use Illuminate\Support\Facades\Storage;
 
 class HealthCheckController extends Controller
 {
+    public function __construct(
+        private readonly AiGateway $aiGateway,
+    ) {}
+
     /**
      * Minimum free disk space in bytes before warning (500 MB).
      */
@@ -127,7 +132,7 @@ class HealthCheckController extends Controller
     private function checkAiGateway(): bool
     {
         try {
-            $gateway = app(\App\Services\AI\Gateway\AiGateway::class);
+            $gateway = $this->aiGateway;
             return $gateway->hasAvailableProvider();
         } catch (\Exception $e) {
             return false;

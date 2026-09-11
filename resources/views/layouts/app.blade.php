@@ -286,6 +286,13 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{{ route('calendar.index') }}" class="nav-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-calendar-alt"></i>
+                            <p>Calendar</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="{{ route('analytics.index') }}" class="nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <p>Analytics</p>
@@ -365,6 +372,41 @@
                         <a href="{{ route('agency.team') }}" class="nav-link {{ request()->routeIs('agency.team*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-friends"></i>
                             <p>Team</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('ab-testing.index') }}" class="nav-link {{ request()->routeIs('ab-testing.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-flask"></i>
+                            <p>A/B Testing</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('support.index') }}" class="nav-link {{ request()->routeIs('support.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-life-ring"></i>
+                            <p>Support</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('referrals.index') }}" class="nav-link {{ request()->routeIs('referrals.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-gift"></i>
+                            <p>Referrals</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('system.status') }}" class="nav-link {{ request()->routeIs('system.status') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-heartbeat"></i>
+                            <p>System Status</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('system.backup.index') }}" class="nav-link {{ request()->routeIs('system.backup*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>Backups</p>
                         </a>
                     </li>
 
@@ -490,5 +532,39 @@
 </script>
 
 @stack('scripts')
+
+<!-- Cookie Consent Banner -->
+<div id="cookie-banner" class="fixed-bottom bg-dark text-white p-3 d-none" style="z-index: 9999;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <p class="mb-0">We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies. <a href="/privacy" class="text-info">Learn more</a></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary btn-sm" onclick="acceptCookies()">Accept</button>
+                <button class="btn btn-outline-light btn-sm" onclick="declineCookies()">Decline</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function acceptCookies() {
+    localStorage.setItem('cookie_consent', 'accepted');
+    document.getElementById('cookie-banner').classList.add('d-none');
+}
+
+function declineCookies() {
+    localStorage.setItem('cookie_consent', 'declined');
+    document.getElementById('cookie-banner').classList.add('d-none');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem('cookie_consent')) {
+        document.getElementById('cookie-banner').classList.remove('d-none');
+    }
+});
+</script>
+
 </body>
 </html>

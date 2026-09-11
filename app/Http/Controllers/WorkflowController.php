@@ -12,8 +12,9 @@ use Illuminate\Support\Str;
 
 class WorkflowController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly WorkflowEngine $engine,
+    ) {
         $this->middleware(['auth', 'agency']);
     }
 
@@ -365,7 +366,7 @@ class WorkflowController extends Controller
             $validated = $request->validate([
                 'trigger_data' => 'nullable|array|max:50',
             ]);
-            $engine = app(WorkflowEngine::class);
+            $engine = $this->engine;
             $execution = $engine->execute($workflow, $validated['trigger_data'] ?? []);
 
             return response()->json([

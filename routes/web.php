@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbTestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AgentController;
@@ -12,7 +13,9 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\CancellationController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ContentCalendarController;
 use App\Http\Controllers\ContentLibraryController;
 use App\Http\Controllers\ContentTemplateController;
 use App\Http\Controllers\CustomFieldController;
@@ -30,16 +33,22 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MediaLibraryController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SocialAccountController;
 use App\Http\Controllers\SocialPostController;
-use App\Http\Controllers\TelegramLinkController;
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\SystemBackupController;
+use App\Http\Controllers\SystemStatusController;
+use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TwitterController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WhiteLabelController;
 use App\Http\Controllers\WorkflowController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'landing'])->name('public.landing');
@@ -47,7 +56,12 @@ Route::get('/pricing', [PublicController::class, 'pricing'])->name('public.prici
 Route::get('/features', [PublicController::class, 'features'])->name('public.features');
 Route::get('/docs', [PublicController::class, 'docs'])->name('public.docs');
 Route::get('/blog', [PublicController::class, 'blog'])->name('public.blog');
+Route::get('/welcome', [PublicController::class, 'welcome'])->name('public.welcome');
+Route::get('/terms', [PublicController::class, 'terms'])->name('public.terms');
+Route::get('/privacy', [PublicController::class, 'privacy'])->name('public.privacy');
 Route::get('/contact', [PublicController::class, 'contact'])->name('public.contact');
+Route::post('/contact', [PublicController::class, 'contactSubmit'])->name('public.contact.submit');
+Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -57,6 +71,21 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Email Verification Routes
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('dashboard')->with('success', 'Email verified successfully!');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/password/reset', [ResetPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('throttle:5,1');
@@ -89,6 +118,13 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('campaigns/{campaign}/agent-insights', [CampaignController::class, 'getAgentInsights'])->name('campaigns.agent-insights');
 
     Route::resource('clients', ClientController::class);
+
+    // Cancellation Flow
+    Route::prefix('cancel')->name('cancellation.')->group(function () {
+        Route::get('/', [CancellationController::class, 'survey'])->name('survey');
+        Route::post('/survey', [CancellationController::class, 'submitSurvey'])->name('submit');
+        Route::get('/confirm', [CancellationController::class, 'confirm'])->name('confirm');
+    });
 
     Route::prefix('ai')->name('ai.')->group(function () {
         Route::get('/', [AiContentController::class, 'index'])->name('index');
@@ -144,8 +180,35 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('media/{asset}/duplicate', [MediaLibraryController::class, 'duplicate'])->name('media.duplicate');
     Route::delete('media/bulk-delete', [MediaLibraryController::class, 'bulkDelete'])->name('media.bulk-delete');
 
+    // Support Tickets
+    Route::resource('support', SupportTicketController::class);
+    Route::post('support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply');
+
+    // System Status
+    Route::get('/system-status', [SystemStatusController::class, 'index'])->name('system.status');
+
+    // Backup Management
+    Route::get('/system-backup', [SystemBackupController::class, 'index'])->name('system.backup.index');
+    Route::post('/system-backup', [SystemBackupController::class, 'store'])->name('system.backup.store');
+    Route::post('/system-backup/{filename}/restore', [SystemBackupController::class, 'restore'])->name('system.backup.restore');
+
+    // A/B Testing
+    Route::prefix('ab-testing')->name('ab-testing.')->group(function () {
+        Route::get('/', [AbTestController::class, 'index'])->name('index');
+        Route::get('/create', [AbTestController::class, 'create'])->name('create');
+        Route::post('/', [AbTestController::class, 'store'])->name('store');
+        Route::get('/{test}', [AbTestController::class, 'show'])->name('show');
+        Route::post('/{test}/start', [AbTestController::class, 'start'])->name('start');
+        Route::post('/{test}/pause', [AbTestController::class, 'pause'])->name('pause');
+        Route::post('/{test}/complete', [AbTestController::class, 'complete'])->name('complete');
+        Route::post('/{test}/track/{variant}/{event}', [AbTestController::class, 'trackEvent'])->name('track');
+    });
+
+    // Activity
+    Route::get('/team-activity', [TeamActivityController::class, 'index'])->name('team.activity');
+
     // Twitter/X Integration
-    Route::prefix('twitter')->name('twitter.')->group(function () {
+    Route::prefix('twitter')->name('twitter.')->middleware('platform.rate_limit:twitter')->group(function () {
         Route::get('/', [TwitterController::class, 'index'])->name('index');
         Route::get('/connect', [TwitterController::class, 'connect'])->name('connect');
         Route::get('/callback', [TwitterController::class, 'callback'])->name('callback');
@@ -156,6 +219,12 @@ Route::middleware(['auth', 'agency'])->group(function () {
     });
     Route::post('forms/{form}/toggle', [FormController::class, 'togglePublish'])->name('forms.toggle');
     Route::resource('webhooks', WebhookController::class);
+
+    // Content Calendar
+    Route::prefix('calendar')->name('calendar.')->group(function () {
+        Route::get('/', [ContentCalendarController::class, 'index'])->name('index');
+        Route::get('/events', [ContentCalendarController::class, 'events'])->name('events');
+    });
 
     // Content Templates
     Route::resource('content-templates', ContentTemplateController::class);
@@ -174,6 +243,10 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::put('/{flag}', [FeatureFlagController::class, 'update'])->name('update');
         Route::delete('/{flag}', [FeatureFlagController::class, 'destroy'])->name('destroy');
     });
+
+    // Referral Program
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+    Route::get('/ref/{code}', [ReferralController::class, 'track'])->name('referrals.track');
 
     // Reports
     Route::resource('reports', ReportController::class);
@@ -259,6 +332,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/onboarding/step5', [OnboardingController::class, 'step5_activateAI'])->name('onboarding.step5');
     Route::post('/onboarding/step5', [OnboardingController::class, 'step5_activateAI']);
     Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+    Route::post('/onboarding/quick-start', [OnboardingController::class, 'quickStart'])->name('onboarding.quickStart');
 
     Route::prefix('agency')->name('agency.')->group(function () {
         Route::get('settings', [AgencyController::class, 'settings'])->name('settings');

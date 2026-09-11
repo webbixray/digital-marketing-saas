@@ -200,6 +200,43 @@ class SocialApiService
     }
 
     /**
+     * Publish post to Pinterest
+     */
+    public function publishToPinterest(SocialAccount $account, SocialPost $post): array
+    {
+        try {
+            $url = 'https://api.pinterest.com/v5/pins';
+
+            $response = Http::withToken($account->access_token)
+                ->timeout(30)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($url, [
+                    'title' => \Illuminate\Support\Str::limit($post->content, 100),
+                    'description' => $post->content,
+                    'board_id' => $account->metadata['board_id'] ?? null,
+                    'link' => $post->links['url'] ?? null,
+                ]);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'platform_post_id' => $response->json()['id'] ?? null,
+                    'url' => $response->json()['link'] ?? "https://pinterest.com/pin/{$response->json()['id']}",
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json()['message'] ?? 'Unknown error',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Pinterest publish failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Publish to the appropriate platform based on account type
      */
     public function publish(SocialAccount $account, SocialPost $post): array
@@ -210,6 +247,7 @@ class SocialApiService
             'twitter' => $this->publishToTwitter($account, $post),
             'linkedin' => $this->publishToLinkedIn($account, $post),
             'tiktok' => $this->publishToTikTok($account, $post),
+            'pinterest' => $this->publishToPinterest($account, $post),
             default => ['success' => false, 'error' => "Unsupported platform: {$account->platform}"],
         };
     }

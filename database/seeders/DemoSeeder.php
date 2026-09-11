@@ -235,7 +235,7 @@ class DemoSeeder extends Seeder
         $users['owner'] = User::create([
             'name' => 'Sarah Johnson',
             'email' => 'owner@agency.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
             'agency_id' => $agency->id,
             'role' => 'owner',
             'title' => 'CEO & Founder',
@@ -249,7 +249,7 @@ class DemoSeeder extends Seeder
         $users['admin'] = User::create([
             'name' => 'Michael Chen',
             'email' => 'admin@agency.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
             'agency_id' => $agency->id,
             'role' => 'admin',
             'title' => 'Operations Manager',
@@ -263,7 +263,7 @@ class DemoSeeder extends Seeder
         $users['manager'] = User::create([
             'name' => 'Emily Rodriguez',
             'email' => 'manager@agency.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
             'agency_id' => $agency->id,
             'role' => 'manager',
             'title' => 'Social Media Manager',
@@ -277,7 +277,7 @@ class DemoSeeder extends Seeder
         $users['member'] = User::create([
             'name' => 'David Kim',
             'email' => 'member@agency.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
             'agency_id' => $agency->id,
             'role' => 'member',
             'title' => 'Content Creator',

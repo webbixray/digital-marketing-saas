@@ -2,87 +2,164 @@
 
 namespace App\Services\Social;
 
-use App\Models\SocialAccount;
+use App\Models\Agency;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class PlatformRateLimitService
 {
     /**
-     * Check if the account is allowed to make a request.
+     * Platform rate limit configurations.
+     * Limits are per-hour unless otherwise specified.
      */
-    public function isAllowed(SocialAccount $account, string $platform): bool
+    private const PLATFORM_LIMITS = [
+        'facebook' => [
+            'posts_per_hour' => 25,
+            'api_calls_per_hour' => 200,
+        ],
+        'instagram' => [
+            'posts_per_hour' => 20,
+            'api_calls_per_hour' => 100,
+        ],
+        'twitter' => [
+            'posts_per_hour' => 30,
+            'api_calls_per_hour' => 150,
+        ],
+        'linkedin' => [
+            'posts_per_hour' => 15,
+            'api_calls_per_hour' => 100,
+        ],
+        'tiktok' => [
+            'posts_per_hour' => 10,
+            'api_calls_per_hour' => 50,
+        ],
+        'pinterest' => [
+            'posts_per_hour' => 20,
+            'api_calls_per_hour' => 100,
+        ],
+    ];
+
+    /**
+     * Plan multipliers for rate limits.
+     */
+    private const PLAN_MULTIPLIERS = [
+        'free' => 1,
+        'starter' => 2,
+        'pro' => 5,
+        'enterprise' => 10,
+    ];
+
+    /**
+     * Check if a platform action is allowed.
+     */
+    public function isAllowed(int $agencyId, string $platform, string $action = 'posts'): bool
     {
-        $limits = config("platform.social.rate_limits.{$platform}");
+        $limit = $this->getLimit($agencyId, $platform, $action);
+        $current = $this->getCurrentUsage($agencyId, $platform, $action);
 
-        if (! $limits) {
-            return true;
-        }
-
-        $hourlyKey = "rate_limit:{$platform}:hourly:{$account->id}";
-        $dailyKey = "rate_limit:{$platform}:daily:{$account->id}";
-
-        $hourlyCount = Cache::get($hourlyKey, 0);
-        $dailyCount = Cache::get($dailyKey, 0);
-
-        return $hourlyCount < $limits['requests_per_hour']
-            && $dailyCount < $limits['requests_per_day'];
+        return $current < $limit;
     }
 
     /**
-     * Record a request being made.
+     * Get the rate limit for a platform action.
      */
-    public function recordRequest(SocialAccount $account, string $platform): void
+    public function getLimit(int $agencyId, string $platform, string $action = 'posts'): int
     {
-        $hourlyKey = "rate_limit:{$platform}:hourly:{$account->id}";
-        $dailyKey = "rate_limit:{$platform}:daily:{$account->id}";
+        $agency = Agency::find($agencyId);
+        $plan = $agency?->subscription_plan ?? 'free';
+        $multiplier = self::PLAN_MULTIPLIERS[$plan] ?? 1;
 
-        $hourlyTtl = now()->addHour();
-        $dailyTtl = now()->addDay();
-
-        Cache::put($hourlyKey, Cache::get($hourlyKey, 0) + 1, $hourlyTtl);
-        Cache::put($dailyKey, Cache::get($dailyKey, 0) + 1, $dailyTtl);
-    }
-
-    /**
-     * Get current rate limit status.
-     */
-    public function getStatus(SocialAccount $account, string $platform): array
-    {
-        $limits = config("platform.social.rate_limits.{$platform}", []);
-        $hourlyKey = "rate_limit:{$platform}:hourly:{$account->id}";
-        $dailyKey = "rate_limit:{$platform}:daily:{$account->id}";
-
-        $hourlyCount = Cache::get($hourlyKey, 0);
-        $dailyCount = Cache::get($dailyKey, 0);
-
-        return [
-            'hourly' => [
-                'used' => $hourlyCount,
-                'limit' => $limits['requests_per_hour'] ?? PHP_INT_MAX,
-                'remaining' => max(0, ($limits['requests_per_hour'] ?? PHP_INT_MAX) - $hourlyCount),
-            ],
-            'daily' => [
-                'used' => $dailyCount,
-                'limit' => $limits['requests_per_day'] ?? PHP_INT_MAX,
-                'remaining' => max(0, ($limits['requests_per_day'] ?? PHP_INT_MAX) - $dailyCount),
-            ],
+        $platformLimits = self::PLATFORM_LIMITS[$platform] ?? [
+            'posts_per_hour' => 10,
+            'api_calls_per_hour' => 50,
         ];
+
+        $baseLimit = $platformLimits["{$action}_per_hour"] ?? 10;
+
+        return $baseLimit * $multiplier;
     }
 
     /**
-     * Calculate the number of seconds to wait before retrying.
-     * Used with queue job backoff for non-blocking rate limit handling.
+     * Get current usage count for a platform action.
      */
-    public function getRetryAfterSeconds(SocialAccount $account, string $platform): int
+    public function getCurrentUsage(int $agencyId, string $platform, string $action = 'posts'): int
     {
-        if ($this->isAllowed($account, $platform)) {
+        $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
+        return Cache::get($cacheKey, 0);
+    }
+
+    /**
+     * Record a platform action.
+     */
+    public function recordAction(int $agencyId, string $platform, string $action = 'posts', int $count = 1): void
+    {
+        $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
+        $current = Cache::get($cacheKey, 0);
+        $newCount = $current + $count;
+
+        // Store with 1-hour expiration
+        Cache::put($cacheKey, $newCount, 3600);
+
+        Log::debug("Rate limit recorded", [
+            'agency_id' => $agencyId,
+            'platform' => $platform,
+            'action' => $action,
+            'count' => $newCount,
+            'limit' => $this->getLimit($agencyId, $platform, $action),
+        ]);
+    }
+
+    /**
+     * Get remaining allowance for a platform action.
+     */
+    public function getRemaining(int $agencyId, string $platform, string $action = 'posts'): int
+    {
+        $limit = $this->getLimit($agencyId, $platform, $action);
+        $current = $this->getCurrentUsage($agencyId, $platform, $action);
+
+        return max(0, $limit - $current);
+    }
+
+    /**
+     * Get seconds until rate limit resets.
+     */
+    public function getSecondsUntilReset(int $agencyId, string $platform, string $action = 'posts'): int
+    {
+        $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
+
+        // Since Laravel Cache doesn't expose TTL directly, we track it separately
+        $ttlKey = $cacheKey . ':ttl';
+        $expiresAt = Cache::get($ttlKey);
+
+        if (!$expiresAt) {
             return 0;
         }
 
-        $limits = config("platform.social.rate_limits.{$platform}");
-        $hourlyKey = "rate_limit:{$platform}:hourly:{$account->id}";
-        $hourlyTtl = Cache::get($hourlyKey) ? now()->addHour()->diffInSeconds(now()) : 60;
+        return max(0, $expiresAt - time());
+    }
 
-        return min($hourlyTtl, 3600);
+    /**
+     * Reset rate limits for an agency.
+     */
+    public function resetLimits(int $agencyId): void
+    {
+        foreach (array_keys(self::PLATFORM_LIMITS) as $platform) {
+            foreach (['posts', 'api_calls'] as $action) {
+                $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
+                Cache::forget($cacheKey);
+                Cache::forget($cacheKey . ':ttl');
+            }
+        }
+
+        Log::info("Rate limits reset for agency {$agencyId}");
+    }
+
+    /**
+     * Get cache key for rate limiting.
+     */
+    private function getCacheKey(int $agencyId, string $platform, string $action): string
+    {
+        $hour = now()->format('YmdH');
+        return "rate_limit:{$agencyId}:{$platform}:{$action}:{$hour}";
     }
 }

@@ -33,6 +33,24 @@ class AnalyticsTest extends TestCase
         $response->assertViewHas('platformStats');
     }
 
+    public function test_it_shows_correct_post_stats(): void
+    {
+        \App\Models\SocialPost::factory()->count(5)->create([
+            'agency_id' => $this->agency->id,
+            'status' => 'published',
+        ]);
+        \App\Models\SocialPost::factory()->count(3)->create([
+            'agency_id' => $this->agency->id,
+            'status' => 'scheduled',
+        ]);
+
+        $response = $this->actingAs($this->user)->get(route('analytics.index'));
+
+        $response->assertOk();
+        $postStats = $response->viewData('postStats');
+        $this->assertEquals(8, $postStats['total_posts'] ?? 0);
+    }
+
     public function test_it_requires_auth(): void
     {
         $response = $this->get(route('analytics.index'));
