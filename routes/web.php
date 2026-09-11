@@ -17,6 +17,7 @@ use App\Http\Controllers\CancellationController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ContentCalendarController;
 use App\Http\Controllers\ContentLibraryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentTemplateController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
@@ -61,6 +62,7 @@ Route::get('/terms', [PublicController::class, 'terms'])->name('public.terms');
 Route::get('/privacy', [PublicController::class, 'privacy'])->name('public.privacy');
 Route::get('/contact', [PublicController::class, 'contact'])->name('public.contact');
 Route::post('/contact', [PublicController::class, 'contactSubmit'])->name('public.contact.submit');
+Route::get('landing/{slug}', [LandingPageController::class, 'render'])->name('public.landing-page');
 Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter');
 
 Route::middleware('guest')->group(function () {
@@ -98,6 +100,14 @@ Route::get('/auth/{provider}/callback', [OAuthController::class, 'callback'])->n
 Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
+    // Comments (morph type)
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+        Route::get('/{comment}', [CommentController::class, 'show'])->name('show');
+        Route::post('/', [CommentController::class, 'store'])->name('store');
+        Route::delete('/{comment}', [CommentController::class, 'destroy'])->name('destroy');
+    });
 
     Route::prefix('social')->name('social.')->group(function () {
         Route::resource('accounts', SocialAccountController::class)->except('show');

@@ -34,13 +34,13 @@
                         <div class="timeline">
                             <!-- Original message -->
                             <div class="time-label">
-                                <span class="bg-primary">{{ $ticket->created_at->toDateString() }}</span>
+                                <span class="bg-primary">{{ $ticket->created_at ? $ticket->created_at->toDateString() : 'N/A' }}</span>
                             </div>
                             <div>
                                 <i class="fas fa-envelope bg-blue"></i>
                                 <div class="timeline-item">
-                                    <span class="time">{{ $ticket->created_at->diffForHumans() }}</span>
-                                    <h3 class="timeline-header">{{ $ticket->user->name }}</h3>
+                                    <span class="time">{{ $ticket->created_at ? $ticket->created_at->diffForHumans() : 'N/A' }}</span>
+                                    <h3 class="timeline-header">{{ $ticket->user->name ?? 'Unknown' }}</h3>
                                     <div class="timeline-body">
                                         {{ $ticket->description }}
                                     </div>
@@ -52,8 +52,8 @@
                                 <div>
                                     <i class="fas fa-comments bg-yellow"></i>
                                     <div class="timeline-item">
-                                        <span class="time">{{ $reply->created_at->diffForHumans() }}</span>
-                                        <h3 class="timeline-header">{{ $reply->user->name }}</h3>
+                                        <span class="time">{{ $reply->created_at ? $reply->created_at->diffForHumans() : 'N/A' }}</span>
+                                        <h3 class="timeline-header">{{ $reply->user->name ?? 'Unknown' }}</h3>
                                         <div class="timeline-body">
                                             {{ $reply->message }}
                                         </div>
@@ -73,7 +73,7 @@
                     </div>
                     @if(!$ticket->isClosed())
                         <div class="card-footer">
-                            <form action="{{ route('support.reply', $ticket) }}" method="POST">
+                            <form action="/support/{{ $ticket->id }}/reply" method="POST">
                                 @csrf
                                 <div class="input-group">
                                     <input type="text" name="message" class="form-control" placeholder="Type your reply..." required>
@@ -95,9 +95,9 @@
                         <p><strong>Category:</strong> {{ ucfirst($ticket->category ?? 'Other') }}</p>
                         <p><strong>Priority:</strong> <span class="badge badge-{{ $ticket->priority === 'urgent' ? 'danger' : ($ticket->priority === 'high' ? 'warning' : 'info') }}">{{ ucfirst($ticket->priority) }}</span></p>
                         <p><strong>Status:</strong> {{ ucfirst($ticket->status) }}</p>
-                        <p><strong>Created:</strong> {{ $ticket->created_at->toDateString() }}</p>
+                        <p><strong>Created:</strong> {{ $ticket->created_at ? $ticket->created_at->toDateString() : 'N/A' }}</p>
                         @if($ticket->resolved_at)
-                            <p><strong>Resolved:</strong> {{ $ticket->resolved_at->toDateString() }}</p>
+                            <p><strong>Resolved:</strong> {{ $ticket->resolved_at ? $ticket->resolved_at->toDateString() : 'N/A' }}</p>
                         @endif
                     </div>
                 </div>

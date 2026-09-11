@@ -15,7 +15,7 @@
 <body>
     <div class="container">
         <h1 class="display-4">{{ $page->headline }}</h1>
-        <div class="lead mt-4">{!! clean($page->content) !!}</div>
+        <div class="lead mt-4">{{ $page->content }}</div>
         @if($page->cta_text && $page->cta_url)
             <a href="{{ route('public.landing-page', ['slug' => $page->slug, 'click' => 1]) }}" class="btn-cta" onclick="window.clickTracked = true;">{{ $page->cta_text }}</a>
         @endif

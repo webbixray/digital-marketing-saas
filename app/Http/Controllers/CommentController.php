@@ -19,11 +19,11 @@ class CommentController extends Controller
             'commentable_id' => 'nullable|integer',
         ]);
 
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
         $commentableType = $request->input('commentable_type');
         $commentableId = $request->input('commentable_id');
 
-        $query = Comment::where('agency_id', $agency->id)
+        $query = Comment::where('agency_id', $agencyId)
             ->with('user')
             ->orderBy('created_at', 'desc');
 
@@ -37,6 +37,14 @@ class CommentController extends Controller
         return response()->json($comments);
     }
 
+    public function show(Request $request, Comment $comment)
+    {
+        if ((int) $comment->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
+        return response()->json($comment->load('user'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -46,10 +54,10 @@ class CommentController extends Controller
             'parent_id' => 'nullable|integer|exists:comments,id',
         ]);
 
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
         $comment = Comment::create([
-            'agency_id' => $agency->id,
+            'agency_id' => $agencyId,
             'user_id' => $request->user()->id,
             'commentable_type' => $request->commentable_type,
             'commentable_id' => $request->commentable_id,
@@ -57,23 +65,17 @@ class CommentController extends Controller
             'parent_id' => $request->parent_id,
         ]);
 
-        $comment->load('user');
-
-        return response()->json([
-            'success' => true,
-            'comment' => $comment,
-        ]);
+        return redirect('/comments')->with('success', 'Comment added.');
     }
 
     public function destroy(Request $request, Comment $comment)
     {
-        $agency = $request->user()->agency;
-        if ($comment->agency_id !== $agency->id) {
+        if ((int) $comment->agency_id !== (int) $request->user()->agency_id) {
             abort(403);
         }
 
         $comment->delete();
 
-        return response()->json(['success' => true]);
+        return redirect('/comments')->with('success', 'Comment deleted.');
     }
 }

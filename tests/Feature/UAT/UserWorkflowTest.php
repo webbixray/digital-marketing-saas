@@ -149,7 +149,7 @@ class UserWorkflowTest extends TestCase
             'cta_text' => 'Book Now',
             'cta_url' => 'https://example.com/contact',
         ]);
-        $response->assertRedirectContains('/landing-pages/');
+        $response->assertRedirectContains('/landing-pages');
         $this->assertDatabaseHas('landing_pages', ['name' => 'Free Consultation']);
     }
 

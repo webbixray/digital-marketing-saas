@@ -67,15 +67,18 @@ class SupportTicketController extends Controller
             'status' => 'open',
         ]);
 
-        return redirect()->route('support.show', $ticket)
+        return redirect('/support')
             ->with('success', 'Ticket created successfully. We\'ll get back to you soon!');
     }
 
     /**
      * Show a single ticket.
      */
-    public function show(SupportTicket $ticket)
+    public function show(Request $request, SupportTicket $ticket)
     {
+        if ((int) $ticket->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
         $ticket->load(['replies.user', 'assignee']);
         return view('support.show', compact('ticket'));
     }
@@ -101,5 +104,19 @@ class SupportTicketController extends Controller
         }
 
         return back()->with('success', 'Reply added successfully.');
+    }
+
+    /**
+     * Delete a ticket.
+     */
+    public function destroy(Request $request, SupportTicket $support)
+    {
+        if ((int) $support->agency_id !== (int) $request->user()->agency_id) {
+            abort(403);
+        }
+
+        $support->delete();
+
+        return redirect('/support')->with('success', 'Ticket deleted.');
     }
 }

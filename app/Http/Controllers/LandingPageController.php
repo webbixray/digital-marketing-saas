@@ -61,7 +61,7 @@ class LandingPageController extends Controller
             'is_published' => false,
         ]);
 
-        return redirect()->route('landing-pages.show', $page)
+        return redirect('/landing-pages')
             ->with('success', 'Landing page created successfully.');
     }
 
@@ -154,11 +154,14 @@ class LandingPageController extends Controller
      */
     public function render(Request $request, $slug)
     {
-        $agency = $request->user()->agency;
         $page = LandingPage::where('slug', $slug)
             ->where('is_published', true)
-            ->where('agency_id', $agency->id)
             ->firstOrFail();
+
+        $user = $request->user();
+        if ($user && (int) $page->agency_id !== (int) $user->agency_id) {
+            abort(403);
+        }
 
         $page->incrementViews();
 

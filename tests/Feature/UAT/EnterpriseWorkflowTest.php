@@ -140,7 +140,7 @@ class EnterpriseWorkflowTest extends TestCase
             'cta_text' => 'Get Early Access',
             'cta_url' => 'https://example.com/early-access',
         ]);
-        $response->assertRedirectContains('/landing-pages/');
+        $response->assertRedirectContains('/landing-pages');
     }
 
     public function test_form_create_and_toggle(): void
