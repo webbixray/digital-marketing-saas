@@ -78,4 +78,10 @@ return [
         'app_secret' => env('PINTEREST_APP_SECRET'),
         'access_token' => env('PINTEREST_ACCESS_TOKEN'),
     ],
+
+    'youtube' => [
+        'client_id' => env('YOUTUBE_CLIENT_ID'),
+        'client_secret' => env('YOUTUBE_CLIENT_SECRET'),
+        'api_key' => env('YOUTUBE_API_KEY'),
+    ],
 ];

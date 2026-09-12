@@ -392,6 +392,9 @@ require __DIR__.'/tiktok.php';
 // Pinterest integration
 require __DIR__.'/pinterest.php';
 
+// YouTube integration
+require __DIR__.'/youtube.php';
+
 // security.txt (RFC 9116)
 Route::get('/.well-known/security.txt', function () {
     $expiry = now()->addYear()->toIso8601String();
