@@ -3,19 +3,24 @@
 namespace App\Observers;
 
 use App\Models\SocialAccount;
-use App\Services\QuotaService;
+use Illuminate\Support\Facades\Cache;
 
 class SocialAccountObserver
 {
-    public function __construct(private QuotaService $quota) {}
-
-    public function created(SocialAccount $account): void
+    public function saved(SocialAccount $account): void
     {
-        $account->agency?->increment('social_accounts_count');
+        Cache::tags(["agency:{$account->agency_id}", 'social-accounts'])->flush();
     }
 
     public function deleted(SocialAccount $account): void
     {
-        $account->agency?->decrement('social_accounts_count');
+        Cache::tags(["agency:{$account->agency_id}", 'social-accounts'])->flush();
+    }
+
+    public function updated(SocialAccount $account): void
+    {
+        if ($account->isDirty(['is_connected', 'status'])) {
+            Cache::tags(["agency:{$account->agency_id}", 'social-accounts'])->flush();
+        }
     }
 }
