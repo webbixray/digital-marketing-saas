@@ -395,6 +395,9 @@ require __DIR__.'/pinterest.php';
 // YouTube integration
 require __DIR__.'/youtube.php';
 
+// Unified inbox
+require __DIR__.'/unified-inbox.php';
+
 // security.txt (RFC 9116)
 Route::get('/.well-known/security.txt', function () {
     $expiry = now()->addYear()->toIso8601String();
