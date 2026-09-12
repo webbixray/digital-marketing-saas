@@ -66,4 +66,16 @@ return [
         'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
         'access_token' => env('LINKEDIN_ACCESS_TOKEN'),
     ],
+
+    'tiktok' => [
+        'client_key' => env('TIKTOK_CLIENT_KEY'),
+        'client_secret' => env('TIKTOK_CLIENT_SECRET'),
+        'access_token' => env('TIKTOK_ACCESS_TOKEN'),
+    ],
+
+    'pinterest' => [
+        'app_id' => env('PINTEREST_APP_ID'),
+        'app_secret' => env('PINTEREST_APP_SECRET'),
+        'access_token' => env('PINTEREST_ACCESS_TOKEN'),
+    ],
 ];

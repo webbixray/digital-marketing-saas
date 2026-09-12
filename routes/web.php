@@ -386,6 +386,12 @@ require __DIR__.'/facebook.php';
 // LinkedIn integration
 require __DIR__.'/linkedin.php';
 
+// TikTok integration
+require __DIR__.'/tiktok.php';
+
+// Pinterest integration
+require __DIR__.'/pinterest.php';
+
 // security.txt (RFC 9116)
 Route::get('/.well-known/security.txt', function () {
     $expiry = now()->addYear()->toIso8601String();
