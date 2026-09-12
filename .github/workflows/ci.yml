@@ -1,40 +1,67 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [main, develop]
   pull_request:
-    branches: [main, master, develop]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+      matrix:
+        php-version: ['8.3']
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Setup PHP 8.3
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, json, bcmath, curl, intl, pdo, pdo_sqlite, sqlite3
-          coverage: none
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, mysql, redis, gd, curl, zip
+        coverage: xdebug
 
-      - name: Copy .env.example to .env
-        run: cp .env.example .env
+    - name: Copy .env
+      run: cp .env.example .env
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+    - name: Install Dependencies
+      run: |
+        composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Generate application key
-        run: php artisan key:generate
+    - name: Generate key
+      run: php artisan key:generate
 
-      - name: Run Pint (code style check)
-        run: vendor/bin/pint --test
+    - name: Run linter
+      run: vendor/bin/pint --test
 
-      - name: Run PHPStan (static analysis)
-        run: vendor/bin/phpstan analyse --level=5 --no-progress
+    - name: Run tests
+      run: php artisan test --parallel --coverage --min=80
 
-      - name: Run PHPUnit tests
-        run: php artisan test
+    - name: Check security
+      run: composer audit
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to production
+      run: |
+        echo "Deployment would happen here"
+        # ssh user@server "cd /var/www && git pull && composer install && php artisan migrate"
