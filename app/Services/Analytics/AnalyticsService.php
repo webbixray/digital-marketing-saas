@@ -269,6 +269,135 @@ class AnalyticsService
     }
 
     /**
+     * Get cross-platform social analytics.
+     */
+    public function getCrossPlatformStats(Agency $agency): array
+    {
+        return Cache::remember("analytics:{$agency->id}:cross_platform", self::CACHE_TTL, function () use ($agency) {
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $stats = [];
+
+            foreach ($platforms as $platform) {
+                $stats[$platform] = $this->getPlatformStats($agency, $platform);
+            }
+
+            return $stats;
+        });
+    }
+
+    /**
+     * Get stats for a specific platform.
+     */
+    public function getPlatformStats(Agency $agency, string $platform): array
+    {
+        $posts = SocialPost::where('agency_id', $agency->id)
+            ->where('platform', $platform);
+
+        $totalPosts = $posts->count();
+        $publishedPosts = (clone $posts)->where('status', 'published')->count();
+        $scheduledPosts = (clone $posts)->where('status', 'scheduled')->count();
+        $failedPosts = (clone $posts)->where('status', 'failed')->count();
+        $draftPosts = (clone $posts)->where('status', 'draft')->count();
+
+        $totalEngagement = (clone $posts)->where('status', 'published')->sum('engagement_rate');
+        $avgEngagement = $publishedPosts > 0 ? round($totalEngagement / $publishedPosts, 2) : 0;
+
+        $totalViews = (clone $posts)->where('status', 'published')->sum('views_count');
+        $totalLikes = (clone $posts)->where('status', 'published')->sum('likes_count');
+        $totalComments = (clone $posts)->where('status', 'published')->sum('comments_count');
+        $totalShares = (clone $posts)->where('status', 'published')->sum('shares_count');
+
+        $connectedAccounts = SocialAccount::where('agency_id', $agency->id)
+            ->where('platform', $platform)
+            ->where('is_active', true)
+            ->count();
+
+        return [
+            'platform' => $platform,
+            'total_posts' => $totalPosts,
+            'published' => $publishedPosts,
+            'scheduled' => $scheduledPosts,
+            'failed' => $failedPosts,
+            'draft' => $draftPosts,
+            'connected_accounts' => $connectedAccounts,
+            'total_engagement' => round($totalEngagement, 2),
+            'average_engagement' => $avgEngagement,
+            'total_views' => $totalViews,
+            'total_likes' => $totalLikes,
+            'total_comments' => $totalComments,
+            'total_shares' => $totalShares,
+        ];
+    }
+
+    /**
+     * Get best performing platform by engagement.
+     */
+    public function getBestPerformingPlatform(Agency $agency): array
+    {
+        $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+        $best = ['platform' => null, 'engagement' => 0];
+
+        foreach ($platforms as $platform) {
+            $stats = $this->getPlatformStats($agency, $platform);
+            if ($stats['total_engagement'] > $best['engagement']) {
+                $best = ['platform' => $platform, 'engagement' => $stats['total_engagement']];
+            }
+        }
+
+        return $best;
+    }
+
+    /**
+     * Get social media growth over time.
+     */
+    public function getSocialGrowth(Agency $agency, int $days = 30): array
+    {
+        return Cache::remember("analytics:{$agency->id}:growth:{$days}", self::CACHE_TTL, function () use ($agency, $days) {
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $growth = [];
+
+            foreach ($platforms as $platform) {
+                $daily = SocialPost::where('agency_id', $agency->id)
+                    ->where('platform', $platform)
+                    ->where('created_at', '>=', now()->subDays($days))
+                    ->selectRaw('DATE(created_at) as date, count(*) as count')
+                    ->groupBy('date')
+                    ->pluck('count', 'date')
+                    ->toArray();
+
+                $growth[$platform] = $daily;
+            }
+
+            return $growth;
+        });
+    }
+
+    /**
+     * Get optimal posting times by platform.
+     */
+    public function getOptimalPostingTimes(Agency $agency): array
+    {
+        return Cache::remember("analytics:{$agency->id}:optimal_times", self::CACHE_TTL, function () use ($agency) {
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $optimal = [];
+
+            foreach ($platforms as $platform) {
+                $bestHour = SocialPost::where('agency_id', $agency->id)
+                    ->where('platform', $platform)
+                    ->where('status', 'published')
+                    ->selectRaw('HOUR(published_at) as hour, AVG(engagement_rate) as avg_engagement')
+                    ->groupBy('hour')
+                    ->orderByDesc('avg_engagement')
+                    ->value('hour');
+
+                $optimal[$platform] = $bestHour !== null ? sprintf('%02d:00', $bestHour) : 'N/A';
+            }
+
+            return $optimal;
+        });
+    }
+
+    /**
      * Get email campaigns by status.
      */
     public function getEmailCampaignsByStatus(Agency $agency): array

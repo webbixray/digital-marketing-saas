@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ApiClientController;
 use App\Http\Controllers\Api\ApiDashboardController;
 use App\Http\Controllers\Api\ApiInvoiceController;
 use App\Http\Controllers\Api\ApiReportController;
+use App\Http\Controllers\Api\ApiAnalyticsController;
 use App\Http\Controllers\Api\ApiRoleController;
 use App\Http\Controllers\Api\ApiSocialAccountController;
 use App\Http\Controllers\Api\ApiSocialPostController;
@@ -96,6 +97,15 @@ Route::prefix('v1')->middleware(['auth', 'agency', 'throttle:60,1', 'cache.etag:
         Route::get('/roles/{roleId}/permissions', [ApiRoleController::class, 'show'])->name('roles.permissions');
         Route::get('/users/{userId}/permissions', [ApiRoleController::class, 'userPermissions'])->name('users.permissions');
         Route::get('/audit-trail', [ApiRoleController::class, 'auditTrail'])->name('audit');
+    });
+
+    // Cross-platform analytics
+    Route::prefix('analytics')->name('analytics.')->group(function () {
+        Route::get('/cross-platform', [ApiAnalyticsController::class, 'crossPlatform']);
+        Route::get('/platform/{platform}', [ApiAnalyticsController::class, 'platform']);
+        Route::get('/growth', [ApiAnalyticsController::class, 'growth']);
+        Route::get('/optimal-times', [ApiAnalyticsController::class, 'optimalTimes']);
+        Route::get('/best-platform', [ApiAnalyticsController::class, 'bestPlatform']);
     });
 });
 
