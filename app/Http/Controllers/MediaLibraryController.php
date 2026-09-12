@@ -16,8 +16,8 @@ class MediaLibraryController extends Controller
 
     public function index(Request $request)
     {
-        $agency = $request->user()->agency;
-        $query = MediaAsset::where('agency_id', $agency->id);
+        $agencyId = $request->user()->agency_id;
+        $query = MediaAsset::where('agency_id', $agencyId);
 
         if ($request->filled('type')) {
             $query->where('file_type', $request->type);
@@ -32,18 +32,18 @@ class MediaLibraryController extends Controller
         }
 
         $assets = $query->orderBy('created_at', 'desc')->paginate(24);
-        $folders = MediaAsset::where('agency_id', $agency->id)->distinct()->pluck('folder');
-        $totalSize = MediaAsset::where('agency_id', $agency->id)->sum('file_size');
+        $folders = MediaAsset::where('agency_id', $agencyId)->distinct()->pluck('folder');
+        $totalSize = MediaAsset::where('agency_id', $agencyId)->sum('file_size');
 
-        return view('media.index', compact('agency', 'assets', 'folders', 'totalSize'));
+        return view('media.index', compact('assets', 'folders', 'totalSize'));
     }
 
     public function create(Request $request)
     {
-        $agency = $request->user()->agency;
-        $folders = MediaAsset::where('agency_id', $agency->id)->distinct()->pluck('folder');
+        $agencyId = $request->user()->agency_id;
+        $folders = MediaAsset::where('agency_id', $agencyId)->distinct()->pluck('folder');
 
-        return view('media.create', compact('agency', 'folders'));
+        return view('media.create', compact('folders'));
     }
 
     public function store(Request $request, MediaUploadService $uploadService)
