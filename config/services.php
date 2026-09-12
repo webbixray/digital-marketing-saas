@@ -60,4 +60,10 @@ return [
         'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),
         'access_token' => env('INSTAGRAM_ACCESS_TOKEN'),
     ],
+
+    'linkedin' => [
+        'client_id' => env('LINKEDIN_CLIENT_ID'),
+        'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
+        'access_token' => env('LINKEDIN_ACCESS_TOKEN'),
+    ],
 ];
