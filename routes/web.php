@@ -377,6 +377,9 @@ require __DIR__.'/telegram.php';
 // API Documentation (public)
 require __DIR__.'/docs.php';
 
+// Instagram integration
+require __DIR__.'/instagram.php';
+
 // security.txt (RFC 9116)
 Route::get('/.well-known/security.txt', function () {
     $expiry = now()->addYear()->toIso8601String();

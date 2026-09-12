@@ -50,4 +50,10 @@ return [
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
     ],
 
+    'instagram' => [
+        'client_id' => env('INSTAGRAM_CLIENT_ID'),
+        'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),
+        'access_token' => env('INSTAGRAM_ACCESS_TOKEN'),
+    ],
+
 ];
