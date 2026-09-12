@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Content *</label>
-                                    <textarea name="template_content" class="form-control" rows="10" required placeholder="Use {{variable}} for dynamic content"></textarea>
+                                    <textarea name="template_content" class="form-control" rows="10" required placeholder="Use &#123;&#123;variable&#125;&#125; for dynamic content"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Status</label>
