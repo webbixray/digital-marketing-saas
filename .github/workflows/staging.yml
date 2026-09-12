@@ -1,0 +1,30 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, mysql, redis, gd, curl, zip
+    
+    - name: Install Dependencies
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader
+    
+    - name: Run tests
+      run: php artisan test --parallel
+    
+    - name: Deploy to staging
+      run: |
+        echo "Deploy to staging server"
+        # ssh user@staging-server "cd /var/www/staging && bash scripts/deploy-staging.sh"

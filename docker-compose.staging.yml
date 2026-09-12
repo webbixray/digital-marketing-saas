@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dms-staging-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    environment:
+      - APP_ENV=staging
+    depends_on:
+      - mysql
+      - redis
+      - meilisearch
+    networks:
+      - staging
+
+  web:
+    image: nginx:alpine
+    container_name: dms-staging-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/staging.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - staging
+
+  mysql:
+    image: mysql:8.0
+    container_name: dms-staging-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: staging_db
+      MYSQL_USER: staging_user
+      MYSQL_PASSWORD: staging_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - staging
+
+  redis:
+    image: redis:alpine
+    container_name: dms-staging-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - staging
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: dms-staging-meilisearch
+    restart: unless-stopped
+    ports:
+      - "7701:7700"
+    environment:
+      MEILI_ENV: staging
+      MEILI_MASTER_KEY: staging-master-key
+    volumes:
+      - meili-data:/meili_data
+    networks:
+      - staging
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dms-staging-scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    environment:
+      - APP_ENV=staging
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - staging
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dms-staging-queue
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=3 --tries=3
+    environment:
+      - APP_ENV=staging
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - staging
+
+volumes:
+  mysql-data:
+  redis-data:
+  meili-data:
+
+networks:
+  staging:
+    driver: bridge
