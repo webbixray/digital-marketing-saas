@@ -16,9 +16,9 @@ class InboxController extends Controller
 
     public function index(Request $request)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
-        $query = InboxMessage::where('agency_id', $agency->id);
+        $query = InboxMessage::where('agency_id', $agencyId);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -32,33 +32,33 @@ class InboxController extends Controller
 
         $messages = $query->with('socialAccount')->orderBy('received_at', 'desc')->paginate(20);
 
-        $unreadCount = Cache::remember("inbox:{$agency->id}:unread_count", 60, function () use ($agency) {
-            return InboxMessage::where('agency_id', $agency->id)->unread()->count();
+        $unreadCount = Cache::remember("inbox:{$agencyId}:unread_count", 60, function () use ($agencyId) {
+            return InboxMessage::where('agency_id', $agencyId)->unread()->count();
         });
 
-        return view('inbox.index', compact('agency', 'messages', 'unreadCount'));
+        return view('inbox.index', compact('messages', 'unreadCount'));
     }
 
-    public function show(Request $request, InboxMessage $message)
+    public function show(Request $request, InboxMessage $inbox)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
-        if ((int) $message->agency_id !== (int) $agency->id) {
+        if ((int) $inbox->agency_id !== (int) $agencyId) {
             abort(403);
         }
 
-        if ($message->status === InboxMessageStatus::UNREAD->value) {
-            InboxMessage::markRead($message);
+        if ($inbox->status === InboxMessageStatus::UNREAD->value) {
+            InboxMessage::markRead($inbox);
         }
 
-        return view('inbox.show', compact('agency', 'message'));
+        return view('inbox.show', ['message' => $inbox]);
     }
 
     public function triage(Request $request, InboxMessage $message)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
-        if ((int) $message->agency_id !== (int) $agency->id) {
+        if ((int) $message->agency_id !== (int) $agencyId) {
             abort(403);
         }
 
@@ -93,9 +93,9 @@ class InboxController extends Controller
 
     public function reply(Request $request, InboxMessage $message)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
-        if ((int) $message->agency_id !== (int) $agency->id) {
+        if ((int) $message->agency_id !== (int) $agencyId) {
             abort(403);
         }
 

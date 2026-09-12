@@ -19,7 +19,7 @@ class SearchController extends Controller
 
     public function index(Request $request)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
         $query = $request->get('q', '');
         $type = $request->get('type', 'all');
 
@@ -31,7 +31,7 @@ class SearchController extends Controller
 
         // Search posts
         if ($type === 'all' || $type === 'posts') {
-            $results['posts'] = SocialPost::where('agency_id', $agency->id)
+            $results['posts'] = SocialPost::where('agency_id', $agencyId)
                 ->where(function ($q) use ($query) {
                     $q->where('content', 'like', "%{$query}%")
                         ->orWhere('platform', 'like', "%{$query}%");
@@ -42,7 +42,7 @@ class SearchController extends Controller
 
         // Search campaigns
         if ($type === 'all' || $type === 'campaigns') {
-            $results['campaigns'] = Campaign::where('agency_id', $agency->id)
+            $results['campaigns'] = Campaign::where('agency_id', $agencyId)
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%{$query}%")
                         ->orWhere('description', 'like', "%{$query}%");
@@ -53,7 +53,7 @@ class SearchController extends Controller
 
         // Search clients
         if ($type === 'all' || $type === 'clients') {
-            $results['clients'] = Client::where('agency_id', $agency->id)
+            $results['clients'] = Client::where('agency_id', $agencyId)
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%{$query}%")
                         ->orWhere('email', 'like', "%{$query}%")
@@ -65,7 +65,7 @@ class SearchController extends Controller
 
         // Search content
         if ($type === 'all' || $type === 'content') {
-            $results['content'] = ContentAsset::where('agency_id', $agency->id)
+            $results['content'] = ContentAsset::where('agency_id', $agencyId)
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', "%{$query}%")
                         ->orWhere('content', 'like', "%{$query}%");
@@ -76,7 +76,7 @@ class SearchController extends Controller
 
         // Search invoices
         if ($type === 'all' || $type === 'invoices') {
-            $results['invoices'] = Invoice::where('agency_id', $agency->id)
+            $results['invoices'] = Invoice::where('agency_id', $agencyId)
                 ->where('invoice_number', 'like', "%{$query}%")
                 ->limit(10)
                 ->get();
@@ -84,7 +84,7 @@ class SearchController extends Controller
 
         // Search workflows
         if ($type === 'all' || $type === 'workflows') {
-            $results['workflows'] = Workflow::where('agency_id', $agency->id)
+            $results['workflows'] = Workflow::where('agency_id', $agencyId)
                 ->where('name', 'like', "%{$query}%")
                 ->limit(10)
                 ->get();

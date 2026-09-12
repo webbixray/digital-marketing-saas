@@ -218,23 +218,19 @@ class InvoiceController extends Controller
 
     public function markPaid(Request $request, Invoice $invoice)
     {
-        $agency = $request->user()->agency;
+        $agencyId = $request->user()->agency_id;
 
-        if ($invoice->agency_id !== $agency->id) {
+        if ((int) $invoice->agency_id !== (int) $agencyId) {
             abort(403);
         }
 
         try {
-            $validated = $request->validate([
-                'payment_method' => 'required|string|max:50',
-                'transaction_id' => 'nullable|string|max:255',
-            ]);
-
-            $invoice->markPaid($validated['payment_method'], $validated['transaction_id'] ?? null);
+            $invoice->markPaid(
+                $request->input('payment_method', 'manual'),
+                $request->input('transaction_id', '')
+            );
 
             return back()->with('success', 'Invoice marked as paid.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
         } catch (\Exception $e) {
             Log::error('Failed to mark invoice as paid', [
                 'invoice_id' => $invoice->id,
