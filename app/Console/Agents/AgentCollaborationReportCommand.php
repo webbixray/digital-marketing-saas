@@ -53,11 +53,11 @@ class AgentCollaborationReportCommand extends Command
         $this->line("Unique agents: {$stats['unique_agents']}");
         $this->line("Unique categories: {$stats['unique_categories']}");
         $this->line("Cross-agent categories: {$stats['cross_agent_categories']}");
-        $this->line("Average confidence: " . round($stats['avg_confidence'] * 100, 1) . '%');
+        $this->line('Average confidence: '.round($stats['avg_confidence'] * 100, 1).'%');
         $this->newLine();
 
         // 2. Top Contributing Agents
-        if (!empty($stats['top_agents'])) {
+        if (! empty($stats['top_agents'])) {
             $this->info('🏆 TOP CONTRIBUTING AGENTS');
             $this->line('───────────────────────────────────────────────────────────');
             foreach ($stats['top_agents'] as $agent) {
@@ -67,7 +67,7 @@ class AgentCollaborationReportCommand extends Command
         }
 
         // 3. Category Breakdown
-        if (!empty($stats['categories'])) {
+        if (! empty($stats['categories'])) {
             $this->info('📁 CATEGORY BREAKDOWN');
             $this->line('───────────────────────────────────────────────────────────');
             foreach ($stats['categories'] as $cat) {
@@ -80,7 +80,7 @@ class AgentCollaborationReportCommand extends Command
         $this->info('🔄 CROSS-AGENT PATTERNS');
         $this->line('───────────────────────────────────────────────────────────');
         $patterns = $knowledgeBase->getCrossAgentPatterns($agencyId);
-        $this->line('Cross-agent pattern categories: ' . count($patterns));
+        $this->line('Cross-agent pattern categories: '.count($patterns));
 
         foreach ($patterns as $cat => $pattern) {
             $this->line("  - Category: {$cat} | Agents: {$pattern['agent_count']} | Insights: {$pattern['insight_count']}");
@@ -91,26 +91,26 @@ class AgentCollaborationReportCommand extends Command
         $this->info('⭐ BEST PRACTICES');
         $this->line('───────────────────────────────────────────────────────────');
         $bestPractices = $knowledgeBase->getBestPractices($agencyId, $category ?? 'general');
-        $this->line('Best practice entries: ' . count($bestPractices));
+        $this->line('Best practice entries: '.count($bestPractices));
 
         foreach ($bestPractices as $practice) {
-            $this->line("  - Agent: {$practice['agent']} | Practices: {$practice['practice_count']} | Avg confidence: " . round($practice['avg_confidence'] * 100, 1) . '%');
+            $this->line("  - Agent: {$practice['agent']} | Practices: {$practice['practice_count']} | Avg confidence: ".round($practice['avg_confidence'] * 100, 1).'%');
         }
         $this->newLine();
 
         // 6. High Confidence Insights (if threshold set)
         if ($minConfidence > 0) {
-            $this->info("🔒 HIGH CONFIDENCE INSIGHTS (>= " . round($minConfidence * 100) . '%)');
+            $this->info('🔒 HIGH CONFIDENCE INSIGHTS (>= '.round($minConfidence * 100).'%)');
             $this->line('───────────────────────────────────────────────────────────');
 
             $targetCategories = $category ? [$category] : array_column($stats['categories'], 'category');
 
             foreach ($targetCategories as $cat) {
                 $highConfInsights = $knowledgeBase->getHighConfidenceInsights($agencyId, $cat, $minConfidence);
-                if (!empty($highConfInsights)) {
+                if (! empty($highConfInsights)) {
                     $this->line("  Category: {$cat}");
                     foreach ($highConfInsights as $insight) {
-                        $this->line("    - [{$insight['from_agent']}] {$insight['insight']} (confidence: " . round($insight['confidence'] * 100, 1) . '%)');
+                        $this->line("    - [{$insight['from_agent']}] {$insight['insight']} (confidence: ".round($insight['confidence'] * 100, 1).'%)');
                     }
                 }
             }
@@ -121,13 +121,13 @@ class AgentCollaborationReportCommand extends Command
         $this->info('🤖 AGENT CAPABILITIES');
         $this->line('───────────────────────────────────────────────────────────');
         $agents = $orchestrator->getRegisteredAgents();
-        $this->line('Registered agents: ' . count($agents));
+        $this->line('Registered agents: '.count($agents));
 
         foreach ($agents as $name) {
             $agent = $orchestrator->getAgent($name);
             if ($agent) {
                 $types = implode(', ', $agent->getSupportedTaskTypes());
-                $this->line("  - {$name}: [{$types}] (success: " . round($agent->getSuccessRate() * 100, 1) . '%)');
+                $this->line("  - {$name}: [{$types}] (success: ".round($agent->getSuccessRate() * 100, 1).'%)');
             }
         }
         $this->newLine();
@@ -142,7 +142,7 @@ class AgentCollaborationReportCommand extends Command
         $recent = $recentQuery->get();
 
         foreach ($recent as $row) {
-            $this->line("  - [{$row->from_agent}] ({$row->category}) {$row->insight} (conf: " . round((float) $row->confidence * 100, 1) . '%)');
+            $this->line("  - [{$row->from_agent}] ({$row->category}) {$row->insight} (conf: ".round((float) $row->confidence * 100, 1).'%)');
         }
         $this->newLine();
 

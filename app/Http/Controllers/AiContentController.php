@@ -8,6 +8,7 @@ use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\QuotaService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AiContentController extends Controller
 {
@@ -316,7 +317,7 @@ class AiContentController extends Controller
                 'error_message' => $errorMessage,
             ]);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::warning("Failed to record AI usage: {$e->getMessage()}");
+            Log::warning("Failed to record AI usage: {$e->getMessage()}");
         }
     }
 }

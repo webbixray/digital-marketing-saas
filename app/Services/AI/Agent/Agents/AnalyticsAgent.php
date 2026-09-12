@@ -29,6 +29,7 @@ class AnalyticsAgent extends AbstractAgent
      * Prediction accuracy thresholds.
      */
     private const ACCURACY_THRESHOLD_HIGH = 0.8;
+
     private const ACCURACY_THRESHOLD_MEDIUM = 0.6;
 
     /**
@@ -38,7 +39,7 @@ class AnalyticsAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -48,7 +49,7 @@ class AnalyticsAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -106,6 +107,7 @@ class AnalyticsAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -135,7 +137,7 @@ class AnalyticsAgent extends AbstractAgent
             return 0.0;
         }
 
-        $correct = count(array_filter($patterns, fn($p) => ($p['accurate'] ?? false)));
+        $correct = count(array_filter($patterns, fn ($p) => ($p['accurate'] ?? false)));
 
         return $correct / count($patterns);
     }
@@ -209,7 +211,7 @@ class AnalyticsAgent extends AbstractAgent
     {
         $current = $this->executionStats['content_type_performance'] ?? [];
 
-        if (!isset($current[$contentType])) {
+        if (! isset($current[$contentType])) {
             $current[$contentType] = [
                 'total_engagement' => 0,
                 'count' => 0,
@@ -284,7 +286,7 @@ class AnalyticsAgent extends AbstractAgent
 
         $prompt = "Based on the following engagement data patterns, identify emerging trends:\n\n";
         $prompt .= "Platform: {$platform}\nNiche: {$niche}\n\n";
-        $prompt .= "Historical engagement data:\n" . json_encode($historicalData, JSON_PRETTY_PRINT);
+        $prompt .= "Historical engagement data:\n".json_encode($historicalData, JSON_PRETTY_PRINT);
         $prompt .= "\n\nIdentify:\n1. Emerging trends in engagement patterns\n2. Declining content types\n3. New opportunities\n4. Predicted trends for the next 7-14 days";
 
         $request = AiRequest::analysis(
@@ -329,7 +331,7 @@ class AnalyticsAgent extends AbstractAgent
 
         $prompt = "Analyze the following competitor data and provide strategic insights:\n\n";
         $prompt .= "Platform: {$platform}\n";
-        $prompt .= "Competitor data:\n" . json_encode($competitorData, JSON_PRETTY_PRINT);
+        $prompt .= "Competitor data:\n".json_encode($competitorData, JSON_PRETTY_PRINT);
         $prompt .= "\n\nProvide:\n1. Competitor strengths and weaknesses\n2. Content strategy gaps you can exploit\n3. Posting frequency and timing insights\n4. Content themes that resonate in this space\n5. Recommended differentiation strategies";
 
         $request = AiRequest::analysis(
@@ -374,15 +376,15 @@ class AnalyticsAgent extends AbstractAgent
         $currentMetrics = $this->gatherPerformanceMetrics($agency, $platform, '14 days');
 
         $prompt = "Based on the following data, provide actionable recommendations:\n\n";
-        $prompt .= "Platform: {$platform}\nGoals: " . implode(', ', $goals) . "\n\n";
-        $prompt .= "Current metrics:\n" . json_encode($currentMetrics, JSON_PRETTY_PRINT) . "\n\n";
+        $prompt .= "Platform: {$platform}\nGoals: ".implode(', ', $goals)."\n\n";
+        $prompt .= "Current metrics:\n".json_encode($currentMetrics, JSON_PRETTY_PRINT)."\n\n";
 
         if ($platformTimes) {
-            $prompt .= "Learned optimal posting times:\n" . json_encode($platformTimes, JSON_PRETTY_PRINT) . "\n\n";
+            $prompt .= "Learned optimal posting times:\n".json_encode($platformTimes, JSON_PRETTY_PRINT)."\n\n";
         }
 
-        if (!empty($contentPerformance)) {
-            $prompt .= "Content type performance history:\n" . json_encode($contentPerformance, JSON_PRETTY_PRINT) . "\n\n";
+        if (! empty($contentPerformance)) {
+            $prompt .= "Content type performance history:\n".json_encode($contentPerformance, JSON_PRETTY_PRINT)."\n\n";
         }
 
         $prompt .= "Provide:\n1. Optimal posting schedule\n2. Recommended content types\n3. Content themes to focus on\n4. Specific actionable tactics\n5. Expected impact of each recommendation";
@@ -397,7 +399,7 @@ class AnalyticsAgent extends AbstractAgent
         $meta = [
             'platform' => $platform,
             'goals' => $goals,
-            'used_learned_data' => !empty($platformTimes) || !empty($contentPerformance),
+            'used_learned_data' => ! empty($platformTimes) || ! empty($contentPerformance),
         ];
 
         return AgentResult::success(
@@ -452,8 +454,13 @@ class AnalyticsAgent extends AbstractAgent
         // Content type breakdown (by content length as proxy)
         $contentTypes = $posts->groupBy(function ($post) {
             $length = strlen($post->content ?? '');
-            if ($length < 100) return 'short';
-            if ($length < 300) return 'medium';
+            if ($length < 100) {
+                return 'short';
+            }
+            if ($length < 300) {
+                return 'medium';
+            }
+
             return 'long';
         })->map(function ($group) {
             return [
@@ -466,7 +473,7 @@ class AnalyticsAgent extends AbstractAgent
             'total_posts' => $posts->count(),
             'average_engagement' => round($posts->avg('engagement_rate') ?? 0, 2),
             'median_engagement' => round($posts->median('engagement_rate') ?? 0, 2),
-            'top_performing' => $posts->sortByDesc('engagement_rate')->take(3)->map(fn($p) => [
+            'top_performing' => $posts->sortByDesc('engagement_rate')->take(3)->map(fn ($p) => [
                 'content_preview' => substr($p->content ?? '', 0, 100),
                 'engagement_rate' => $p->engagement_rate,
                 'platform' => $p->platform,
@@ -515,13 +522,13 @@ class AnalyticsAgent extends AbstractAgent
      */
     private function learnFromPerformanceData(array $metrics, ?string $platform): void
     {
-        if (!$platform) {
+        if (! $platform) {
             return;
         }
 
         // Learn optimal posting times from hourly trends
         $hourlyTrends = $metrics['hourly_trends'] ?? [];
-        if (!empty($hourlyTrends)) {
+        if (! empty($hourlyTrends)) {
             $bestHours = array_slice(array_column($hourlyTrends, 'hour'), 0, 3);
             $this->updateOptimalPostingTimes($platform, $bestHours, []);
         }
@@ -542,8 +549,8 @@ class AnalyticsAgent extends AbstractAgent
             return 'insufficient_data';
         }
 
-        $firstHalf = $posts->take((int)($posts->count() / 2));
-        $secondHalf = $posts->skip((int)($posts->count() / 2));
+        $firstHalf = $posts->take((int) ($posts->count() / 2));
+        $secondHalf = $posts->skip((int) ($posts->count() / 2));
 
         $firstAvg = $firstHalf->avg('engagement_rate') ?? 0;
         $secondAvg = $secondHalf->avg('engagement_rate') ?? 0;
@@ -554,6 +561,7 @@ class AnalyticsAgent extends AbstractAgent
         if ($secondAvg < $firstAvg * 0.9) {
             return 'downward';
         }
+
         return 'stable';
     }
 

@@ -2,11 +2,9 @@
 
 namespace App\Services\AI\Agent;
 
-use App\Models\Agency;
 use App\Models\AiContentLog;
 use App\Models\SocialPost;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -74,7 +72,7 @@ class SecurityAuditAgent implements AgentInterface
         }
 
         // Check for default database credentials
-        $dbPassword = config('database.connections.' . config('database.default') . '.password');
+        $dbPassword = config('database.connections.'.config('database.default').'.password');
         if (in_array($dbPassword, ['', 'password', 'root', '123456'])) {
             $findings[] = [
                 'severity' => 'high',

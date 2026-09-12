@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 class OpenAiTestCommand extends Command
 {
     protected $signature = 'openai:test {--prompt= : Custom prompt to test}';
+
     protected $description = 'Test OpenAI API connection and generate content';
 
     public function handle(): int
@@ -27,22 +28,23 @@ class OpenAiTestCommand extends Command
             $this->line('2. Add it to your .env file:');
             $this->line('   AI_API_KEY=sk-your-key-here');
             $this->line('3. Run: php artisan config:clear');
+
             return self::FAILURE;
         }
 
         // Mask key for display
-        $maskedKey = substr($apiKey, 0, 8) . '...' . substr($apiKey, -4);
+        $maskedKey = substr($apiKey, 0, 8).'...'.substr($apiKey, -4);
         $this->info("API Key: {$maskedKey}");
-        $this->info("Provider: " . config('platform.ai.default_provider', 'openai'));
-        $this->info("Model: " . config('platform.ai.providers.openai.model', 'gpt-4o'));
+        $this->info('Provider: '.config('platform.ai.default_provider', 'openai'));
+        $this->info('Model: '.config('platform.ai.providers.openai.model', 'gpt-4o'));
         $this->newLine();
 
         // Create gateway and test
         try {
             $gateway = App::make(AiGateway::class);
-            
+
             $prompt = $this->option('prompt') ?? 'Write a short, engaging tweet about the future of AI in marketing. Keep it under 280 characters.';
-            
+
             $this->line("Prompt: {$prompt}");
             $this->newLine();
 
@@ -54,9 +56,9 @@ class OpenAiTestCommand extends Command
 
             $this->info('Calling OpenAI API...');
             $startTime = microtime(true);
-            
+
             $response = $gateway->send($request);
-            
+
             $elapsed = round((microtime(true) - $startTime) * 1000, 2);
 
             $this->newLine();
@@ -76,9 +78,9 @@ class OpenAiTestCommand extends Command
         } catch (\Exception $e) {
             $this->newLine();
             $this->error('❌ API Call Failed!');
-            $this->line('Error: ' . $e->getMessage());
+            $this->line('Error: '.$e->getMessage());
             $this->newLine();
-            
+
             if (str_contains($e->getMessage(), '401')) {
                 $this->line('💡 Your API key may be invalid. Check at:');
                 $this->line('   https://platform.openai.com/api-keys');

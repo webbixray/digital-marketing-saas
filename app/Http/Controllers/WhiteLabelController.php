@@ -69,7 +69,7 @@ class WhiteLabelController extends Controller
 
         $success = $this->whiteLabelService->setupCustomDomain($agencyId, $domain);
 
-        if (!$success) {
+        if (! $success) {
             return back()->with('error', 'Domain is already in use or could not be configured.');
         }
 

@@ -6,6 +6,7 @@ use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class SocialApiService
 {
@@ -211,7 +212,7 @@ class SocialApiService
                 ->timeout(30)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post($url, [
-                    'title' => \Illuminate\Support\Str::limit($post->content, 100),
+                    'title' => Str::limit($post->content, 100),
                     'description' => $post->content,
                     'board_id' => $account->metadata['board_id'] ?? null,
                     'link' => $post->links['url'] ?? null,

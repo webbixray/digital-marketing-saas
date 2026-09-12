@@ -320,7 +320,7 @@ class AgentHealthMonitor
         try {
             $orchestrator = app(AgentOrchestrator::class);
             $agents = $orchestrator->getRegisteredAgents();
-            if (!empty($agents)) {
+            if (! empty($agents)) {
                 return $agents;
             }
         } catch (Throwable) {

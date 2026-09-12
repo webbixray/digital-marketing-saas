@@ -14,9 +14,10 @@ class PerformanceService
     public function getDatabaseMetrics(): array
     {
         $connection = config('database.default');
-        
+
         if ($connection === 'sqlite') {
             $size = filesize(database_path('database.sqlite'));
+
             return [
                 'driver' => 'sqlite',
                 'size_bytes' => $size,

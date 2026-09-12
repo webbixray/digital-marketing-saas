@@ -37,14 +37,14 @@ class GenerateReportJob implements ShouldQueue
                 'last_generated_at' => now(),
             ]);
 
-            Log::info("Report generated successfully", [
+            Log::info('Report generated successfully', [
                 'report_id' => $this->report->id,
                 'agency_id' => $this->report->agency_id,
             ]);
         } catch (Throwable $e) {
             $this->report->update(['status' => 'failed']);
 
-            Log::error("Report generation failed", [
+            Log::error('Report generation failed', [
                 'report_id' => $this->report->id,
                 'error' => $e->getMessage(),
             ]);
@@ -57,7 +57,7 @@ class GenerateReportJob implements ShouldQueue
     {
         $this->report->update(['status' => 'failed']);
 
-        Log::error("GenerateReportJob failed permanently", [
+        Log::error('GenerateReportJob failed permanently', [
             'report_id' => $this->report->id,
             'error' => $exception->getMessage(),
         ]);
@@ -67,7 +67,7 @@ class GenerateReportJob implements ShouldQueue
     {
         $report = $this->report;
 
-        Log::info("Generating report", [
+        Log::info('Generating report', [
             'report_id' => $report->id,
             'type' => $report->type,
             'format' => $report->format,

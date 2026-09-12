@@ -40,7 +40,7 @@ class GDPRComplianceService
             'consent_history' => ConsentRecord::where('user_id', $userId)->get()->toArray(),
         ];
 
-        $filename = "gdpr-exports/{$agencyId}/{$userId}/export-{$userId}-" . time() . '.json';
+        $filename = "gdpr-exports/{$agencyId}/{$userId}/export-{$userId}-".time().'.json';
         Storage::disk('local')->put($filename, json_encode($exportData, JSON_PRETTY_PRINT));
 
         // Update the export request status
@@ -87,10 +87,10 @@ class GDPRComplianceService
 
             DB::commit();
 
-            Log::info("GDPR: User data deleted", ['user_id' => $userId, 'agency_id' => $agencyId]);
+            Log::info('GDPR: User data deleted', ['user_id' => $userId, 'agency_id' => $agencyId]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("GDPR: Failed to delete user data", [
+            Log::error('GDPR: Failed to delete user data', [
                 'user_id' => $userId,
                 'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
@@ -161,6 +161,7 @@ class GDPRComplianceService
             ->get()
             ->map(function ($request) {
                 $request->request_type = 'export';
+
                 return $request;
             });
 
@@ -169,6 +170,7 @@ class GDPRComplianceService
             ->get()
             ->map(function ($request) {
                 $request->request_type = 'deletion';
+
                 return $request;
             });
 
@@ -180,11 +182,11 @@ class GDPRComplianceService
      */
     public function anonymizeUser(User $user): void
     {
-        $anonymousId = 'anon_' . Str::random(16);
+        $anonymousId = 'anon_'.Str::random(16);
 
         $user->update([
             'name' => 'Anonymous User',
-            'email' => $anonymousId . '@anonymized.local',
+            'email' => $anonymousId.'@anonymized.local',
             'phone' => null,
             'avatar' => null,
             'title' => null,

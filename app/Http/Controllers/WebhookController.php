@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use App\Concerns\StructuredLogger;
 use App\Models\Webhook;
 use App\Models\WebhookLog;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Validation\ValidationException;
 
 class WebhookController extends Controller
 {
@@ -87,7 +85,7 @@ class WebhookController extends Controller
 
             return redirect()->route('webhooks.show', $webhook)
                 ->with('success', 'Webhook created successfully.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
             Log::error('Failed to create webhook', [
@@ -186,7 +184,7 @@ class WebhookController extends Controller
 
             return redirect()->route('webhooks.show', $webhook)
                 ->with('success', 'Webhook updated successfully.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
             Log::error('Failed to update webhook', [

@@ -40,13 +40,13 @@ class AgentCollaborationReportCommand extends Command
         $this->info('📊 COLLABORATION HISTORY');
         $this->line('───────────────────────────────────────────────────────────');
         $history = $orchestrator->getCollaborationHistory($agencyId);
-        $this->line("Total collaborations: " . count($history));
+        $this->line('Total collaborations: '.count($history));
 
-        if (!empty($history)) {
+        if (! empty($history)) {
             $this->newLine();
             $this->line('Recent collaborations:');
             foreach (array_slice($history, -5) as $entry) {
-                $this->line("  - Agent: {$entry['agent_name']} | Task: {$entry['task_type']} | Success: " . ($entry['success'] ? '✓' : '✗'));
+                $this->line("  - Agent: {$entry['agent_name']} | Task: {$entry['task_type']} | Success: ".($entry['success'] ? '✓' : '✗'));
             }
         }
         $this->newLine();
@@ -57,7 +57,7 @@ class AgentCollaborationReportCommand extends Command
         $report = $orchestrator->getSharedKnowledgeReport($agencyId);
         $this->line("Total collaborations: {$report['total_collaborations']}");
 
-        if (!empty($report['agent_collaboration_frequency'])) {
+        if (! empty($report['agent_collaboration_frequency'])) {
             $this->newLine();
             $this->line('Agent collaboration frequency:');
             foreach ($report['agent_collaboration_frequency'] as $agent => $count) {
@@ -74,7 +74,7 @@ class AgentCollaborationReportCommand extends Command
         $this->info('🔄 CROSS-AGENT PATTERNS');
         $this->line('───────────────────────────────────────────────────────────');
         $patterns = $knowledgeBase->getCrossAgentPatterns($agencyId);
-        $this->line("Cross-agent pattern categories: " . count($patterns));
+        $this->line('Cross-agent pattern categories: '.count($patterns));
 
         foreach ($patterns as $category => $pattern) {
             $this->line("  - Category: {$category} | Agents: {$pattern['agent_count']} | Insights: {$pattern['insight_count']}");
@@ -85,7 +85,7 @@ class AgentCollaborationReportCommand extends Command
         $this->info('⭐ BEST PRACTICES');
         $this->line('───────────────────────────────────────────────────────────');
         $bestPractices = $knowledgeBase->getBestPractices($agencyId, 'general');
-        $this->line("Best practice entries: " . count($bestPractices));
+        $this->line('Best practice entries: '.count($bestPractices));
 
         foreach ($bestPractices as $practice) {
             $this->line("  - Agent: {$practice['agent']} | Practices: {$practice['practice_count']}");
@@ -96,13 +96,13 @@ class AgentCollaborationReportCommand extends Command
         $this->info('🤖 AGENT CAPABILITIES');
         $this->line('───────────────────────────────────────────────────────────');
         $agents = $orchestrator->getRegisteredAgents();
-        $this->line("Registered agents: " . count($agents));
+        $this->line('Registered agents: '.count($agents));
 
         foreach ($agents as $name) {
             $agent = $orchestrator->getAgent($name);
             if ($agent) {
                 $types = implode(', ', $agent->getSupportedTaskTypes());
-                $this->line("  - {$name}: [{$types}] (success: " . round($agent->getSuccessRate() * 100, 1) . "%)");
+                $this->line("  - {$name}: [{$types}] (success: ".round($agent->getSuccessRate() * 100, 1).'%)');
             }
         }
         $this->newLine();

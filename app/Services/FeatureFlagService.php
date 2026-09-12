@@ -71,18 +71,19 @@ class FeatureFlagService
     {
         $feature = self::FEATURES[$featureCode] ?? null;
 
-        if (!$feature) {
+        if (! $feature) {
             Log::warning("Unknown feature flag: {$featureCode}");
+
             return false;
         }
 
         // Check if feature is globally enabled
-        if (!$feature['enabled']) {
+        if (! $feature['enabled']) {
             return false;
         }
 
         // Check if agency's plan has access
-        if (!in_array($agency->subscription_plan, $feature['plans'])) {
+        if (! in_array($agency->subscription_plan, $feature['plans'])) {
             return false;
         }
 
@@ -146,7 +147,7 @@ class FeatureFlagService
         $key = "feature_override:{$agencyId}:{$featureCode}";
         Cache::put($key, $enabled, now()->addDays(30));
 
-        Log::info("Feature override set", [
+        Log::info('Feature override set', [
             'agency_id' => $agencyId,
             'feature' => $featureCode,
             'enabled' => $enabled,

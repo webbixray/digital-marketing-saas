@@ -3,7 +3,6 @@
 namespace App\Services\AI\Agent\Collaboration;
 
 use App\Models\AgentSharedKnowledge;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class SharedKnowledgeBase
@@ -93,7 +92,7 @@ class SharedKnowledgeBase
         $practicesByAgent = [];
         foreach ($insights as $insight) {
             $agent = $insight->from_agent;
-            if (!isset($practicesByAgent[$agent])) {
+            if (! isset($practicesByAgent[$agent])) {
                 $practicesByAgent[$agent] = [];
             }
             $practicesByAgent[$agent][] = [
@@ -111,6 +110,7 @@ class SharedKnowledgeBase
                 if ($confDiff !== 0) {
                     return $confDiff;
                 }
+
                 return strtotime($b['created_at']) <=> strtotime($a['created_at']);
             });
 

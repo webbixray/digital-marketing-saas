@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\PerformanceService;
-use Illuminate\Http\Request;
 
 class SystemStatusController extends Controller
 {

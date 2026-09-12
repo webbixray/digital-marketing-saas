@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\AgentLearningReport;
 use App\Models\AgentPerformanceLog;
-use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentFeedbackService;
+use App\Services\AI\Agent\AgentMemory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -81,7 +81,7 @@ class AgentLearningReportCommand extends Command
 
         $this->newLine();
         $this->info('═══════════════════════════════════════════════════════');
-        $this->info('  Report generated: ' . now()->toDateTimeString());
+        $this->info('  Report generated: '.now()->toDateTimeString());
         $this->info('═══════════════════════════════════════════════════════');
 
         return self::SUCCESS;
@@ -309,7 +309,7 @@ class AgentLearningReportCommand extends Command
         $this->line("  Average accuracy: {$details['average_accuracy']}%");
         $this->line("  Trend: {$details['accuracy_trend']}");
 
-        if (!empty($details['recent_learning_reports'])) {
+        if (! empty($details['recent_learning_reports'])) {
             $this->line('  Recent learning reports:');
             foreach (array_slice($details['recent_learning_reports'], 0, 5) as $report) {
                 $this->line("    • [{$report['improvement_type']}] {$report['description']}");
@@ -323,13 +323,13 @@ class AgentLearningReportCommand extends Command
         $this->info('─── Learned Patterns ───');
         $this->line("  Total patterns: {$patternsReport['total_patterns']}");
 
-        if (!empty($patternsReport['patterns'])) {
+        if (! empty($patternsReport['patterns'])) {
             $this->line('  Top patterns:');
             foreach (array_slice($patternsReport['patterns'], 0, 5) as $pattern) {
                 $confidence = round(($pattern['confidence'] ?? 0) * 100);
                 $occurrences = $pattern['occurrence_count'] ?? 1;
                 $this->line("    • [{$pattern['agent_name']}] confidence={$confidence}%, occurrences={$occurrences}");
-                $this->line("      Pattern: " . Str::limit(json_encode($pattern['pattern']), 80));
+                $this->line('      Pattern: '.Str::limit(json_encode($pattern['pattern']), 80));
             }
         }
         $this->newLine();
@@ -339,8 +339,8 @@ class AgentLearningReportCommand extends Command
     {
         $this->info('─── Prediction Accuracy Trends ───');
         $this->line("  Data points: {$trends['data_points']}");
-        $this->line("  Latest accuracy: " . ($trends['latest_accuracy'] ?? 'N/A') . '%');
-        $this->line("  Average accuracy: " . ($trends['average_accuracy'] ?? 'N/A') . '%');
+        $this->line('  Latest accuracy: '.($trends['latest_accuracy'] ?? 'N/A').'%');
+        $this->line('  Average accuracy: '.($trends['average_accuracy'] ?? 'N/A').'%');
 
         $trendIcon = match ($trends['trend']) {
             'improving' => '📈',
@@ -349,7 +349,7 @@ class AgentLearningReportCommand extends Command
         };
         $this->line("  Trend: {$trendIcon} {$trends['trend']}");
 
-        if (!empty($trends['recent_values'])) {
+        if (! empty($trends['recent_values'])) {
             $this->line('  Recent values:');
             foreach (array_slice($trends['recent_values'], 0, 5) as $value) {
                 $this->line("    • {$value['accuracy']}% at {$value['recorded_at']}");
@@ -363,7 +363,7 @@ class AgentLearningReportCommand extends Command
         $this->info('─── Recent Feedback Outcomes ───');
         $this->line("  Total recent: {$outcomes['total_recent']}");
 
-        if (!empty($outcomes['outcomes'])) {
+        if (! empty($outcomes['outcomes'])) {
             foreach (array_slice($outcomes['outcomes'], 0, 5) as $outcome) {
                 $this->line("    • [{$outcome['agent']}] {$outcome['accuracy']}% - {$outcome['task_type']}");
             }
@@ -391,10 +391,10 @@ class AgentLearningReportCommand extends Command
      */
     private function exportReport(array $report): void
     {
-        $filename = 'agent_learning_report_' . now()->format('Y-m-d_His') . '.json';
+        $filename = 'agent_learning_report_'.now()->format('Y-m-d_His').'.json';
         $path = storage_path("app/reports/{$filename}");
 
-        if (!is_dir(dirname($path))) {
+        if (! is_dir(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
@@ -419,8 +419,13 @@ class AgentLearningReportCommand extends Command
 
         $changePercent = $firstAvg != 0 ? (($secondAvg - $firstAvg) / $firstAvg) * 100 : 0;
 
-        if ($changePercent > 5) return 'improving';
-        if ($changePercent < -5) return 'declining';
+        if ($changePercent > 5) {
+            return 'improving';
+        }
+        if ($changePercent < -5) {
+            return 'declining';
+        }
+
         return 'stable';
     }
 

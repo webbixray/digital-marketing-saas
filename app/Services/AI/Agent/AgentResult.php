@@ -14,7 +14,7 @@ class AgentResult
         public readonly float $executionTimeMs = 0.0,
         public readonly ?string $error = null,
         public readonly array $metadata = [],
-        public readonly int $timestamp  = 0,
+        public readonly int $timestamp = 0,
     ) {
         if ($this->timestamp === 0) {
             // Use a workaround since we can't assign in constructor body with readonly

@@ -5,6 +5,7 @@ namespace App\Services\Reporting;
 use App\Jobs\GenerateReportJob;
 use App\Models\Report;
 use App\Models\ScheduledReport;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -42,8 +43,8 @@ class EnterpriseReportingService
 
     public function scheduleReport(int $agencyId, array $config, string $frequency): ScheduledReport
     {
-        if (!in_array($frequency, self::ALLOWED_FREQUENCIES, true)) {
-            throw new InvalidArgumentException("Invalid frequency: {$frequency}. Allowed: " . implode(', ', self::ALLOWED_FREQUENCIES));
+        if (! in_array($frequency, self::ALLOWED_FREQUENCIES, true)) {
+            throw new InvalidArgumentException("Invalid frequency: {$frequency}. Allowed: ".implode(', ', self::ALLOWED_FREQUENCIES));
         }
 
         $this->validateConfig($config);
@@ -61,7 +62,7 @@ class EnterpriseReportingService
             'columns' => $config['columns'] ?? [],
         ]);
 
-        Log::info("Scheduled report created", [
+        Log::info('Scheduled report created', [
             'scheduled_report_id' => $scheduledReport->id,
             'agency_id' => $agencyId,
             'frequency' => $frequency,
@@ -72,12 +73,12 @@ class EnterpriseReportingService
 
     public function exportData(int $agencyId, string $type, array $filters): string
     {
-        if (!in_array($type, self::ALLOWED_FORMATS, true)) {
-            throw new InvalidArgumentException("Invalid export type: {$type}. Allowed: " . implode(', ', self::ALLOWED_FORMATS));
+        if (! in_array($type, self::ALLOWED_FORMATS, true)) {
+            throw new InvalidArgumentException("Invalid export type: {$type}. Allowed: ".implode(', ', self::ALLOWED_FORMATS));
         }
 
         $data = $this->collectExportData($agencyId, $filters);
-        $filename = "exports/agency_{$agencyId}_{$type}_" . time() . ".{$type}";
+        $filename = "exports/agency_{$agencyId}_{$type}_".time().".{$type}";
 
         switch ($type) {
             case 'csv':
@@ -145,16 +146,16 @@ class EnterpriseReportingService
 
     private function validateConfig(array $config): void
     {
-        if (isset($config['type']) && !in_array($config['type'], self::ALLOWED_TYPES, true)) {
+        if (isset($config['type']) && ! in_array($config['type'], self::ALLOWED_TYPES, true)) {
             throw new InvalidArgumentException("Invalid report type: {$config['type']}");
         }
 
-        if (isset($config['format']) && !in_array($config['format'], self::ALLOWED_FORMATS, true)) {
+        if (isset($config['format']) && ! in_array($config['format'], self::ALLOWED_FORMATS, true)) {
             throw new InvalidArgumentException("Invalid format: {$config['format']}");
         }
     }
 
-    private function calculateNextRun(string $frequency): \Carbon\Carbon
+    private function calculateNextRun(string $frequency): Carbon
     {
         return match ($frequency) {
             'daily' => now()->addDay()->startOfDay(),

@@ -16,7 +16,7 @@ class NvidiaNimProviderTest extends TestCase
 
     public function test_nvidia_nim_provider_returns_correct_name_and_models(): void
     {
-        $provider = new NvidiaNimProvider();
+        $provider = new NvidiaNimProvider;
 
         $this->assertEquals('nvidia_nim', $provider->getName());
         $this->assertEquals('NVIDIA NIM', $provider->getDisplayName());
@@ -35,7 +35,7 @@ class NvidiaNimProviderTest extends TestCase
     {
         config(['platform.ai.nvidia_api_key' => '']);
 
-        $provider = new NvidiaNimProvider();
+        $provider = new NvidiaNimProvider;
 
         $this->assertFalse($provider->isAvailable());
     }
@@ -43,7 +43,7 @@ class NvidiaNimProviderTest extends TestCase
     public function test_nvidia_nim_provider_calculates_cost_correctly(): void
     {
         config(['platform.ai.nvidia_api_key' => 'nv-test-key']);
-        $provider = new NvidiaNimProvider();
+        $provider = new NvidiaNimProvider;
 
         $response = new AiResponse(
             content: 'Test content from NVIDIA NIM',

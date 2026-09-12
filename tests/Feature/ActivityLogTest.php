@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Agency;
 use App\Models\ActivityLog;
+use App\Models\Agency;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,6 +13,7 @@ class ActivityLogTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void
@@ -56,7 +57,7 @@ class ActivityLogTest extends TestCase
     {
         ActivityLog::factory()->create(['agency_id' => $this->agency->id, 'created_at' => now()->subDays(10)]);
         ActivityLog::factory()->create(['agency_id' => $this->agency->id, 'created_at' => now()]);
-        $response = $this->get('/activity?date_from=' . now()->subDays(5)->toDateString());
+        $response = $this->get('/activity?date_from='.now()->subDays(5)->toDateString());
         $response->assertStatus(200);
         $logs = $response->viewData('logs');
         $this->assertCount(1, $logs);

@@ -36,11 +36,13 @@ class RunAgentWorkflowJob implements ShouldQueue
 
         if ($execution === null) {
             Log::error("RunAgentWorkflowJob: execution [{$this->executionId}] not found");
+
             return;
         }
 
         if ($execution->status === 'cancelled') {
             Log::info("RunAgentWorkflowJob: execution [{$this->executionId}] was cancelled, skipping");
+
             return;
         }
 
@@ -75,6 +77,7 @@ class RunAgentWorkflowJob implements ShouldQueue
                 $execution->refresh();
                 if ($execution->status === 'cancelled') {
                     Log::info("RunAgentWorkflowJob: execution [{$this->executionId}] cancelled at step {$index}");
+
                     return;
                 }
 
@@ -97,9 +100,9 @@ class RunAgentWorkflowJob implements ShouldQueue
                     ],
                 ]);
 
-                Log::info("RunAgentWorkflowJob: step [{$index}] completed, success: " . ($result->success ? 'yes' : 'no'));
+                Log::info("RunAgentWorkflowJob: step [{$index}] completed, success: ".($result->success ? 'yes' : 'no'));
 
-                if (!$result->success) {
+                if (! $result->success) {
                     // Mark as failed
                     $execution->update([
                         'status' => 'failed',
@@ -190,6 +193,7 @@ class RunAgentWorkflowJob implements ShouldQueue
                 ],
             );
         }
+
         return $tasks;
     }
 
@@ -253,6 +257,7 @@ class RunAgentWorkflowJob implements ShouldQueue
             return 0;
         }
         $end = $execution->completed_at ?? now();
+
         return (int) ($end->getTimestampMs() - $execution->started_at->getTimestampMs());
     }
 }

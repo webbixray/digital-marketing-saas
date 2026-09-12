@@ -36,6 +36,7 @@ class SocialListeningService
             ];
         } catch (\Exception $e) {
             Log::error('Twitter mentions fetch failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -66,6 +67,7 @@ class SocialListeningService
             ];
         } catch (\Exception $e) {
             Log::error('Facebook comments fetch failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -96,6 +98,7 @@ class SocialListeningService
             ];
         } catch (\Exception $e) {
             Log::error('Instagram comments fetch failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

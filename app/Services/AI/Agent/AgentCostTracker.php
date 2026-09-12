@@ -2,8 +2,8 @@
 
 namespace App\Services\AI\Agent;
 
-use App\Models\AgentCostLog;
 use App\Models\Agency;
+use App\Models\AgentCostLog;
 use Illuminate\Support\Facades\Log;
 
 class AgentCostTracker
@@ -135,7 +135,7 @@ class AgentCostTracker
     {
         $agency = Agency::find($agencyId);
 
-        if (!$agency) {
+        if (! $agency) {
             return self::PLAN_LIMITS['free'];
         }
 

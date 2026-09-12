@@ -6,13 +6,13 @@ use App\Models\Agency;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Spatie\Permission\Models\Role;
 
 class RoleTest extends TestCase
 {
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void

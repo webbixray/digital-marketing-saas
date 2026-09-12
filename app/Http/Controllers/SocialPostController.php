@@ -70,7 +70,7 @@ class SocialPostController extends Controller
 
         // Check if AI content generation is enabled
         $agency = $request->user()->agency;
-        if (!$this->featureFlag->isEnabled($agency, 'ai_content_generation')) {
+        if (! $this->featureFlag->isEnabled($agency, 'ai_content_generation')) {
             return back()->with('error', 'AI content generation is not available on your plan.');
         }
 
@@ -275,7 +275,7 @@ class SocialPostController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'post_schedule_' . uniqid(),
+            id: 'post_schedule_'.uniqid(),
             type: 'post_schedule',
             prompt: 'Determine optimal posting time',
             data: [
@@ -331,7 +331,7 @@ class SocialPostController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'post_analyze_' . uniqid(),
+            id: 'post_analyze_'.uniqid(),
             type: 'performance_analysis',
             prompt: 'Analyze post performance and provide insights',
             data: [
@@ -381,7 +381,7 @@ class SocialPostController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'reply_suggest_' . uniqid(),
+            id: 'reply_suggest_'.uniqid(),
             type: 'response_suggest',
             prompt: 'Suggest a reply to the message',
             data: [

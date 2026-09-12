@@ -6,7 +6,6 @@ use App\Models\Agency;
 use App\Models\User;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentOrchestrator;
-use App\Services\AI\Agent\AgentResult;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Support\Facades\Log;
 

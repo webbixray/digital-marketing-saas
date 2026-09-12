@@ -4,7 +4,6 @@ namespace App\Services\AI\Agent;
 
 use App\Models\AgentLearningReport;
 use App\Models\AgentPerformanceLog;
-use App\Services\AI\Agent\AgentFeedbackService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -17,7 +16,7 @@ class SelfImprovementEngine
     /**
      * Analyze agent performance over time and find patterns.
      *
-     * @param array $results Recent execution results from an agent
+     * @param  array  $results  Recent execution results from an agent
      * @return array Performance analysis with patterns
      */
     public function analyzePerformance(array $results): array
@@ -98,7 +97,6 @@ class SelfImprovementEngine
     /**
      * Suggest prompt/strategy changes for an agent based on its performance history.
      *
-     * @param AgentInterface $agent
      * @return array List of suggested improvements
      */
     public function generateImprovements(AgentInterface $agent): array
@@ -199,8 +197,6 @@ class SelfImprovementEngine
 
     /**
      * Automatically adjust agent parameters based on performance analysis.
-     *
-     * @param AgentInterface $agent
      */
     public function autoTune(AgentInterface $agent): void
     {
@@ -215,6 +211,7 @@ class SelfImprovementEngine
 
         if ($recentLogs->isEmpty()) {
             Log::info("No recent performance data for [{$agentName}], skipping auto-tune.");
+
             return;
         }
 
@@ -337,11 +334,11 @@ class SelfImprovementEngine
      * Record a real feedback outcome and trigger learning updates.
      * This is the main entry point for the real feedback loop.
      *
-     * @param string $agentName     The agent that performed the task
-     * @param string $taskType      The type of task
-     * @param array  $prediction    What the agent predicted
-     * @param array  $actualOutcome What actually happened
-     * @param int    $agencyId      The agency context
+     * @param  string  $agentName  The agent that performed the task
+     * @param  string  $taskType  The type of task
+     * @param  array  $prediction  What the agent predicted
+     * @param  array  $actualOutcome  What actually happened
+     * @param  int  $agencyId  The agency context
      * @return float The accuracy score for this outcome
      */
     public function recordFeedbackAndLearn(
@@ -459,7 +456,7 @@ class SelfImprovementEngine
 
         foreach ($topErrors as $error => $count) {
             if ($count >= 3) {
-                $recommendations[] = "Recurring error ({$count}x): " . substr($error, 0, 100);
+                $recommendations[] = "Recurring error ({$count}x): ".substr($error, 0, 100);
             }
         }
 
@@ -507,6 +504,7 @@ class SelfImprovementEngine
         }
         $mean = array_sum($values) / count($values);
         $squaredDiffs = array_map(fn ($v) => pow($v - $mean, 2), $values);
+
         return array_sum($squaredDiffs) / count($squaredDiffs);
     }
 
@@ -518,6 +516,7 @@ class SelfImprovementEngine
         if ($successRate < 50) {
             return 'Implement exponential backoff with retry. Review API error handling. Consider adding a fallback provider.';
         }
+
         return 'Add retry logic for transient failures. Review timeout settings and add graceful degradation.';
     }
 

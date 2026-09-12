@@ -2,8 +2,8 @@
 
 namespace App\Services\AI\Agent;
 
-use App\Models\AgentPerformanceLog;
 use App\Models\AgentLearningReport;
+use App\Models\AgentPerformanceLog;
 use Illuminate\Support\Facades\Log;
 
 class AgentFeedbackService
@@ -12,11 +12,11 @@ class AgentFeedbackService
      * Record a prediction vs actual outcome comparison for an agent.
      * This is the core of the real feedback loop.
      *
-     * @param string $agentName  The agent that made the prediction
-     * @param string $taskType   The type of task performed
-     * @param array  $prediction  The predicted values (expected outcomes)
-     * @param array  $actualOutcome The actual measured outcomes
-     * @param int    $agencyId   The agency context for this operation
+     * @param  string  $agentName  The agent that made the prediction
+     * @param  string  $taskType  The type of task performed
+     * @param  array  $prediction  The predicted values (expected outcomes)
+     * @param  array  $actualOutcome  The actual measured outcomes
+     * @param  int  $agencyId  The agency context for this operation
      */
     public function recordOutcome(
         string $agentName,
@@ -58,8 +58,8 @@ class AgentFeedbackService
      * Uses normalized mean absolute error for numeric fields,
      * exact match ratio for boolean/string fields.
      *
-     * @param array $prediction    Predicted values
-     * @param array $actual        Actual measured values
+     * @param  array  $prediction  Predicted values
+     * @param  array  $actual  Actual measured values
      * @return float Accuracy score 0.0 to 1.0
      */
     public function calculateAccuracy(array $prediction, array $actual): float
@@ -106,8 +106,8 @@ class AgentFeedbackService
      * Update learned parameters for an agent based on recent accuracy trends.
      * Stores persistent tuning recommendations in agent_learning_reports.
      *
-     * @param string $agentName  The agent name
-     * @param float  $accuracy   Current accuracy score
+     * @param  string  $agentName  The agent name
+     * @param  float  $accuracy  Current accuracy score
      */
     public function updateAgentParameters(string $agentName, float $accuracy): void
     {
@@ -123,6 +123,7 @@ class AgentFeedbackService
         if (count($recentAccuracies) < 3) {
             // Not enough data to update parameters
             Log::debug("AgentFeedbackService: insufficient data for [{$agentName}] parameter update.");
+
             return;
         }
 
@@ -132,7 +133,7 @@ class AgentFeedbackService
         // Determine parameter adjustments based on performance
         $adjustments = $this->deriveParameterAdjustments($avgAccuracy, $trend);
 
-        if (!empty($adjustments)) {
+        if (! empty($adjustments)) {
             AgentLearningReport::create([
                 'agent_name' => $agentName,
                 'improvement_type' => 'parameter_update',
@@ -162,6 +163,7 @@ class AgentFeedbackService
                 $delta[$key] = (string) $predVal !== (string) $actual[$key] ? 'mismatch' : 'match';
             }
         }
+
         return $delta;
     }
 
@@ -213,8 +215,13 @@ class AgentFeedbackService
 
         $change = (($secondAvg - $firstAvg) / $firstAvg) * 100;
 
-        if ($change > 5) return 'improving';
-        if ($change < -5) return 'declining';
+        if ($change > 5) {
+            return 'improving';
+        }
+        if ($change < -5) {
+            return 'declining';
+        }
+
         return 'stable';
     }
 

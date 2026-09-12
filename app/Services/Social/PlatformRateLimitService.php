@@ -85,6 +85,7 @@ class PlatformRateLimitService
     public function getCurrentUsage(int $agencyId, string $platform, string $action = 'posts'): int
     {
         $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
+
         return Cache::get($cacheKey, 0);
     }
 
@@ -100,7 +101,7 @@ class PlatformRateLimitService
         // Store with 1-hour expiration
         Cache::put($cacheKey, $newCount, 3600);
 
-        Log::debug("Rate limit recorded", [
+        Log::debug('Rate limit recorded', [
             'agency_id' => $agencyId,
             'platform' => $platform,
             'action' => $action,
@@ -128,10 +129,10 @@ class PlatformRateLimitService
         $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
 
         // Since Laravel Cache doesn't expose TTL directly, we track it separately
-        $ttlKey = $cacheKey . ':ttl';
+        $ttlKey = $cacheKey.':ttl';
         $expiresAt = Cache::get($ttlKey);
 
-        if (!$expiresAt) {
+        if (! $expiresAt) {
             return 0;
         }
 
@@ -147,7 +148,7 @@ class PlatformRateLimitService
             foreach (['posts', 'api_calls'] as $action) {
                 $cacheKey = $this->getCacheKey($agencyId, $platform, $action);
                 Cache::forget($cacheKey);
-                Cache::forget($cacheKey . ':ttl');
+                Cache::forget($cacheKey.':ttl');
             }
         }
 
@@ -160,6 +161,7 @@ class PlatformRateLimitService
     private function getCacheKey(int $agencyId, string $platform, string $action): string
     {
         $hour = now()->format('YmdH');
+
         return "rate_limit:{$agencyId}:{$platform}:{$action}:{$hour}";
     }
 }

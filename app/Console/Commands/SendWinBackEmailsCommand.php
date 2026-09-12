@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Mail\WinBackEmail;
-use App\Models\User;
 use App\Services\ChurnPreventionService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -37,23 +36,25 @@ class SendWinBackEmailsCommand extends Command
 
         if (empty($dormantUsers)) {
             $this->info('No dormant users found.');
+
             return self::SUCCESS;
         }
 
-        $this->info('Found ' . count($dormantUsers) . ' dormant users.');
+        $this->info('Found '.count($dormantUsers).' dormant users.');
 
         if ($dryRun) {
             $this->info('DRY RUN - No emails will be sent.');
             foreach ($dormantUsers as $user) {
                 $this->line("  - {$user->email} (last active: {$user->last_active_at})");
             }
+
             return self::SUCCESS;
         }
 
         $sent = 0;
         foreach ($dormantUsers as $user) {
             try {
-                $discountCode = 'COMEBACK-' . strtoupper(Str::random(6));
+                $discountCode = 'COMEBACK-'.strtoupper(Str::random(6));
 
                 Mail::to($user->email)->send(new WinBackEmail(
                     user: $user,
@@ -73,6 +74,7 @@ class SendWinBackEmailsCommand extends Command
         }
 
         $this->info("Sent {$sent} win-back emails.");
+
         return self::SUCCESS;
     }
 }

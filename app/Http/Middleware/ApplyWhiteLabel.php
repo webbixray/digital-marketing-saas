@@ -10,9 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ApplyWhiteLabel
 {
-    public function __construct(private WhiteLabelService $whiteLabelService)
-    {
-    }
+    public function __construct(private WhiteLabelService $whiteLabelService) {}
 
     public function handle(Request $request, Closure $next): Response
     {

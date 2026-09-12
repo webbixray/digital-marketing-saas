@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SupportTicketController extends Controller
@@ -63,7 +62,7 @@ class SupportTicketController extends Controller
             'description' => $validated['description'],
             'priority' => $validated['priority'],
             'category' => $validated['category'],
-            'ticket_number' => 'TKT-' . strtoupper(Str::random(8)),
+            'ticket_number' => 'TKT-'.strtoupper(Str::random(8)),
             'status' => 'open',
         ]);
 
@@ -80,6 +79,7 @@ class SupportTicketController extends Controller
             abort(403);
         }
         $ticket->load(['replies.user', 'assignee']);
+
         return view('support.show', compact('ticket'));
     }
 

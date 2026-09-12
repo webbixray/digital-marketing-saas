@@ -3,10 +3,9 @@
 namespace Tests\Feature\Reporting;
 
 use App\Models\Agency;
-use App\Models\Report;
-use App\Models\ScheduledReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class EnterpriseReportTest extends TestCase
@@ -26,7 +25,7 @@ class EnterpriseReportTest extends TestCase
 
     public function test_it_generates_a_custom_report(): void
     {
-        \Illuminate\Support\Facades\Bus::fake();
+        Bus::fake();
 
         $response = $this->actingAs($this->user)->postJson('/api/v1/reports', [
             'name' => 'Test Social Report',

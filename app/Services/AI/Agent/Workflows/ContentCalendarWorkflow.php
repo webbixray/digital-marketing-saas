@@ -58,7 +58,7 @@ class ContentCalendarWorkflow implements AgentWorkflowTemplate
     public function isAvailable(Agency $agency): bool
     {
         foreach ($this->getRequiredFeatures() as $feature) {
-            if (!$agency->isFeatureAvailable($feature)) {
+            if (! $agency->isFeatureAvailable($feature)) {
                 return false;
             }
         }

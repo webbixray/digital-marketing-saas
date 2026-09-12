@@ -117,9 +117,9 @@ class ReportController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'report_gen_' . uniqid(),
+            id: 'report_gen_'.uniqid(),
             type: 'report_generate',
-            prompt: 'Generate a ' . $validated['report_type'] . ' report',
+            prompt: 'Generate a '.$validated['report_type'].' report',
             data: [
                 'report_type' => $validated['report_type'],
                 'date_range' => $validated['date_range'] ?? '30 days',
@@ -133,7 +133,7 @@ class ReportController extends Controller
             $report = Report::create([
                 'agency_id' => $agency->id,
                 'user_id' => $user->id,
-                'name' => 'AI Generated ' . ucfirst($validated['report_type']) . ' Report',
+                'name' => 'AI Generated '.ucfirst($validated['report_type']).' Report',
                 'type' => $validated['report_type'],
                 'format' => $validated['format'] ?? 'pdf',
                 'schedule' => 'once',
@@ -176,7 +176,7 @@ class ReportController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'report_rec_' . uniqid(),
+            id: 'report_rec_'.uniqid(),
             type: 'report_recommend',
             prompt: 'Provide recommendations for report improvement',
             data: [
@@ -222,7 +222,7 @@ class ReportController extends Controller
         $context = AgentContext::fromUser($user);
 
         $task = new AgentTask(
-            id: 'report_sched_' . uniqid(),
+            id: 'report_sched_'.uniqid(),
             type: 'report_schedule',
             prompt: 'Create optimal report scheduling plan',
             data: [
@@ -239,7 +239,7 @@ class ReportController extends Controller
             $report = Report::create([
                 'agency_id' => $agency->id,
                 'user_id' => $user->id,
-                'name' => 'Scheduled ' . ucfirst($validated['report_type']) . ' Report (' . $validated['frequency'] . ')',
+                'name' => 'Scheduled '.ucfirst($validated['report_type']).' Report ('.$validated['frequency'].')',
                 'type' => $validated['report_type'],
                 'format' => $validated['format'] ?? 'pdf',
                 'schedule' => $validated['frequency'],

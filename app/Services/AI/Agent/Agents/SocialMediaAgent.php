@@ -29,6 +29,7 @@ class SocialMediaAgent extends AbstractAgent
      * Engagement thresholds for success scoring.
      */
     private const ENGAGEMENT_THRESHOLD_HIGH = 0.7;
+
     private const ENGAGEMENT_THRESHOLD_MEDIUM = 0.4;
 
     /**
@@ -38,7 +39,7 @@ class SocialMediaAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -48,7 +49,7 @@ class SocialMediaAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -106,6 +107,7 @@ class SocialMediaAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -122,8 +124,8 @@ class SocialMediaAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highEngagement = count(array_filter($scores, fn($s) => $s >= self::ENGAGEMENT_THRESHOLD_HIGH));
-        $mediumEngagement = count(array_filter($scores, fn($s) => $s >= self::ENGAGEMENT_THRESHOLD_MEDIUM));
+        $highEngagement = count(array_filter($scores, fn ($s) => $s >= self::ENGAGEMENT_THRESHOLD_HIGH));
+        $mediumEngagement = count(array_filter($scores, fn ($s) => $s >= self::ENGAGEMENT_THRESHOLD_MEDIUM));
 
         // Weight: high engagement counts double, medium counts once
         $weightedSuccesses = ($highEngagement * 2) + $mediumEngagement;
@@ -175,9 +177,9 @@ class SocialMediaAgent extends AbstractAgent
 
         if ($platformBestTimes) {
             $prompt .= "\nBased on past performance data:\n";
-            $prompt .= "- Best hours: " . implode(', ', $platformBestTimes['best_hours'] ?? []) . "\n";
-            $prompt .= "- Best days: " . implode(', ', $platformBestTimes['best_days'] ?? []) . "\n";
-            $prompt .= "- Confidence: " . ($platformBestTimes['confidence'] ?? 'low') . "\n";
+            $prompt .= '- Best hours: '.implode(', ', $platformBestTimes['best_hours'] ?? [])."\n";
+            $prompt .= '- Best days: '.implode(', ', $platformBestTimes['best_days'] ?? [])."\n";
+            $prompt .= '- Confidence: '.($platformBestTimes['confidence'] ?? 'low')."\n";
         }
 
         $prompt .= "\nProvide:\n1. Recommended date and time\n2. Reasoning for the recommendation\n3. Expected engagement level (low/medium/high)";
@@ -227,9 +229,9 @@ class SocialMediaAgent extends AbstractAgent
         $topPatterns = $this->extractTopOptimizationPatterns($pastPatterns);
 
         $prompt = "Optimize the following social media content for {$platform}:\n\n{$content}\n\n";
-        $prompt .= "Goals: " . implode(', ', $goals) . "\n";
+        $prompt .= 'Goals: '.implode(', ', $goals)."\n";
 
-        if (!empty($topPatterns)) {
+        if (! empty($topPatterns)) {
             $prompt .= "\nBased on past successful optimizations, these patterns work well:\n";
             foreach ($topPatterns as $pattern) {
                 $prompt .= "- {$pattern}\n";
@@ -331,7 +333,7 @@ class SocialMediaAgent extends AbstractAgent
 
         // Get past successful replies
         $pastReplies = $this->getLearnedPatterns($context, 'reply_suggest');
-        $successfulReplies = array_filter($pastReplies, fn($r) => ($r['metadata']['engagement_score'] ?? 0) >= self::ENGAGEMENT_THRESHOLD_MEDIUM);
+        $successfulReplies = array_filter($pastReplies, fn ($r) => ($r['metadata']['engagement_score'] ?? 0) >= self::ENGAGEMENT_THRESHOLD_MEDIUM);
 
         $prompt = "Suggest a reply to the following {$platform} message:\n\n";
         $prompt .= "Message: {$message}\n";
@@ -341,11 +343,11 @@ class SocialMediaAgent extends AbstractAgent
             $prompt .= "Context: {$context_info}\n";
         }
 
-        if (!empty($successfulReplies)) {
+        if (! empty($successfulReplies)) {
             $prompt .= "\nBased on past successful replies, these approaches work well:\n";
             $topReplies = array_slice($successfulReplies, 0, 3);
             foreach ($topReplies as $reply) {
-                $prompt .= "- Style: " . ($reply['metadata']['tone'] ?? 'friendly') . "\n";
+                $prompt .= '- Style: '.($reply['metadata']['tone'] ?? 'friendly')."\n";
             }
         }
 
@@ -441,7 +443,7 @@ class SocialMediaAgent extends AbstractAgent
      */
     private function learnFromEngagementData(array $metrics, ?string $platform): void
     {
-        if (!$platform) {
+        if (! $platform) {
             return;
         }
 
@@ -449,7 +451,7 @@ class SocialMediaAgent extends AbstractAgent
         $hourlyTrends = $metrics['hourly_trends'] ?? [];
         $dailyTrends = $metrics['daily_trends'] ?? [];
 
-        if (!empty($hourlyTrends) || !empty($dailyTrends)) {
+        if (! empty($hourlyTrends) || ! empty($dailyTrends)) {
             $bestHours = array_slice(array_column($hourlyTrends, 'hour'), 0, 3);
             $bestDays = array_slice(array_column($dailyTrends, 'day'), 0, 3);
             $this->updateBestPostingTimes($platform, $bestHours, $bestDays);
@@ -557,6 +559,7 @@ class SocialMediaAgent extends AbstractAgent
         if (preg_match('/\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?/', $content, $matches)) {
             $time = $matches[0];
             $date = $preferredDate ?? now()->addDay()->format('Y-m-d');
+
             return "{$date} {$time}";
         }
 

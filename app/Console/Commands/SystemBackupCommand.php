@@ -32,10 +32,12 @@ class SystemBackupCommand extends Command
         if ($result['success']) {
             $this->info("Backup created: {$result['filename']}");
             $this->info("Size: {$result['size']}");
+
             return self::SUCCESS;
         }
 
         $this->error("Backup failed: {$result['error']}");
+
         return self::FAILURE;
     }
 }

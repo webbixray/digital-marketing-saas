@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Services;
 
-use App\Models\AgentCostLog;
 use App\Models\Agency;
+use App\Models\AgentCostLog;
 use App\Services\AI\Agent\AgentCostTracker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +17,7 @@ class AgentCostTrackerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tracker = new AgentCostTracker();
+        $this->tracker = new AgentCostTracker;
     }
 
     /**

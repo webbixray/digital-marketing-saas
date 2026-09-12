@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\AI\Agent\AgentContext;
-use App\Services\AI\Agent\AgentCostTracker;
 use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentOrchestrator;

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\AgentRateLimit;
+use App\Http\Middleware\Enforce2FA;
+use App\Http\Middleware\EnforcePlatformRateLimit;
 use App\Http\Middleware\EnforceQuota;
 use App\Http\Middleware\EnsureAgencyAccess;
 use App\Http\Middleware\FeatureGate;
@@ -8,6 +11,7 @@ use App\Http\Middleware\RequestId;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -33,9 +37,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'agency' => EnsureAgencyAccess::class,
             'feature' => FeatureGate::class,
             'quota' => EnforceQuota::class,
-            '2fa' => \App\Http\Middleware\Enforce2FA::class,
-            'platform.rate_limit' => \App\Http\Middleware\EnforcePlatformRateLimit::class,
-            'agent.rate_limit' => \App\Http\Middleware\AgentRateLimit::class,
+            '2fa' => Enforce2FA::class,
+            'platform.rate_limit' => EnforcePlatformRateLimit::class,
+            'agent.rate_limit' => AgentRateLimit::class,
         ]);
 
         $middleware->web(append: [
@@ -58,7 +62,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // ModelNotFoundException -> 404 JSON for API
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, Request $request) {
+        $exceptions->render(function (ModelNotFoundException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'success' => false,

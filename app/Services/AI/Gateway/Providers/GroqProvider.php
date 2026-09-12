@@ -91,7 +91,7 @@ class GroqProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey);
+        return ! empty($this->apiKey);
     }
 
     public function getSupportedModels(): array

@@ -11,7 +11,7 @@ use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiAgentWorkflowController extends Controller
 {
@@ -72,14 +72,14 @@ class ApiAgentWorkflowController extends Controller
 
             // Check if required features are enabled
             $missingFeatures = $this->checkRequiredFeatures($workflow['required_features'], $request->user()->agency_id);
-            if (!empty($missingFeatures)) {
+            if (! empty($missingFeatures)) {
                 return response()->json([
                     'error' => 'Missing required features.',
                     'missing_features' => $missingFeatures,
                 ], 403);
             }
 
-            $executionId = 'wf_' . uniqid();
+            $executionId = 'wf_'.uniqid();
             $agencyId = $request->user()->agency_id;
             $userId = $request->user()->id;
             $input = $validated['input'] ?? [];
@@ -179,7 +179,7 @@ class ApiAgentWorkflowController extends Controller
                     'message' => 'Workflow execution failed.',
                 ], 500);
             }
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
@@ -398,6 +398,7 @@ class ApiAgentWorkflowController extends Controller
                 ],
             );
         }
+
         return $tasks;
     }
 }

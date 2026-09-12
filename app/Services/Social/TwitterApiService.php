@@ -9,10 +9,15 @@ use Illuminate\Support\Str;
 class TwitterApiService
 {
     protected ?string $apiKey;
+
     protected ?string $apiSecret;
+
     protected ?string $accessToken;
+
     protected ?string $accessSecret;
+
     protected ?string $bearerToken;
+
     protected string $baseUrl = 'https://api.twitter.com';
 
     public function __construct()
@@ -49,7 +54,7 @@ class TwitterApiService
                 'status' => $response->status(),
             ];
         } catch (\Exception $e) {
-            Log::error('Twitter authentication failed: ' . $e->getMessage());
+            Log::error('Twitter authentication failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -67,7 +72,7 @@ class TwitterApiService
             $payload = ['text' => $text];
 
             // If media IDs are provided, attach them
-            if (!empty($media)) {
+            if (! empty($media)) {
                 $payload['media'] = [
                     'media_ids' => $media,
                 ];
@@ -94,7 +99,7 @@ class TwitterApiService
                 'status' => $response->status(),
             ];
         } catch (\Exception $e) {
-            Log::error('Twitter postTweet failed: ' . $e->getMessage());
+            Log::error('Twitter postTweet failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -138,7 +143,7 @@ class TwitterApiService
                 'status' => $response->status(),
             ];
         } catch (\Exception $e) {
-            Log::error('Twitter getUserMetrics failed: ' . $e->getMessage());
+            Log::error('Twitter getUserMetrics failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -183,7 +188,7 @@ class TwitterApiService
                 'status' => $response->status(),
             ];
         } catch (\Exception $e) {
-            Log::error('Twitter getTweetMetrics failed: ' . $e->getMessage());
+            Log::error('Twitter getTweetMetrics failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -205,17 +210,17 @@ class TwitterApiService
 
         // Build signature base string
         $baseString = $this->buildBaseString($method, $url, $oauth);
-        $signingKey = rawurlencode($this->apiSecret) . '&' . rawurlencode($this->accessSecret);
+        $signingKey = rawurlencode($this->apiSecret).'&'.rawurlencode($this->accessSecret);
         $oauth['oauth_signature'] = base64_encode(hash_hmac('sha1', $baseString, $signingKey, true));
 
         // Build Authorization header
         $headerParts = [];
         foreach ($oauth as $key => $value) {
-            $headerParts[] = rawurlencode($key) . '="' . rawurlencode($value) . '"';
+            $headerParts[] = rawurlencode($key).'="'.rawurlencode($value).'"';
         }
 
         return [
-            'Authorization' => 'OAuth ' . implode(', ', $headerParts),
+            'Authorization' => 'OAuth '.implode(', ', $headerParts),
             'Content-Type' => 'application/json',
         ];
     }
@@ -228,10 +233,10 @@ class TwitterApiService
         $parts = [];
         ksort($params);
         foreach ($params as $key => $value) {
-            $parts[] = rawurlencode($key) . '=' . rawurlencode($value);
+            $parts[] = rawurlencode($key).'='.rawurlencode($value);
         }
 
-        return $method . '&' . rawurlencode($url) . '&' . rawurlencode(implode('&', $parts));
+        return $method.'&'.rawurlencode($url).'&'.rawurlencode(implode('&', $parts));
     }
 
     /**
@@ -239,10 +244,10 @@ class TwitterApiService
      */
     public function isConfigured(): bool
     {
-        return !empty($this->apiKey)
-            && !empty($this->apiSecret)
-            && !empty($this->accessToken)
-            && !empty($this->accessSecret);
+        return ! empty($this->apiKey)
+            && ! empty($this->apiSecret)
+            && ! empty($this->accessToken)
+            && ! empty($this->accessSecret);
     }
 
     /**
@@ -250,6 +255,6 @@ class TwitterApiService
      */
     public function hasBearerToken(): bool
     {
-        return !empty($this->bearerToken);
+        return ! empty($this->bearerToken);
     }
 }

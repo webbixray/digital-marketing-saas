@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Stripe\Stripe;
 use Stripe\Balance;
+use Stripe\Exception\ApiConnectionException;
+use Stripe\Exception\AuthenticationException;
+use Stripe\Stripe;
 
 class StripeTestCommand extends Command
 {
@@ -32,10 +34,11 @@ class StripeTestCommand extends Command
         if (empty($secretKey) || str_contains($secretKey, 'xxx')) {
             $this->error('Stripe secret key is not configured or uses placeholder values.');
             $this->line('Please set STRIPE_SECRET in your .env file with a valid test key (sk_test_...).');
+
             return Command::FAILURE;
         }
 
-        if (!str_starts_with($secretKey, 'sk_test_')) {
+        if (! str_starts_with($secretKey, 'sk_test_')) {
             $this->warn('Warning: The Stripe secret key does not start with sk_test_. You are NOT in test mode!');
         } else {
             $this->info('✓ Running in Stripe test mode.');
@@ -59,14 +62,17 @@ class StripeTestCommand extends Command
             }
 
             return Command::SUCCESS;
-        } catch (\Stripe\Exception\AuthenticationException $e) {
-            $this->error('✗ Stripe authentication failed: ' . $e->getMessage());
+        } catch (AuthenticationException $e) {
+            $this->error('✗ Stripe authentication failed: '.$e->getMessage());
+
             return Command::FAILURE;
-        } catch (\Stripe\Exception\ApiConnectionException $e) {
-            $this->error('✗ Could not connect to Stripe: ' . $e->getMessage());
+        } catch (ApiConnectionException $e) {
+            $this->error('✗ Could not connect to Stripe: '.$e->getMessage());
+
             return Command::FAILURE;
         } catch (\Exception $e) {
-            $this->error('✗ Error: ' . $e->getMessage());
+            $this->error('✗ Error: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

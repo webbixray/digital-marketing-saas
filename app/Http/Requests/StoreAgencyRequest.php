@@ -17,7 +17,7 @@ class StoreAgencyRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:agencies,email',
             'website' => 'nullable|url|max:255',
-            'timezone' => 'required|string|in:' . implode(',', timezone_identifiers_list()),
+            'timezone' => 'required|string|in:'.implode(',', timezone_identifiers_list()),
             'phone' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:500',
             'description' => 'nullable|string|max:1000',

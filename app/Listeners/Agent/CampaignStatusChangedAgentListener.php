@@ -21,15 +21,17 @@ class CampaignStatusChangedAgentListener
         $campaign = $event->campaign;
         $agencyId = $campaign->agency_id;
 
-        if (!$agencyId) {
+        if (! $agencyId) {
             Log::debug('CampaignStatusChangedAgentListener: no agency_id on campaign, skipping');
+
             return;
         }
 
         $agency = Agency::find($agencyId);
 
-        if (!$agency) {
+        if (! $agency) {
             Log::debug("CampaignStatusChangedAgentListener: agency [{$agencyId}] not found, skipping");
+
             return;
         }
 
@@ -42,7 +44,7 @@ class CampaignStatusChangedAgentListener
             $task = new AgentTask(
                 id: "campaign_completed_optimize_{$campaign->id}",
                 type: 'campaign_optimize',
-                prompt: "Analyze completed campaign and provide optimization insights",
+                prompt: 'Analyze completed campaign and provide optimization insights',
                 data: [
                     'campaign_id' => $campaign->id,
                     'goals' => ['engagement', 'reach'],
@@ -60,7 +62,7 @@ class CampaignStatusChangedAgentListener
             $task = new AgentTask(
                 id: "campaign_active_budget_{$campaign->id}",
                 type: 'budget_allocate',
-                prompt: "Allocate budget across platforms for active campaign",
+                prompt: 'Allocate budget across platforms for active campaign',
                 data: [
                     'campaign_id' => $campaign->id,
                     'total_budget' => $campaign->budget ?? 0,

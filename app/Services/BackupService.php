@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Cache;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Exception;
 
 class BackupService
 {
     private string $backupPath = 'backups';
+
     private int $maxBackups = 7;
 
     /**
@@ -23,14 +23,14 @@ class BackupService
 
         try {
             // Ensure backup directory exists
-            if (!is_dir(dirname($localPath))) {
+            if (! is_dir(dirname($localPath))) {
                 mkdir(dirname($localPath), 0755, true);
             }
 
             // Create ZIP archive
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
             if ($zip->open($localPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-                throw new Exception("Cannot create backup archive");
+                throw new Exception('Cannot create backup archive');
             }
 
             // Add database dump
@@ -57,6 +57,7 @@ class BackupService
             ];
         } catch (Exception $e) {
             Log::error("Backup failed: {$e->getMessage()}");
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -115,7 +116,7 @@ class BackupService
     private function addStorageFiles(\ZipArchive $zip): void
     {
         $storagePath = storage_path('app/public');
-        if (!is_dir($storagePath)) {
+        if (! is_dir($storagePath)) {
             return;
         }
 
@@ -129,7 +130,7 @@ class BackupService
                 continue;
             }
             $filePath = $file->getRealPath();
-            $relativePath = 'storage/' . substr($filePath, strlen($storagePath) + 1);
+            $relativePath = 'storage/'.substr($filePath, strlen($storagePath) + 1);
             $zip->addFile($filePath, $relativePath);
         }
     }
@@ -184,7 +185,8 @@ class BackupService
             $bytes /= 1024;
             $i++;
         }
-        return round($bytes, 2) . ' ' . $units[$i];
+
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
@@ -215,14 +217,14 @@ class BackupService
     {
         $path = storage_path("app/{$this->backupPath}/{$filename}");
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return ['success' => false, 'error' => 'Backup file not found'];
         }
 
         try {
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
             if ($zip->open($path) !== true) {
-                throw new Exception("Cannot open backup archive");
+                throw new Exception('Cannot open backup archive');
             }
 
             $zip->extractTo(storage_path('app/restore_temp'));
@@ -242,6 +244,7 @@ class BackupService
             return ['success' => true];
         } catch (Exception $e) {
             Log::error("Restore failed: {$e->getMessage()}");
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -279,7 +282,7 @@ class BackupService
     private function restoreStorage(): void
     {
         $storageBackup = storage_path('app/restore_temp/storage');
-        if (!is_dir($storageBackup)) {
+        if (! is_dir($storageBackup)) {
             return;
         }
 
@@ -293,7 +296,7 @@ class BackupService
      */
     private function removeDirectory(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return;
         }
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class ReferralService
 {
     private const CREDIT_AMOUNT = 10.00;
+
     private const REFERRER_REWARD = 10.00;
 
     /**
@@ -29,7 +30,7 @@ class ReferralService
      */
     public function assignCode(User $user): void
     {
-        if (!$user->referral_code) {
+        if (! $user->referral_code) {
             $user->referral_code = $this->generateCode();
             $user->save();
         }
@@ -40,7 +41,7 @@ class ReferralService
      */
     public function assignCodeToAgency(Agency $agency): void
     {
-        if (!$agency->referral_code) {
+        if (! $agency->referral_code) {
             $agency->referral_code = $this->generateCode();
             $agency->save();
         }
@@ -53,7 +54,7 @@ class ReferralService
     {
         $referrer = User::where('referral_code', $referralCode)->first();
 
-        if (!$referrer || $referrer->id === $newUser->id) {
+        if (! $referrer || $referrer->id === $newUser->id) {
             return false;
         }
 
@@ -74,12 +75,12 @@ class ReferralService
      */
     public function awardReferralCredits(User $user): void
     {
-        if (!$user->referred_by) {
+        if (! $user->referred_by) {
             return;
         }
 
         $referrer = User::find($user->referred_by);
-        if (!$referrer) {
+        if (! $referrer) {
             return;
         }
 
@@ -108,7 +109,7 @@ class ReferralService
 
         return [
             'referral_code' => $user->referral_code,
-            'referral_link' => url('/register?ref=' . $user->referral_code),
+            'referral_link' => url('/register?ref='.$user->referral_code),
             'total_referrals' => $referrals->count(),
             'total_credits' => $user->credits,
             'referrals' => $referrals->map(fn ($r) => [

@@ -15,7 +15,7 @@ Route::get('/.well-known/security.txt', function () {
     $content .= "Expires: {$expiry}\n";
     $content .= "Preferred-Languages: en\n";
     $content .= "Canonical: https://your-domain.com/.well-known/security.txt\n";
-    
+
     return response($content, 200, [
         'Content-Type' => 'text/plain; charset=utf-8',
     ]);

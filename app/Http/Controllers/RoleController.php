@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Services\RBAC\EnterpriseRBACService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -34,7 +34,7 @@ class RoleController extends Controller
     public function create(Request $request): View
     {
         $agencyId = $request->user()->agency_id;
-        $permissions = \Spatie\Permission\Models\Permission::all();
+        $permissions = Permission::all();
 
         return view('roles.create', compact('permissions', 'agencyId'));
     }
@@ -62,7 +62,7 @@ class RoleController extends Controller
     public function edit(Request $request, Role $role): View
     {
         $agencyId = $request->user()->agency_id;
-        $permissions = \Spatie\Permission\Models\Permission::all();
+        $permissions = Permission::all();
         $rolePermissions = $this->rbacService->getRolePermissions($role->id);
 
         return view('roles.edit', compact('role', 'permissions', 'rolePermissions', 'agencyId'));

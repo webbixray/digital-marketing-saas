@@ -9,6 +9,7 @@ use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentResult;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\AI\Gateway\AiRequest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class TeamAgent extends AbstractAgent
@@ -29,6 +30,7 @@ class TeamAgent extends AbstractAgent
      * Task completion improvement thresholds.
      */
     private const COMPLETION_THRESHOLD_HIGH = 0.85;
+
     private const COMPLETION_THRESHOLD_MEDIUM = 0.6;
 
     /**
@@ -38,7 +40,7 @@ class TeamAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -48,7 +50,7 @@ class TeamAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -106,6 +108,7 @@ class TeamAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -123,8 +126,8 @@ class TeamAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highCompletion = count(array_filter($completionScores, fn($s) => $s >= self::COMPLETION_THRESHOLD_HIGH));
-        $mediumCompletion = count(array_filter($completionScores, fn($s) => $s >= self::COMPLETION_THRESHOLD_MEDIUM));
+        $highCompletion = count(array_filter($completionScores, fn ($s) => $s >= self::COMPLETION_THRESHOLD_HIGH));
+        $mediumCompletion = count(array_filter($completionScores, fn ($s) => $s >= self::COMPLETION_THRESHOLD_MEDIUM));
 
         $weightedSuccesses = ($highCompletion * 2) + $mediumCompletion;
 
@@ -177,10 +180,10 @@ class TeamAgent extends AbstractAgent
 
         $prompt .= "\nPending Tasks:\n";
         foreach ($pendingTasks as $pendingTask) {
-            $prompt .= "- {$pendingTask['title']} (Skills: " . implode(', ', $pendingTask['required_skills'] ?? []) . ")\n";
+            $prompt .= "- {$pendingTask['title']} (Skills: ".implode(', ', $pendingTask['required_skills'] ?? []).")\n";
         }
 
-        if (!empty($skillRecs)) {
+        if (! empty($skillRecs)) {
             $prompt .= "\nBased on past successful assignments:\n";
             foreach (array_slice($skillRecs, 0, 5) as $rec) {
                 $prompt .= "- {$rec['pattern']}: {$rec['success_rate']}% success rate\n";
@@ -192,7 +195,7 @@ class TeamAgent extends AbstractAgent
         $prompt .= "2. Expected completion timeline\n";
         $prompt .= "3. Risk assessment for each assignment\n";
         $prompt .= "4. Alternative assignments if primary is unavailable\n";
-        $prompt .= "5. Collaboration suggestions for complex tasks";
+        $prompt .= '5. Collaboration suggestions for complex tasks';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -248,7 +251,7 @@ class TeamAgent extends AbstractAgent
             $prompt .= "  Avg completion time: {$workload['avg_completion_time']} hours\n";
         }
 
-        if (!empty($patterns)) {
+        if (! empty($patterns)) {
             $prompt .= "\nBased on past productivity patterns:\n";
             foreach ($patterns as $pattern => $data) {
                 $prompt .= "- {$pattern}: Optimal load = {$data['optimal_load']} tasks, Peak = {$data['peak_day']}\n";
@@ -261,7 +264,7 @@ class TeamAgent extends AbstractAgent
         $prompt .= "3. Specific task redistribution recommendations\n";
         $prompt .= "4. Capacity planning for upcoming work\n";
         $prompt .= "5. Burnout risk assessment\n";
-        $prompt .= "6. Suggested hiring needs if applicable";
+        $prompt .= '6. Suggested hiring needs if applicable';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -331,7 +334,7 @@ class TeamAgent extends AbstractAgent
         $prompt .= "3. Areas for improvement\n";
         $prompt .= "4. Specific, actionable feedback\n";
         $prompt .= "5. Goals for next period\n";
-        $prompt .= "6. Professional development recommendations";
+        $prompt .= '6. Professional development recommendations';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -378,11 +381,11 @@ class TeamAgent extends AbstractAgent
         $prompt .= "Current Team Skills:\n";
         foreach ($teamMembers as $member) {
             $skills = $this->getMemberSkills($member);
-            $prompt .= "- {$member->name}: " . implode(', ', $skills) . "\n";
+            $prompt .= "- {$member->name}: ".implode(', ', $skills)."\n";
         }
 
         $prompt .= "\nRequired Skills for Current Projects:\n";
-        $prompt .= implode(', ', $requiredSkills) . "\n";
+        $prompt .= implode(', ', $requiredSkills)."\n";
 
         $prompt .= "\nProvide:\n";
         $prompt .= "1. Current team skill matrix\n";
@@ -391,7 +394,7 @@ class TeamAgent extends AbstractAgent
         $prompt .= "4. Training recommendations per team member\n";
         $prompt .= "5. Hiring recommendations for critical gaps\n";
         $prompt .= "6. Upskilling timeline and priorities\n";
-        $prompt .= "7. Cross-training opportunities";
+        $prompt .= '7. Cross-training opportunities';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -425,7 +428,7 @@ class TeamAgent extends AbstractAgent
     /**
      * Get team members for an agency.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, User>
+     * @return Collection<int, User>
      */
     private function getTeamMembers(Agency $agency)
     {
@@ -437,7 +440,7 @@ class TeamAgent extends AbstractAgent
     /**
      * Get workload data for team members.
      *
-     * @param \Illuminate\Database\Eloquent\Collection<int, User> $members
+     * @param  Collection<int, User>  $members
      * @return array<int, array>
      */
     private function getTeamWorkloads(Agency $agency, $members): array
@@ -602,7 +605,7 @@ class TeamAgent extends AbstractAgent
     /**
      * Learn productivity patterns from team data.
      *
-     * @param \Illuminate\Database\Eloquent\Collection<int, User> $members
+     * @param  Collection<int, User>  $members
      */
     private function learnProductivityPatterns($members, array $workloads): void
     {
@@ -611,7 +614,7 @@ class TeamAgent extends AbstractAgent
         // Track optimal workload per role
         foreach ($members as $member) {
             $workload = $workloads[$member->id] ?? null;
-            if (!$workload) {
+            if (! $workload) {
                 continue;
             }
 

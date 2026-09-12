@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Agent\Collaboration;
 
+use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentResult;
@@ -24,6 +25,7 @@ class AgentCollaborationProtocol
 
         if ($targetAgent === null) {
             Log::warning("AgentCollaborationProtocol: agent [{$toAgent}] not found for help request from [{$from->getName()}]");
+
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $toAgent,
@@ -31,8 +33,9 @@ class AgentCollaborationProtocol
             );
         }
 
-        if (!$targetAgent->canHandle($task->type)) {
+        if (! $targetAgent->canHandle($task->type)) {
             Log::warning("AgentCollaborationProtocol: agent [{$toAgent}] cannot handle task type [{$task->type}]");
+
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $toAgent,
@@ -43,19 +46,20 @@ class AgentCollaborationProtocol
         Log::info("AgentCollaborationProtocol: agent [{$from->getName()}] requesting help from [{$toAgent}] for task [{$task->id}]");
 
         try {
-            $result = $targetAgent->execute($task, new \App\Services\AI\Agent\AgentContext);
+            $result = $targetAgent->execute($task, new AgentContext);
 
             // Share the insight about collaboration
             $this->knowledgeBase->shareInsight(
                 agencyId: 0,
                 fromAgent: $from->getName(),
-                insight: "Requested help from [{$toAgent}] for task type [{$task->type}], result: " . ($result->success ? 'success' : 'failure'),
+                insight: "Requested help from [{$toAgent}] for task type [{$task->type}], result: ".($result->success ? 'success' : 'failure'),
                 category: 'collaboration',
             );
 
             return $result;
         } catch (\Exception $e) {
             Log::error("AgentCollaborationProtocol: help request failed: {$e->getMessage()}");
+
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $toAgent,
@@ -81,7 +85,7 @@ class AgentCollaborationProtocol
             );
         }
 
-        Log::info("AgentCollaborationProtocol: knowledge shared from [{$fromAgent}] to [{$toAgent}], " . count($insights) . " insights");
+        Log::info("AgentCollaborationProtocol: knowledge shared from [{$fromAgent}] to [{$toAgent}], ".count($insights).' insights');
     }
 
     /**

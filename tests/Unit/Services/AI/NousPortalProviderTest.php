@@ -18,7 +18,7 @@ class NousPortalProviderTest extends TestCase
     {
         config(['platform.ai.providers.nous_portal.api_key' => 'nous-test-key']);
 
-        $provider = new NousPortalProvider();
+        $provider = new NousPortalProvider;
 
         $this->assertTrue($provider->isAvailable());
         $this->assertEquals('nous_portal', $provider->getName());
@@ -29,14 +29,14 @@ class NousPortalProviderTest extends TestCase
     {
         config(['platform.ai.providers.nous_portal.api_key' => '']);
 
-        $provider = new NousPortalProvider();
+        $provider = new NousPortalProvider;
 
         $this->assertFalse($provider->isAvailable());
     }
 
     public function test_nous_portal_provider_returns_supported_models(): void
     {
-        $provider = new NousPortalProvider();
+        $provider = new NousPortalProvider;
 
         $models = $provider->getSupportedModels();
 
@@ -51,7 +51,7 @@ class NousPortalProviderTest extends TestCase
 
     public function test_nous_portal_provider_calculates_cost_correctly(): void
     {
-        $provider = new NousPortalProvider();
+        $provider = new NousPortalProvider;
 
         // Nous Portal models are free, so cost should always be 0
         $response = new AiResponse(
@@ -77,7 +77,7 @@ class NousPortalProviderTest extends TestCase
             'platform.ai.providers.nous_portal.api_base_url' => 'https://portal.nous.co/api/v1',
         ]);
 
-        $provider = new NousPortalProvider();
+        $provider = new NousPortalProvider;
 
         $this->assertTrue($provider->isAvailable());
     }

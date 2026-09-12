@@ -14,6 +14,8 @@ use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class AgentController extends Controller
 {
@@ -44,7 +46,7 @@ class AgentController extends Controller
             foreach ($agentStats as $name => $stat) {
                 $agent = $this->orchestrator->getAgent($name);
                 $health = $agent ? $this->healthMonitor->checkAgentHealth($agent) : null;
-                
+
                 $agents[$name] = array_merge($stat, [
                     'status' => $health['status'] ?? 'active',
                     'last_run' => $health['last_execution'] ?? 'Never',
@@ -101,7 +103,7 @@ class AgentController extends Controller
 
             $agents = $this->orchestrator->getAgentStats();
 
-            if (!isset($agents[$agentName])) {
+            if (! isset($agents[$agentName])) {
                 abort(404);
             }
 
@@ -118,12 +120,12 @@ class AgentController extends Controller
             $learnedPatterns = [];
             $memoryPath = "agent_memory/global/{$agentName}.json";
             try {
-                if (\Illuminate\Support\Facades\Storage::exists($memoryPath)) {
-                    $data = json_decode(\Illuminate\Support\Facades\Storage::get($memoryPath), true);
+                if (Storage::exists($memoryPath)) {
+                    $data = json_decode(Storage::get($memoryPath), true);
                     $patterns = $data['stats'] ?? [];
                     foreach ($patterns as $key => $value) {
-                        if (is_array($value) && !empty($value)) {
-                            $learnedPatterns[] = ucfirst(str_replace('_', ' ', $key)) . ': ' . count($value) . ' samples collected';
+                        if (is_array($value) && ! empty($value)) {
+                            $learnedPatterns[] = ucfirst(str_replace('_', ' ', $key)).': '.count($value).' samples collected';
                         }
                     }
                 }
@@ -187,7 +189,7 @@ class AgentController extends Controller
      */
     private function getAgentDescription(string $name): string
     {
-        return match($name) {
+        return match ($name) {
             'content_agent' => 'Creates and optimizes content for social media, blogs, and marketing campaigns.',
             'analytics_agent' => 'Analyzes performance data, detects trends, and provides strategic recommendations.',
             'security_agent' => 'Performs security audits and vulnerability scans to protect agency assets.',
@@ -203,7 +205,7 @@ class AgentController extends Controller
      */
     private function getAgentCategory(string $name): string
     {
-        return match($name) {
+        return match ($name) {
             'content_agent', 'campaign_agent', 'social_media_agent' => 'Marketing',
             'analytics_agent' => 'Analytics',
             'security_agent' => 'Security',
@@ -259,8 +261,8 @@ class AgentController extends Controller
             $learnedPatterns = [];
 
             try {
-                if (\Illuminate\Support\Facades\Storage::exists($memoryPath)) {
-                    $data = json_decode(\Illuminate\Support\Facades\Storage::get($memoryPath), true);
+                if (Storage::exists($memoryPath)) {
+                    $data = json_decode(Storage::get($memoryPath), true);
                     $learnedPatterns = $data['stats'] ?? [];
                 }
             } catch (\Exception $e) {
@@ -336,7 +338,7 @@ class AgentController extends Controller
                 'success' => true,
                 'data' => $result->toArray(),
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
@@ -416,7 +418,7 @@ class AgentController extends Controller
             $input = $validated['input'] ?? [];
             $async = $validated['async'] ?? true;
 
-            $executionId = 'wf_' . uniqid();
+            $executionId = 'wf_'.uniqid();
             $agencyId = $request->user()->agency_id;
             $userId = $request->user()->id;
 
@@ -492,7 +494,7 @@ class AgentController extends Controller
                     'results' => array_map(fn ($r) => $r->toArray(), $results),
                 ],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',

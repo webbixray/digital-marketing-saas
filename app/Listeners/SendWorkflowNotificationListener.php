@@ -19,6 +19,7 @@ class SendWorkflowNotificationListener
 
         if ($user === null) {
             Log::warning("SendWorkflowNotificationListener: user [{$event->userId}] not found for workflow notification");
+
             return;
         }
 

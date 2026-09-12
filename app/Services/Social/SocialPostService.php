@@ -3,7 +3,6 @@
 namespace App\Services\Social;
 
 use App\Enums\PostStatus;
-use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -97,14 +96,14 @@ class SocialPostService
     protected function publishToPlatform(SocialPost $post): array
     {
         $account = $post->socialAccount;
-        
-        if (!$account) {
+
+        if (! $account) {
             throw new \RuntimeException("Social account not found for post #{$post->id}");
         }
 
         $result = $this->apiService->publish($account, $post);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             throw new \RuntimeException($result['error'] ?? 'Unknown error');
         }
 

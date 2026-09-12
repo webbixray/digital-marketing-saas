@@ -16,7 +16,7 @@ class OllamaProviderTest extends TestCase
 
     public function test_ollama_provider_returns_correct_name(): void
     {
-        $provider = new OllamaProvider();
+        $provider = new OllamaProvider;
 
         $this->assertEquals('ollama', $provider->getName());
         $this->assertEquals('Ollama (Local)', $provider->getDisplayName());
@@ -24,7 +24,7 @@ class OllamaProviderTest extends TestCase
 
     public function test_ollama_provider_returns_supported_models(): void
     {
-        $provider = new OllamaProvider();
+        $provider = new OllamaProvider;
 
         $models = $provider->getSupportedModels();
 
@@ -42,7 +42,7 @@ class OllamaProviderTest extends TestCase
 
     public function test_ollama_provider_calculates_zero_cost(): void
     {
-        $provider = new OllamaProvider();
+        $provider = new OllamaProvider;
 
         $response = new AiResponse(
             content: 'Test content',
@@ -64,7 +64,7 @@ class OllamaProviderTest extends TestCase
     {
         config(['platform.ai.providers.ollama.model' => 'llama3.1:8b']);
 
-        $provider = new OllamaProvider();
+        $provider = new OllamaProvider;
 
         $this->assertEquals('llama3.1:8b', $provider->getDefaultModel());
     }
@@ -73,7 +73,7 @@ class OllamaProviderTest extends TestCase
     {
         config(['platform.ai.providers.ollama.api_base_url' => 'http://localhost:11434']);
 
-        $provider = new OllamaProvider();
+        $provider = new OllamaProvider;
 
         // Should not throw exception
         $this->assertNotNull($provider);

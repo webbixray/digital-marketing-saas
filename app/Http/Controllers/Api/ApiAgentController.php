@@ -6,6 +6,7 @@ use App\Concerns\StructuredLogger;
 use App\Http\Controllers\Controller;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentHealthMonitor;
+use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\JsonResponse;
@@ -166,7 +167,7 @@ class ApiAgentController extends Controller
 
             $taskType = $request->input('task_type');
 
-            if (!$agent->canHandle($taskType)) {
+            if (! $agent->canHandle($taskType)) {
                 return response()->json([
                     'error' => "Agent [{$name}] cannot handle task type [{$taskType}].",
                     'supported_types' => $agent->getSupportedTaskTypes(),
@@ -174,7 +175,7 @@ class ApiAgentController extends Controller
             }
 
             $task = new AgentTask(
-                id: 'task_' . uniqid(),
+                id: 'task_'.uniqid(),
                 type: $taskType,
                 prompt: $request->input('prompt'),
                 data: $request->input('data', []),
@@ -204,7 +205,7 @@ class ApiAgentController extends Controller
                     ],
                 ];
 
-                if (!$result->success) {
+                if (! $result->success) {
                     $response['data']['error'] = $result->error;
 
                     $this->logAgentError('task_failed', [
@@ -367,7 +368,7 @@ class ApiAgentController extends Controller
     /**
      * Get agent instance by name from orchestrator.
      */
-    private function getAgentByName(string $name): ?\App\Services\AI\Agent\AgentInterface
+    private function getAgentByName(string $name): ?AgentInterface
     {
         return $this->orchestrator->getAgent($name);
     }

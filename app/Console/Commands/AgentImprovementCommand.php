@@ -34,6 +34,7 @@ class AgentImprovementCommand extends Command
         // Show learning report if requested
         if ($showReport) {
             $this->displayLearningReport($engine);
+
             return self::SUCCESS;
         }
 
@@ -41,7 +42,8 @@ class AgentImprovementCommand extends Command
         if ($agentName) {
             if (! $orchestrator->hasAgent($agentName)) {
                 $this->error("Agent [{$agentName}] not found.");
-                $this->line('Available agents: ' . implode(', ', $orchestrator->getAgentNames()));
+                $this->line('Available agents: '.implode(', ', $orchestrator->getAgentNames()));
+
                 return self::FAILURE;
             }
             $agents = [$agentName => $orchestrator->getAgent($agentName)];
@@ -51,6 +53,7 @@ class AgentImprovementCommand extends Command
 
         if ($agents->isEmpty()) {
             $this->warn('No agents registered. Register agents in the AgentOrchestrator first.');
+
             return self::SUCCESS;
         }
 

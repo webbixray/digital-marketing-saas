@@ -46,7 +46,7 @@ class OnboardingController extends Controller
             $validated = $request->validate([
                 'agency_name' => 'required|string|max:255',
                 'website' => 'nullable|url|max:255',
-                'timezone' => 'required|string|in:' . implode(',', timezone_identifiers_list()),
+                'timezone' => 'required|string|in:'.implode(',', timezone_identifiers_list()),
             ]);
 
             $agency = Auth::user()->agency;
@@ -88,13 +88,13 @@ class OnboardingController extends Controller
                     ->where('platform', $platform)
                     ->exists();
 
-                if (!$exists) {
+                if (! $exists) {
                     SocialAccount::create([
                         'agency_id' => $agency->id,
                         'platform' => $platform,
-                        'platform_username' => '@' . Str::slug($agency->name) . '_' . $platform,
+                        'platform_username' => '@'.Str::slug($agency->name).'_'.$platform,
                         'is_active' => true,
-                        'access_token' => 'pending_' . Str::random(32),
+                        'access_token' => 'pending_'.Str::random(32),
                     ]);
                 }
             }
@@ -167,7 +167,7 @@ class OnboardingController extends Controller
         if ($request->isMethod('post')) {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'type' => 'required|in:' . implode(',', array_keys(Campaign::CAMPAIGN_TYPES)),
+                'type' => 'required|in:'.implode(',', array_keys(Campaign::CAMPAIGN_TYPES)),
                 'description' => 'nullable|string|max:1000',
                 'objective' => 'nullable|string|max:255',
                 'start_date' => 'nullable|date|after_or_equal:today',
@@ -179,7 +179,7 @@ class OnboardingController extends Controller
             Campaign::create([
                 'agency_id' => $agency->id,
                 'name' => $validated['name'],
-                'slug' => Str::slug($validated['name']) . '-' . uniqid(),
+                'slug' => Str::slug($validated['name']).'-'.uniqid(),
                 'type' => $validated['type'],
                 'status' => 'draft',
                 'description' => $validated['description'] ?? null,

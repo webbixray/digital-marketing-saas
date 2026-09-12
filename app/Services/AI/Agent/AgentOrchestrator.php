@@ -4,7 +4,6 @@ namespace App\Services\AI\Agent;
 
 use App\Services\AI\Gateway\AiGateway;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
 
 class AgentOrchestrator
 {
@@ -32,7 +31,7 @@ class AgentOrchestrator
         $this->agents[$name] = $agent;
 
         // Initialize routing weights for this agent
-        if (!isset($this->routingWeights[$name])) {
+        if (! isset($this->routingWeights[$name])) {
             $this->routingWeights[$name] = [];
         }
 
@@ -48,6 +47,7 @@ class AgentOrchestrator
 
         if ($agent === null) {
             Log::warning("AgentOrchestrator: no agent found for task type [{$task->type}]");
+
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: 'unknown',
@@ -89,7 +89,7 @@ class AgentOrchestrator
                 );
             }
 
-            Log::info("AgentOrchestrator: task [{$task->id}] dispatched to [{$agentName}], success: " . ($result->success ? 'yes' : 'no'));
+            Log::info("AgentOrchestrator: task [{$task->id}] dispatched to [{$agentName}], success: ".($result->success ? 'yes' : 'no'));
 
             return $result;
         } catch (\Exception $e) {
@@ -113,7 +113,7 @@ class AgentOrchestrator
     /**
      * Execute a multi-step workflow where each step's output feeds into the next.
      *
-     * @param array<AgentTask> $tasks
+     * @param  array<AgentTask>  $tasks
      * @return array<AgentResult>
      */
     public function dispatchWorkflow(array $tasks, ?AgentContext $context = null): array
@@ -131,7 +131,7 @@ class AgentOrchestrator
             $results[] = $result;
 
             // If a step fails, stop the workflow
-            if (!$result->success) {
+            if (! $result->success) {
                 Log::warning("AgentOrchestrator: workflow stopped at step [{$index}], agent [{$result->agentName}] failed");
                 break;
             }
@@ -238,11 +238,11 @@ class AgentOrchestrator
             $taskType = $entry['task_type'];
             $agentName = $entry['agent_name'];
 
-            if (!isset($taskTypeStats[$taskType])) {
+            if (! isset($taskTypeStats[$taskType])) {
                 $taskTypeStats[$taskType] = [];
             }
 
-            if (!isset($taskTypeStats[$taskType][$agentName])) {
+            if (! isset($taskTypeStats[$taskType][$agentName])) {
                 $taskTypeStats[$taskType][$agentName] = [
                     'total' => 0,
                     'successes' => 0,
@@ -275,7 +275,7 @@ class AgentOrchestrator
             }
         }
 
-        Log::info('AgentOrchestrator: learning complete, weights updated for ' . count($taskTypeStats) . ' task types');
+        Log::info('AgentOrchestrator: learning complete, weights updated for '.count($taskTypeStats).' task types');
     }
 
     /**
@@ -325,12 +325,14 @@ class AgentOrchestrator
             if ($agent === null) {
                 Log::warning("AgentOrchestrator: collaborative dispatch - agent [{$name}] not found");
                 $errors[] = "Agent not found: {$name}";
+
                 continue;
             }
 
-            if (!$agent->canHandle($task->type)) {
+            if (! $agent->canHandle($task->type)) {
                 Log::warning("AgentOrchestrator: collaborative dispatch - agent [{$name}] cannot handle [{$task->type}]");
                 $errors[] = "Agent [{$name}] cannot handle task type: {$task->type}";
+
                 continue;
             }
 
@@ -352,12 +354,12 @@ class AgentOrchestrator
 
         // Merge outputs from successful agents
         $mergedOutput = $this->mergeCollaborativeOutputs($outputs, $task->type);
-        $allSuccessful = !empty($results) && count(array_filter($results, fn ($r) => $r->success)) === count($results);
-        $anySuccessful = !empty(array_filter($results, fn ($r) => $r->success));
+        $allSuccessful = ! empty($results) && count(array_filter($results, fn ($r) => $r->success)) === count($results);
+        $anySuccessful = ! empty(array_filter($results, fn ($r) => $r->success));
 
         return new AgentResult(
             taskId: $task->id,
-            agentName: 'collaborative:' . implode(',', $agentNames),
+            agentName: 'collaborative:'.implode(',', $agentNames),
             success: $anySuccessful,
             output: $mergedOutput,
             costUsd: $totalCost,
@@ -422,7 +424,7 @@ class AgentOrchestrator
             'total_collaborations' => count($collaborativeHistory),
             'collaboration_by_type' => $categoryStats,
             'agent_collaboration_frequency' => $agentCollaborationCount,
-            'most_collaborative_agent' => !empty($agentCollaborationCount) ? array_key_first(collect($agentCollaborationCount)->sortDesc()->toArray()) : null,
+            'most_collaborative_agent' => ! empty($agentCollaborationCount) ? array_key_first(collect($agentCollaborationCount)->sortDesc()->toArray()) : null,
         ];
     }
 

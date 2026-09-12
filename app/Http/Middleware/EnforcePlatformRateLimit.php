@@ -20,13 +20,13 @@ class EnforcePlatformRateLimit
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return $next($request);
         }
 
         $agencyId = $user->agency_id;
 
-        if (!$this->rateLimitService->isAllowed($agencyId, $platform, $action)) {
+        if (! $this->rateLimitService->isAllowed($agencyId, $platform, $action)) {
             $remaining = $this->rateLimitService->getSecondsUntilReset($agencyId, $platform, $action);
 
             if ($request->expectsJson()) {

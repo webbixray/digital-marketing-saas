@@ -2,14 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Agency;
-use App\Services\AI\Agent\AgentOrchestrator;
-use App\Services\AI\Agent\AgentTask;
 use App\Services\AI\Gateway\AiRequest;
-use App\Services\AI\Gateway\AiResponse;
 use App\Services\AI\Gateway\Providers\GroqProvider;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\App;
 
 class ContentGenerateCommand extends Command
 {
@@ -42,10 +37,11 @@ class ContentGenerateCommand extends Command
         $this->newLine();
 
         try {
-            $provider = new GroqProvider();
-            
-            if (!$provider->isAvailable()) {
+            $provider = new GroqProvider;
+
+            if (! $provider->isAvailable()) {
                 $this->error('Groq API key is not configured!');
+
                 return self::FAILURE;
             }
 
@@ -58,9 +54,9 @@ class ContentGenerateCommand extends Command
 
             $this->info('Calling AI API...');
             $startTime = microtime(true);
-            
+
             $response = $provider->send($request);
-            
+
             $elapsed = round((microtime(true) - $startTime) * 1000, 2);
 
             $this->newLine();
@@ -77,7 +73,8 @@ class ContentGenerateCommand extends Command
         } catch (\Exception $e) {
             $this->newLine();
             $this->error('❌ Content Generation Failed!');
-            $this->line('Error: ' . $e->getMessage());
+            $this->line('Error: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -86,9 +83,9 @@ class ContentGenerateCommand extends Command
     {
         return match ($type) {
             'post' => "Write an engaging {$platform} post about the future of AI in digital marketing. Keep it under 280 characters for Twitter or 2000 for LinkedIn. Include relevant hashtags.",
-            'campaign' => "Create a social media campaign concept for launching a new AI-powered marketing platform. Include campaign name, target audience, key messages, and 3 sample posts.",
-            'email' => "Write a professional email announcing our new AI marketing platform to potential customers. Highlight key benefits and include a clear call to action.",
-            'analytics' => "Analyze the following social media metrics and provide actionable recommendations: Engagement rate: 4.5%, Reach: 50,000, Click-through rate: 2.1%, Conversion rate: 0.8%. What should we improve?",
+            'campaign' => 'Create a social media campaign concept for launching a new AI-powered marketing platform. Include campaign name, target audience, key messages, and 3 sample posts.',
+            'email' => 'Write a professional email announcing our new AI marketing platform to potential customers. Highlight key benefits and include a clear call to action.',
+            'analytics' => 'Analyze the following social media metrics and provide actionable recommendations: Engagement rate: 4.5%, Reach: 50,000, Click-through rate: 2.1%, Conversion rate: 0.8%. What should we improve?',
             default => "Write marketing content about AI in digital marketing for {$platform}.",
         };
     }

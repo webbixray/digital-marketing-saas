@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\Workflows\CampaignOptimizationWorkflow;
@@ -14,8 +15,8 @@ use App\Services\AI\Agent\Workflows\WeeklyReportWorkflow;
 use App\Services\AI\Agent\Workflows\WorkflowRunner;
 use App\Services\AI\Gateway\AiGateway;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\ServiceProvider;
 
 class AgentServiceProvider extends ServiceProvider
 {
@@ -76,7 +77,7 @@ class AgentServiceProvider extends ServiceProvider
     {
         $agentDir = app_path('Services/AI/Agent/Agents');
 
-        if (!is_dir($agentDir)) {
+        if (! is_dir($agentDir)) {
             Log::info('AgentServiceProvider: no Agents directory found, skipping auto-discovery');
 
             return;
@@ -85,15 +86,15 @@ class AgentServiceProvider extends ServiceProvider
         $files = File::files($agentDir);
 
         foreach ($files as $file) {
-            $className = 'App\\Services\\AI\\Agent\\Agents\\' . $file->getFilenameWithoutExtension();
+            $className = 'App\\Services\\AI\\Agent\\Agents\\'.$file->getFilenameWithoutExtension();
 
-            if (!class_exists($className)) {
+            if (! class_exists($className)) {
                 continue;
             }
 
             $interfaces = class_implements($className);
 
-            if ($interfaces === false || !in_array(\App\Services\AI\Agent\AgentInterface::class, $interfaces)) {
+            if ($interfaces === false || ! in_array(AgentInterface::class, $interfaces)) {
                 continue;
             }
 
@@ -105,6 +106,6 @@ class AgentServiceProvider extends ServiceProvider
             }
         }
 
-        Log::info('AgentServiceProvider: auto-discovery complete, registered agents: ' . implode(', ', $orchestrator->getRegisteredAgents()));
+        Log::info('AgentServiceProvider: auto-discovery complete, registered agents: '.implode(', ', $orchestrator->getRegisteredAgents()));
     }
 }

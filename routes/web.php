@@ -15,9 +15,9 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CancellationController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentCalendarController;
 use App\Http\Controllers\ContentLibraryController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentTemplateController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
@@ -79,13 +79,15 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
+
     return redirect()->route('dashboard')->with('success', 'Email verified successfully!');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
+
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
@@ -382,7 +384,7 @@ Route::get('/.well-known/security.txt', function () {
     $content .= "Expires: {$expiry}\n";
     $content .= "Preferred-Languages: en\n";
     $content .= "Canonical: https://digitalmarketingsaas.com/.well-known/security.txt\n";
-    
+
     return response($content, 200, [
         'Content-Type' => 'text/plain; charset=utf-8',
     ]);

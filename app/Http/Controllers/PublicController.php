@@ -104,7 +104,7 @@ class PublicController extends Controller
 
         // Log the contact request
         Log::info('Contact form submitted', [
-            'name' => $data['first_name'] . ' ' . $data['last_name'],
+            'name' => $data['first_name'].' '.$data['last_name'],
             'email' => $data['email'],
             'subject' => $data['subject'],
         ]);
@@ -120,7 +120,7 @@ class PublicController extends Controller
                     message: $data['message'],
                 ));
         } catch (\Exception $e) {
-            Log::warning('Contact email failed: ' . $e->getMessage());
+            Log::warning('Contact email failed: '.$e->getMessage());
             // Don't fail the submission if email fails
         }
 
@@ -146,7 +146,7 @@ class PublicController extends Controller
         try {
             Mail::to($email)->send(new NewsletterSubscription($email));
         } catch (\Exception $e) {
-            Log::warning('Newsletter email failed: ' . $e->getMessage());
+            Log::warning('Newsletter email failed: '.$e->getMessage());
         }
 
         return back()->with('success', 'Thank you for subscribing! You\'ll receive our latest updates.');

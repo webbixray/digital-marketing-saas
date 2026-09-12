@@ -18,7 +18,7 @@ class OpenRouterProviderTest extends TestCase
     {
         config(['platform.ai.providers.openrouter.api_key' => 'sk-or-test-key']);
 
-        $provider = new OpenRouterProvider();
+        $provider = new OpenRouterProvider;
 
         $this->assertTrue($provider->isAvailable());
         $this->assertEquals('openrouter', $provider->getName());
@@ -29,7 +29,7 @@ class OpenRouterProviderTest extends TestCase
     {
         config(['platform.ai.providers.openrouter.api_key' => '']);
 
-        $provider = new OpenRouterProvider();
+        $provider = new OpenRouterProvider;
 
         $this->assertFalse($provider->isAvailable());
     }
@@ -37,7 +37,7 @@ class OpenRouterProviderTest extends TestCase
     public function test_openrouter_provider_calculates_cost_correctly(): void
     {
         config(['platform.ai.providers.openrouter.api_key' => 'sk-or-test-key']);
-        $provider = new OpenRouterProvider();
+        $provider = new OpenRouterProvider;
 
         $response = new AiResponse(
             content: 'Test content',

@@ -99,7 +99,7 @@ return new class extends Migration
                 Schema::table($table, function (Blueprint $blueprint) use ($index) {
                     $blueprint->dropIndex($index);
                 });
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Index may not exist
             }
         }

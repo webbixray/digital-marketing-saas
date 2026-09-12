@@ -278,7 +278,7 @@ abstract class AbstractAgent implements AgentInterface
     /**
      * Get learned patterns from agency-specific memory.
      */
-    protected function getLearnedPatterns(AgentContext $context, string $taskType = null): array
+    protected function getLearnedPatterns(AgentContext $context, ?string $taskType = null): array
     {
         try {
             $path = $this->getMemoryPath($context);

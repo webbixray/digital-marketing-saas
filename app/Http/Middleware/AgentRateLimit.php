@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class AgentRateLimit
@@ -26,13 +28,13 @@ class AgentRateLimit
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if (!$user || !$user->agency) {
+        if (! $user || ! $user->agency) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Unauthorized.'], 401);
             }
@@ -49,10 +51,10 @@ class AgentRateLimit
         }
 
         $agencyId = $agency->id;
-        $cacheKey = self::CACHE_PREFIX . $agencyId;
+        $cacheKey = self::CACHE_PREFIX.$agencyId;
         $windowSeconds = 60; // 1 minute window
 
-        $currentCount = (int) \Illuminate\Support\Facades\Cache::get($cacheKey, 0);
+        $currentCount = (int) Cache::get($cacheKey, 0);
 
         if ($currentCount >= $limit) {
             if ($request->expectsJson()) {
@@ -72,16 +74,16 @@ class AgentRateLimit
 
         // Set or extend the cache entry
         if ($currentCount === 0) {
-            \Illuminate\Support\Facades\Cache::put($cacheKey, $newCount, $windowSeconds);
+            Cache::put($cacheKey, $newCount, $windowSeconds);
         } else {
             // Keep the same TTL as the original entry
-            \Illuminate\Support\Facades\Cache::put($cacheKey, $newCount, $windowSeconds);
+            Cache::put($cacheKey, $newCount, $windowSeconds);
         }
 
         $response = $next($request);
 
         // Add rate limit headers to response
-        if ($response instanceof \Illuminate\Http\JsonResponse || $response instanceof \Illuminate\Http\Response) {
+        if ($response instanceof JsonResponse || $response instanceof \Illuminate\Http\Response) {
             $response->headers->set('X-RateLimit-Limit', (string) $limit);
             $response->headers->set('X-RateLimit-Remaining', (string) max(0, $limit - $newCount));
             $response->headers->set('X-RateLimit-Reset', (string) (time() + $this->getRetryAfter($cacheKey, $windowSeconds)));

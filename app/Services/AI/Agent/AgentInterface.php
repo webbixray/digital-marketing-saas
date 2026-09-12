@@ -2,10 +2,6 @@
 
 namespace App\Services\AI\Agent;
 
-use App\Services\AI\Agent\AgentTask;
-use App\Services\AI\Agent\AgentContext;
-use App\Services\AI\Agent\AgentResult;
-
 interface AgentInterface
 {
     /**

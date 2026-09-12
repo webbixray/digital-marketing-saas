@@ -42,6 +42,7 @@ class CommentController extends Controller
         if ((int) $comment->agency_id !== (int) $request->user()->agency_id) {
             abort(403);
         }
+
         return response()->json($comment->load('user'));
     }
 

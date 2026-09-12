@@ -2,44 +2,53 @@
 
 namespace App\Console\Commands;
 
-use App\Services\AI\Gateway\AiGateway;
 use App\Services\AI\Gateway\AiRequest;
+use App\Services\AI\Gateway\Providers\AnthropicProvider;
+use App\Services\AI\Gateway\Providers\GoogleProvider;
+use App\Services\AI\Gateway\Providers\GroqProvider;
+use App\Services\AI\Gateway\Providers\MistralProvider;
+use App\Services\AI\Gateway\Providers\NousPortalProvider;
 use App\Services\AI\Gateway\Providers\NvidiaNimProvider;
+use App\Services\AI\Gateway\Providers\OllamaProvider;
+use App\Services\AI\Gateway\Providers\OpenAiProvider;
+use App\Services\AI\Gateway\Providers\OpenRouterProvider;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\App;
 
 class AiTestCommand extends Command
 {
     protected $signature = 'ai:test {provider=default : Provider to test (openai, anthropic, google, nvidia_nim, nous_portal, ollama, groq, openrouter, mistral)} {--prompt= : Custom prompt to test}';
+
     protected $description = 'Test AI provider connection and generate content';
 
     public function handle(): int
     {
         $providerName = $this->argument('provider');
-        
+
         if ($providerName === 'default') {
             $providerName = config('platform.ai.default_provider', 'openai');
         }
-        
+
         $this->info("Testing AI Provider: {$providerName}");
         $this->newLine();
 
         // Create the provider directly (bypass gateway routing)
         $provider = $this->createProvider($providerName);
-        
-        if (!$provider) {
+
+        if (! $provider) {
             $this->error("Provider [{$providerName}] not found or could not be created!");
+
             return self::FAILURE;
         }
 
-        if (!$provider->isAvailable()) {
+        if (! $provider->isAvailable()) {
             $this->error("Provider [{$providerName}] is not available!");
             $this->line('Add the required API key to your .env file.');
+
             return self::FAILURE;
         }
 
         $this->info("Provider: {$provider->getDisplayName()}");
-        $this->info("Supported models: " . implode(', ', $provider->getSupportedModels()));
+        $this->info('Supported models: '.implode(', ', $provider->getSupportedModels()));
         $this->newLine();
 
         // Create test prompt
@@ -59,9 +68,9 @@ class AiTestCommand extends Command
 
             $this->info('Calling AI API...');
             $startTime = microtime(true);
-            
+
             $response = $provider->send($request);
-            
+
             $elapsed = round((microtime(true) - $startTime) * 1000, 2);
 
             $this->newLine();
@@ -81,9 +90,9 @@ class AiTestCommand extends Command
         } catch (\Exception $e) {
             $this->newLine();
             $this->error('❌ API Call Failed!');
-            $this->line('Error: ' . $e->getMessage());
+            $this->line('Error: '.$e->getMessage());
             $this->newLine();
-            
+
             if (str_contains($e->getMessage(), '401')) {
                 $this->line('💡 Your API key may be invalid. Check your provider dashboard.');
             } elseif (str_contains($e->getMessage(), '403')) {
@@ -114,16 +123,16 @@ class AiTestCommand extends Command
 
     private function createProvider(string $providerName)
     {
-        return match($providerName) {
-            'openai' => new \App\Services\AI\Gateway\Providers\OpenAiProvider(),
-            'anthropic' => new \App\Services\AI\Gateway\Providers\AnthropicProvider(),
-            'google' => new \App\Services\AI\Gateway\Providers\GoogleProvider(),
-            'nvidia_nim' => new NvidiaNimProvider(),
-            'nous_portal' => new \App\Services\AI\Gateway\Providers\NousPortalProvider(),
-            'ollama' => new \App\Services\AI\Gateway\Providers\OllamaProvider(),
-            'groq' => new \App\Services\AI\Gateway\Providers\GroqProvider(),
-            'mistral' => new \App\Services\AI\Gateway\Providers\MistralProvider(),
-            'openrouter' => new \App\Services\AI\Gateway\Providers\OpenRouterProvider(),
+        return match ($providerName) {
+            'openai' => new OpenAiProvider,
+            'anthropic' => new AnthropicProvider,
+            'google' => new GoogleProvider,
+            'nvidia_nim' => new NvidiaNimProvider,
+            'nous_portal' => new NousPortalProvider,
+            'ollama' => new OllamaProvider,
+            'groq' => new GroqProvider,
+            'mistral' => new MistralProvider,
+            'openrouter' => new OpenRouterProvider,
             default => null,
         };
     }

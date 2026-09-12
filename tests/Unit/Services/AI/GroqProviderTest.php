@@ -16,7 +16,7 @@ class GroqProviderTest extends TestCase
 
     public function test_groq_provider_returns_correct_name(): void
     {
-        $provider = new GroqProvider();
+        $provider = new GroqProvider;
 
         $this->assertEquals('groq', $provider->getName());
         $this->assertEquals('Groq', $provider->getDisplayName());
@@ -26,7 +26,7 @@ class GroqProviderTest extends TestCase
     {
         config(['platform.ai.providers.groq.api_key' => 'gsk-test-key']);
 
-        $provider = new GroqProvider();
+        $provider = new GroqProvider;
 
         $this->assertTrue($provider->isAvailable());
     }
@@ -35,7 +35,7 @@ class GroqProviderTest extends TestCase
     {
         config(['platform.ai.providers.groq.api_key' => '']);
 
-        $provider = new GroqProvider();
+        $provider = new GroqProvider;
 
         $this->assertFalse($provider->isAvailable());
     }
@@ -43,7 +43,7 @@ class GroqProviderTest extends TestCase
     public function test_groq_provider_returns_supported_models(): void
     {
         config(['platform.ai.providers.groq.api_key' => 'gsk-test-key']);
-        $provider = new GroqProvider();
+        $provider = new GroqProvider;
 
         $models = $provider->getSupportedModels();
 
@@ -57,7 +57,7 @@ class GroqProviderTest extends TestCase
     public function test_groq_provider_calculates_zero_cost(): void
     {
         config(['platform.ai.providers.groq.api_key' => 'gsk-test-key']);
-        $provider = new GroqProvider();
+        $provider = new GroqProvider;
 
         // Groq models on free tier have $0 cost
         $response = new AiResponse(

@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Services\AI;
 
-use App\Services\AI\Gateway\AiRequest;
 use App\Services\AI\Gateway\AiResponse;
 use App\Services\AI\Gateway\Providers\MistralProvider;
 use Tests\TestCase;
@@ -19,7 +18,7 @@ class MistralProviderTest extends TestCase
     {
         config(['platform.ai.api_key' => 'test-mistral-key']);
 
-        $provider = new MistralProvider();
+        $provider = new MistralProvider;
 
         $this->assertTrue($provider->isAvailable());
         $this->assertEquals('mistral', $provider->getName());
@@ -29,7 +28,7 @@ class MistralProviderTest extends TestCase
     public function test_mistral_provider_returns_supported_models(): void
     {
         config(['platform.ai.api_key' => 'test-mistral-key']);
-        $provider = new MistralProvider();
+        $provider = new MistralProvider;
 
         $models = $provider->getSupportedModels();
 
@@ -43,7 +42,7 @@ class MistralProviderTest extends TestCase
     public function test_mistral_provider_calculates_cost_correctly(): void
     {
         config(['platform.ai.api_key' => 'test-mistral-key']);
-        $provider = new MistralProvider();
+        $provider = new MistralProvider;
 
         $response = new AiResponse(
             content: 'Test content',

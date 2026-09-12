@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
+use App\Services\Social\SocialApiService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -309,13 +310,13 @@ class UserWorkflowTest extends TestCase
         ]);
 
         // Mock the SocialApiService to avoid real API calls
-        $mock = \Mockery::mock(\App\Services\Social\SocialApiService::class);
+        $mock = \Mockery::mock(SocialApiService::class);
         $mock->shouldReceive('publish')->once()->andReturn([
             'success' => true,
             'platform_post_id' => 'mock_123',
             'url' => 'https://example.com/mock',
         ]);
-        $this->app->instance(\App\Services\Social\SocialApiService::class, $mock);
+        $this->app->instance(SocialApiService::class, $mock);
 
         $response = $this->post("/social/posts/{$post->id}/publish");
         $response->assertRedirect('/social/posts');

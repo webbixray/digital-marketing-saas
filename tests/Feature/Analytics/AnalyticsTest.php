@@ -3,6 +3,7 @@
 namespace Tests\Feature\Analytics;
 
 use App\Models\Agency;
+use App\Models\SocialPost;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -35,11 +36,11 @@ class AnalyticsTest extends TestCase
 
     public function test_it_shows_correct_post_stats(): void
     {
-        \App\Models\SocialPost::factory()->count(5)->create([
+        SocialPost::factory()->count(5)->create([
             'agency_id' => $this->agency->id,
             'status' => 'published',
         ]);
-        \App\Models\SocialPost::factory()->count(3)->create([
+        SocialPost::factory()->count(3)->create([
             'agency_id' => $this->agency->id,
             'status' => 'scheduled',
         ]);

@@ -31,6 +31,7 @@ class ReportAgent extends AbstractAgent
      * Client satisfaction thresholds.
      */
     private const SATISFACTION_THRESHOLD_HIGH = 0.8;
+
     private const SATISFACTION_THRESHOLD_MEDIUM = 0.5;
 
     /**
@@ -40,7 +41,7 @@ class ReportAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -50,7 +51,7 @@ class ReportAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -108,6 +109,7 @@ class ReportAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -125,8 +127,8 @@ class ReportAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highSatisfaction = count(array_filter($satisfactionScores, fn($s) => $s >= self::SATISFACTION_THRESHOLD_HIGH));
-        $mediumSatisfaction = count(array_filter($satisfactionScores, fn($s) => $s >= self::SATISFACTION_THRESHOLD_MEDIUM));
+        $highSatisfaction = count(array_filter($satisfactionScores, fn ($s) => $s >= self::SATISFACTION_THRESHOLD_HIGH));
+        $mediumSatisfaction = count(array_filter($satisfactionScores, fn ($s) => $s >= self::SATISFACTION_THRESHOLD_MEDIUM));
 
         $weightedSuccesses = ($highSatisfaction * 2) + $mediumSatisfaction;
 
@@ -180,8 +182,8 @@ class ReportAgent extends AbstractAgent
             $prompt .= "Industry: {$clientData['industry']}\n\n";
         }
 
-        $prompt .= "Social Media Performance:\n" . json_encode($socialData, JSON_PRETTY_PRINT) . "\n\n";
-        $prompt .= "Campaign Performance:\n" . json_encode($campaignData, JSON_PRETTY_PRINT) . "\n\n";
+        $prompt .= "Social Media Performance:\n".json_encode($socialData, JSON_PRETTY_PRINT)."\n\n";
+        $prompt .= "Campaign Performance:\n".json_encode($campaignData, JSON_PRETTY_PRINT)."\n\n";
 
         $prompt .= "Provide:\n";
         $prompt .= "1. Executive Summary\n";
@@ -246,15 +248,15 @@ class ReportAgent extends AbstractAgent
         $prompt = "Generate a comprehensive monthly report for the following data:\n\n";
         $prompt .= "Report period: Last 30 days\n";
         $prompt .= "Format: {$suggestedFormat}\n";
-        $prompt .= "Include month-over-month comparison: " . ($includeComparison ? 'Yes' : 'No') . "\n\n";
+        $prompt .= 'Include month-over-month comparison: '.($includeComparison ? 'Yes' : 'No')."\n\n";
 
         if ($clientData) {
             $prompt .= "Client: {$clientData['name']}\n";
             $prompt .= "Industry: {$clientData['industry']}\n\n";
         }
 
-        $prompt .= "Social Media Performance:\n" . json_encode($socialData, JSON_PRETTY_PRINT) . "\n\n";
-        $prompt .= "Campaign Performance:\n" . json_encode($campaignData, JSON_PRETTY_PRINT) . "\n\n";
+        $prompt .= "Social Media Performance:\n".json_encode($socialData, JSON_PRETTY_PRINT)."\n\n";
+        $prompt .= "Campaign Performance:\n".json_encode($campaignData, JSON_PRETTY_PRINT)."\n\n";
 
         $prompt .= "Provide:\n";
         $prompt .= "1. Executive Summary\n";
@@ -307,7 +309,7 @@ class ReportAgent extends AbstractAgent
         $campaignId = $task->data['campaign_id'] ?? null;
         $format = $task->data['format'] ?? 'detailed';
 
-        if (!$campaignId) {
+        if (! $campaignId) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -317,7 +319,7 @@ class ReportAgent extends AbstractAgent
 
         $campaign = Campaign::where('agency_id', $agency->id)->find($campaignId);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -327,7 +329,7 @@ class ReportAgent extends AbstractAgent
 
         // Gather campaign-specific data
         $posts = SocialPost::where('agency_id', $agency->id)
-            ->whereHas('campaigns', fn($q) => $q->where('campaign_id', $campaign->id))
+            ->whereHas('campaigns', fn ($q) => $q->where('campaign_id', $campaign->id))
             ->get();
 
         $client = $campaign->client;
@@ -358,12 +360,12 @@ class ReportAgent extends AbstractAgent
         $prompt .= "- Engagement Rate: {$campaign->engagement_rate}\n\n";
 
         $prompt .= "Platform Breakdown:\n";
-        $platformBreakdown = $posts->groupBy('platform')->map(fn($group) => [
+        $platformBreakdown = $posts->groupBy('platform')->map(fn ($group) => [
             'posts' => $group->count(),
             'avg_engagement' => round($group->avg('engagement_rate') ?? 0, 2),
             'total_views' => $group->sum('views_count'),
         ]);
-        $prompt .= json_encode($platformBreakdown, JSON_PRETTY_PRINT) . "\n\n";
+        $prompt .= json_encode($platformBreakdown, JSON_PRETTY_PRINT)."\n\n";
 
         $prompt .= "Provide:\n";
         $prompt .= "1. Campaign Overview\n";
@@ -429,16 +431,16 @@ class ReportAgent extends AbstractAgent
 
         $prompt = "Generate a custom report based on the following configuration:\n\n";
         $prompt .= "Date Range: {$dateRange}\n";
-        $prompt .= "Metrics: " . implode(', ', $metrics) . "\n";
-        $prompt .= "Sections: " . implode(', ', $sections) . "\n";
+        $prompt .= 'Metrics: '.implode(', ', $metrics)."\n";
+        $prompt .= 'Sections: '.implode(', ', $sections)."\n";
         $prompt .= "Format: {$suggestedFormat}\n\n";
 
-        $prompt .= "Social Media Data:\n" . json_encode($socialData, JSON_PRETTY_PRINT) . "\n\n";
-        $prompt .= "Campaign Data:\n" . json_encode($campaignData, JSON_PRETTY_PRINT) . "\n\n";
+        $prompt .= "Social Media Data:\n".json_encode($socialData, JSON_PRETTY_PRINT)."\n\n";
+        $prompt .= "Campaign Data:\n".json_encode($campaignData, JSON_PRETTY_PRINT)."\n\n";
 
         $prompt .= "Include the following sections:\n";
         foreach ($sections as $section) {
-            $prompt .= "- " . ucfirst($section) . "\n";
+            $prompt .= '- '.ucfirst($section)."\n";
         }
 
         $prompt .= "\nProvide a well-structured report with the requested metrics and insights.";
@@ -509,11 +511,11 @@ class ReportAgent extends AbstractAgent
             'total_comments' => $posts->sum('comments_count'),
             'total_shares' => $posts->sum('shares_count'),
             'total_clicks' => $posts->sum('clicks_count'),
-            'platforms' => $posts->groupBy('platform')->map(fn($g) => [
+            'platforms' => $posts->groupBy('platform')->map(fn ($g) => [
                 'count' => $g->count(),
                 'avg_engagement' => round($g->avg('engagement_rate') ?? 0, 2),
             ])->toArray(),
-            'top_content' => $posts->sortByDesc('engagement_rate')->take(5)->map(fn($p) => [
+            'top_content' => $posts->sortByDesc('engagement_rate')->take(5)->map(fn ($p) => [
                 'content_preview' => substr($p->content ?? '', 0, 100),
                 'engagement_rate' => $p->engagement_rate,
                 'platform' => $p->platform,
@@ -553,7 +555,7 @@ class ReportAgent extends AbstractAgent
             'avg_engagement' => round($campaigns->avg('engagement_rate') ?? 0, 2),
             'total_views' => $campaigns->sum('views_count'),
             'total_clicks' => $campaigns->sum('clicks_count'),
-            'campaigns' => $campaigns->map(fn($c) => [
+            'campaigns' => $campaigns->map(fn ($c) => [
                 'name' => $c->name,
                 'type' => $c->type,
                 'status' => $c->status,
@@ -570,7 +572,7 @@ class ReportAgent extends AbstractAgent
     {
         $client = Client::where('agency_id', $agency->id)->find($clientId);
 
-        if (!$client) {
+        if (! $client) {
             return null;
         }
 
@@ -631,7 +633,7 @@ class ReportAgent extends AbstractAgent
 
         // Track format-specific satisfaction
         $formatSatisfaction = $this->executionStats['report_format_satisfaction'] ?? [];
-        if (!isset($formatSatisfaction[$format])) {
+        if (! isset($formatSatisfaction[$format])) {
             $formatSatisfaction[$format] = ['total' => 0, 'sum' => 0, 'avg' => 0];
         }
         $formatSatisfaction[$format]['total']++;
@@ -639,7 +641,7 @@ class ReportAgent extends AbstractAgent
         $formatSatisfaction[$format]['avg'] = $formatSatisfaction[$format]['sum'] / $formatSatisfaction[$format]['total'];
 
         // Sort by average satisfaction descending
-        uasort($formatSatisfaction, fn($a, $b) => $b['avg'] <=> $a['avg']);
+        uasort($formatSatisfaction, fn ($a, $b) => $b['avg'] <=> $a['avg']);
         $this->executionStats['report_format_satisfaction'] = $formatSatisfaction;
 
         $this->persistMemory();

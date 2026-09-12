@@ -4,15 +4,18 @@ use App\Http\Controllers\Api\ApiAgencyController;
 use App\Http\Controllers\Api\ApiAgentController;
 use App\Http\Controllers\Api\ApiAgentWorkflowController;
 use App\Http\Controllers\Api\ApiAiController;
-use App\Http\Controllers\Api\ApiRoleController;
 use App\Http\Controllers\Api\ApiCampaignController;
 use App\Http\Controllers\Api\ApiClientController;
 use App\Http\Controllers\Api\ApiDashboardController;
 use App\Http\Controllers\Api\ApiInvoiceController;
+use App\Http\Controllers\Api\ApiReportController;
+use App\Http\Controllers\Api\ApiRoleController;
 use App\Http\Controllers\Api\ApiSocialAccountController;
 use App\Http\Controllers\Api\ApiSocialPostController;
-use App\Http\Controllers\Api\ApiReportController;
 use App\Http\Controllers\Api\ApiWorkflowController;
+use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,23 +42,23 @@ Route::prefix('v1')->middleware(['auth', 'agency', 'throttle:60,1'])->as('api.')
 
     // Agent-powered Report routes
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::post('/agent-generate', [\App\Http\Controllers\ReportController::class, 'generateWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{report}/agent-recommendations', [\App\Http\Controllers\ReportController::class, 'getAgentRecommendations'])->middleware('throttle:10,1');
-        Route::post('/agent-schedule', [\App\Http\Controllers\ReportController::class, 'scheduleAgentReport'])->middleware('throttle:5,1');
+        Route::post('/agent-generate', [ReportController::class, 'generateWithAgent'])->middleware('throttle:5,1');
+        Route::get('/{report}/agent-recommendations', [ReportController::class, 'getAgentRecommendations'])->middleware('throttle:10,1');
+        Route::post('/agent-schedule', [ReportController::class, 'scheduleAgentReport'])->middleware('throttle:5,1');
     });
 
     // Agent-powered Campaign routes
     Route::prefix('campaigns')->name('campaigns.')->group(function () {
-        Route::post('/{campaign}/agent-optimize', [\App\Http\Controllers\CampaignController::class, 'optimizeWithAgent'])->middleware('throttle:5,1');
-        Route::post('/{campaign}/agent-ab-test', [\App\Http\Controllers\CampaignController::class, 'abTestWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{campaign}/agent-insights', [\App\Http\Controllers\CampaignController::class, 'getAgentInsights'])->middleware('throttle:10,1');
+        Route::post('/{campaign}/agent-optimize', [CampaignController::class, 'optimizeWithAgent'])->middleware('throttle:5,1');
+        Route::post('/{campaign}/agent-ab-test', [CampaignController::class, 'abTestWithAgent'])->middleware('throttle:5,1');
+        Route::get('/{campaign}/agent-insights', [CampaignController::class, 'getAgentInsights'])->middleware('throttle:10,1');
     });
 
     // Agent-powered Social Post routes
     Route::prefix('posts')->name('posts.')->group(function () {
-        Route::post('/{post}/agent-schedule', [\App\Http\Controllers\SocialPostController::class, 'scheduleWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{post}/agent-analyze', [\App\Http\Controllers\SocialPostController::class, 'analyzeWithAgent'])->middleware('throttle:10,1');
-        Route::post('/{post}/agent-reply-suggestions', [\App\Http\Controllers\SocialPostController::class, 'replySuggestionsWithAgent'])->middleware('throttle:10,1');
+        Route::post('/{post}/agent-schedule', [SocialPostController::class, 'scheduleWithAgent'])->middleware('throttle:5,1');
+        Route::get('/{post}/agent-analyze', [SocialPostController::class, 'analyzeWithAgent'])->middleware('throttle:10,1');
+        Route::post('/{post}/agent-reply-suggestions', [SocialPostController::class, 'replySuggestionsWithAgent'])->middleware('throttle:10,1');
     });
 
     // AI

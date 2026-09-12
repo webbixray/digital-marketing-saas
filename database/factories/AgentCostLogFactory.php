@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\AgentCostLog;
 use App\Models\Agency;
+use App\Models\AgentCostLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AgentCostLogFactory extends Factory

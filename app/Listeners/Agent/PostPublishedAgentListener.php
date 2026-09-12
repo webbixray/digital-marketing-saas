@@ -20,21 +20,24 @@ class PostPublishedAgentListener
         $post = $event->post;
         $agencyId = $post->agency_id;
 
-        if (!$agencyId) {
+        if (! $agencyId) {
             Log::debug('PostPublishedAgentListener: no agency_id on post, skipping');
+
             return;
         }
 
         $agency = Agency::find($agencyId);
 
-        if (!$agency) {
+        if (! $agency) {
             Log::debug("PostPublishedAgentListener: agency [{$agencyId}] not found, skipping");
+
             return;
         }
 
         // Only run if agency has 'workflow_engine' feature enabled
-        if (!$agency->isFeatureAvailable('workflow_engine')) {
+        if (! $agency->isFeatureAvailable('workflow_engine')) {
             Log::debug("PostPublishedAgentListener: workflow_engine not available for agency [{$agencyId}], skipping");
+
             return;
         }
 
@@ -63,7 +66,7 @@ class PostPublishedAgentListener
         $trendTask = new AgentTask(
             id: "post_published_trend_{$post->id}",
             type: 'trend_detection',
-            prompt: "Detect trends based on recent post performance",
+            prompt: 'Detect trends based on recent post performance',
             data: [
                 'platform' => $post->platform,
                 'niche' => 'general',
@@ -81,7 +84,7 @@ class PostPublishedAgentListener
         $optimizeTask = new AgentTask(
             id: "post_published_optimize_{$post->id}",
             type: 'content_optimize',
-            prompt: "Optimize content for better engagement",
+            prompt: 'Optimize content for better engagement',
             data: [
                 'content' => $post->content,
                 'platform' => $post->platform,

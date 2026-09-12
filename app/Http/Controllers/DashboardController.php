@@ -10,6 +10,7 @@ use App\Models\SocialPost;
 use App\Services\AI\Agent\AgentHealthMonitor;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\QuotaService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -140,7 +141,7 @@ class DashboardController extends Controller
     /**
      * Get recent agent activity for dashboard widget.
      */
-    private function getRecentAgentActivity(int $agencyId): \Illuminate\Database\Eloquent\Collection
+    private function getRecentAgentActivity(int $agencyId): Collection
     {
         try {
             return AgentCostLog::byAgency($agencyId)

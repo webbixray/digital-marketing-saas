@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentOrchestrator;
@@ -19,6 +18,7 @@ use Tests\TestCase;
 class AgentCollaborationTest extends TestCase
 {
     use RefreshDatabase;
+
     private AgentOrchestrator $orchestrator;
 
     private AgentMemory $memory;
@@ -49,7 +49,7 @@ class AgentCollaborationTest extends TestCase
     /**
      * Test 1: AgentCollaborationProtocol can find collaborators for a task type.
      */
-    public function test_findCollaborators_returns_agents_that_can_handle_task_type(): void
+    public function test_find_collaborators_returns_agents_that_can_handle_task_type(): void
     {
         // Create two agents with different capabilities
         $contentAgent = Mockery::mock(AgentInterface::class);
@@ -81,7 +81,7 @@ class AgentCollaborationTest extends TestCase
     /**
      * Test 2: SharedKnowledgeBase stores and retrieves insights across agents.
      */
-    public function test_sharedKnowledgeBase_stores_and_retrieves_insights(): void
+    public function test_shared_knowledge_base_stores_and_retrieves_insights(): void
     {
         $agencyId = 1;
 
@@ -106,7 +106,7 @@ class AgentCollaborationTest extends TestCase
     /**
      * Test 3: AgentOrchestrator collaborative dispatch merges results from multiple agents.
      */
-    public function test_dispatchCollaborative_merges_results_from_multiple_agents(): void
+    public function test_dispatch_collaborative_merges_results_from_multiple_agents(): void
     {
         $agentA = Mockery::mock(AgentInterface::class);
         $agentA->shouldReceive('getName')->andReturn('agent_a');

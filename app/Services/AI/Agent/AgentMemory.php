@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class AgentMemory
 {
     private const CACHE_KEY = 'agent_orchestrator_memory';
+
     private const LEARNED_PATTERNS_KEY = 'agent_learned_patterns';
+
     private const MAX_HISTORY = 1000;
 
     /**
@@ -46,8 +48,7 @@ class AgentMemory
     {
         $history = $this->getHistory();
 
-        $relevant = array_filter($history, fn ($entry) =>
-            $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
+        $relevant = array_filter($history, fn ($entry) => $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
         );
 
         if (empty($relevant)) {
@@ -66,8 +67,7 @@ class AgentMemory
     {
         $history = $this->getHistory();
 
-        $relevant = array_filter($history, fn ($entry) =>
-            $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
+        $relevant = array_filter($history, fn ($entry) => $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
         );
 
         if (empty($relevant)) {
@@ -86,8 +86,7 @@ class AgentMemory
     {
         $history = $this->getHistory();
 
-        $relevant = array_filter($history, fn ($entry) =>
-            $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
+        $relevant = array_filter($history, fn ($entry) => $entry['agent_name'] === $agentName && $entry['task_type'] === $taskType
         );
 
         if (empty($relevant)) {
@@ -112,7 +111,7 @@ class AgentMemory
         foreach ($history as $entry) {
             $name = $entry['agent_name'];
 
-            if (!isset($stats[$name])) {
+            if (! isset($stats[$name])) {
                 $stats[$name] = [
                     'total' => 0,
                     'successes' => 0,
@@ -142,10 +141,10 @@ class AgentMemory
     /**
      * Record a learned pattern from an agent's feedback loop.
      *
-     * @param string $agentName  The agent that discovered this pattern
-     * @param string $taskType   The task type this pattern applies to
-     * @param array  $pattern    The pattern data (e.g., best parameters, correlations)
-     * @param float  $confidence Confidence score 0.0 to 1.0
+     * @param  string  $agentName  The agent that discovered this pattern
+     * @param  string  $taskType  The task type this pattern applies to
+     * @param  array  $pattern  The pattern data (e.g., best parameters, correlations)
+     * @param  float  $confidence  Confidence score 0.0 to 1.0
      */
     public function recordLearnedPattern(
         string $agentName,
@@ -182,9 +181,9 @@ class AgentMemory
     /**
      * Get all learned patterns, optionally filtered by agent or task type.
      *
-     * @param string|null $agentName  Filter by agent name
-     * @param string|null $taskType   Filter by task type
-     * @param float       $minConfidence Minimum confidence threshold
+     * @param  string|null  $agentName  Filter by agent name
+     * @param  string|null  $taskType  Filter by task type
+     * @param  float  $minConfidence  Minimum confidence threshold
      * @return array<int, array>
      */
     public function getLearnedPatterns(
@@ -209,7 +208,10 @@ class AgentMemory
         // Sort by confidence descending, then occurrence count descending
         uasort($patterns, function ($a, $b) {
             $confDiff = ($b['confidence'] ?? 0) <=> ($a['confidence'] ?? 0);
-            if ($confDiff !== 0) return $confDiff;
+            if ($confDiff !== 0) {
+                return $confDiff;
+            }
+
             return ($b['occurrence_count'] ?? 0) <=> ($a['occurrence_count'] ?? 0);
         });
 
@@ -219,7 +221,7 @@ class AgentMemory
     /**
      * Get the most reliable learned patterns across all agents.
      *
-     * @param int $limit Maximum number of patterns to return
+     * @param  int  $limit  Maximum number of patterns to return
      * @return array<int, array>
      */
     public function getTopLearnedPatterns(int $limit = 10): array
@@ -232,7 +234,7 @@ class AgentMemory
     /**
      * Store learned patterns in cache.
      *
-     * @param array<string, array> $patterns
+     * @param  array<string, array>  $patterns
      */
     private function storeLearnedPatterns(array $patterns): void
     {
@@ -242,6 +244,7 @@ class AgentMemory
             uasort($patterns, function ($a, $b) {
                 $scoreA = ($a['confidence'] ?? 0) * ($a['occurrence_count'] ?? 1);
                 $scoreB = ($b['confidence'] ?? 0) * ($b['occurrence_count'] ?? 1);
+
                 return $scoreB <=> $scoreA;
             });
             $patterns = array_slice($patterns, 0, 500, true);
@@ -271,7 +274,7 @@ class AgentMemory
     /**
      * Store history in cache.
      *
-     * @param array<int, array> $history
+     * @param  array<int, array>  $history
      */
     private function storeHistory(array $history): void
     {

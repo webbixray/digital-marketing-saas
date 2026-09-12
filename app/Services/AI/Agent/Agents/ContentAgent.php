@@ -28,6 +28,7 @@ class ContentAgent extends AbstractAgent
      * Engagement thresholds for success scoring.
      */
     private const ENGAGEMENT_THRESHOLD_HIGH = 0.7;
+
     private const ENGAGEMENT_THRESHOLD_MEDIUM = 0.4;
 
     /**
@@ -37,7 +38,7 @@ class ContentAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -47,7 +48,7 @@ class ContentAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -105,6 +106,7 @@ class ContentAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -122,8 +124,8 @@ class ContentAgent extends AbstractAgent
             return 0.0;
         }
 
-        $highEngagement = count(array_filter($scores, fn($s) => $s >= self::ENGAGEMENT_THRESHOLD_HIGH));
-        $mediumEngagement = count(array_filter($scores, fn($s) => $s >= self::ENGAGEMENT_THRESHOLD_MEDIUM));
+        $highEngagement = count(array_filter($scores, fn ($s) => $s >= self::ENGAGEMENT_THRESHOLD_HIGH));
+        $mediumEngagement = count(array_filter($scores, fn ($s) => $s >= self::ENGAGEMENT_THRESHOLD_MEDIUM));
 
         // Weight: high engagement counts double, medium counts once
         $weightedSuccesses = ($highEngagement * 2) + $mediumEngagement;
@@ -145,7 +147,7 @@ class ContentAgent extends AbstractAgent
         }
 
         // Sort by average engagement descending
-        uasort($patterns, fn($a, $b) => ($b['avg_engagement'] ?? 0) <=> ($a['avg_engagement'] ?? 0));
+        uasort($patterns, fn ($a, $b) => ($b['avg_engagement'] ?? 0) <=> ($a['avg_engagement'] ?? 0));
 
         return array_slice($patterns, 0, $limit, true);
     }
@@ -162,7 +164,7 @@ class ContentAgent extends AbstractAgent
         }
 
         // Find top performing patterns
-        $highPerformers = array_filter($patterns, fn($p) => ($p['metadata']['engagement_score'] ?? 0) >= self::ENGAGEMENT_THRESHOLD_MEDIUM);
+        $highPerformers = array_filter($patterns, fn ($p) => ($p['metadata']['engagement_score'] ?? 0) >= self::ENGAGEMENT_THRESHOLD_MEDIUM);
         $topPerformers = array_slice($highPerformers, 0, 3);
 
         if (empty($topPerformers)) {
@@ -183,7 +185,7 @@ class ContentAgent extends AbstractAgent
             }
         }
 
-        return $basePrompt . $enhancement;
+        return $basePrompt.$enhancement;
     }
 
     /**
@@ -197,7 +199,7 @@ class ContentAgent extends AbstractAgent
         $patternKey = $meta['pattern_key'] ?? md5($meta['prompt'] ?? 'default');
         $patterns = $this->executionStats['prompt_patterns'] ?? [];
 
-        if (!isset($patterns[$patternKey])) {
+        if (! isset($patterns[$patternKey])) {
             $patterns[$patternKey] = [
                 'count' => 0,
                 'total_engagement' => 0,
@@ -214,7 +216,7 @@ class ContentAgent extends AbstractAgent
 
         // Trim to top 50 patterns
         if (count($patterns) > 50) {
-            uasort($patterns, fn($a, $b) => ($b['avg_engagement'] ?? 0) <=> ($a['avg_engagement'] ?? 0));
+            uasort($patterns, fn ($a, $b) => ($b['avg_engagement'] ?? 0) <=> ($a['avg_engagement'] ?? 0));
             $this->executionStats['prompt_patterns'] = array_slice($patterns, 0, 50, true);
         }
 
@@ -279,7 +281,7 @@ class ContentAgent extends AbstractAgent
         $platform = $task->data['platform'] ?? 'instagram';
         $goals = $task->data['goals'] ?? ['engagement'];
 
-        $prompt = "Optimize the following content for {$platform} to maximize " . implode(', ', $goals) . ":\n\n{$content}";
+        $prompt = "Optimize the following content for {$platform} to maximize ".implode(', ', $goals).":\n\n{$content}";
         $prompt .= "\n\nProvide the optimized version and briefly explain what changes you made.";
 
         $request = AiRequest::creative(
@@ -365,8 +367,8 @@ class ContentAgent extends AbstractAgent
         $topHashtags = $this->extractTopHashtagsFromMemory($pastResults);
 
         $prompt = "Generate {$count} highly relevant, high-performing hashtags for: {$topic}\nPlatform: {$platform}";
-        if (!empty($topHashtags)) {
-            $prompt .= "\n\nBased on past successful content, these hashtags performed well: " . implode(', ', $topHashtags);
+        if (! empty($topHashtags)) {
+            $prompt .= "\n\nBased on past successful content, these hashtags performed well: ".implode(', ', $topHashtags);
         }
         $prompt .= "\n\nReturn ONLY a comma-separated list of hashtags (with # prefix). No extra text.";
 
@@ -493,6 +495,7 @@ class ContentAgent extends AbstractAgent
         if ($diff <= 5) {
             return 0.6;
         }
+
         return 0.4;
     }
 
@@ -510,8 +513,8 @@ class ContentAgent extends AbstractAgent
             $parts = explode(',', $content);
             foreach ($parts as $part) {
                 $tag = trim($part);
-                if (!str_starts_with($tag, '#')) {
-                    $tag = '#' . $tag;
+                if (! str_starts_with($tag, '#')) {
+                    $tag = '#'.$tag;
                 }
                 if (strlen($tag) > 1) {
                     $hashtags[] = $tag;
@@ -535,7 +538,7 @@ class ContentAgent extends AbstractAgent
             $engagement = $meta['engagement_score'] ?? 0;
 
             foreach ($hashtags as $tag) {
-                if (!isset($hashtagPerformance[$tag])) {
+                if (! isset($hashtagPerformance[$tag])) {
                     $hashtagPerformance[$tag] = ['total' => 0, 'count' => 0];
                 }
                 $hashtagPerformance[$tag]['total'] += $engagement;

@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class InvoiceController extends Controller
 {
@@ -107,7 +108,7 @@ class InvoiceController extends Controller
 
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice created successfully.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
             Log::error('Failed to create invoice', [
@@ -181,7 +182,7 @@ class InvoiceController extends Controller
 
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice updated successfully.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
             Log::error('Failed to update invoice', [

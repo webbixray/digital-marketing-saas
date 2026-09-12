@@ -5,6 +5,7 @@ namespace App\Concerns;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -17,10 +18,9 @@ trait HandlesErrors
      * Execute a callback with consistent error handling for API requests.
      *
      * @template T
-     * @param callable(): T $callback
-     * @param string $errorMessage
-     * @param int $errorCode
-     * @param array<string, mixed> $logContext
+     *
+     * @param  callable(): T  $callback
+     * @param  array<string, mixed>  $logContext
      * @return T|JsonResponse
      */
     protected function handleApiOperation(
@@ -82,11 +82,10 @@ trait HandlesErrors
      * Execute a callback with consistent error handling for web requests.
      *
      * @template T
-     * @param callable(): T $callback
-     * @param string $errorMessage
-     * @param string $redirectRoute
-     * @param array<string, mixed> $logContext
-     * @return T|\Illuminate\Http\RedirectResponse
+     *
+     * @param  callable(): T  $callback
+     * @param  array<string, mixed>  $logContext
+     * @return T|RedirectResponse
      */
     protected function handleWebOperation(
         callable $callback,

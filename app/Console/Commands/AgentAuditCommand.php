@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\SocialPost;
-use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\SecurityAuditAgent;
 use App\Services\AI\Agent\SelfImprovementEngine;
@@ -36,14 +35,15 @@ class AgentAuditCommand extends Command
 
         // Register the security audit agent if not already registered
         if (! $orchestrator->hasAgent('security_auditor')) {
-            $orchestrator->registerAgent(new SecurityAuditAgent());
+            $orchestrator->registerAgent(new SecurityAuditAgent);
         }
 
         // Get agents to run
         if ($agentName) {
             if (! $orchestrator->hasAgent($agentName)) {
                 $this->error("Agent [{$agentName}] not found.");
-                $this->line('Available agents: ' . implode(', ', $orchestrator->getAgentNames()));
+                $this->line('Available agents: '.implode(', ', $orchestrator->getAgentNames()));
+
                 return self::FAILURE;
             }
             $agents = [$agentName => $orchestrator->getAgent($agentName)];
@@ -56,10 +56,11 @@ class AgentAuditCommand extends Command
 
         if ($agents->isEmpty()) {
             $this->warn('No audit agents available.');
+
             return self::SUCCESS;
         }
 
-        $this->info('Running ' . $agents->count() . ' audit agent(s)...');
+        $this->info('Running '.$agents->count().' audit agent(s)...');
         if ($autoFix) {
             $this->warn('Auto-fix mode ENABLED — fixable issues will be resolved automatically.');
         }
@@ -79,8 +80,9 @@ class AgentAuditCommand extends Command
                 $result = $agent->execute([]);
 
                 if (! ($result['success'] ?? false)) {
-                    $this->error("  ✗ Agent execution failed.");
+                    $this->error('  ✗ Agent execution failed.');
                     $totalFailed++;
+
                     continue;
                 }
 
@@ -110,7 +112,7 @@ class AgentAuditCommand extends Command
                 } else {
                     $this->newLine();
                     $this->line('  Findings:');
-                    $this->line('  ' . str_repeat('─', 50));
+                    $this->line('  '.str_repeat('─', 50));
 
                     foreach ($findings as $index => $finding) {
                         $icon = match ($finding['severity']) {
@@ -121,7 +123,7 @@ class AgentAuditCommand extends Command
                             default => '⚪',
                         };
 
-                        $this->line("  {$icon} [" . strtoupper($finding['severity']) . "] {$finding['title']}");
+                        $this->line("  {$icon} [".strtoupper($finding['severity'])."] {$finding['title']}");
                         $this->line("     Category: {$finding['category']}");
                         $this->line("     {$finding['description']}");
                         $this->line("     Fix: {$finding['fix']}");
@@ -139,7 +141,7 @@ class AgentAuditCommand extends Command
                             }
                         }
 
-                        $this->line('  ' . str_repeat('─', 50));
+                        $this->line('  '.str_repeat('─', 50));
                     }
                 }
 
@@ -158,11 +160,11 @@ class AgentAuditCommand extends Command
         $this->info('═══════════════════════════════════════════════');
         $this->info('  AUDIT SUMMARY');
         $this->info('═══════════════════════════════════════════════');
-        $this->line("  Total findings: " . count($allFindings));
-        $this->line("  Critical: " . count(array_filter($allFindings, fn ($f) => $f['severity'] === 'critical')));
-        $this->line("  High: " . count(array_filter($allFindings, fn ($f) => $f['severity'] === 'high')));
-        $this->line("  Medium: " . count(array_filter($allFindings, fn ($f) => $f['severity'] === 'medium')));
-        $this->line("  Low: " . count(array_filter($allFindings, fn ($f) => $f['severity'] === 'low')));
+        $this->line('  Total findings: '.count($allFindings));
+        $this->line('  Critical: '.count(array_filter($allFindings, fn ($f) => $f['severity'] === 'critical')));
+        $this->line('  High: '.count(array_filter($allFindings, fn ($f) => $f['severity'] === 'high')));
+        $this->line('  Medium: '.count(array_filter($allFindings, fn ($f) => $f['severity'] === 'medium')));
+        $this->line('  Low: '.count(array_filter($allFindings, fn ($f) => $f['severity'] === 'low')));
         $this->line("  Auto-fixed: {$totalFixed}");
         if ($totalFailed > 0) {
             $this->line("  Failed fixes: {$totalFailed}");
@@ -206,6 +208,7 @@ class AgentAuditCommand extends Command
                     ->where('scheduled_at', '<', now()->subDays(7))
                     ->update(['status' => 'draft']);
                 Log::info("Auto-fixed: {$staleCount} stale scheduled posts reverted to draft.");
+
                 return true;
             }
 
@@ -213,12 +216,14 @@ class AgentAuditCommand extends Command
             // but we can log the suggestion
             if (str_contains($title, 'Debug mode') || str_contains($title, 'application key')) {
                 Log::warning("Auto-fix unavailable for: {$title} — requires manual .env configuration change.");
+
                 return false;
             }
 
             return false;
         } catch (\Exception $e) {
             Log::error("Auto-fix failed for finding: {$finding['title']} — {$e->getMessage()}");
+
             return false;
         }
     }

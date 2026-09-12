@@ -23,8 +23,11 @@ class WorkflowTemplatesTest extends TestCase
     use RefreshDatabase;
 
     private AgentOrchestrator $orchestrator;
+
     private WorkflowRunner $runner;
+
     private $gateway;
+
     private AgentMemory $memory;
 
     protected function setUp(): void
@@ -198,7 +201,7 @@ class WorkflowTemplatesTest extends TestCase
     /**
      * Register mock agents with the orchestrator.
      *
-     * @param array<string, array<string>> $agentConfig Agent name => task types
+     * @param  array<string, array<string>>  $agentConfig  Agent name => task types
      */
     private function registerMockAgents(array $agentConfig): void
     {

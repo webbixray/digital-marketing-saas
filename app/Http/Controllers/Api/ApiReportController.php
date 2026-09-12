@@ -7,7 +7,6 @@ use App\Models\Report;
 use App\Services\Reporting\EnterpriseReportingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ApiReportController extends Controller
 {

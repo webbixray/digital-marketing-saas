@@ -88,6 +88,7 @@ class AbTestController extends Controller
             abort(403);
         }
         $test->load('socialAccount');
+
         return view('ab-testing.show', compact('test'));
     }
 
@@ -150,7 +151,7 @@ class AbTestController extends Controller
             'ended_at' => now(),
         ]);
 
-        return back()->with('success', "Test completed! Winner: " . ucfirst($winner) . " ({$confidence}% confidence)");
+        return back()->with('success', 'Test completed! Winner: '.ucfirst($winner)." ({$confidence}% confidence)");
     }
 
     /**
@@ -158,7 +159,7 @@ class AbTestController extends Controller
      */
     public function trackEvent(Request $request, AbTest $test, string $variant, string $event)
     {
-        if (!$test->isRunning()) {
+        if (! $test->isRunning()) {
             return response()->json(['error' => 'Test not running'], 400);
         }
 

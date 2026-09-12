@@ -147,6 +147,7 @@ class BillingController extends Controller
                 'invoice_id' => $invoice->id,
                 'error' => $e->getMessage(),
             ]);
+
             return back()->with('error', 'Failed to download invoice. Please try again.');
         }
     }

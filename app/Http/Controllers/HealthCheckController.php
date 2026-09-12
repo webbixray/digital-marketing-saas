@@ -52,7 +52,7 @@ class HealthCheckController extends Controller
             'queue' => $this->checkQueue(),
         ];
 
-        $healthy = !in_array(false, $checks, true);
+        $healthy = ! in_array(false, $checks, true);
 
         return response()->json([
             'status' => $healthy ? 'ready' : 'not_ready',
@@ -104,6 +104,7 @@ class HealthCheckController extends Controller
     {
         try {
             DB::connection()->getPdo();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -114,6 +115,7 @@ class HealthCheckController extends Controller
     {
         try {
             Cache::put('health_check', true, 10);
+
             return Cache::get('health_check') === true;
         } catch (\Exception $e) {
             return false;
@@ -133,6 +135,7 @@ class HealthCheckController extends Controller
     {
         try {
             $gateway = $this->aiGateway;
+
             return $gateway->hasAvailableProvider();
         } catch (\Exception $e) {
             return false;
@@ -147,6 +150,7 @@ class HealthCheckController extends Controller
     {
         try {
             $freeSpace = disk_free_space(storage_path());
+
             return $freeSpace !== false && $freeSpace >= self::MIN_DISK_SPACE;
         } catch (\Exception $e) {
             return false;
@@ -170,6 +174,7 @@ class HealthCheckController extends Controller
             // For database queue, check table exists and count pending jobs
             if ($queueDriver === 'database') {
                 $pending = DB::table('jobs')->count();
+
                 return $pending < self::MAX_QUEUE_SIZE;
             }
 
@@ -177,6 +182,7 @@ class HealthCheckController extends Controller
             if ($queueDriver === 'redis') {
                 $connection = config('queue.connections.redis.connection', 'default');
                 $size = Queue::size();
+
                 return $size < self::MAX_QUEUE_SIZE;
             }
 
@@ -218,7 +224,7 @@ class HealthCheckController extends Controller
             ];
         }
 
-        $allHealthy = !in_array(false, array_column($diskInfo, 'healthy'), true);
+        $allHealthy = ! in_array(false, array_column($diskInfo, 'healthy'), true);
 
         return response()->json([
             'status' => $allHealthy ? 'ok' : 'warning',
@@ -235,7 +241,7 @@ class HealthCheckController extends Controller
     public function queueStatus(): JsonResponse
     {
         $queueDriver = config('queue.default');
-        $defaultQueue = config('queue.connections.' . $queueDriver . '.queue', 'default');
+        $defaultQueue = config('queue.connections.'.$queueDriver.'.queue', 'default');
 
         $status = [
             'driver' => $queueDriver,
@@ -276,6 +282,6 @@ class HealthCheckController extends Controller
             $unitIndex++;
         }
 
-        return round($size, 2) . ' ' . $units[$unitIndex];
+        return round($size, 2).' '.$units[$unitIndex];
     }
 }

@@ -10,7 +10,7 @@ use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiAiController extends Controller
 {
@@ -109,7 +109,7 @@ class ApiAiController extends Controller
                     'execution_time_ms' => $result->executionTimeMs,
                 ],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',

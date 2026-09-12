@@ -49,17 +49,17 @@ class NvidiaNimProvider implements AiProviderInterface
                 'Authorization' => "Bearer {$this->apiKey}",
                 'Content-Type' => 'application/json',
             ])
-            ->timeout(120)
-            ->withoutVerifying()
-            ->post("{$this->apiBaseUrl}/chat/completions", [
-                'model' => $model,
-                'messages' => [
-                    ...($request->systemPrompt ? [['role' => 'system', 'content' => $request->systemPrompt]] : []),
-                    ['role' => 'user', 'content' => $request->prompt],
-                ],
-                'temperature' => $request->temperature,
-                'max_tokens' => $request->maxTokens,
-            ]);
+                ->timeout(120)
+                ->withoutVerifying()
+                ->post("{$this->apiBaseUrl}/chat/completions", [
+                    'model' => $model,
+                    'messages' => [
+                        ...($request->systemPrompt ? [['role' => 'system', 'content' => $request->systemPrompt]] : []),
+                        ['role' => 'user', 'content' => $request->prompt],
+                    ],
+                    'temperature' => $request->temperature,
+                    'max_tokens' => $request->maxTokens,
+                ]);
 
             if ($response->failed()) {
                 $body = $response->body();
@@ -117,7 +117,7 @@ class NvidiaNimProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey);
+        return ! empty($this->apiKey);
     }
 
     public function getSupportedModels(): array

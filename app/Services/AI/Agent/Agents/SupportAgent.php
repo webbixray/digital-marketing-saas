@@ -29,14 +29,18 @@ class SupportAgent extends AbstractAgent
      * Resolution rate thresholds for success scoring.
      */
     private const RESOLUTION_THRESHOLD_HIGH = 0.8;
+
     private const RESOLUTION_THRESHOLD_MEDIUM = 0.5;
 
     /**
      * Sentiment categories.
      */
     private const SENTIMENT_POSITIVE = 'positive';
+
     private const SENTIMENT_NEUTRAL = 'neutral';
+
     private const SENTIMENT_NEGATIVE = 'negative';
+
     private const SENTIMENT_URGENT = 'urgent';
 
     /**
@@ -46,7 +50,7 @@ class SupportAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -56,7 +60,7 @@ class SupportAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -114,6 +118,7 @@ class SupportAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -130,8 +135,8 @@ class SupportAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highResolution = count(array_filter($resolutionScores, fn($r) => $r >= self::RESOLUTION_THRESHOLD_HIGH));
-        $mediumResolution = count(array_filter($resolutionScores, fn($r) => $r >= self::RESOLUTION_THRESHOLD_MEDIUM));
+        $highResolution = count(array_filter($resolutionScores, fn ($r) => $r >= self::RESOLUTION_THRESHOLD_HIGH));
+        $mediumResolution = count(array_filter($resolutionScores, fn ($r) => $r >= self::RESOLUTION_THRESHOLD_MEDIUM));
 
         // Weight: high resolution counts double, medium counts once
         $weightedSuccesses = ($highResolution * 2) + $mediumResolution;
@@ -175,10 +180,10 @@ class SupportAgent extends AbstractAgent
         $prompt .= "Subject: {$subject}\n";
         $prompt .= "Message: {$message}\n";
 
-        if (!empty($categoryStats)) {
+        if (! empty($categoryStats)) {
             $prompt .= "\nBased on past tickets, common categories are:\n";
             foreach (array_slice($categoryStats, 0, 5, true) as $category => $stats) {
-                $prompt .= "- {$category} ({$stats['count']} tickets, " . round($stats['avg_resolution'] * 100) . "% resolution rate)\n";
+                $prompt .= "- {$category} ({$stats['count']} tickets, ".round($stats['avg_resolution'] * 100)."% resolution rate)\n";
             }
         }
 
@@ -232,7 +237,7 @@ class SupportAgent extends AbstractAgent
 
         // Get past successful responses
         $pastResponses = $this->getLearnedPatterns($context, 'response_suggest');
-        $successfulResponses = array_filter($pastResponses, fn($r) => ($r['metadata']['resolution_score'] ?? 0) >= self::RESOLUTION_THRESHOLD_MEDIUM);
+        $successfulResponses = array_filter($pastResponses, fn ($r) => ($r['metadata']['resolution_score'] ?? 0) >= self::RESOLUTION_THRESHOLD_MEDIUM);
 
         $prompt = "Suggest a response to the following support ticket:\n\n";
         $prompt .= "Subject: {$subject}\n";
@@ -240,18 +245,18 @@ class SupportAgent extends AbstractAgent
         $prompt .= "Category: {$category}\n";
         $prompt .= "Tone: {$tone}\n";
 
-        if (!empty($history)) {
+        if (! empty($history)) {
             $prompt .= "\nConversation history:\n";
             foreach (array_slice($history, -5) as $entry) {
                 $prompt .= "- {$entry['role']}: {$entry['message']}\n";
             }
         }
 
-        if (!empty($successfulResponses)) {
+        if (! empty($successfulResponses)) {
             $prompt .= "\nBased on past successful resolutions, these approaches work well:\n";
             $topResponses = array_slice($successfulResponses, 0, 3);
             foreach ($topResponses as $response) {
-                $prompt .= "- Category: " . ($response['metadata']['category'] ?? 'general') . "\n";
+                $prompt .= '- Category: '.($response['metadata']['category'] ?? 'general')."\n";
             }
         }
 
@@ -269,7 +274,7 @@ class SupportAgent extends AbstractAgent
             'category' => $category,
             'tone' => $tone,
             'resolution_score' => $resolutionScore,
-            'has_history' => !empty($history),
+            'has_history' => ! empty($history),
         ];
 
         $this->recordResolutionScore('response_suggest', $resolutionScore, $meta);
@@ -301,11 +306,11 @@ class SupportAgent extends AbstractAgent
         $prompt .= "Subject: {$subject}\n";
         $prompt .= "Message: {$message}\n";
 
-        if (!empty($customerHistory)) {
+        if (! empty($customerHistory)) {
             $prompt .= "\nCustomer history summary:\n";
-            $prompt .= "- Total tickets: " . ($customerHistory['total_tickets'] ?? 0) . "\n";
-            $prompt .= "- Average sentiment: " . ($customerHistory['avg_sentiment'] ?? 'neutral') . "\n";
-            $prompt .= "- Satisfaction trend: " . ($customerHistory['satisfaction_trend'] ?? 'stable') . "\n";
+            $prompt .= '- Total tickets: '.($customerHistory['total_tickets'] ?? 0)."\n";
+            $prompt .= '- Average sentiment: '.($customerHistory['avg_sentiment'] ?? 'neutral')."\n";
+            $prompt .= '- Satisfaction trend: '.($customerHistory['satisfaction_trend'] ?? 'stable')."\n";
         }
 
         $prompt .= "\nProvide:\n1. Sentiment classification (positive/neutral/negative/urgent)\n2. Sentiment score (0-1, where 0 is very negative, 1 is very positive)\n3. Key emotional indicators\n4. Urgency level\n5. Customer satisfaction risk (low/medium/high)\n6. Recommended approach";
@@ -365,7 +370,7 @@ class SupportAgent extends AbstractAgent
         $prompt .= "Category: {$category}\n";
         $prompt .= "Ticket age: {$ticketAge} hours\n";
 
-        if (!empty($escalationPatterns)) {
+        if (! empty($escalationPatterns)) {
             $prompt .= "\nBased on past escalations, these patterns typically require escalation:\n";
             foreach (array_slice($escalationPatterns, 0, 5) as $pattern) {
                 $prompt .= "- {$pattern['indicator']}\n";
@@ -446,8 +451,8 @@ class SupportAgent extends AbstractAgent
             return 'insufficient_data';
         }
 
-        $firstHalf = $messages->take((int)($messages->count() / 2));
-        $secondHalf = $messages->skip((int)($messages->count() / 2));
+        $firstHalf = $messages->take((int) ($messages->count() / 2));
+        $secondHalf = $messages->skip((int) ($messages->count() / 2));
 
         $firstAvg = $firstHalf->avg('sentiment_score') ?? 0.5;
         $secondAvg = $secondHalf->avg('sentiment_score') ?? 0.5;
@@ -458,6 +463,7 @@ class SupportAgent extends AbstractAgent
         if ($secondAvg < $firstAvg * 0.9) {
             return 'declining';
         }
+
         return 'stable';
     }
 
@@ -564,7 +570,7 @@ class SupportAgent extends AbstractAgent
         $category = $classification['category'] ?? 'unknown';
         $categoryStats = $this->executionStats['category_stats'] ?? [];
 
-        if (!isset($categoryStats[$category])) {
+        if (! isset($categoryStats[$category])) {
             $categoryStats[$category] = [
                 'count' => 0,
                 'avg_resolution' => 0.5,
@@ -609,7 +615,7 @@ class SupportAgent extends AbstractAgent
      */
     private function learnFromEscalation(array $escalation, string $message, string $category): void
     {
-        if (!$escalation['needs_escalation']) {
+        if (! $escalation['needs_escalation']) {
             return;
         }
 
@@ -628,7 +634,7 @@ class SupportAgent extends AbstractAgent
                 }
             }
 
-            if (!$found) {
+            if (! $found) {
                 $patterns[] = [
                     'indicator' => $indicator,
                     'count' => 1,
@@ -638,7 +644,7 @@ class SupportAgent extends AbstractAgent
         }
 
         // Keep top 20 patterns
-        usort($patterns, fn($a, $b) => ($b['count'] ?? 0) <=> ($a['count'] ?? 0));
+        usort($patterns, fn ($a, $b) => ($b['count'] ?? 0) <=> ($a['count'] ?? 0));
         $this->executionStats['escalation_patterns'] = array_slice($patterns, 0, 20);
         $this->persistMemory();
     }

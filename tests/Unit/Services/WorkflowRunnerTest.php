@@ -4,13 +4,10 @@ namespace Tests\Unit\Services;
 
 use App\Models\Agency;
 use App\Models\User;
-use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentResult;
-use App\Services\AI\Agent\AgentTask;
-use App\Services\AI\Agent\Workflows\AgentWorkflowTemplate;
 use App\Services\AI\Agent\Workflows\ContentCalendarWorkflow;
 use App\Services\AI\Agent\Workflows\WorkflowRunner;
 use App\Services\AI\Gateway\AiGateway;
@@ -23,8 +20,11 @@ class WorkflowRunnerTest extends TestCase
     use RefreshDatabase;
 
     private AgentOrchestrator $orchestrator;
+
     private WorkflowRunner $runner;
+
     private $gateway;
+
     private AgentMemory $memory;
 
     protected function setUp(): void

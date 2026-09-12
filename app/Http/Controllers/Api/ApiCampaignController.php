@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiCampaignController extends Controller
@@ -67,7 +68,7 @@ class ApiCampaignController extends Controller
             return (new CampaignResource($campaign))
                 ->response()
                 ->setStatusCode(201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
@@ -126,7 +127,7 @@ class ApiCampaignController extends Controller
             return (new CampaignResource($campaign))->response();
         } catch (AuthorizationException|HttpException $e) {
             throw $e;
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',

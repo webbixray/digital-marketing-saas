@@ -30,6 +30,7 @@ class AbTestingAgent extends AbstractAgent
      * Test outcome accuracy thresholds.
      */
     private const ACCURACY_THRESHOLD_HIGH = 0.85;
+
     private const ACCURACY_THRESHOLD_MEDIUM = 0.6;
 
     /**
@@ -44,7 +45,7 @@ class AbTestingAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -54,7 +55,7 @@ class AbTestingAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -112,6 +113,7 @@ class AbTestingAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -129,8 +131,8 @@ class AbTestingAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highAccuracy = count(array_filter($accuracyScores, fn($s) => $s >= self::ACCURACY_THRESHOLD_HIGH));
-        $mediumAccuracy = count(array_filter($accuracyScores, fn($s) => $s >= self::ACCURACY_THRESHOLD_MEDIUM));
+        $highAccuracy = count(array_filter($accuracyScores, fn ($s) => $s >= self::ACCURACY_THRESHOLD_HIGH));
+        $mediumAccuracy = count(array_filter($accuracyScores, fn ($s) => $s >= self::ACCURACY_THRESHOLD_MEDIUM));
 
         $weightedSuccesses = ($highAccuracy * 2) + $mediumAccuracy;
 
@@ -171,7 +173,7 @@ class AbTestingAgent extends AbstractAgent
 
         // Get past successful test patterns
         $patterns = $this->getTestPatterns();
-        $successfulPatterns = array_filter($patterns, fn($p) => ($p['success_rate'] ?? 0) >= 0.6);
+        $successfulPatterns = array_filter($patterns, fn ($p) => ($p['success_rate'] ?? 0) >= 0.6);
 
         // Get campaign data for context
         $campaignData = $campaignId ? $this->getCampaignTestData($agency, $campaignId) : null;
@@ -180,7 +182,7 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "Test type: {$testType}\n";
         $prompt .= "Element to test: {$element}\n";
         $prompt .= "Primary metric: {$primaryMetric}\n";
-        $prompt .= "Confidence level: " . ($confidenceLevel * 100) . "%\n";
+        $prompt .= 'Confidence level: '.($confidenceLevel * 100)."%\n";
 
         if ($hypothesis) {
             $prompt .= "Hypothesis: {$hypothesis}\n";
@@ -193,7 +195,7 @@ class AbTestingAgent extends AbstractAgent
             $prompt .= "- Total posts: {$campaignData['posts_count']}\n";
         }
 
-        if (!empty($successfulPatterns)) {
+        if (! empty($successfulPatterns)) {
             $prompt .= "\nBased on past successful tests:\n";
             foreach (array_slice($successfulPatterns, 0, 3) as $pattern) {
                 $prompt .= "- {$pattern['description']}: {$pattern['success_rate']}% success\n";
@@ -204,13 +206,13 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "1. Clear hypothesis statement\n";
         $prompt .= "2. Control variant (A) definition\n";
         $prompt .= "3. Treatment variant (B) definition\n";
-        $prompt .= "4. Sample size calculation (minimum " . self::MIN_SAMPLE_SIZE . " per variant)\n";
+        $prompt .= '4. Sample size calculation (minimum '.self::MIN_SAMPLE_SIZE." per variant)\n";
         $prompt .= "5. Test duration recommendation\n";
         $prompt .= "6. Success metrics and how to measure them\n";
         $prompt .= "7. Statistical test to use (chi-square, t-test, etc.)\n";
         $prompt .= "8. Potential confounding variables to control\n";
         $prompt .= "9. Implementation plan\n";
-        $prompt .= "10. Risk mitigation strategies";
+        $prompt .= '10. Risk mitigation strategies';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -276,21 +278,21 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "Variant A (Control):\n";
         $prompt .= "- Sample size: {$statsA['sample_size']}\n";
         $prompt .= "- Conversions: {$statsA['conversions']}\n";
-        $prompt .= "- Conversion rate: " . round($statsA['rate'] * 100, 2) . "%\n";
-        $prompt .= "- Standard deviation: " . round($statsA['std_dev'], 4) . "\n\n";
+        $prompt .= '- Conversion rate: '.round($statsA['rate'] * 100, 2)."%\n";
+        $prompt .= '- Standard deviation: '.round($statsA['std_dev'], 4)."\n\n";
 
         $prompt .= "Variant B (Treatment):\n";
         $prompt .= "- Sample size: {$statsB['sample_size']}\n";
         $prompt .= "- Conversions: {$statsB['conversions']}\n";
-        $prompt .= "- Conversion rate: " . round($statsB['rate'] * 100, 2) . "%\n";
-        $prompt .= "- Standard deviation: " . round($statsB['std_dev'], 4) . "\n\n";
+        $prompt .= '- Conversion rate: '.round($statsB['rate'] * 100, 2)."%\n";
+        $prompt .= '- Standard deviation: '.round($statsB['std_dev'], 4)."\n\n";
 
         $prompt .= "Statistical Analysis:\n";
-        $prompt .= "- Z-score: " . round($significance['z_score'], 4) . "\n";
-        $prompt .= "- P-value: " . round($significance['p_value'], 4) . "\n";
-        $prompt .= "- Confidence interval: [" . round($significance['ci_lower'] * 100, 2) . "%, " . round($significance['ci_upper'] * 100, 2) . "%]\n";
-        $prompt .= "- Statistically significant: " . ($significance['is_significant'] ? 'Yes' : 'No') . "\n";
-        $prompt .= "- Relative lift: " . round($significance['relative_lift'] * 100, 2) . "%\n\n";
+        $prompt .= '- Z-score: '.round($significance['z_score'], 4)."\n";
+        $prompt .= '- P-value: '.round($significance['p_value'], 4)."\n";
+        $prompt .= '- Confidence interval: ['.round($significance['ci_lower'] * 100, 2).'%, '.round($significance['ci_upper'] * 100, 2)."%]\n";
+        $prompt .= '- Statistically significant: '.($significance['is_significant'] ? 'Yes' : 'No')."\n";
+        $prompt .= '- Relative lift: '.round($significance['relative_lift'] * 100, 2)."%\n\n";
 
         $prompt .= "Provide:\n";
         $prompt .= "1. Summary of findings\n";
@@ -300,7 +302,7 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "5. Potential sources of bias\n";
         $prompt .= "6. Recommendation (implement B, keep A, or continue testing)\n";
         $prompt .= "7. Expected business impact\n";
-        $prompt .= "8. Follow-up test suggestions";
+        $prompt .= '8. Follow-up test suggestions';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -354,15 +356,15 @@ class AbTestingAgent extends AbstractAgent
         }
 
         $prompt = "Select the winning variant from the following A/B test results:\n\n";
-        $prompt .= "Selection criteria: " . implode(', ', $selectionCriteria) . "\n\n";
+        $prompt .= 'Selection criteria: '.implode(', ', $selectionCriteria)."\n\n";
 
         foreach ($testResults as $result) {
             $prompt .= "Variant: {$result['variant']}\n";
             $prompt .= "- Sample size: {$result['sample_size']}\n";
-            $prompt .= "- Conversion rate: " . round($result['conversion_rate'] * 100, 2) . "%\n";
+            $prompt .= '- Conversion rate: '.round($result['conversion_rate'] * 100, 2)."%\n";
             $prompt .= "- P-value: {$result['p_value']}\n";
-            $prompt .= "- Revenue impact: $" . number_format($result['revenue_impact'] ?? 0, 2) . "\n";
-            $prompt .= "- Engagement score: " . round($result['engagement_score'] ?? 0, 2) . "\n\n";
+            $prompt .= '- Revenue impact: $'.number_format($result['revenue_impact'] ?? 0, 2)."\n";
+            $prompt .= '- Engagement score: '.round($result['engagement_score'] ?? 0, 2)."\n\n";
         }
 
         $prompt .= "Provide:\n";
@@ -372,7 +374,7 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "4. Risk assessment\n";
         $prompt .= "5. Implementation timeline\n";
         $prompt .= "6. Monitoring plan post-implementation\n";
-        $prompt .= "7. Conditions that would invalidate the result";
+        $prompt .= '7. Conditions that would invalidate the result';
 
         $request = AiRequest::analysis(
             prompt: $prompt,
@@ -424,10 +426,10 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "Goal: {$testGoal}\n";
         $prompt .= "Base content: {$baseContent}\n\n";
 
-        if (!empty($elementPerf)) {
+        if (! empty($elementPerf)) {
             $prompt .= "Based on past test results for this element:\n";
             $prompt .= "- Best performing approach: {$elementPerf['best_approach']}\n";
-            $prompt .= "- Average lift: " . round($elementPerf['avg_lift'] * 100, 1) . "%\n\n";
+            $prompt .= '- Average lift: '.round($elementPerf['avg_lift'] * 100, 1)."%\n\n";
         }
 
         $prompt .= "Generate variants that:\n";
@@ -441,7 +443,7 @@ class AbTestingAgent extends AbstractAgent
         $prompt .= "- The specific content/copy\n";
         $prompt .= "- Hypothesis for why it might perform better\n";
         $prompt .= "- Expected direction of change\n";
-        $prompt .= "- Any risks or considerations";
+        $prompt .= '- Any risks or considerations';
 
         $request = AiRequest::creative(
             prompt: $prompt,
@@ -481,12 +483,12 @@ class AbTestingAgent extends AbstractAgent
     {
         $campaign = Campaign::where('agency_id', $agency->id)->find($campaignId);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return null;
         }
 
         $posts = SocialPost::where('agency_id', $agency->id)
-            ->whereHas('campaigns', fn($q) => $q->where('campaign_id', $campaign->id))
+            ->whereHas('campaigns', fn ($q) => $q->where('campaign_id', $campaign->id))
             ->get();
 
         return [

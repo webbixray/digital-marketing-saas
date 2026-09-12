@@ -20,15 +20,17 @@ class ClientCreatedAgentListener
         $client = $event->client;
         $agencyId = $client->agency_id;
 
-        if (!$agencyId) {
+        if (! $agencyId) {
             Log::debug('ClientCreatedAgentListener: no agency_id on client, skipping');
+
             return;
         }
 
         $agency = Agency::find($agencyId);
 
-        if (!$agency) {
+        if (! $agency) {
             Log::debug("ClientCreatedAgentListener: agency [{$agencyId}] not found, skipping");
+
             return;
         }
 

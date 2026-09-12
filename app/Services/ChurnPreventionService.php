@@ -18,13 +18,13 @@ class ChurnPreventionService
 
         // Factor 1: No login in 14 days
         $lastActive = $agency->users()->max('last_active_at');
-        if (!$lastActive || $lastActive->diffInDays(now()) > 14) {
+        if (! $lastActive || $lastActive->diffInDays(now()) > 14) {
             $score += 30;
         }
 
         // Factor 2: No posts in 30 days
         $lastPost = $agency->socialPosts()->max('created_at');
-        if (!$lastPost || $lastPost->diffInDays(now()) > 30) {
+        if (! $lastPost || $lastPost->diffInDays(now()) > 30) {
             $score += 25;
         }
 
@@ -48,8 +48,13 @@ class ChurnPreventionService
             $score += 10;
         }
 
-        if ($score >= 60) return 'high';
-        if ($score >= 30) return 'medium';
+        if ($score >= 60) {
+            return 'high';
+        }
+        if ($score >= 30) {
+            return 'medium';
+        }
+
         return 'low';
     }
 
@@ -129,7 +134,7 @@ class ChurnPreventionService
             if ($postsCount >= 5) {
                 return [
                     'type' => 'upgrade_prompt',
-                    'message' => 'You\'ve created ' . $postsCount . ' posts! Unlock unlimited posts and AI features.',
+                    'message' => 'You\'ve created '.$postsCount.' posts! Unlock unlimited posts and AI features.',
                     'urgency' => 'medium',
                 ];
             }
@@ -150,7 +155,7 @@ class ChurnPreventionService
         ]);
 
         // Store in cache for analytics
-        $cacheKey = 'churn_survey:' . date('Y-m');
+        $cacheKey = 'churn_survey:'.date('Y-m');
         $data = Cache::get($cacheKey, []);
         $data[] = [
             'agency_id' => $agencyId,
@@ -166,7 +171,7 @@ class ChurnPreventionService
      */
     public function getChurnAnalytics(int $days = 30): array
     {
-        $cacheKey = 'churn_survey:' . date('Y-m');
+        $cacheKey = 'churn_survey:'.date('Y-m');
         $surveys = Cache::get($cacheKey, []);
 
         $reasons = array_count_values(array_column($surveys, 'reason'));

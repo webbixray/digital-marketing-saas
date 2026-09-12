@@ -117,6 +117,7 @@ class OllamaProvider implements AiProviderInterface
         try {
             $response = Http::timeout(5)
                 ->get("{$this->apiBaseUrl}/api/tags");
+
             return $response->successful();
         } catch (\Exception $e) {
             return false;
@@ -193,6 +194,7 @@ class OllamaProvider implements AiProviderInterface
 
             if ($response->successful()) {
                 $data = $response->json();
+
                 return array_map(fn ($model) => $model['name'], $data['models'] ?? []);
             }
         } catch (\Exception $e) {

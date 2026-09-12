@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Agent\Agents;
 
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Models\Agency;
 use App\Models\User;
 use App\Services\AI\Agent\AbstractAgent;
@@ -9,12 +10,10 @@ use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentResult;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\AI\Gateway\AiRequest;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Illuminate\Routing\Route as RouterRoute;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -54,7 +53,7 @@ class SecurityAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -114,6 +113,7 @@ class SecurityAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -129,8 +129,8 @@ class SecurityAgent extends AbstractAgent
             return 0.0;
         }
 
-        $highSeverity = count(array_filter($findings, fn($f) => ($f['severity'] ?? '') === 'high'));
-        $mediumSeverity = count(array_filter($findings, fn($f) => ($f['severity'] ?? '') === 'medium'));
+        $highSeverity = count(array_filter($findings, fn ($f) => ($f['severity'] ?? '') === 'high'));
+        $mediumSeverity = count(array_filter($findings, fn ($f) => ($f['severity'] ?? '') === 'medium'));
 
         // Weighted by severity
         return min(($highSeverity * 2 + $mediumSeverity) / count($findings), 1.0);
@@ -280,7 +280,7 @@ class SecurityAgent extends AbstractAgent
         ];
 
         // Generate recommendations based on findings
-        if (!empty($results['middleware_gaps'])) {
+        if (! empty($results['middleware_gaps'])) {
             foreach ($results['middleware_gaps'] as $gap) {
                 $results['recommendations'][] = [
                     'severity' => 'high',
@@ -290,7 +290,7 @@ class SecurityAgent extends AbstractAgent
             }
         }
 
-        if (!empty($results['permission_issues'])) {
+        if (! empty($results['permission_issues'])) {
             foreach ($results['permission_issues'] as $issue) {
                 $results['recommendations'][] = [
                     'severity' => 'medium',
@@ -334,7 +334,7 @@ class SecurityAgent extends AbstractAgent
         // Use AI to analyze patterns and identify potential issues
         $findingsForAi = $this->prepareFindingsForAiAnalysis($scanResults);
 
-        if (!empty($findingsForAi)) {
+        if (! empty($findingsForAi)) {
             $prompt = "Review the following code patterns and identify potential security vulnerabilities:\n\n";
             $prompt .= json_encode($findingsForAi, JSON_PRETTY_PRINT);
             $prompt .= "\n\nFor each finding, provide:\n";
@@ -343,7 +343,7 @@ class SecurityAgent extends AbstractAgent
             $prompt .= "3. Potential impact\n";
             $prompt .= "4. Recommended fix\n";
             $prompt .= "5. CWE ID if applicable\n\n";
-            $prompt .= "Return as a JSON array of findings.";
+            $prompt .= 'Return as a JSON array of findings.';
 
             try {
                 $request = AiRequest::analysis(
@@ -406,7 +406,7 @@ class SecurityAgent extends AbstractAgent
             'findings' => [],
         ];
 
-        if (!class_exists($controllerClass)) {
+        if (! class_exists($controllerClass)) {
             return $result;
         }
 
@@ -431,7 +431,7 @@ class SecurityAgent extends AbstractAgent
                 $methodStartLine = $method->getStartLine();
                 $methodEndLine = $method->getEndLine();
 
-                if (!$methodStartLine || !$methodEndLine) {
+                if (! $methodStartLine || ! $methodEndLine) {
                     continue;
                 }
 
@@ -445,7 +445,7 @@ class SecurityAgent extends AbstractAgent
                     str_contains($methodContent, 'FormRequest') ||
                     str_contains($methodContent, 'Rule::');
 
-                if ($hasRequestInput && !$hasValidation) {
+                if ($hasRequestInput && ! $hasValidation) {
                     $result['unvalidated_methods']++;
                     $result['findings'][] = [
                         'controller' => $controllerClass,
@@ -499,7 +499,7 @@ class SecurityAgent extends AbstractAgent
                 }
             }
 
-            if (!$hasAuth && !$hasApiAuth) {
+            if (! $hasAuth && ! $hasApiAuth) {
                 $unprotectedRoutes[] = [
                     'uri' => $uri,
                     'methods' => $methods,
@@ -527,7 +527,7 @@ class SecurityAgent extends AbstractAgent
             $uri = $route->uri();
 
             // Check for missing tenant isolation middleware
-            if (Str::startsWith($uri, 'api/') && !in_array('tenant', $middleware)) {
+            if (Str::startsWith($uri, 'api/') && ! in_array('tenant', $middleware)) {
                 $gaps[] = [
                     'type' => 'missing_tenant_middleware',
                     'route' => $uri,
@@ -552,7 +552,7 @@ class SecurityAgent extends AbstractAgent
         $issues = [];
 
         // Check if spatie permissions table exists
-        if (!Schema::hasTable('permissions') || !Schema::hasTable('roles')) {
+        if (! Schema::hasTable('permissions') || ! Schema::hasTable('roles')) {
             $issues[] = [
                 'description' => 'Permission tables are missing. Role-based access control is not configured.',
                 'recommendation' => 'Run migrations for spatie/laravel-permission package.',
@@ -564,7 +564,7 @@ class SecurityAgent extends AbstractAgent
             $userReflection = new ReflectionClass(User::class);
             $usesTraits = $userReflection->getTraitNames();
 
-            if (!in_array('Spatie\\Permission\\Traits\\HasRoles', $usesTraits)) {
+            if (! in_array('Spatie\\Permission\\Traits\\HasRoles', $usesTraits)) {
                 $issues[] = [
                     'description' => 'User model is missing HasRoles trait.',
                     'recommendation' => 'Add "use HasRoles;" trait to User model.',
@@ -632,7 +632,7 @@ class SecurityAgent extends AbstractAgent
         }
 
         // Check for 2FA configuration
-        if (!class_exists(\App\Http\Controllers\Auth\TwoFactorController::class)) {
+        if (! class_exists(TwoFactorController::class)) {
             $findings[] = [
                 'severity' => 'medium',
                 'type' => 'missing_2fa',
@@ -674,7 +674,7 @@ class SecurityAgent extends AbstractAgent
         // Check if models have agency scoping
         $models = $this->getAgencyScopedModels();
         foreach ($models as $model) {
-            if (!$this->modelHasAgencyScope($model)) {
+            if (! $this->modelHasAgencyScope($model)) {
                 $findings[] = [
                     'severity' => 'critical',
                     'type' => 'missing_tenant_scope',
@@ -704,7 +704,7 @@ class SecurityAgent extends AbstractAgent
         $controllers = $this->getTargetControllers();
 
         foreach ($controllers as $controller) {
-            if (!class_exists($controller)) {
+            if (! class_exists($controller)) {
                 continue;
             }
 
@@ -712,7 +712,7 @@ class SecurityAgent extends AbstractAgent
                 $reflection = new ReflectionClass($controller);
                 $filename = $reflection->getFileName();
 
-                if (!$filename || !file_exists($filename)) {
+                if (! $filename || ! file_exists($filename)) {
                     continue;
                 }
 
@@ -764,7 +764,7 @@ class SecurityAgent extends AbstractAgent
         $controllers = $this->getTargetControllers();
 
         foreach ($controllers as $controller) {
-            if (!class_exists($controller)) {
+            if (! class_exists($controller)) {
                 continue;
             }
 
@@ -772,7 +772,7 @@ class SecurityAgent extends AbstractAgent
                 $reflection = new ReflectionClass($controller);
                 $filename = $reflection->getFileName();
 
-                if (!$filename || !file_exists($filename)) {
+                if (! $filename || ! file_exists($filename)) {
                     continue;
                 }
 
@@ -780,7 +780,7 @@ class SecurityAgent extends AbstractAgent
 
                 foreach (self::SUSPICIOUS_PATTERNS as $category => $patterns) {
                     foreach ($patterns as $pattern) {
-                        if (preg_match_all('/' . $pattern . '/i', $content, $patternMatches, PREG_OFFSET_CAPTURE)) {
+                        if (preg_match_all('/'.$pattern.'/i', $content, $patternMatches, PREG_OFFSET_CAPTURE)) {
                             foreach ($patternMatches[0] as $match) {
                                 $line = substr_count(substr($content, 0, $match[1]), "\n") + 1;
                                 $severity = in_array($category, ['eval_usage', 'hardcoded_secrets']) ? 'critical' : 'medium';
@@ -819,7 +819,7 @@ class SecurityAgent extends AbstractAgent
         $controllers = $this->getTargetControllers();
 
         foreach ($controllers as $controller) {
-            if (!class_exists($controller)) {
+            if (! class_exists($controller)) {
                 continue;
             }
 
@@ -827,14 +827,14 @@ class SecurityAgent extends AbstractAgent
                 $reflection = new ReflectionClass($controller);
                 $filename = $reflection->getFileName();
 
-                if (!$filename || !file_exists($filename)) {
+                if (! $filename || ! file_exists($filename)) {
                     continue;
                 }
 
                 $content = file_get_contents($filename);
 
                 foreach ($learnedPatterns as $pattern) {
-                    if (preg_match('/' . preg_quote($pattern['regex'], '/') . '/', $content)) {
+                    if (preg_match('/'.preg_quote($pattern['regex'], '/').'/', $content)) {
                         $matches[] = [
                             'severity' => $pattern['severity'] ?? 'medium',
                             'type' => $pattern['type'] ?? 'learned_pattern',
@@ -860,11 +860,11 @@ class SecurityAgent extends AbstractAgent
         $learned = $this->executionStats['learned_vulnerability_patterns'] ?? [];
 
         foreach ($findings as $finding) {
-            if (!isset($finding['type'])) {
+            if (! isset($finding['type'])) {
                 continue;
             }
 
-            $patternKey = md5($finding['type'] . ($finding['pattern'] ?? ''));
+            $patternKey = md5($finding['type'].($finding['pattern'] ?? ''));
 
             // Skip if already learned
             $exists = false;
@@ -877,7 +877,7 @@ class SecurityAgent extends AbstractAgent
                 }
             }
 
-            if (!$exists && count($learned) < 100) {
+            if (! $exists && count($learned) < 100) {
                 $learned[] = [
                     'id' => $patternKey,
                     'type' => $finding['type'],
@@ -967,14 +967,14 @@ class SecurityAgent extends AbstractAgent
      */
     private function getTargetControllers(array $specific = []): array
     {
-        if (!empty($specific)) {
+        if (! empty($specific)) {
             return $specific;
         }
 
         $controllers = [];
         $controllerPath = app_path('Http/Controllers');
 
-        if (!is_dir($controllerPath)) {
+        if (! is_dir($controllerPath)) {
             return $controllers;
         }
 
@@ -984,9 +984,9 @@ class SecurityAgent extends AbstractAgent
 
         foreach ($iterator as $file) {
             if ($file->getExtension() === 'php') {
-                $relativePath = str_replace($controllerPath . '/', '', $file->getPathname());
+                $relativePath = str_replace($controllerPath.'/', '', $file->getPathname());
                 $classPath = str_replace('/', '\\', str_replace('.php', '', $relativePath));
-                $className = 'App\\Http\\Controllers\\' . $classPath;
+                $className = 'App\\Http\\Controllers\\'.$classPath;
 
                 if (class_exists($className)) {
                     $controllers[] = $className;
@@ -1005,14 +1005,14 @@ class SecurityAgent extends AbstractAgent
         $models = [];
         $modelPath = app_path('Models');
 
-        if (!is_dir($modelPath)) {
+        if (! is_dir($modelPath)) {
             return $models;
         }
 
-        $files = glob($modelPath . '/*.php');
+        $files = glob($modelPath.'/*.php');
 
         foreach ($files as $file) {
-            $className = 'App\\Models\\' . basename($file, '.php');
+            $className = 'App\\Models\\'.basename($file, '.php');
 
             if (class_exists($className)) {
                 $models[] = $className;
@@ -1031,7 +1031,7 @@ class SecurityAgent extends AbstractAgent
             $reflection = new ReflectionClass($modelClass);
             $filename = $reflection->getFileName();
 
-            if (!$filename || !file_exists($filename)) {
+            if (! $filename || ! file_exists($filename)) {
                 return false;
             }
 
@@ -1046,7 +1046,7 @@ class SecurityAgent extends AbstractAgent
             ];
 
             foreach ($patterns as $pattern) {
-                if (preg_match('/' . $pattern . '/i', $content)) {
+                if (preg_match('/'.$pattern.'/i', $content)) {
                     return true;
                 }
             }

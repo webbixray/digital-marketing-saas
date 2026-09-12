@@ -30,6 +30,7 @@ class CampaignAgent extends AbstractAgent
      * ROI thresholds for success scoring.
      */
     private const ROI_THRESHOLD_HIGH = 2.0;
+
     private const ROI_THRESHOLD_MEDIUM = 1.0;
 
     /**
@@ -39,7 +40,7 @@ class CampaignAgent extends AbstractAgent
     {
         $startTime = microtime(true);
 
-        if (!$this->canHandle($task->type)) {
+        if (! $this->canHandle($task->type)) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -49,7 +50,7 @@ class CampaignAgent extends AbstractAgent
 
         $agency = $context->agency;
 
-        if (!$agency) {
+        if (! $agency) {
             return AgentResult::failure(
                 taskId: $task->id,
                 agentName: $this->name,
@@ -107,6 +108,7 @@ class CampaignAgent extends AbstractAgent
             );
 
             $this->recordExecution($task->type, $result);
+
             return $result;
         }
     }
@@ -123,8 +125,8 @@ class CampaignAgent extends AbstractAgent
             return 0.5;
         }
 
-        $highRoi = count(array_filter($roiScores, fn($r) => $r >= self::ROI_THRESHOLD_HIGH));
-        $mediumRoi = count(array_filter($roiScores, fn($r) => $r >= self::ROI_THRESHOLD_MEDIUM));
+        $highRoi = count(array_filter($roiScores, fn ($r) => $r >= self::ROI_THRESHOLD_HIGH));
+        $mediumRoi = count(array_filter($roiScores, fn ($r) => $r >= self::ROI_THRESHOLD_MEDIUM));
 
         // Weight: high ROI counts double, medium counts once
         $weightedSuccesses = ($highRoi * 2) + $mediumRoi;
@@ -170,9 +172,9 @@ class CampaignAgent extends AbstractAgent
 
         $prompt = "Analyze and optimize the following campaign data:\n\n";
         $prompt .= json_encode($campaignData, JSON_PRETTY_PRINT);
-        $prompt .= "\n\nGoals: " . implode(', ', $goals) . "\n";
+        $prompt .= "\n\nGoals: ".implode(', ', $goals)."\n";
 
-        if (!empty($successfulStrategies)) {
+        if (! empty($successfulStrategies)) {
             $prompt .= "\nBased on past successful optimizations:\n";
             foreach ($successfulStrategies as $strategy) {
                 $prompt .= "- {$strategy}\n";
@@ -228,11 +230,11 @@ class CampaignAgent extends AbstractAgent
         $prompt .= "Campaign type: {$campaignType}\n";
         $prompt .= "Platform: {$platform}\n";
 
-        if (!empty($currentAudience)) {
-            $prompt .= "Current audience: " . json_encode($currentAudience) . "\n";
+        if (! empty($currentAudience)) {
+            $prompt .= 'Current audience: '.json_encode($currentAudience)."\n";
         }
 
-        if (!empty($platformSegments)) {
+        if (! empty($platformSegments)) {
             $prompt .= "\nBased on past high-performing campaigns, these segments worked well:\n";
             foreach (array_slice($platformSegments, 0, 5) as $segment) {
                 $prompt .= "- {$segment['name']}: {$segment['description']}\n";
@@ -290,10 +292,10 @@ class CampaignAgent extends AbstractAgent
 
         $prompt = "Recommend budget allocation across platforms:\n\n";
         $prompt .= "Total budget: \${$totalBudget}\n";
-        $prompt .= "Platforms: " . implode(', ', $platforms) . "\n\n";
-        $prompt .= "Platform performance data:\n" . json_encode($campaignPerformance, JSON_PRETTY_PRINT) . "\n";
+        $prompt .= 'Platforms: '.implode(', ', $platforms)."\n\n";
+        $prompt .= "Platform performance data:\n".json_encode($campaignPerformance, JSON_PRETTY_PRINT)."\n";
 
-        if (!empty($budgetRecs)) {
+        if (! empty($budgetRecs)) {
             $prompt .= "\nBased on past budget allocations that yielded high ROI:\n";
             foreach ($budgetRecs as $rec) {
                 $prompt .= "- {$rec['platform']}: {$rec['percentage']}% (ROI: {$rec['roi']})\n";
@@ -315,7 +317,7 @@ class CampaignAgent extends AbstractAgent
         // Learn from allocations
         $this->learnBudgetAllocations($allocations);
 
-        $avgRoi = !empty($allocations) ? array_sum(array_column($allocations, 'expected_roi')) / count($allocations) : 0;
+        $avgRoi = ! empty($allocations) ? array_sum(array_column($allocations, 'expected_roi')) / count($allocations) : 0;
         $meta = [
             'total_budget' => $totalBudget,
             'platforms' => $platforms,
@@ -355,7 +357,7 @@ class CampaignAgent extends AbstractAgent
             $prompt .= "Hypothesis: {$hypothesis}\n";
         }
 
-        if (!empty($successfulTests)) {
+        if (! empty($successfulTests)) {
             $prompt .= "\nBased on past successful A/B tests:\n";
             foreach (array_slice($successfulTests, 0, 3) as $test) {
                 $prompt .= "- Test variable: {$test['variable']}, Winner: {$test['winner']}, Lift: {$test['lift']}%\n";
@@ -397,7 +399,7 @@ class CampaignAgent extends AbstractAgent
     private function getCampaignData(Agency $agency, Campaign $campaign): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
-            ->whereHas('campaigns', fn($q) => $q->where('campaign_id', $campaign->id))
+            ->whereHas('campaigns', fn ($q) => $q->where('campaign_id', $campaign->id))
             ->get();
 
         return [
@@ -432,7 +434,7 @@ class CampaignAgent extends AbstractAgent
             'active_campaigns' => $campaigns->where('status', 'active')->count(),
             'avg_roi' => $campaigns->avg('estimated_roi'),
             'avg_engagement' => $campaigns->avg('engagement_rate'),
-            'campaigns' => $campaigns->map(fn($c) => [
+            'campaigns' => $campaigns->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
                 'roi' => $c->estimated_roi,
@@ -505,7 +507,7 @@ class CampaignAgent extends AbstractAgent
 
             if ($roi >= 0.5) {
                 if (isset($meta['goals'])) {
-                    $strategies[] = "Focus on " . implode(', ', $meta['goals']);
+                    $strategies[] = 'Focus on '.implode(', ', $meta['goals']);
                 }
             }
         }
@@ -550,13 +552,13 @@ class CampaignAgent extends AbstractAgent
                 }
             }
 
-            if (!$found) {
+            if (! $found) {
                 $platformSegments[] = array_merge($segment, ['occurrences' => 1]);
             }
         }
 
         // Keep top 20 segments per platform
-        usort($platformSegments, fn($a, $b) => ($b['occurrences'] ?? 0) <=> ($a['occurrences'] ?? 0));
+        usort($platformSegments, fn ($a, $b) => ($b['occurrences'] ?? 0) <=> ($a['occurrences'] ?? 0));
         $topSegments[$platform] = array_slice($platformSegments, 0, 20);
 
         $this->executionStats['top_audience_segments'] = $topSegments;

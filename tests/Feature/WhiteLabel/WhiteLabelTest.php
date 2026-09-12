@@ -4,8 +4,6 @@ namespace Tests\Feature\WhiteLabel;
 
 use App\Models\Agency;
 use App\Models\User;
-use App\Models\WhiteLabelSetting;
-use App\Services\WhiteLabel\WhiteLabelService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +12,7 @@ class WhiteLabelTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void

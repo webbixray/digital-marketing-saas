@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 
 class SystemCleanupCommand extends Command
 {
@@ -51,14 +50,14 @@ class SystemCleanupCommand extends Command
         if ($logs) {
             $this->info('📋 Cleaning log files...');
             $results['logs'] = $this->cleanupLogs($days, $dryRun);
-            $this->info("   Files: {$results['logs']['count']} | Size: " . $this->formatBytes($results['logs']['size']));
+            $this->info("   Files: {$results['logs']['count']} | Size: ".$this->formatBytes($results['logs']['size']));
         }
 
         // Clean temporary files
         if ($temp) {
             $this->info('📋 Cleaning temporary files...');
             $results['temp'] = $this->cleanupTemp($dryRun);
-            $this->info("   Files: {$results['temp']['count']} | Size: " . $this->formatBytes($results['temp']['size']));
+            $this->info("   Files: {$results['temp']['count']} | Size: ".$this->formatBytes($results['temp']['size']));
         }
 
         // Clean cache
@@ -81,7 +80,7 @@ class SystemCleanupCommand extends Command
 
         $this->newLine();
         $this->info('───────────────────────────────────────────────────');
-        $this->info("Total cleaned: {$totalFiles} items, " . $this->formatBytes($totalSize));
+        $this->info("Total cleaned: {$totalFiles} items, ".$this->formatBytes($totalSize));
         $this->info('═══════════════════════════════════════════════════');
 
         if ($dryRun) {
@@ -98,7 +97,7 @@ class SystemCleanupCommand extends Command
         $size = 0;
         $cutoff = Carbon::now()->subDays($days);
 
-        if (!is_dir($logPath)) {
+        if (! is_dir($logPath)) {
             return ['count' => 0, 'size' => 0];
         }
 
@@ -114,7 +113,7 @@ class SystemCleanupCommand extends Command
             if ($modified < $cutoff) {
                 $count++;
                 $size += $file->getSize();
-                if (!$dryRun) {
+                if (! $dryRun) {
                     File::delete($file->getPathname());
                 }
             }
@@ -136,7 +135,7 @@ class SystemCleanupCommand extends Command
         ];
 
         foreach ($tempPaths as $tempPath) {
-            if (!is_dir($tempPath)) {
+            if (! is_dir($tempPath)) {
                 continue;
             }
 
@@ -147,7 +146,7 @@ class SystemCleanupCommand extends Command
                 if ($modified < Carbon::now()->subDay()) {
                     $count++;
                     $size += $file->getSize();
-                    if (!$dryRun) {
+                    if (! $dryRun) {
                         File::delete($file->getPathname());
                     }
                 }
@@ -164,7 +163,7 @@ class SystemCleanupCommand extends Command
                     if ($modified < Carbon::now()->subDays(7)) {
                         $count++;
                         $size += $file->getSize();
-                        if (!$dryRun) {
+                        if (! $dryRun) {
                             File::delete($file->getPathname());
                         }
                     }
@@ -189,7 +188,7 @@ class SystemCleanupCommand extends Command
                     $modified = Carbon::createFromTimestamp($file->getMTime());
                     if ($modified < Carbon::now()->subDays(7)) {
                         $count++;
-                        if (!$dryRun) {
+                        if (! $dryRun) {
                             File::delete($file->getPathname());
                         }
                     }
@@ -219,7 +218,7 @@ class SystemCleanupCommand extends Command
                     $modified = Carbon::createFromTimestamp($file->getMTime());
                     if ($modified < $cutoff) {
                         $count++;
-                        if (!$dryRun) {
+                        if (! $dryRun) {
                             File::delete($file->getPathname());
                         }
                     }
@@ -230,7 +229,7 @@ class SystemCleanupCommand extends Command
             $cutoff = Carbon::now()->subDays($days)->timestamp;
             $count = \DB::table('sessions')
                 ->where('last_activity', '<', $cutoff)
-                ->when(!$dryRun, function ($query) {
+                ->when(! $dryRun, function ($query) {
                     $query->delete();
                 })
                 ->count();
@@ -253,6 +252,6 @@ class SystemCleanupCommand extends Command
             $unitIndex++;
         }
 
-        return round($size, 2) . ' ' . $units[$unitIndex];
+        return round($size, 2).' '.$units[$unitIndex];
     }
 }

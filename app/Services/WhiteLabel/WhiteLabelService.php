@@ -17,8 +17,9 @@ class WhiteLabelService
     {
         $domain = $this->normalizeDomain($domain);
 
-        if (!$this->isDomainAvailable($domain, $agencyId)) {
+        if (! $this->isDomainAvailable($domain, $agencyId)) {
             Log::warning("Domain [{$domain}] is already in use by another agency.");
+
             return false;
         }
 
@@ -40,8 +41,9 @@ class WhiteLabelService
     {
         $domain = $this->normalizeDomain($domain);
 
-        if (!checkdnsrr($domain, 'A') && !checkdnsrr($domain, 'CNAME')) {
+        if (! checkdnsrr($domain, 'A') && ! checkdnsrr($domain, 'CNAME')) {
             Log::warning("Domain [{$domain}] has no valid A or CNAME records.");
+
             return false;
         }
 
@@ -57,7 +59,7 @@ class WhiteLabelService
 
         // Fallback: if domain resolves, consider it provisionally valid
         // (production would require TXT verification)
-        return !empty($txtRecords) || checkdnsrr($domain, 'A');
+        return ! empty($txtRecords) || checkdnsrr($domain, 'A');
     }
 
     /**
@@ -67,7 +69,7 @@ class WhiteLabelService
     {
         $settings = WhiteLabelSetting::where('agency_id', $agencyId)->first();
 
-        if (!$settings) {
+        if (! $settings) {
             return $this->getDefaultAssets();
         }
 
@@ -120,7 +122,7 @@ class WhiteLabelService
             ->where('enabled', true)
             ->first();
 
-        if (!$settings || empty($settings->custom_css)) {
+        if (! $settings || empty($settings->custom_css)) {
             return '';
         }
 
@@ -167,7 +169,7 @@ class WhiteLabelService
      */
     private function isDomainAvailable(string $domain, int $excludeAgencyId): bool
     {
-        return !WhiteLabelSetting::where('custom_domain', $domain)
+        return ! WhiteLabelSetting::where('custom_domain', $domain)
             ->where('agency_id', '!=', $excludeAgencyId)
             ->exists();
     }
@@ -177,7 +179,7 @@ class WhiteLabelService
      */
     private function getVerificationToken(string $domain): string
     {
-        return 'dms-verify=' . md5($domain . config('app.key'));
+        return 'dms-verify='.md5($domain.config('app.key'));
     }
 
     /**

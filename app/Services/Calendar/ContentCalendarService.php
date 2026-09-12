@@ -4,8 +4,8 @@ namespace App\Services\Calendar;
 
 use App\Models\SocialPost;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ContentCalendarService
 {
@@ -20,7 +20,7 @@ class ContentCalendarService
             ->get()
             ->map(fn (SocialPost $post) => [
                 'id' => $post->id,
-                'title' => \Illuminate\Support\Str::limit($post->content, 50),
+                'title' => Str::limit($post->content, 50),
                 'content' => $post->content,
                 'start' => $post->scheduled_at?->toISOString(),
                 'end' => $post->scheduled_at?->addHour()->toISOString(),
@@ -106,6 +106,6 @@ class ContentCalendarService
             'tiktok' => '#000000',
             'pinterest' => '#bd081c',
             default => '#6c757d',
-                    };
+        };
     }
 }

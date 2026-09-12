@@ -13,7 +13,7 @@ class TwitterApiServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new TwitterApiService();
+        $this->service = new TwitterApiService;
     }
 
     public function test_authenticate_returns_success_when_credentials_valid(): void
