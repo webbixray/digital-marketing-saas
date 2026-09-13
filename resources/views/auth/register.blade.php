@@ -1,79 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | {{ config('app.name') }}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-</head>
-<body class="hold-transition register-page" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
-<div class="register-box">
-    <div class="register-logo">
-        <a href="/" class="text-white"><b>{{ config('app.name') }}</b></a>
-    </div>
-    <div class="card">
-        <div class="card-body register-card-body">
-            <p class="register-box-msg">Register a new agency</p>
+@extends('layouts.auth')
 
-            <form action="{{ route('register') }}" method="POST">
-                @csrf
+@section('title', 'Create Account')
 
-                <div class="input-group mb-3">
-                    <input type="text" name="agency_name" class="form-control @error('agency_name') is-invalid @enderror" placeholder="Agency Name" value="{{ old('agency_name') }}" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-building"></span></div>
-                    </div>
-                    @error('agency_name') <span class="invalid-feedback">{{ $message }}</span> @enderror
+@section('content')
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="auth-logo-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h1>Get Started</h1>
+            <p class="auth-subtitle">Create your agency account</p>
+        </div>
+
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+            <div class="form-group">
+                <label class="form-label" for="agency_name">Agency Name</label>
+                <div class="input-group">
+                    <i class="fas fa-building input-group-icon"></i>
+                    <input id="agency_name" type="text" name="agency_name" class="form-input @error('agency_name') is-invalid @enderror" value="{{ old('agency_name') }}" placeholder="Your Agency" required>
                 </div>
+                @error('agency_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-                <div class="input-group mb-3">
-                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Your Name" value="{{ old('name') }}" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-user"></span></div>
-                    </div>
-                    @error('name') <span class="invalid-feedback">{{ $message }}</span> @enderror
+            <div class="form-group">
+                <label class="form-label" for="name">Your Name</label>
+                <div class="input-group">
+                    <i class="fas fa-user input-group-icon"></i>
+                    <input id="name" type="text" name="name" class="form-input @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="John Doe" required>
                 </div>
+                @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-                <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-envelope"></span></div>
-                    </div>
-                    @error('email') <span class="invalid-feedback">{{ $message }}</span> @enderror
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <div class="input-group">
+                    <i class="fas fa-envelope input-group-icon"></i>
+                    <input id="email" type="email" name="email" class="form-input @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="you@example.com" required>
                 </div>
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-lock"></span></div>
-                    </div>
-                    @error('password') <span class="invalid-feedback">{{ $message }}</span> @enderror
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock input-group-icon"></i>
+                    <input id="password" type="password" name="password" class="form-input @error('password') is-invalid @enderror" placeholder="••••••••" required>
                 </div>
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-                <div class="input-group mb-3">
-                    <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm Password" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-lock"></span></div>
-                    </div>
+            <div class="form-group">
+                <label class="form-label" for="password_confirmation">Confirm Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock input-group-icon"></i>
+                    <input id="password_confirmation" type="password" name="password_confirmation" class="form-input" placeholder="••••••••" required>
                 </div>
+            </div>
 
-                <div class="row">
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
-                    </div>
-                </div>
-            </form>
+            <div class="form-group">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </div>
+        </form>
 
-            <p class="mb-0 text-center mt-3">
-                <a href="{{ route('login') }}">I already have an account</a>
-            </p>
+        <div class="auth-footer">
+            Already have an account? <a href="{{ route('login') }}">Sign in</a>
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-</body>
-</html>
+@endsection

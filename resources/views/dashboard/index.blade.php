@@ -1,238 +1,129 @@
-@extends('layouts.app')
+@extends('layouts.modern')
+
 @section('title', 'Dashboard')
 
 @section('content')
-<!-- Stats Cards Row -->
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>{{ $stats['totalPosts'] ?? 0 }}</h3>
-                <p>Total Posts</p>
-            </div>
-            <div class="icon"><i class="fas fa-pen-nib"></i></div>
-            <a href="{{ route('social.posts.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
+    <!-- Welcome Section -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()?->name ?? 'User' }}</h2>
+        <p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your social media today.</p>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>{{ $stats['publishedPosts'] ?? 0 }}</h3>
-                <p>Published</p>
-            </div>
-            <div class="icon"><i class="fas fa-check-circle"></i></div>
-            <a href="{{ route('social.posts.index', ['status' => 'published']) }}" class="small-box-footer">View <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>{{ $stats['scheduledPosts'] ?? 0 }}</h3>
-                <p>Scheduled</p>
-            </div>
-            <div class="icon"><i class="fas fa-clock"></i></div>
-            <a href="{{ route('social.posts.index', ['status' => 'scheduled']) }}" class="small-box-footer">View <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ $stats['failedPosts'] ?? 0 }}</h3>
-                <p>Failed</p>
-            </div>
-            <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <a href="{{ route('social.posts.index', ['status' => 'failed']) }}" class="small-box-footer">Fix <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-primary">
-            <div class="inner">
-                <h3>{{ $stats['totalCampaigns'] ?? 0 }}</h3>
-                <p>Campaigns</p>
-            </div>
-            <div class="icon"><i class="fas fa-bullhorn"></i></div>
-            <a href="{{ route('campaigns.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-teal">
-            <div class="inner">
-                <h3>{{ $stats['totalClients'] ?? 0 }}</h3>
-                <p>Clients</p>
-            </div>
-            <div class="icon"><i class="fas fa-users"></i></div>
-            <a href="{{ route('clients.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-indigo">
-            <div class="inner">
-                <h3>{{ $stats['totalInvoices'] ?? 0 }}</h3>
-                <p>Invoices</p>
-            </div>
-            <div class="icon"><i class="fas fa-file-invoice-dollar"></i></div>
-            <a href="{{ route('invoices.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-purple">
-            <div class="inner">
-                <h3>{{ $stats['aiGenerations'] ?? 0 }}</h3>
-                <p>AI Generations</p>
-            </div>
-            <div class="icon"><i class="fas fa-robot"></i></div>
-            <a href="{{ route('ai.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-</div>
-
-<!-- Quota Usage Row -->
-@if(isset($quotas))
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-tachometer-alt mr-2"></i>Plan Usage</h3>
-                <div class="card-tools">
-                    <span class="badge badge-primary">{{ ucfirst($agency->subscription_plan ?? 'free') }} Plan</span>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Total Posts</p>
+                    <p class="stat-value">{{ $stats['total_posts'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-pen-nib text-indigo-600 dark:text-indigo-400 text-xl"></i>
                 </div>
             </div>
+            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 12% from last month</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Published</p>
+                    <p class="stat-value">{{ $stats['published_posts'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl"></i>
+                </div>
+            </div>
+            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 8% from last month</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Scheduled</p>
+                    <p class="stat-value">{{ $stats['pending_posts'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-clock text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                </div>
+            </div>
+            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 24% from last month</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Failed</p>
+                    <p class="stat-value">{{ $stats['failed_posts'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
+                </div>
+            </div>
+            <p class="stat-change down"><i class="fas fa-arrow-down"></i> 3% from last month</p>
+        </div>
+    </div>
+
+    <!-- Platform Stats & Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Platform Breakdown -->
+        <div class="lg:col-span-2 card">
+            <div class="card-header flex items-center justify-between">
+                <h3 class="font-semibold text-gray-900 dark:text-white">Platform Performance</h3>
+                <a href="{{ route('analytics.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
+            </div>
             <div class="card-body">
-                <div class="row">
-                    @foreach($quotas as $key => $quota)
-                    <div class="col-md-3">
-                        <div class="progress-group">
-                            <span class="progress-text">{{ $quota['label'] }}</span>
-                            <span class="float-right"><b>{{ $quota['used'] }}</b>/{{ $quota['limit'] }}</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar {{ $quota['percentage'] > 80 ? 'bg-danger' : ($quota['percentage'] > 50 ? 'bg-warning' : 'bg-primary') }}" style="width: {{ min($quota['percentage'], 100) }}%"></div>
+                <div class="space-y-4">
+                    @foreach(['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'] as $platform)
+                        @php
+                            $platformStats = $platformStats ?? [];
+                            $stat = $platformStats[$platform] ?? null;
+                        @endphp
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                <i class="fab fa-{{ $platform }} text-gray-600 dark:text-gray-300"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{ $platform }}</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $stat ? number_format($stat->total_posts) : 0 }} posts</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $stat ? min(($stat->published / max($stat->total_posts, 1)) * 100, 100) : 0 }}%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
         </div>
-    </div>
-</div>
-@endif
 
-<div class="row">
-    <!-- Recent Activity -->
-    <div class="col-md-8">
+        <!-- Recent Activity -->
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Activity</h3>
-                <div class="card-tools">
-                    <a href="{{ route('activity.index') }}" class="btn btn-sm btn-primary">View All</a>
-                </div>
-            </div>
-            <div class="card-body p-0">
-                <ul class="products-list product-list-in-card pl-2 pr-2">
-                    @forelse($recentActivity ?? [] as $activity)
-                    <li class="item">
-                        <div class="product-img">
-                            <img src="{{ $activity->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($activity->user->name ?? 'U') }}" alt="Avatar" class="img-size-50 img-circle">
-                        </div>
-                        <div class="product-info">
-                            <a href="#" class="product-title">{{ $activity->description ?? 'Activity' }}</a>
-                            <span class="product-description"><i class="far fa-clock mr-1"></i>{{ $activity->created_at->diffForHumans() ?? 'Just now' }}</span>
-                        </div>
-                    </li>
-                    @empty
-                    <li class="item text-center py-4">
-                        <span class="text-muted">No recent activity yet. Start by creating your first post!</span>
-                    </li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions & Upcoming -->
-    <div class="col-md-4">
-        <!-- Agent Health Widget -->
-        @if(isset($agentHealthSummary) && $agentHealthSummary['total_agents'] > 0)
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-robot mr-2"></i>AI Agents</h3>
-                <div class="card-tools">
-                    <a href="{{ route('agents.dashboard') }}" class="btn btn-sm btn-primary">View All</a>
-                </div>
+            <div class="card-header flex items-center justify-between">
+                <h3 class="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
+                <a href="{{ route('social.posts.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>System Health:</span>
-                    <span class="badge badge-{{ $agentHealthSummary['overall_status'] === 'healthy' ? 'success' : ($agentHealthSummary['overall_status'] === 'degraded' ? 'warning' : 'danger') }}">
-                        {{ $agentHealthSummary['system_score'] }}%
-                    </span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>Healthy Agents:</span>
-                    <span class="text-success font-weight-bold">{{ $agentHealthSummary['healthy_agents'] }}/{{ $agentHealthSummary['total_agents'] }}</span>
-                </div>
-                @if(!empty($recentAgentActivity) && $recentAgentActivity->count() > 0)
-                <hr>
-                <h6 class="text-muted">Recent Agent Activity</h6>
-                <ul class="list-unstyled mb-0">
-                    @foreach($recentAgentActivity as $activity)
-                    <li class="d-flex justify-content-between align-items-center mb-1">
-                        <small>{{ ucwords(str_replace('_', ' ', $activity->agent_name ?? 'Agent')) }}</small>
-                        <small class="text-muted">{{ $activity->executed_at ? \Carbon\Carbon::parse($activity->executed_at)->diffForHumans() : '' }}</small>
-                    </li>
-                    @endforeach
-                </ul>
-                @endif
-            </div>
-        </div>
-        @endif
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt mr-2"></i>Quick Actions</h3>
-            </div>
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('social.posts.create') }}" class="btn btn-primary mb-2"><i class="fas fa-plus mr-1"></i> New Post</a>
-                    <a href="{{ route('campaigns.create') }}" class="btn btn-success mb-2"><i class="fas fa-bullhorn mr-1"></i> New Campaign</a>
-                    <a href="{{ route('clients.create') }}" class="btn btn-info mb-2"><i class="fas fa-user-plus mr-1"></i> New Client</a>
-                    <a href="{{ route('invoices.create') }}" class="btn btn-warning mb-2"><i class="fas fa-file-invoice mr-1"></i> New Invoice</a>
-                    <a href="{{ route('ai.index') }}" class="btn btn-purple mb-2"><i class="fas fa-robot mr-1"></i> AI Content</a>
-                    <a href="{{ route('content.create') }}" class="btn btn-secondary mb-2"><i class="fas fa-folder-plus mr-1"></i> Add Content</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-calendar-alt mr-2"></i>Upcoming Posts</h3>
-            </div>
-            <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    @forelse($upcomingPosts ?? [] as $post)
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="badge badge-{{ $post->platform_color }} mr-2">{{ ucfirst($post->socialAccount->platform ?? 'web') }}</span>
-                            \Str::limit($post->content, 40)
+                <div class="space-y-4">
+                    @forelse($recentActivity ?? [] as $post)
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                <i class="fab fa-{{ $post->platform }} text-gray-600 dark:text-gray-300 text-xs"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ ucfirst($post->platform) }} Post</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->created_at->diffForHumans() }}</p>
+                            </div>
+                            <span class="badge {{ $post->status === 'published' ? 'badge-success' : ($post->status === 'failed' ? 'badge-danger' : 'badge-warning') }}">
+                                {{ ucfirst($post->status) }}
+                            </span>
                         </div>
-                        <small class="text-muted">{{ $post->scheduled_at->diffForHumans() }}</small>
-                    </li>
                     @empty
-                    <li class="list-group-item text-center text-muted py-3">No scheduled posts</li>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No recent activity</p>
                     @endforelse
-                </ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
-
-@push('css')
-<style>
-.gap-2 { gap: 0.5rem; }
-.progress-group { margin-bottom: 1rem; }
-</style>
-@endpush
