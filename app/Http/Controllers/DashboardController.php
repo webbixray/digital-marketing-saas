@@ -28,8 +28,28 @@ class DashboardController extends Controller
     {
         $agency = $request->user()->agency;
 
-        // Use cached analytics service
-        $stats = $this->analytics->getOverviewStats($agency);
+        // Get all stats
+        $overviewStats = $this->analytics->getOverviewStats($agency);
+        $socialStats = $this->analytics->getSocialStats($agency);
+
+        // Combine stats for the modern dashboard view
+        $stats = [
+            'total_posts' => $overviewStats['total_posts'],
+            'published_posts' => $socialStats['published'],
+            'pending_posts' => $socialStats['scheduled'],
+            'failed_posts' => $socialStats['failed'],
+            'draft_posts' => $socialStats['draft'],
+            'total_engagement' => $socialStats['total_engagement'],
+            'average_engagement' => $socialStats['average_engagement'],
+            'total_clients' => $overviewStats['total_clients'],
+            'total_campaigns' => $overviewStats['total_campaigns'],
+            'total_revenue' => $overviewStats['total_revenue'],
+            'pending_invoices' => $overviewStats['pending_invoices'],
+            'active_social_accounts' => $overviewStats['active_social_accounts'],
+        ];
+
+        // Platform stats for the performance section
+        $platformStats = $socialStats['by_platform'] ?? [];
 
         // Quotas
         $quotas = [
@@ -111,12 +131,9 @@ class DashboardController extends Controller
         // Recent agent activity
         $recentAgentActivity = $this->getRecentAgentActivity($agency->id);
 
-        return view('dashboard.index', compact('stats', 'quotas', 'recentActivity', 'upcomingPosts', 'agency', 'agentHealthSummary', 'recentAgentActivity'));
+        return view('dashboard.index', compact('stats', 'platformStats', 'quotas', 'recentActivity', 'upcomingPosts', 'agency', 'agentHealthSummary', 'recentAgentActivity'));
     }
 
-    /**
-     * Get agent health summary for dashboard widget.
-     */
     private function getAgentHealthSummary(int $agencyId): array
     {
         try {
@@ -140,9 +157,6 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * Get recent agent activity for dashboard widget.
-     */
     private function getRecentAgentActivity(int $agencyId): Collection
     {
         try {

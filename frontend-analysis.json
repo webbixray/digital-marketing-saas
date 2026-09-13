@@ -1,0 +1,886 @@
+{
+  "findings": [
+    {
+      "file": "resources/views/layouts/app.blade.php",
+      "issue": "Main layout extends AdminLTE CSS/JS (adminlte.min.css, adminlte.min.js, OverlayScrollbars) with 161-line inline style block",
+      "severity": "high",
+      "recommendation": "Migrate to modern.blade.php which uses Tailwind CSS and Alpine.js"
+    },
+    {
+      "file": "resources/views/layouts/auth.blade.php",
+      "issue": "Auth layout contains 218-line inline <style> block with AdminLTE 3.2.0 references and Bootstrap 4.6.2 CDN",
+      "severity": "high",
+      "recommendation": "Migrate to modern.blade.php or extract styles to Vite-bundled CSS"
+    },
+    {
+      "file": "resources/views/layouts/public.blade.php",
+      "issue": "Public layout contains 41-line inline <style> block and uses Bootstrap 4/5 hybrid classes",
+      "severity": "medium",
+      "recommendation": "Migrate to modern.blade.php or extract styles to Vite-bundled CSS"
+    },
+    {
+      "file": "resources/views/auth/passwords/reset.blade.php",
+      "issue": "References AdminLTE CDN CSS/JS directly (admin-lte@3.2, bootstrap@4.6.2, jquery@3.7.1) — old stack",
+      "severity": "high",
+      "recommendation": "Migrate to modern.blade.php or at least remove AdminLTE CDN references and use Vite-bundled assets"
+    },
+    {
+      "file": "resources/views/auth/passwords/email.blade.php",
+      "issue": "References AdminLTE CDN CSS/JS directly (admin-lte@3.2, bootstrap@4.6.2, jquery@3.7.1) — old stack",
+      "severity": "high",
+      "recommendation": "Migrate to modern.blade.php or at least remove AdminLTE CDN references and use Vite-bundled assets"
+    },
+    {
+      "file": "resources/views/agency/settings.blade.php",
+      "issue": "Form uses method=\"PUT\" directly instead of method=\"POST\" with @method('PUT') — browsers don't support PUT in forms, will be treated as GET",
+      "severity": "high",
+      "recommendation": "Change to method=\"POST\" and add @method('PUT') after @csrf"
+    },
+    {
+      "file": "resources/views/workflows/builder.blade.php",
+      "issue": "Contains inline <style> block with 890 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/media/index.blade.php",
+      "issue": "Contains inline <style> block with 128 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/public/landing-new.blade.php",
+      "issue": "Contains inline <style> block with 82 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/public/docs.blade.php",
+      "issue": "Contains inline <style> block with 53 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/billing/upgrade.blade.php",
+      "issue": "Contains inline <style> block with 39 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/public/blog.blade.php",
+      "issue": "Contains inline <style> block with 39 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/billing/success.blade.php",
+      "issue": "Contains inline <style> block with 9 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/public/landing-page.blade.php",
+      "issue": "Contains inline <style> block with 6 lines (exceeds 5-line threshold)",
+      "severity": "medium",
+      "recommendation": "Move styles to external CSS file or @push('styles') with Vite-bundled stylesheet"
+    },
+    {
+      "file": "resources/views/comments/_partial.blade.php",
+      "issue": "Uses onsubmit=\"submitComment(event)\" with no @csrf token — likely relies on AJAX with CSRF header but form has no fallback",
+      "severity": "medium",
+      "recommendation": "Add @csrf inside the form or ensure AJAX setup includes CSRF token from meta tag"
+    },
+    {
+      "file": "resources/views/agents/dashboard.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/agents/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/agents/workflows.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/campaigns/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/campaigns/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/clients/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/clients/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/content/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/content/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/media/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/social/posts/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/social/posts/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/analytics/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/billing/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/workflows/index.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "resources/views/workflows/show.blade.php",
+      "issue": "Uses raw HTML with AdminLTE card/table classes instead of modern Tailwind card/badge/table components",
+      "severity": "medium",
+      "recommendation": "Refactor to use modern Tailwind utility classes or extract reusable Blade components"
+    },
+    {
+      "file": "app/Http/Controllers/TikTokController.php",
+      "issue": "Controller exists but no TikTok views found in resources/views/tiktok/",
+      "severity": "low",
+      "recommendation": "Create tiktok/ views or verify routes point to existing controller methods"
+    },
+    {
+      "file": "app/Http/Controllers/TikTokWebhookController.php",
+      "issue": "Controller exists but no TikTok views found in resources/views/tiktok/",
+      "severity": "low",
+      "recommendation": "Create tiktok/ views or verify routes point to existing controller methods"
+    },
+    {
+      "file": "app/Http/Controllers/InstagramWebhookController.php",
+      "issue": "Controller exists but no Instagram views found in resources/views/instagram/",
+      "severity": "low",
+      "recommendation": "Create instagram/ views or verify routes point to existing controller methods"
+    },
+    {
+      "file": "app/Http/Controllers/LinkedInWebhookController.php",
+      "issue": "Controller exists but no LinkedIn views found in resources/views/linkedin/",
+      "severity": "low",
+      "recommendation": "Create linkedin/ views or verify routes point to existing controller methods"
+    },
+    {
+      "file": "app/Http/Controllers/ActivityFeedController.php",
+      "issue": "Controller exists but no activity-feed/ directory with views found",
+      "severity": "low",
+      "recommendation": "Verify routes for ActivityFeedController point to existing views or create them"
+    },
+    {
+      "file": "app/Http/Controllers/UnifiedInboxController.php",
+      "issue": "Controller exists but no unified-inbox/ directory with views found",
+      "severity": "low",
+      "recommendation": "Verify routes for UnifiedInboxController point to existing views or create them"
+    },
+    {
+      "file": "resources/views/ab-testing/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/ab-testing/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/ab-testing/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/activity/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/activity/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/agency/billing-success.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/agency/billing.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/agency/invoices.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/agency/settings.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/agency/team.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/ai/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/auth/two-factor.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/auth/verify-email.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/billing/invoices.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/billing/success.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/billing/upgrade.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/calendar/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/campaigns/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/campaigns/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/cancellation/confirm.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/cancellation/survey.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/clients/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/clients/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content-templates/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content-templates/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content-templates/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/content-templates/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/custom-fields/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/custom-fields/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/custom-fields/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/custom-fields/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/campaigns/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/campaigns/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/templates/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/templates/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/templates/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/email/templates/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/400.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/403.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/404.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/419.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/422.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/429.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/500.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/errors/503.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/feature-flags/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/feature-flags/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/feature-flags/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/feature-flags/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/features/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/features/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/features/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/features/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/forms/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/forms/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/forms/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/forms/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/gdpr/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/invoices/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/invoices/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/invoices/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/invoices/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/landing-pages/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/landing-pages/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/landing-pages/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/landing-pages/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/media/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/media/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/media/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/quick_start.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/step1_agency.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/step2_social.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/step3_team.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/step4_campaign.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding/step5_ai.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/onboarding.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/reports/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/reports/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/reports/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/accounts/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/accounts/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/accounts/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/posts/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/posts/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/posts/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/social/posts/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/support/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/support/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/system/backup.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/telegram/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/twitter/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/version/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/webhooks/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/webhooks/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/webhooks/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/create.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/edit.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/show.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/versions.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/workflows/webhook.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/youtube/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/youtube/metrics.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/facebook/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/facebook/metrics.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/white-label/index.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/auth/login.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    },
+    {
+      "file": "resources/views/auth/register.blade.php",
+      "issue": "Extends 'layouts.app' (AdminLTE) instead of 'layouts.modern' (Tailwind)",
+      "severity": "medium",
+      "recommendation": "Change @extends('layouts.app') to @extends('layouts.modern') and update classes to Tailwind"
+    }
+  ]
+}

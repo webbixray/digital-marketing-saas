@@ -76,8 +76,7 @@
                 <div class="space-y-4">
                     @foreach(['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'] as $platform)
                         @php
-                            $platformStats = $platformStats ?? [];
-                            $stat = $platformStats[$platform] ?? null;
+                            $count = $platformStats[$platform] ?? 0;
                         @endphp
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -86,10 +85,10 @@
                             <div class="flex-1">
                                 <div class="flex items-center justify-between mb-1">
                                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{ $platform }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $stat ? number_format($stat->total_posts) : 0 }} posts</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ number_format($count) }} posts</span>
                                 </div>
                                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $stat ? min(($stat->published / max($stat->total_posts, 1)) * 100, 100) : 0 }}%"></div>
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $count > 0 ? min(($count / max($stats['total_posts'], 1)) * 100, 100) : 0 }}%"></div>
                                 </div>
                             </div>
                         </div>
@@ -102,22 +101,19 @@
         <div class="card">
             <div class="card-header flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
-                <a href="{{ route('social.posts.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
+                <a href="{{ route('activity.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
             <div class="card-body">
                 <div class="space-y-4">
-                    @forelse($recentActivity ?? [] as $post)
+                    @forelse($recentActivity ?? [] as $activity)
                         <div class="flex items-start gap-3">
                             <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                                <i class="fab fa-{{ $post->platform }} text-gray-600 dark:text-gray-300 text-xs"></i>
+                                <i class="fas fa-{{ $activity->action === 'created' ? 'plus' : ($activity->action === 'deleted' ? 'trash' : 'edit') }} text-gray-600 dark:text-gray-300 text-xs"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ ucfirst($post->platform) }} Post</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->created_at->diffForHumans() }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $activity->description ?? 'Activity' }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
                             </div>
-                            <span class="badge {{ $post->status === 'published' ? 'badge-success' : ($post->status === 'failed' ? 'badge-danger' : 'badge-warning') }}">
-                                {{ ucfirst($post->status) }}
-                            </span>
                         </div>
                     @empty
                         <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No recent activity</p>

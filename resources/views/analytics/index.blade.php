@@ -1,130 +1,154 @@
-@extends('layouts.app')
+@extends('layouts.modern')
+
 @section('title', 'Analytics')
 
 @section('content')
-<div class="row">
-    <div class="col-6 col-md-3">
-        <div class="small-box bg-info">
-            <div class="inner"><h3>{{ number_format($postStats['total_posts']) }}</h3><p>Total Posts</p></div>
-            <div class="icon"><i class="fas fa-pen-fancy"></i></div>
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Analytics</h2>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">Track your social media performance.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('analytics.index', ['range' => '7']) }}" class="btn btn-sm {{ $range == 7 ? 'btn-primary' : 'btn-secondary' }}">7d</a>
+            <a href="{{ route('analytics.index', ['range' => '30']) }}" class="btn btn-sm {{ $range == 30 ? 'btn-primary' : 'btn-secondary' }}">30d</a>
+            <a href="{{ route('analytics.index', ['range' => '90']) }}" class="btn btn-sm {{ $range == 90 ? 'btn-primary' : 'btn-secondary' }}">90d</a>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="small-box bg-success">
-            <div class="inner"><h3>{{ number_format($engagement->total_likes ?? 0) }}</h3><p>Total Likes</p></div>
-            <div class="icon"><i class="fas fa-heart"></i></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="small-box bg-warning">
-            <div class="inner"><h3>{{ number_format($engagement->total_shares ?? 0) }}</h3><p>Total Shares</p></div>
-            <div class="icon"><i class="fas fa-share-alt"></i></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="small-box bg-danger">
-            <div class="inner"><h3>${{ number_format($revenueStats['paid'], 2) }}</h3><p>Revenue (Paid)</p></div>
-            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Engagement Overview</h3></div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tr><td><i class="fas fa-eye text-info"></i> Total Views</td><td class="text-right"><strong>{{ number_format($engagement->total_views ?? 0) }}</strong></td></tr>
-                    <tr><td><i class="fas fa-heart text-danger"></i> Total Likes</td><td class="text-right"><strong>{{ number_format($engagement->total_likes ?? 0) }}</strong></td></tr>
-                    <tr><td><i class="fas fa-comment text-primary"></i> Total Comments</td><td class="text-right"><strong>{{ number_format($engagement->total_comments ?? 0) }}</strong></td></tr>
-                    <tr><td><i class="fas fa-share text-success"></i> Total Shares</td><td class="text-right"><strong>{{ number_format($engagement->total_shares ?? 0) }}</strong></td></tr>
-                    <tr><td><i class="fas fa-mouse-pointer text-warning"></i> Total Clicks</td><td class="text-right"><strong>{{ number_format($engagement->total_clicks ?? 0) }}</strong></td></tr>
-                    <tr><td><i class="fas fa-chart-line text-info"></i> Avg Quality Score</td><td class="text-right"><strong>{{ number_format($postStats['avg_quality_score'], 1) }}</strong></td></tr>
-                </table>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Total Posts</p>
+                    <p class="stat-value">{{ number_format($postStats['total_posts']) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-pen-nib text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Engagement</p>
+                    <p class="stat-value">{{ number_format($engagement->total_likes + $engagement->total_shares) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-heart text-pink-600 dark:text-pink-400 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">Revenue</p>
+                    <p class="stat-value">${{ number_format($revenueStats['paid'], 0) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-dollar-sign text-green-600 dark:text-green-400 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="stat-label">AI Generations</p>
+                    <p class="stat-value">{{ number_format($aiStats['total_generations']) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-robot text-purple-600 dark:text-purple-400 text-xl"></i>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+
+    <!-- Platform Performance & Engagement Chart -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Platform Stats -->
         <div class="card">
-            <div class="card-header"><h3 class="card-title">Platform Breakdown</h3></div>
+            <div class="card-header">
+                <h3 class="font-semibold text-gray-900 dark:text-white">By Platform</h3>
+            </div>
             <div class="card-body">
-                @forelse($platformStats as $platform => $stat)
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>{{ ucfirst($platform) }}</span>
-                            <strong>{{ $stat->total }} posts</strong>
+                <div class="space-y-4">
+                    @foreach($platformStats as $platform => $stat)
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                <i class="fab fa-{{ $platform }} text-gray-600 dark:text-gray-300"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{ $platform }}</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ number_format($stat->total) }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ ($stat->total / max($postStats['total_posts'], 1)) * 100 }}%"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-{{ $loop->iteration % 2 == 0 ? 'success' : 'primary' }}" style="width: {{ min(100, ($stat->total / max(1, $postStats['total_posts'])) * 100) }}%"></div>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-muted text-center">No data available</p>
-                @endforelse
+                    @endforeach
+                    @if($platformStats->isEmpty())
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No platform data available</p>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card card-outline card-primary">
-            <div class="card-header"><h3 class="card-title">Campaigns</h3></div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between"><span>Active</span><strong>{{ $campaignStats['active'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Completed</span><strong>{{ $campaignStats['completed'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Total</span><strong>{{ $campaignStats['total'] }}</strong></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-outline card-success">
-            <div class="card-header"><h3 class="card-title">Clients</h3></div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between"><span>Active</span><strong>{{ $clientStats['active'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Leads</span><strong>{{ $clientStats['leads'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Total</span><strong>{{ $clientStats['total'] }}</strong></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-outline card-warning">
-            <div class="card-header"><h3 class="card-title">AI Usage</h3></div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between"><span>Generations</span><strong>{{ $aiStats['total_generations'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Successful</span><strong>{{ $aiStats['successful'] }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Cost</span><strong>${{ number_format($aiStats['total_cost'], 4) }}</strong></div>
-                <div class="d-flex justify-content-between"><span>Tokens</span><strong>{{ number_format($aiStats['total_tokens']) }}</strong></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
+        <!-- Best Posts -->
         <div class="card">
-            <div class="card-header"><h3 class="card-title">Top 5 Performing Posts</h3></div>
-            <div class="card-body p-0">
-                <table class="table table-striped">
-                    <thead><tr><th>Platform</th><th>Content</th><th>Likes</th><th>Comments</th><th>Shares</th><th>Published</th></tr></thead>
-                    <tbody>
-                        @forelse($bestPosts as $post)
-                            <tr>
-                                <td><span class="badge badge-info">{{ ucfirst($post->platform) }}</span></td>
-                                <td>{{ Str::limit($post->content, 50) }}</td>
-                                <td>{{ $post->likes_count }}</td>
-                                <td>{{ $post->comments_count }}</td>
-                                <td>{{ $post->shares_count }}</td>
-                                <td>{{ $post->published_at?->diffForHumans() }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="text-center text-muted">No published posts yet</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="card-header">
+                <h3 class="font-semibold text-gray-900 dark:text-white">Top Performing Posts</h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-4">
+                    @forelse($bestPosts as $post)
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                <i class="fab fa-{{ $post->platform }} text-gray-600 dark:text-gray-300 text-xs"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ Str::limit($post->content, 80) }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <i class="fas fa-heart mr-1"></i>{{ $post->likes_count ?? 0 }}
+                                    <i class="fas fa-share ml-2 mr-1"></i>{{ $post->shares_count ?? 0 }}
+                                    <i class="fas fa-eye ml-2 mr-1"></i>{{ $post->views_count ?? 0 }}
+                                </p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No published posts yet</p>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Campaign & Client Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="stat-card">
+            <div class="text-center">
+                <p class="stat-value text-indigo-600 dark:text-indigo-400">{{ $campaignStats['total'] }}</p>
+                <p class="stat-label">Total Campaigns</p>
+                <p class="text-xs text-gray-400 mt-1">{{ $campaignStats['active'] }} active</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="text-center">
+                <p class="stat-value text-green-600 dark:text-green-400">{{ $clientStats['total'] }}</p>
+                <p class="stat-label">Total Clients</p>
+                <p class="text-xs text-gray-400 mt-1">{{ $clientStats['active'] }} active</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="text-center">
+                <p class="stat-value text-purple-600 dark:text-purple-400">${{ number_format($aiStats['total_cost'], 2) }}</p>
+                <p class="stat-label">AI Cost</p>
+                <p class="text-xs text-gray-400 mt-1">{{ number_format($aiStats['total_tokens']) }} tokens used</p>
+            </div>
+        </div>
+    </div>
 @endsection
