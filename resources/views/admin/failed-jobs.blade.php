@@ -1,16 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Failed Jobs - Digital Marketing SaaS</title>
-</head>
-<body>
-    <div class="container">
-        <h1>Failed Jobs</h1>
-        
-        @if(count($failedJobs) > 0)
-            <table>
+@extends('layouts.modern')
+
+@section('title', 'Failed Jobs')
+
+@section('content')
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Failed Jobs</h2>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">View and retry failed background jobs.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -20,31 +22,40 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($failedJobs as $job)
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    @forelse($failedJobs as $job)
                         <tr>
                             <td>{{ $job->id }}</td>
-                            <td>{{ $job->connection }}</td>
+                            <td>{{ $job->connection_name }}</td>
                             <td>{{ $job->queue }}</td>
-                            <td>{{ $job->failed_at }}</td>
+                            <td>{{ \Carbon\Carbon::parse($job->failed_at)->diffForHumans() }}</td>
                             <td>
-                                <form method="POST" action="{{ route('admin.retry-job', $job->id) }}" style="display:inline">
+                                <form method="POST" action="{{ route('failed-jobs.retry', $job->id) }}" class="inline">
                                     @csrf
-                                    <button type="submit">Retry</button>
+                                    <button type="submit" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-redo"></i> Retry
+                                    </button>
                                 </form>
-                                <form method="POST" action="{{ route('admin.delete-failed-job', $job->id) }}" style="display:inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit">Delete</button>
+                                <form method="POST" action="{{ route('failed-jobs.delete', $job->id) }}" class="inline ml-2">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-8 text-gray-500 dark:text-gray-400">No failed jobs</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
-        @else
-            <p>No failed jobs.</p>
+        </div>
+        @if($failedJobs->hasPages())
+            <div class="p-4">
+                {{ $failedJobs->links() }}
+            </div>
         @endif
     </div>
-</body>
-</html>
+@endsection
