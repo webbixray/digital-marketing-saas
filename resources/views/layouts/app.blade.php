@@ -276,7 +276,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{ route('inbox.index') }}" class="nav-link {{ request()->routeIs('inbox.*') ? 'active' : '' }}">
+                        <a href="{{ route('unified-inbox.index') }}" class="nav-link {{ request()->routeIs('unified-inbox.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-inbox"></i>
                             <p>Inbox</p>
                             @if(isset($unreadCount) && $unreadCount > 0)

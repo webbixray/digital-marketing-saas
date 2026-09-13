@@ -170,9 +170,12 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('workflows/{workflow}/webhook', [WorkflowController::class, 'webhookInfo'])->name('workflows.webhook');
     Route::post('workflows/{workflow}/webhook/regenerate', [WorkflowController::class, 'regenerateWebhook'])->name('workflows.webhook.regenerate');
 
-    Route::resource('inbox', InboxController::class)->except('create', 'store', 'edit', 'update');
-    Route::post('inbox/{message}/triage', [InboxController::class, 'triage'])->name('inbox.triage');
-    Route::post('inbox/{message}/reply', [InboxController::class, 'reply'])->name('inbox.reply');
+    // Legacy inbox (redirects to unified inbox)
+    Route::middleware(['auth', 'agency'])->group(function () {
+        Route::get('/inbox/legacy', [InboxController::class, 'index'])->name('inbox.index');
+        Route::post('inbox/{message}/triage', [InboxController::class, 'triage'])->name('inbox.triage');
+        Route::post('inbox/{message}/reply', [InboxController::class, 'reply'])->name('inbox.reply');
+    });
 
     Route::resource('content', ContentLibraryController::class);
 

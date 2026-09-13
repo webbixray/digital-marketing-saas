@@ -27,16 +27,16 @@ class InboxTest extends TestCase
     {
         InboxMessage::factory()->count(3)->create(['agency_id' => $this->agency->id]);
 
-        $response = $this->actingAs($this->user)->get(route('inbox.index'));
+        $response = $this->actingAs($this->user)->get(route('unified-inbox.index'));
 
         $response->assertOk();
         $response->assertViewIs('inbox.index');
-        $response->assertViewHas('messages');
+        $response->assertViewHas('inbox');
     }
 
     public function test_it_requires_auth(): void
     {
-        $response = $this->get(route('inbox.index'));
+        $response = $this->get(route('unified-inbox.index'));
 
         $response->assertRedirect(route('login'));
     }
