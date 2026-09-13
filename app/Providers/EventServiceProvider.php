@@ -39,6 +39,7 @@ class EventServiceProvider extends ServiceProvider
             ClearPostCache::class.'@handlePostFailed',
             LogPostActivity::class.'@handlePostFailed',
             SendPostNotification::class.'@handlePostFailed',
+            \App\Listeners\HandlePostFailure::class,
         ],
         CampaignStatusChanged::class => [
             CampaignStatusChangedAgentListener::class,

@@ -401,6 +401,9 @@ require __DIR__.'/youtube.php';
 // Unified inbox
 require __DIR__.'/unified-inbox.php';
 
+// Admin dashboard
+require __DIR__.'/admin.php';
+
 // security.txt (RFC 9116)
 Route::get('/.well-known/security.txt', function () {
     $expiry = now()->addYear()->toIso8601String();

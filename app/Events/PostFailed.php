@@ -11,8 +11,6 @@ class PostFailed
     use Dispatchable, SerializesModels;
 
     public function __construct(
-        public SocialPost $post,
-        public string $errorMessage,
-        public int $attemptNumber = 1,
+        public readonly SocialPost $post,
     ) {}
 }
