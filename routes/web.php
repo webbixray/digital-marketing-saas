@@ -248,7 +248,9 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::resource('custom-fields', CustomFieldController::class);
 
     // Feature Flags
-    Route::resource('features', FeatureController::class);
+    Route::prefix('admin-features')->name('features.')->group(function () {
+        Route::resource('feature-flags', FeatureController::class);
+    });
     Route::prefix('feature-flags')->name('feature-flags.')->group(function () {
         Route::get('/', [FeatureFlagController::class, 'index'])->name('index');
         Route::get('/create', [FeatureFlagController::class, 'create'])->name('create');
@@ -304,10 +306,12 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('white-label/validate-domain', [WhiteLabelController::class, 'validateDomain'])->name('white-label.validate-domain');
 
     // GDPR
-    Route::get('privacy', [GdprController::class, 'index'])->name('gdpr.index');
-    Route::post('privacy/export', [GdprController::class, 'requestExport'])->name('gdpr.export');
-    Route::post('privacy/delete', [GdprController::class, 'requestDeletion'])->name('gdpr.delete');
-    Route::post('privacy/consent', [GdprController::class, 'updateConsent'])->name('gdpr.consent');
+    Route::prefix('gdpr')->name('gdpr.')->group(function () {
+        Route::get('/', [GdprController::class, 'index'])->name('index');
+        Route::post('/export', [GdprController::class, 'requestExport'])->name('export');
+        Route::post('/delete', [GdprController::class, 'requestDeletion'])->name('delete');
+        Route::post('/consent', [GdprController::class, 'updateConsent'])->name('consent');
+    });
 
     // Billing & Subscription
     Route::get('agency/billing', [BillingController::class, 'index'])->name('agency.billing');

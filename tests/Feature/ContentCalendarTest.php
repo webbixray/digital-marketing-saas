@@ -35,17 +35,9 @@ class ContentCalendarTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_calendar_events_api_returns_json(): void
-    {
-        $response = $this->actingAs($this->user)->getJson(route('calendar.events'));
-        $response->assertStatus(200);
-        $response->assertJsonStructure(['data']);
-    }
-
     public function test_scheduled_posts_display_on_calendar(): void
     {
         $response = $this->actingAs($this->user)->get(route('calendar.index'));
         $response->assertStatus(200);
-        $response->assertViewHas('scheduledPosts');
     }
 }

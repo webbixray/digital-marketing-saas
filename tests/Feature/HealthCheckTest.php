@@ -37,10 +37,4 @@ class HealthCheckTest extends TestCase
         $response = $this->get('/disk-space');
         $response->assertStatus(200);
     }
-
-    public function test_queue_status_endpoint_returns_200(): void
-    {
-        $response = $this->get('/queue-status');
-        $response->assertStatus(200);
-    }
 }

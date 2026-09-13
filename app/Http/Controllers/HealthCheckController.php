@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class HealthCheckController extends Controller
@@ -238,9 +239,11 @@ class HealthCheckController extends Controller
             'timestamp' => now()->toIso8601String(),
         ];
 
+        $failedJobsTableExists = Schema::hasTable('failed_jobs');
+        
         if ($queueDriver === 'database') {
             $status['pending'] = DB::table('jobs')->count();
-            $status['failed'] = DB::table('failed_jobs')->count();
+            $status['failed'] = $failedJobsTableExists ? DB::table('failed_jobs')->count() : 0;
             $status['pending_by_queue'] = DB::table('jobs')
                 ->select('queue', DB::raw('count(*) as count'))
                 ->groupBy('queue')
@@ -248,10 +251,10 @@ class HealthCheckController extends Controller
                 ->toArray();
         } elseif ($queueDriver === 'redis') {
             $status['pending'] = Queue::size();
-            $status['failed'] = DB::table('failed_jobs')->count();
+            $status['failed'] = $failedJobsTableExists ? DB::table('failed_jobs')->count() : 0;
         } else {
             $status['pending'] = 'n/a';
-            $status['failed'] = DB::table('failed_jobs')->count();
+            $status['failed'] = $failedJobsTableExists ? DB::table('failed_jobs')->count() : 0;
         }
 
         $status['healthy'] = $this->checkQueue();
