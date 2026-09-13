@@ -12,7 +12,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-8">
-                    <form action="{{ route('features.update', $feature) }}" method="POST">
+                    <form action="{{ route('features.flags.update', $feature) }}" method="POST">
                         @csrf @method('PUT')
                         <div class="card">
                             <div class="card-body">
@@ -31,7 +31,7 @@
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Update Feature</button>
-                                <a href="{{ route('features.index') }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('features.flags.index') }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </div>
                     </form>

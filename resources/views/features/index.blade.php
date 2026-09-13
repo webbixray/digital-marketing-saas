@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Features</h1>
-                <a href="{{ route('features.create') }}" class="btn btn-primary">Create Feature</a>
+                <a href="{{ route('features.flags.create') }}" class="btn btn-primary">Create Feature</a>
             </div>
         </div>
     </div>
@@ -37,9 +37,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('features.show', $feature) }}" class="btn btn-sm btn-info">View</a>
-                                    <a href="{{ route('features.edit', $feature) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('features.destroy', $feature) }}" method="POST" class="d-inline">
+                                    <a href="{{ route('features.flags.show', $feature) }}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{{ route('features.flags.edit', $feature) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('features.flags.destroy', $feature) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
                                     </form>

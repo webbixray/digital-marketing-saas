@@ -249,7 +249,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
 
     // Feature Flags
     Route::prefix('admin-features')->name('features.')->group(function () {
-        Route::resource('feature-flags', FeatureController::class);
+        Route::resource('flags', FeatureController::class)->parameters(['flags' => 'feature']);
     });
     Route::prefix('feature-flags')->name('feature-flags.')->group(function () {
         Route::get('/', [FeatureFlagController::class, 'index'])->name('index');

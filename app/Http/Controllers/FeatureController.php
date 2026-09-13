@@ -34,7 +34,7 @@ class FeatureController extends Controller
 
         Feature::create($validated);
 
-        return redirect()->route('features.index')->with('success', 'Feature created.');
+        return redirect()->route('features.flags.index')->with('success', 'Feature created.');
     }
 
     public function show(Feature $feature)
@@ -56,13 +56,13 @@ class FeatureController extends Controller
 
         $feature->update($validated);
 
-        return redirect()->route('features.index')->with('success', 'Feature updated.');
+        return redirect()->route('features.flags.index')->with('success', 'Feature updated.');
     }
 
     public function destroy(Feature $feature)
     {
         $feature->delete();
 
-        return redirect()->route('features.index')->with('success', 'Feature deleted.');
+        return redirect()->route('features.flags.index')->with('success', 'Feature deleted.');
     }
 }

@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-between">
                 <h1>{{ $feature->name }}</h1>
-                <a href="{{ route('features.index') }}" class="btn btn-secondary">Back</a>
+                <a href="{{ route('features.flags.index') }}" class="btn btn-secondary">Back</a>
             </div>
         </div>
     </div>
@@ -20,8 +20,8 @@
                     <p><strong>Status:</strong> <span class="badge badge-{{ $feature->is_active ? 'success' : 'secondary' }}">{{ $feature->is_active ? 'Active' : 'Inactive' }}</span></p>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ route('features.edit', $feature) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('features.destroy', $feature) }}" method="POST" class="d-inline">
+                    <a href="{{ route('features.flags.edit', $feature) }}" class="btn btn-warning">Edit</a>
+                    <form action="{{ route('features.flags.destroy', $feature) }}" method="POST" class="d-inline">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Delete?')">Delete</button>
                     </form>

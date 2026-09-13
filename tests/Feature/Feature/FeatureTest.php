@@ -13,7 +13,6 @@ class FeatureTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
-
     private User $user;
 
     protected function setUp(): void
@@ -27,7 +26,7 @@ class FeatureTest extends TestCase
     {
         Feature::factory()->count(3)->create();
 
-        $response = $this->actingAs($this->user)->get(route('features.index'));
+        $response = $this->actingAs($this->user)->get(route('features.flags.index'));
 
         $response->assertOk();
         $response->assertViewIs('features.index');
@@ -36,7 +35,7 @@ class FeatureTest extends TestCase
 
     public function test_it_creates_a_feature(): void
     {
-        $response = $this->actingAs($this->user)->post(route('features.store'), [
+        $response = $this->actingAs($this->user)->post(route('features.flags.store'), [
             'code' => 'test_feature',
             'name' => 'Test Feature',
             'description' => 'Test description',
@@ -48,7 +47,7 @@ class FeatureTest extends TestCase
 
     public function test_it_validates_feature_creation(): void
     {
-        $response = $this->actingAs($this->user)->post(route('features.store'), []);
+        $response = $this->actingAs($this->user)->post(route('features.flags.store'), []);
 
         $response->assertSessionHasErrors(['code', 'name']);
     }
@@ -57,7 +56,7 @@ class FeatureTest extends TestCase
     {
         $feature = Feature::factory()->create();
 
-        $response = $this->actingAs($this->user)->get(route('features.show', $feature));
+        $response = $this->actingAs($this->user)->get(route('features.flags.show', $feature));
 
         $response->assertOk();
         $response->assertViewIs('features.show');
@@ -67,7 +66,7 @@ class FeatureTest extends TestCase
     {
         $feature = Feature::factory()->create();
 
-        $response = $this->actingAs($this->user)->get(route('features.edit', $feature));
+        $response = $this->actingAs($this->user)->get(route('features.flags.edit', $feature));
 
         $response->assertOk();
         $response->assertViewIs('features.edit');
@@ -77,7 +76,7 @@ class FeatureTest extends TestCase
     {
         $feature = Feature::factory()->create();
 
-        $response = $this->actingAs($this->user)->put(route('features.update', $feature), [
+        $response = $this->actingAs($this->user)->put(route('features.flags.update', $feature), [
             'name' => 'Updated Feature',
             'description' => 'Updated description',
         ]);
@@ -90,15 +89,15 @@ class FeatureTest extends TestCase
     {
         $feature = Feature::factory()->create();
 
-        $response = $this->actingAs($this->user)->delete(route('features.destroy', $feature));
+        $response = $this->actingAs($this->user)->delete(route('features.flags.destroy', $feature));
 
-        $response->assertRedirect(route('features.index'));
+        $response->assertRedirect(route('features.flags.index'));
         $this->assertDatabaseMissing('features', ['id' => $feature->id]);
     }
 
     public function test_it_requires_auth(): void
     {
-        $response = $this->get(route('features.index'));
+        $response = $this->get(route('features.flags.index'));
 
         $response->assertRedirect(route('login'));
     }
