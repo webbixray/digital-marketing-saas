@@ -401,6 +401,9 @@ require __DIR__.'/youtube.php';
 // Unified inbox
 require __DIR__.'/unified-inbox.php';
 
+// Platform webhooks
+require __DIR__.'/webhooks.php';
+
 // Admin dashboard
 require __DIR__.'/admin.php';
 
