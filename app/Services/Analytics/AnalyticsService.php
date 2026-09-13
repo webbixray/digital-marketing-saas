@@ -274,11 +274,56 @@ class AnalyticsService
     public function getCrossPlatformStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:cross_platform", self::CACHE_TTL, function () use ($agency) {
+            // Single query for all platforms
+            $platformStats = SocialPost::where('agency_id', $agency->id)
+                ->selectRaw('
+                    platform,
+                    COUNT(*) as total_posts,
+                    SUM(CASE WHEN status = "published" THEN 1 ELSE 0 END) as published,
+                    SUM(CASE WHEN status = "scheduled" THEN 1 ELSE 0 END) as scheduled,
+                    SUM(CASE WHEN status = "failed" THEN 1 ELSE 0 END) as failed,
+                    SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                    SUM(CASE WHEN status = "published" THEN engagement_rate ELSE 0 END) as total_engagement,
+                    AVG(CASE WHEN status = "published" THEN engagement_rate ELSE NULL END) as average_engagement,
+                    SUM(CASE WHEN status = "published" THEN views_count ELSE 0 END) as total_views,
+                    SUM(CASE WHEN status = "published" THEN likes_count ELSE 0 END) as total_likes,
+                    SUM(CASE WHEN status = "published" THEN comments_count ELSE 0 END) as total_comments,
+                    SUM(CASE WHEN status = "published" THEN shares_count ELSE 0 END) as total_shares
+                ')
+                ->groupBy('platform')
+                ->get()
+                ->keyBy('platform');
+
+            // Single query for connected accounts
+            $connectedAccounts = SocialAccount::where('agency_id', $agency->id)
+                ->where('is_active', true)
+                ->selectRaw('platform, count(*) as count')
+                ->groupBy('platform')
+                ->pluck('count', 'platform');
+
             $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
             $stats = [];
 
             foreach ($platforms as $platform) {
-                $stats[$platform] = $this->getPlatformStats($agency, $platform);
+                $ps = $platformStats[$platform] ?? null;
+                $published = (int) ($ps?->published ?? 0);
+                $totalEngagement = (float) ($ps?->total_engagement ?? 0);
+
+                $stats[$platform] = [
+                    'platform' => $platform,
+                    'total_posts' => (int) ($ps?->total_posts ?? 0),
+                    'published' => $published,
+                    'scheduled' => (int) ($ps?->scheduled ?? 0),
+                    'failed' => (int) ($ps?->failed ?? 0),
+                    'draft' => (int) ($ps?->draft ?? 0),
+                    'connected_accounts' => (int) ($connectedAccounts[$platform] ?? 0),
+                    'total_engagement' => round($totalEngagement, 2),
+                    'average_engagement' => $published > 0 ? round($totalEngagement / $published, 2) : 0,
+                    'total_views' => (int) ($ps?->total_views ?? 0),
+                    'total_likes' => (int) ($ps?->total_likes ?? 0),
+                    'total_comments' => (int) ($ps?->total_comments ?? 0),
+                    'total_shares' => (int) ($ps?->total_shares ?? 0),
+                ];
             }
 
             return $stats;
@@ -334,17 +379,17 @@ class AnalyticsService
      */
     public function getBestPerformingPlatform(Agency $agency): array
     {
-        $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
-        $best = ['platform' => null, 'engagement' => 0];
+        $result = SocialPost::where('agency_id', $agency->id)
+            ->where('status', 'published')
+            ->selectRaw('platform, SUM(engagement_rate) as total_engagement')
+            ->groupBy('platform')
+            ->orderByDesc('total_engagement')
+            ->first();
 
-        foreach ($platforms as $platform) {
-            $stats = $this->getPlatformStats($agency, $platform);
-            if ($stats['total_engagement'] > $best['engagement']) {
-                $best = ['platform' => $platform, 'engagement' => $stats['total_engagement']];
-            }
-        }
-
-        return $best;
+        return [
+            'platform' => $result?->platform,
+            'engagement' => (float) ($result?->total_engagement ?? 0),
+        ];
     }
 
     /**
@@ -353,19 +398,16 @@ class AnalyticsService
     public function getSocialGrowth(Agency $agency, int $days = 30): array
     {
         return Cache::remember("analytics:{$agency->id}:growth:{$days}", self::CACHE_TTL, function () use ($agency, $days) {
-            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
+            // Single query for all platforms
+            $daily = SocialPost::where('agency_id', $agency->id)
+                ->where('created_at', '>=', now()->subDays($days))
+                ->selectRaw('platform, DATE(created_at) as date, count(*) as count')
+                ->groupBy('platform', 'date')
+                ->get();
+
             $growth = [];
-
-            foreach ($platforms as $platform) {
-                $daily = SocialPost::where('agency_id', $agency->id)
-                    ->where('platform', $platform)
-                    ->where('created_at', '>=', now()->subDays($days))
-                    ->selectRaw('DATE(created_at) as date, count(*) as count')
-                    ->groupBy('date')
-                    ->pluck('count', 'date')
-                    ->toArray();
-
-                $growth[$platform] = $daily;
+            foreach ($daily as $row) {
+                $growth[$row->platform][$row->date] = (int) $row->count;
             }
 
             return $growth;
@@ -378,19 +420,20 @@ class AnalyticsService
     public function getOptimalPostingTimes(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:optimal_times", self::CACHE_TTL, function () use ($agency) {
-            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
+            // Single query for all platforms
+            $hours = SocialPost::where('agency_id', $agency->id)
+                ->where('status', 'published')
+                ->selectRaw("platform, strftime('%H', published_at) as hour, AVG(engagement_rate) as avg_engagement")
+                ->groupBy('platform', 'hour')
+                ->orderBy('platform')
+                ->orderByDesc('avg_engagement')
+                ->get();
+
             $optimal = [];
-
-            foreach ($platforms as $platform) {
-                $bestHour = SocialPost::where('agency_id', $agency->id)
-                    ->where('platform', $platform)
-                    ->where('status', 'published')
-                    ->selectRaw("strftime('%H', published_at) as hour, AVG(engagement_rate) as avg_engagement")
-                    ->groupBy('hour')
-                    ->orderByDesc('avg_engagement')
-                    ->value('hour');
-
-                $optimal[$platform] = $bestHour !== null ? sprintf('%02d:00', $bestHour) : 'N/A';
+            foreach ($hours as $row) {
+                if (!isset($optimal[$row->platform])) {
+                    $optimal[$row->platform] = sprintf('%02d:00', $row->hour);
+                }
             }
 
             return $optimal;

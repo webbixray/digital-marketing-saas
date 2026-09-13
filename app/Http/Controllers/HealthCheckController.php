@@ -79,22 +79,11 @@ class HealthCheckController extends Controller
     {
         return response()->json([
             'status' => 'ok',
-            'environment' => config('app.env'),
-            'debug' => config('app.debug'),
-            'version' => config('app.version', '1.0.0'),
             'checks' => [
                 'database' => $this->checkDatabase(),
                 'cache' => $this->checkCache(),
                 'storage' => $this->checkStorage(),
-                'ai_gateway' => $this->checkAiGateway(),
-                'disk_space' => $this->checkDiskSpace(),
                 'queue' => $this->checkQueue(),
-            ],
-            'stats' => [
-                'agencies' => DB::table('agencies')->count(),
-                'users' => DB::table('users')->count(),
-                'posts' => DB::table('social_posts')->count(),
-                'campaigns' => DB::table('campaigns')->count(),
             ],
             'timestamp' => now()->toIso8601String(),
         ]);

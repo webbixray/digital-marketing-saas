@@ -21,6 +21,7 @@ app('router')->middleware(['auth', 'agency'])->prefix('telegram/link')->name('te
     app('router')->post('/regenerate', [TelegramLinkController::class, 'regenerateCode'])->name('regenerate');
 });
 
-// API: Link via bot
+// API: Link via bot (rate-limited to prevent brute-force)
 app('router')->post('/api/telegram/link', [TelegramLinkController::class, 'linkViaBot'])
+    ->middleware(['throttle:10,1'])
     ->name('api.telegram.link');

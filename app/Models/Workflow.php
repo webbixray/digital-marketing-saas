@@ -18,19 +18,23 @@ class Workflow extends Model
         'name',
         'slug',
         'description',
-        'status',
         'trigger_type',
         'trigger_config',
         'actions',
         'conditions',
         'nodes',
         'connections',
-        'execution_count',
         'last_executed_at',
+        'webhook_url',
+    ];
+
+    // Internal/operational fields - never set via mass assignment
+    protected $guarded = [
+        'status',
+        'execution_count',
         'error_message',
         'is_system',
         'webhook_secret',
-        'webhook_url',
     ];
 
     protected $casts = [

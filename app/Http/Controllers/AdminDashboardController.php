@@ -104,8 +104,7 @@ class AdminDashboardController extends Controller
         }
 
         try {
-            dispatch(unserialize($job->payload)['data']['command'] ?? null);
-            DB::table('failed_jobs')->where('id', $jobId)->delete();
+            \Illuminate\Support\Facades\Artisan::call('queue:retry', ['id' => $jobId]);
             return back()->with('success', 'Job dispatched for retry');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to retry job: ' . $e->getMessage());

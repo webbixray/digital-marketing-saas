@@ -19,7 +19,6 @@ class Campaign extends Model
         'name',
         'slug',
         'type',
-        'status',
         'description',
         'objective',
         'target_audience',
@@ -27,14 +26,6 @@ class Campaign extends Model
         'end_date',
         'tags',
         'cover_image',
-        'posts_count',
-        'views_count',
-        'likes_count',
-        'comments_count',
-        'shares_count',
-        'clicks_count',
-        'estimated_roi',
-        'engagement_rate',
     ];
 
     protected $casts = [

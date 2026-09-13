@@ -25,11 +25,15 @@ class LandingPage extends Model
         'button_color',
         'button_text_color',
         'is_published',
+        'published_at',
+    ];
+
+    // Counter/computed fields - never set via mass assignment
+    protected $guarded = [
         'views_count',
         'clicks_count',
         'conversions_count',
         'conversion_rate',
-        'published_at',
     ];
 
     protected $casts = [

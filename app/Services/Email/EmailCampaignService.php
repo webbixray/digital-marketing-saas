@@ -185,8 +185,11 @@ class EmailCampaignService
     {
         if ($recipient->status === 'sent') {
             $recipient->update(['status' => 'opened', 'opened_at' => now()]);
-            $recipient->campaign->increment('opened_count');
-            $this->calculateRates($recipient->campaign);
+            EmailCampaign::where('id', $recipient->email_campaign_id)->increment('opened_count');
+            $campaign = EmailCampaign::find($recipient->email_campaign_id);
+            if ($campaign) {
+                $this->calculateRates($campaign);
+            }
         }
     }
 
@@ -197,8 +200,11 @@ class EmailCampaignService
     {
         if (in_array($recipient->status, ['sent', 'opened'])) {
             $recipient->update(['status' => 'clicked', 'clicked_at' => now()]);
-            $recipient->campaign->increment('clicked_count');
-            $this->calculateRates($recipient->campaign);
+            EmailCampaign::where('id', $recipient->email_campaign_id)->increment('clicked_count');
+            $campaign = EmailCampaign::find($recipient->email_campaign_id);
+            if ($campaign) {
+                $this->calculateRates($campaign);
+            }
         }
     }
 
@@ -208,7 +214,7 @@ class EmailCampaignService
     public function trackUnsubscribe(EmailCampaignRecipient $recipient): void
     {
         $recipient->update(['status' => 'unsubscribed', 'unsubscribed_at' => now()]);
-        $recipient->campaign->increment('unsubscribed_count');
+        EmailCampaign::where('id', $recipient->email_campaign_id)->increment('unsubscribed_count');
     }
 
     /**
