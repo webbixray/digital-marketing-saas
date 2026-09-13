@@ -36,14 +36,12 @@ class AuditLogService
     /**
      * Get audit trail for an agency.
      */
-    public function getAuditTrail(int $agencyId, int $limit = 50, int $offset = 0): Collection
+    public function getAuditTrail(int $agencyId, int $perPage = 25)
     {
         return ActivityLog::where('agency_id', $agencyId)
             ->with('user')
             ->orderBy('created_at', 'desc')
-            ->skip($offset)
-            ->take($limit)
-            ->get();
+            ->paginate($perPage);
     }
 
     /**

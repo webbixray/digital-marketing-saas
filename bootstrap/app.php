@@ -42,6 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
             '2fa' => Enforce2FA::class,
             'platform.rate_limit' => EnforcePlatformRateLimit::class,
             'agent.rate_limit' => AgentRateLimit::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
 
         $middleware->web(append: [

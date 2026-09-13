@@ -132,7 +132,7 @@
         <div class="card">
             <div class="card-header flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Failed Posts</h3>
-                <a href="{{ route('failed-jobs.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
+                <a href="{{ route('admin.failed-jobs') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
             <div class="card-body">
                 <div class="space-y-4">

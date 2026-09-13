@@ -21,9 +21,9 @@ class TeamActivityController extends Controller
         $agencyId = $request->user()->agency_id;
         $perPage = $request->input('per_page', 25);
 
-        $activities = $this->auditLog->getAuditTrail($agencyId, $perPage);
+        $logs = $this->auditLog->getAuditTrail($agencyId, $perPage);
         $stats = $this->auditLog->getActionStats($agencyId, 7);
 
-        return view('activity.index', compact('activities', 'stats'));
+        return view('activity.index', compact('logs', 'stats'));
     }
 }

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Models\Permission;
+use App\Models\AiContentLog;
+use App\Models\ActivityLog;
 
 class Agency extends Model
 {
@@ -77,6 +79,21 @@ class Agency extends Model
     public function socialAccounts(): HasMany
     {
         return $this->hasMany(SocialAccount::class);
+    }
+
+    public function socialPosts(): HasMany
+    {
+        return $this->hasMany(SocialPost::class);
+    }
+
+    public function aiContentLogs(): HasMany
+    {
+        return $this->hasMany(AiContentLog::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 
     public function hasFeature(string $featureCode): bool
