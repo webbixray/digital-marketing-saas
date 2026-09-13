@@ -56,7 +56,6 @@ return Application::configure(basePath: dirname(__DIR__))
             RequestId::class,
         ]);
 
-        // Trim whitespace and empty strings from input
         $middleware->api(prepend: [
             \Illuminate\Foundation\Http\Middleware\TrimStrings::class,
             \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
@@ -69,7 +68,6 @@ return Application::configure(basePath: dirname(__DIR__))
             MethodNotAllowedHttpException::class,
         ]);
 
-        // ModelNotFoundException -> 404 JSON for API
         $exceptions->render(function (ModelNotFoundException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
@@ -80,7 +78,6 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        // AuthorizationException -> 403 JSON for API
         $exceptions->render(function (AuthorizationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
@@ -91,7 +88,6 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        // AuthenticationException -> 401 JSON for API
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
@@ -102,7 +98,6 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        // ValidationException -> 422 JSON with errors
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
@@ -114,7 +109,6 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        // Generic HTTP exception -> JSON for API
         $exceptions->render(function (HttpException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
@@ -126,7 +120,6 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Sentry reporting
         $exceptions->reportable(function (\Throwable $e) {
             if (! app()->bound('sentry')) {
                 return;

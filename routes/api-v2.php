@@ -1,27 +1,42 @@
 <?php
 
-use App\Http\Controllers\Api\ApiAgencyController;
-use App\Http\Controllers\Api\ApiAgentController;
-use App\Http\Controllers\Api\ApiAgentWorkflowController;
-use App\Http\Controllers\Api\ApiAiController;
 use App\Http\Controllers\Api\ApiAnalyticsController;
+use App\Http\Controllers\Api\ApiDashboardController;
+use App\Http\Controllers\Api\ApiSocialPostController;
+use App\Http\Controllers\Api\ApiSocialAccountController;
 use App\Http\Controllers\Api\ApiCampaignController;
 use App\Http\Controllers\Api\ApiClientController;
-use App\Http\Controllers\Api\ApiDashboardController;
 use App\Http\Controllers\Api\ApiInvoiceController;
-use App\Http\Controllers\Api\ApiReportController;
-use App\Http\Controllers\Api\ApiRoleController;
-use App\Http\Controllers\Api\ApiSocialAccountController;
-use App\Http\Controllers\Api\ApiSocialPostController;
 use App\Http\Controllers\Api\ApiWorkflowController;
+use App\Http\Controllers\Api\ApiAiController;
+use App\Http\Controllers\Api\ApiAgentController;
+use App\Http\Controllers\Api\ApiAgentWorkflowController;
+use App\Http\Controllers\Api\ApiRoleController;
+use App\Http\Controllers\Api\ApiReportController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(['auth', 'agency', 'throttle:60,1', 'cache.etag:300'])->as('api.')->group(function () {
-    Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1']);
+/*
+|--------------------------------------------------------------------------
+| API Routes v2
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application.
+| These routes are loaded by the RouteServiceProvider and are prefixed with /api/v2.
+|
+| This version includes:
+| - Improved response formatting
+| - Better error handling
+| - Pagination by default
+| - Rate limiting per user
+|
+*/
+
+Route::prefix('v2')->middleware(['auth', 'agency', 'throttle:120,1'])->as('api.v2.')->group(function () {
+    Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v2']);
 
     // Dashboard
     Route::get('/dashboard', [ApiDashboardController::class, 'index']);
@@ -33,34 +48,6 @@ Route::prefix('v1')->middleware(['auth', 'agency', 'throttle:60,1', 'cache.etag:
     Route::apiResource('clients', ApiClientController::class);
     Route::apiResource('invoices', ApiInvoiceController::class);
     Route::apiResource('workflows', ApiWorkflowController::class);
-
-    // Enterprise Reports
-    Route::get('/reports/types', [ApiReportController::class, 'types']);
-    Route::get('/reports/scheduled', [ApiReportController::class, 'scheduled']);
-    Route::post('/reports/export', [ApiReportController::class, 'export'])->middleware('throttle:10,1');
-    Route::post('/reports/schedule', [ApiReportController::class, 'schedule'])->middleware('throttle:10,1');
-    Route::apiResource('reports', ApiReportController::class);
-
-    // Agent-powered Report routes
-    Route::prefix('reports')->name('reports.')->group(function () {
-        Route::post('/agent-generate', [ReportController::class, 'generateWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{report}/agent-recommendations', [ReportController::class, 'getAgentRecommendations'])->middleware('throttle:10,1');
-        Route::post('/agent-schedule', [ReportController::class, 'scheduleAgentReport'])->middleware('throttle:5,1');
-    });
-
-    // Agent-powered Campaign routes
-    Route::prefix('campaigns')->name('campaigns.')->group(function () {
-        Route::post('/{campaign}/agent-optimize', [CampaignController::class, 'optimizeWithAgent'])->middleware('throttle:5,1');
-        Route::post('/{campaign}/agent-ab-test', [CampaignController::class, 'abTestWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{campaign}/agent-insights', [CampaignController::class, 'getAgentInsights'])->middleware('throttle:10,1');
-    });
-
-    // Agent-powered Social Post routes
-    Route::prefix('posts')->name('posts.')->group(function () {
-        Route::post('/{post}/agent-schedule', [SocialPostController::class, 'scheduleWithAgent'])->middleware('throttle:5,1');
-        Route::get('/{post}/agent-analyze', [SocialPostController::class, 'analyzeWithAgent'])->middleware('throttle:10,1');
-        Route::post('/{post}/agent-reply-suggestions', [SocialPostController::class, 'replySuggestionsWithAgent'])->middleware('throttle:10,1');
-    });
 
     // AI
     Route::post('/ai/generate', [ApiAiController::class, 'generate'])->middleware('throttle:10,1');
@@ -110,4 +97,4 @@ Route::prefix('v1')->middleware(['auth', 'agency', 'throttle:60,1', 'cache.etag:
 });
 
 // Public webhook endpoint (no auth)
-Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');
+Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.v2.workflows.webhook');

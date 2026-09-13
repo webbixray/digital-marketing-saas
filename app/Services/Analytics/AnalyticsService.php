@@ -274,7 +274,7 @@ class AnalyticsService
     public function getCrossPlatformStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:cross_platform", self::CACHE_TTL, function () use ($agency) {
-            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
             $stats = [];
 
             foreach ($platforms as $platform) {
@@ -334,7 +334,7 @@ class AnalyticsService
      */
     public function getBestPerformingPlatform(Agency $agency): array
     {
-        $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+        $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
         $best = ['platform' => null, 'engagement' => 0];
 
         foreach ($platforms as $platform) {
@@ -353,7 +353,7 @@ class AnalyticsService
     public function getSocialGrowth(Agency $agency, int $days = 30): array
     {
         return Cache::remember("analytics:{$agency->id}:growth:{$days}", self::CACHE_TTL, function () use ($agency, $days) {
-            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
             $growth = [];
 
             foreach ($platforms as $platform) {
@@ -378,14 +378,14 @@ class AnalyticsService
     public function getOptimalPostingTimes(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:optimal_times", self::CACHE_TTL, function () use ($agency) {
-            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest'];
+            $platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
             $optimal = [];
 
             foreach ($platforms as $platform) {
                 $bestHour = SocialPost::where('agency_id', $agency->id)
                     ->where('platform', $platform)
                     ->where('status', 'published')
-                    ->selectRaw('HOUR(published_at) as hour, AVG(engagement_rate) as avg_engagement')
+                    ->selectRaw("strftime('%H', published_at) as hour, AVG(engagement_rate) as avg_engagement")
                     ->groupBy('hour')
                     ->orderByDesc('avg_engagement')
                     ->value('hour');
