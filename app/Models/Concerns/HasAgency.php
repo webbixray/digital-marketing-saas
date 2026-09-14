@@ -19,16 +19,4 @@ trait HasAgency
     {
         return $query->where('agency_id', auth()->user()->agency_id);
     }
-
-    /**
-     * Boot the trait — auto-set agency_id on create if not set.
-     */
-    public static function bootHasAgency(): void
-    {
-        static::creating(function ($model) {
-            if (! $model->agency_id && auth()->check()) {
-                $model->agency_id = auth()->user()->agency_id;
-            }
-        });
-    }
 }
