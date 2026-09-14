@@ -58,7 +58,7 @@ class SendEmailBatch implements ShouldQueue
             }
 
             try {
-                $unsubscribeUrl = $unsubscribeBase . $recipient->id;
+                $unsubscribeUrl = $unsubscribeBase.$recipient->id;
                 $smtp->sendToRecipient($campaign, $recipient, $unsubscribeUrl);
                 $recipient->update(['status' => EmailCampaignRecipient::STATUS_SENT, 'sent_at' => now()]);
             } catch (\Exception $e) {

@@ -23,6 +23,7 @@ use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Email\EmailCampaignController;
 use App\Http\Controllers\Email\EmailTemplateController;
+use App\Http\Controllers\Email\TrackingController;
 use App\Http\Controllers\Email\UnsubscribeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\FeatureFlagController;
@@ -67,12 +68,12 @@ Route::get('landing/{slug}', [LandingPageController::class, 'render'])->name('pu
 Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter');
 
 // Email unsubscribe (public, no auth)
-Route::get('/email/unsubscribe/{recipient}', [\App\Http\Controllers\Email\UnsubscribeController::class, 'show'])->name('email.unsubscribe');
-Route::post('/email/unsubscribe/{recipient}', [\App\Http\Controllers\Email\UnsubscribeController::class, 'confirm'])->name('email.unsubscribe.confirm');
+Route::get('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'show'])->name('email.unsubscribe');
+Route::post('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'confirm'])->name('email.unsubscribe.confirm');
 
 // Email tracking (public, no auth)
-Route::get('/email/track/open/{recipient}', [\App\Http\Controllers\Email\TrackingController::class, 'open'])->name('email.track.open');
-Route::get('/email/track/click/{recipient}', [\App\Http\Controllers\Email\TrackingController::class, 'click'])->name('email.track.click');
+Route::get('/email/track/open/{recipient}', [TrackingController::class, 'open'])->name('email.track.open');
+Route::get('/email/track/click/{recipient}', [TrackingController::class, 'click'])->name('email.track.click');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

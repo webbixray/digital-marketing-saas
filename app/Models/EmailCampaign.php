@@ -78,7 +78,7 @@ class EmailCampaign extends Model
      */
     public static function getUnsubscribeHash(int $recipientId, int $campaignId): string
     {
-        return hash_hmac('sha256', $recipientId . ':' . $campaignId, config('app.key'));
+        return hash_hmac('sha256', $recipientId.':'.$campaignId, config('app.key'));
     }
 
     /**

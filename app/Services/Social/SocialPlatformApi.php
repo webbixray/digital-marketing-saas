@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 abstract class SocialPlatformApi
 {
     protected string $accessToken;
+
     protected string $baseUrl;
 
     public function __construct(string $accessToken = '')

@@ -20,6 +20,7 @@ class TrackingController extends Controller
 
         // Return 1x1 transparent GIF
         $gif = base64_decode('R0lGODlhAQABAJAAAP8AAAAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==');
+
         return response($gif, 200)
             ->header('Content-Type', 'image/gif')
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')

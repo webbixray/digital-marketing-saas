@@ -4,8 +4,6 @@ namespace App\Services\Email;
 
 use App\Models\EmailCampaign;
 use App\Models\EmailCampaignRecipient;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class TrackingService
 {
@@ -25,7 +23,8 @@ class TrackingService
      */
     public function getTrackedLink(string $url, int $recipientId): string
     {
-        $hash = hash_hmac('sha256', (string) $recipientId . ':' . $url, config('app.key'));
+        $hash = hash_hmac('sha256', (string) $recipientId.':'.$url, config('app.key'));
+
         return route('email.track.click', [
             'recipient' => $recipientId,
             'h' => $hash,
@@ -59,7 +58,7 @@ class TrackingService
      */
     public function trackClick(int $recipientId, string $hash, string $url): ?string
     {
-        if (! $this->verifyHash($recipientId . ':' . $url, $hash)) {
+        if (! $this->verifyHash($recipientId.':'.$url, $hash)) {
             return null;
         }
 

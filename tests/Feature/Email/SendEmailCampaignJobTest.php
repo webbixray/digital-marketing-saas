@@ -31,11 +31,12 @@ class SendEmailCampaignJobTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->actingAs($user)
-            ->post(route('email.campaigns.send', $campaign))
-            ->assertRedirect();
+        $response = $this->actingAs($user)
+            ->post(route('email.campaigns.send', $campaign));
 
+        $response->assertRedirect();
         Bus::assertDispatched(SendEmailCampaign::class);
+        $this->assertTrue(true, 'Job dispatch verified via Bus::assertDispatched');
     }
 
     public function test_job_updates_campaign_status_to_sent(): void

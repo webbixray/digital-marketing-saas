@@ -35,7 +35,7 @@ class SmtpEmailService
                 continue;
             }
 
-            $unsubscribeUrl = $unsubscribeBase . $recipient->id . '?h=' . EmailCampaign::getUnsubscribeHash($recipient->id, $campaign->id);
+            $unsubscribeUrl = $unsubscribeBase.$recipient->id.'?h='.EmailCampaign::getUnsubscribeHash($recipient->id, $campaign->id);
 
             try {
                 $this->sendToRecipient($campaign, $recipient, $unsubscribeUrl);
@@ -77,7 +77,7 @@ class SmtpEmailService
 
         // Add tracking pixel for opens
         $pixel = $unsubscribeUrl
-            ? app(\App\Services\Email\TrackingService::class)->getTrackingPixel($recipient->id)
+            ? app(TrackingService::class)->getTrackingPixel($recipient->id)
             : '';
 
         return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
