@@ -35,7 +35,7 @@ class SmtpEmailService
                 continue;
             }
 
-            $unsubscribeUrl = $unsubscribeBase.$recipient->id;
+            $unsubscribeUrl = $unsubscribeBase . $recipient->id . '?h=' . EmailCampaign::getUnsubscribeHash($recipient->id, $campaign->id);
 
             try {
                 $this->sendToRecipient($campaign, $recipient, $unsubscribeUrl);
@@ -75,6 +75,11 @@ class SmtpEmailService
                 .'</div>'
             : '';
 
+        // Add tracking pixel for opens
+        $pixel = $unsubscribeUrl
+            ? app(\App\Services\Email\TrackingService::class)->getTrackingPixel($recipient->id)
+            : '';
+
         return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
             .'<body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;">'
             .'<div style="max-width:600px;margin:0 auto;padding:20px;">'
@@ -86,6 +91,7 @@ class SmtpEmailService
             .'Sent by '.e($agencyName).' via DigitalMarketingSaaS'
             .'<br>Reply to: '.e($fromEmail)
             .'</div>'
+            .$pixel
             .'</div></body></html>';
     }
 

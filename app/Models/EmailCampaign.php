@@ -72,6 +72,23 @@ class EmailCampaign extends Model
         return in_array($this->status, ['draft', 'scheduled']) && $this->recipients_count > 0;
     }
 
+    /**
+     * Get the unsubscribe hash for a recipient.
+     * Uses HMAC to prevent guessing.
+     */
+    public static function getUnsubscribeHash(int $recipientId, int $campaignId): string
+    {
+        return hash_hmac('sha256', $recipientId . ':' . $campaignId, config('app.key'));
+    }
+
+    /**
+     * Verify an unsubscribe hash is valid.
+     */
+    public static function verifyUnsubscribeHash(int $recipientId, int $campaignId, string $hash): bool
+    {
+        return hash_equals(self::getUnsubscribeHash($recipientId, $campaignId), $hash);
+    }
+
     public const STATUSES = [
         'draft' => 'Draft',
         'scheduled' => 'Scheduled',

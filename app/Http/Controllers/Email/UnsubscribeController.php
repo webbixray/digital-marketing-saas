@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Email;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmailCampaign;
 use App\Models\EmailCampaignRecipient;
 use App\Services\Email\EmailCampaignService;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class UnsubscribeController extends Controller
         // Public endpoint — no auth required
     }
 
-    public function show(int $recipient)
+    public function show(int $recipient, Request $request)
     {
         $recipient = EmailCampaignRecipient::with('campaign')->find($recipient);
 
@@ -23,6 +24,12 @@ class UnsubscribeController extends Controller
                 'status' => 'invalid',
                 'message' => 'Invalid unsubscribe link.',
             ]);
+        }
+
+        // Verify the HMAC hash to prevent ID guessing
+        $hash = $request->query('h', '');
+        if (! EmailCampaign::verifyUnsubscribeHash($recipient->id, $recipient->email_campaign_id, $hash)) {
+            abort(403, 'Invalid unsubscribe signature.');
         }
 
         if ($recipient->status === EmailCampaignRecipient::STATUS_UNSUBSCRIBED) {
@@ -49,6 +56,12 @@ class UnsubscribeController extends Controller
                 'status' => 'invalid',
                 'message' => 'Invalid unsubscribe link.',
             ]);
+        }
+
+        // Verify the HMAC hash to prevent ID guessing
+        $hash = $request->query('h', '');
+        if (! EmailCampaign::verifyUnsubscribeHash($recipient->id, $recipient->email_campaign_id, $hash)) {
+            abort(403, 'Invalid unsubscribe signature.');
         }
 
         if ($recipient->status !== EmailCampaignRecipient::STATUS_UNSUBSCRIBED) {

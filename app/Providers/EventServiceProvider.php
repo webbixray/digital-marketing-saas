@@ -62,7 +62,13 @@ class EventServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        // Register audit observer for models with agency_id
+        \App\Models\Campaign::observe(\App\Observers\AuditObserver::class);
+        \App\Models\Client::observe(\App\Observers\AuditObserver::class);
+        \App\Models\Invoice::observe(\App\Observers\AuditObserver::class);
+        \App\Models\SocialPost::observe(\App\Observers\AuditObserver::class);
+        \App\Models\Workflow::observe(\App\Observers\AuditObserver::class);
+        \App\Models\EmailCampaign::observe(\App\Observers\AuditObserver::class);
     }
 
     public function shouldDiscoverEvents(): bool
