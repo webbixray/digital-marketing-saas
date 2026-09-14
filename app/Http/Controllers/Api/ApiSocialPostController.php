@@ -31,7 +31,7 @@ class ApiSocialPostController extends Controller
 
         $posts = $query->orderBy('created_at', 'desc')
             ->with('socialAccount')
-            ->paginate($request->get('per_page', 20));
+            ->paginate(min(max((int) $request->get('per_page', 20), 1), 100));
 
         return SocialPostResource::collection($posts)->response();
     }

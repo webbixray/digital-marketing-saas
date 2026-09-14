@@ -31,7 +31,7 @@ class ApiCampaignController extends Controller
             }
 
             $campaigns = $query->orderBy('created_at', 'desc')
-                ->paginate($request->get('per_page', 20));
+                ->paginate(min(max((int) $request->get('per_page', 20), 1), 100));
 
             return CampaignResource::collection($campaigns)->response();
         } catch (\Exception $e) {

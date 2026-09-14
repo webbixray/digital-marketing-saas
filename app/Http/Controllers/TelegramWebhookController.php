@@ -21,15 +21,26 @@ class TelegramWebhookController extends Controller
     {
         $update = $request->all();
 
-        Log::debug('Telegram webhook received', [
-            'update_id' => $update['update_id'] ?? null,
-            'message_id' => $update['message']['message_id'] ?? null,
-            'chat_id' => $update['message']['chat']['id'] ?? null,
-        ]);
+        // Log only safe metadata — never log message text or personal data
+        Log::debug('Telegram webhook received', self::extractSafeMetadata($update));
 
         $this->telegram->handleWebhook($update);
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Extract only non-sensitive metadata from a Telegram update.
+     * Never includes message text, user personal data, or chat content.
+     */
+    private static function extractSafeMetadata(array $update): array
+    {
+        return [
+            'update_id' => $update['update_id'] ?? null,
+            'message_id' => $update['message']['message_id'] ?? null,
+            'chat_id' => $update['message']['chat']['id'] ?? null,
+            'has_callback' => isset($update['callback_query']),
+        ];
     }
 
     /**

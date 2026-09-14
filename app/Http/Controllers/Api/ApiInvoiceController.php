@@ -30,7 +30,7 @@ class ApiInvoiceController extends Controller
             }
 
             $invoices = $query->orderBy('created_at', 'desc')
-                ->paginate($request->get('per_page', 20));
+                ->paginate(min(max((int) $request->get('per_page', 20), 1), 100));
 
             return InvoiceResource::collection($invoices)->response();
         } catch (\Exception $e) {

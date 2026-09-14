@@ -19,7 +19,7 @@ class ApiSocialAccountController extends Controller
         $agencyId = $request->user()->agency_id;
         $accounts = SocialAccount::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
-            ->paginate($request->get('per_page', 20));
+            ->paginate(min(max((int) $request->get('per_page', 20), 1), 100));
 
         return response()->json($accounts);
     }
