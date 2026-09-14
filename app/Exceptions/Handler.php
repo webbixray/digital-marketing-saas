@@ -116,6 +116,33 @@ class Handler extends ExceptionHandler
                 ], 429);
             }
         });
+
+        // Generic JSON fallback for any unhandled exception in API context
+        $this->renderable(function (Throwable $e, $request) {
+            if ($request->is('api/*') || $request->wantsJson()) {
+                // Only handle if not already handled by more specific renderables
+                if ($e instanceof AuthenticationException ||
+                    $e instanceof AuthorizationException ||
+                    $e instanceof ModelNotFoundException ||
+                    $e instanceof ValidationException ||
+                    $e instanceof NotFoundHttpException ||
+                    $e instanceof MethodNotAllowedHttpException ||
+                    $e instanceof TooManyRequestsHttpException) {
+                    return null; // let the more specific handler win
+                }
+
+                $isLocal = app()->isLocal();
+                $payload = [
+                    'message' => $isLocal ? $e->getMessage() : 'An unexpected error occurred.',
+                    'error' => 'internal_error',
+                ];
+                if ($isLocal) {
+                    $payload['trace'] = $e->getTraceAsString();
+                }
+
+                return response()->json($payload, 500);
+            }
+        });
     }
 
     public function report(Throwable $e): void

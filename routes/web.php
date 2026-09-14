@@ -23,6 +23,7 @@ use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Email\EmailCampaignController;
 use App\Http\Controllers\Email\EmailTemplateController;
+use App\Http\Controllers\Email\UnsubscribeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\FeatureFlagController;
 use App\Http\Controllers\FormController;
@@ -64,6 +65,10 @@ Route::get('/contact', [PublicController::class, 'contact'])->name('public.conta
 Route::post('/contact', [PublicController::class, 'contactSubmit'])->name('public.contact.submit');
 Route::get('landing/{slug}', [LandingPageController::class, 'render'])->name('public.landing-page');
 Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter');
+
+// Email unsubscribe (public, no auth)
+Route::get('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'show'])->name('email.unsubscribe');
+Route::post('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'confirm'])->name('email.unsubscribe.confirm');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

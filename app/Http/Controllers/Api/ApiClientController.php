@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ApiClientController extends Controller
+class ApiClientController extends ApiController
 {
     public function __construct()
     {
@@ -55,14 +54,14 @@ class ApiClientController extends Controller
 
     public function show(Request $request, Client $client): JsonResponse
     {
-        $this->authorizeAccess($request, $client);
+        $this->authorizeAgencyResource($client, $request->user()->agency_id);
 
         return (new ClientResource($client->load('campaigns')))->response();
     }
 
     public function update(Request $request, Client $client): JsonResponse
     {
-        $this->authorizeAccess($request, $client);
+        $this->authorizeAgencyResource($client, $request->user()->agency_id);
 
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -80,17 +79,9 @@ class ApiClientController extends Controller
 
     public function destroy(Request $request, Client $client): JsonResponse
     {
-        $this->authorizeAccess($request, $client);
+        $this->authorizeAgencyResource($client, $request->user()->agency_id);
         $client->delete();
 
         return response()->json(null, 204);
-    }
-
-    private function authorizeAccess(Request $request, Client $client): void
-    {
-        $agencyId = $request->user()->agency_id;
-        if ($client->agency_id !== $agencyId) {
-            abort(404);
-        }
     }
 }

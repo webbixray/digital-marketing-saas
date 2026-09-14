@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\SocialAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ApiSocialAccountController extends Controller
+class ApiSocialAccountController extends ApiController
 {
     public function __construct()
     {
@@ -44,19 +43,18 @@ class ApiSocialAccountController extends Controller
 
     public function show(Request $request, SocialAccount $account): JsonResponse
     {
-        $this->authorizeAccess($request, $account);
+        $this->authorizeAgencyResource($account, $request->user()->agency_id);
 
         return response()->json($account);
     }
 
     public function update(Request $request, SocialAccount $account): JsonResponse
     {
-        $this->authorizeAccess($request, $account);
+        $this->authorizeAgencyResource($account, $request->user()->agency_id);
 
         $data = $request->validate([
-            'account_name' => 'sometimes|string|max:255',
-            'account_handle' => 'nullable|string|max:255',
-            'is_active' => 'sometimes|boolean',
+            'platform_display_name' => 'nullable|string|max:255',
+            'platform_username' => 'nullable|string|max:255',
         ]);
 
         $account->update($data);
@@ -66,17 +64,9 @@ class ApiSocialAccountController extends Controller
 
     public function destroy(Request $request, SocialAccount $account): JsonResponse
     {
-        $this->authorizeAccess($request, $account);
+        $this->authorizeAgencyResource($account, $request->user()->agency_id);
         $account->delete();
 
         return response()->json(null, 204);
-    }
-
-    private function authorizeAccess(Request $request, SocialAccount $account): void
-    {
-        $agencyId = $request->user()->agency_id;
-        if ($account->agency_id !== $agencyId) {
-            abort(404);
-        }
     }
 }

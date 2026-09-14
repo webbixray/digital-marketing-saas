@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SocialPostRequest;
 use App\Http\Resources\SocialPostResource;
 use App\Models\SocialPost;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ApiSocialPostController extends Controller
+class ApiSocialPostController extends ApiController
 {
     public function __construct()
     {
@@ -54,32 +53,31 @@ class ApiSocialPostController extends Controller
 
     public function show(Request $request, SocialPost $post): JsonResponse
     {
-        $this->authorizeAccess($request, $post);
+        $this->authorizeAgencyResource($post, $request->user()->agency_id);
 
-        return (new SocialPostResource($post->load('campaigns', 'socialAccount')))->response();
+        return (new SocialPostResource($post->load('socialAccount')))->response();
     }
 
-    public function update(SocialPostRequest $request, SocialPost $post): JsonResponse
+    public function update(Request $request, SocialPost $post): JsonResponse
     {
-        $this->authorizeAccess($request, $post);
-        $post->update($request->validated());
+        $this->authorizeAgencyResource($post, $request->user()->agency_id);
+
+        $data = $request->validate([
+            'content' => 'sometimes|string',
+            'status' => 'sometimes|string|in:draft,scheduled,published,failed',
+            'scheduled_at' => 'sometimes|date',
+        ]);
+
+        $post->update($data);
 
         return (new SocialPostResource($post))->response();
     }
 
     public function destroy(Request $request, SocialPost $post): JsonResponse
     {
-        $this->authorizeAccess($request, $post);
+        $this->authorizeAgencyResource($post, $request->user()->agency_id);
         $post->delete();
 
         return response()->json(null, 204);
-    }
-
-    private function authorizeAccess(Request $request, SocialPost $post): void
-    {
-        $agencyId = $request->user()->agency_id;
-        if ($post->agency_id !== $agencyId) {
-            abort(404);
-        }
     }
 }

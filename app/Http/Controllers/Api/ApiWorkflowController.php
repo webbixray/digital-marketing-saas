@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Workflow;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class ApiWorkflowController extends Controller
+class ApiWorkflowController extends ApiController
 {
     public function __construct()
     {
@@ -45,20 +44,20 @@ class ApiWorkflowController extends Controller
 
     public function show(Request $request, Workflow $workflow): JsonResponse
     {
-        $this->authorizeAccess($request, $workflow);
+        $this->authorizeAgencyResource($workflow, $request->user()->agency_id);
 
         return response()->json($workflow->load('executions', 'versions'));
     }
 
     public function update(Request $request, Workflow $workflow): JsonResponse
     {
-        $this->authorizeAccess($request, $workflow);
+        $this->authorizeAgencyResource($workflow, $request->user()->agency_id);
 
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
             'trigger_type' => 'sometimes|string',
             'actions' => 'sometimes|array',
-            'status' => 'sometimes|in:active,paused',
+            'is_active' => 'sometimes|boolean',
         ]);
 
         $workflow->update($data);
@@ -68,17 +67,9 @@ class ApiWorkflowController extends Controller
 
     public function destroy(Request $request, Workflow $workflow): JsonResponse
     {
-        $this->authorizeAccess($request, $workflow);
+        $this->authorizeAgencyResource($workflow, $request->user()->agency_id);
         $workflow->delete();
 
         return response()->json(null, 204);
-    }
-
-    private function authorizeAccess(Request $request, Workflow $workflow): void
-    {
-        $agencyId = $request->user()->agency_id;
-        if ($workflow->agency_id !== $agencyId) {
-            abort(404);
-        }
     }
 }
