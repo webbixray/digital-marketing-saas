@@ -2,6 +2,7 @@
 
 namespace App\Services\Email;
 
+use App\Jobs\Email\SendEmailCampaign;
 use App\Models\Agency;
 use App\Models\Client;
 use App\Models\EmailCampaign;
@@ -136,29 +137,7 @@ class EmailCampaignService
             throw new \InvalidArgumentException('Campaign is not in sendable status');
         }
 
-        $campaign->update(['status' => 'sending']);
-
-        $recipients = $campaign->recipients()->where('status', 'pending')->get();
-
-        foreach ($recipients as $recipient) {
-            try {
-                $recipient->update([
-                    'status' => 'sent',
-                    'sent_at' => now(),
-                ]);
-                $campaign->increment('sent_count');
-            } catch (\Exception $e) {
-                $recipient->update(['status' => 'bounced']);
-                $campaign->increment('bounced_count');
-            }
-        }
-
-        $campaign->update([
-            'status' => 'sent',
-            'sent_at' => now(),
-        ]);
-
-        $this->calculateRates($campaign);
+        SendEmailCampaign::dispatch($campaign->id);
     }
 
     /**
