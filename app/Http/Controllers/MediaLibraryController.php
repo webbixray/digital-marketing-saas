@@ -28,7 +28,7 @@ class MediaLibraryController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+            $query->whereLike('name', $request->search);
         }
 
         $assets = $query->orderBy('created_at', 'desc')->paginate(24);

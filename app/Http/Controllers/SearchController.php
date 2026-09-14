@@ -29,15 +29,17 @@ class SearchController extends Controller
             return view('search.index', compact('results', 'query', 'type'));
         }
 
-        // Escape LIKE wildcards in user input to prevent pattern injection
-        $escapedQuery = str_replace(['%', '_'], ['\%', '\_'], $query);
+        // Escape LIKE wildcards in user input — whereLike handles this natively
+        if (empty($query) || strlen($query) < 2) {
+            return view('search.index', compact('results', 'query', 'type'));
+        }
 
         // Search posts
         if ($type === 'all' || $type === 'posts') {
             $results['posts'] = SocialPost::where('agency_id', $agencyId)
-                ->where(function ($q) use ($escapedQuery) {
-                    $q->where('content', 'like', "%{$escapedQuery}%")
-                        ->orWhere('platform', 'like', "%{$escapedQuery}%");
+                ->where(function ($q) use ($query) {
+                    $q->where('content', 'LIKE', '%'.$query.'%')
+                        ->orWhere('platform', 'LIKE', '%'.$query.'%');
                 })
                 ->limit(10)
                 ->get();
@@ -46,9 +48,9 @@ class SearchController extends Controller
         // Search campaigns
         if ($type === 'all' || $type === 'campaigns') {
             $results['campaigns'] = Campaign::where('agency_id', $agencyId)
-                ->where(function ($q) use ($escapedQuery) {
-                    $q->where('name', 'like', "%{$escapedQuery}%")
-                        ->orWhere('description', 'like', "%{$escapedQuery}%");
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'LIKE', '%'.$query.'%')
+                        ->orWhere('description', 'LIKE', '%'.$query.'%');
                 })
                 ->limit(10)
                 ->get();
@@ -57,10 +59,10 @@ class SearchController extends Controller
         // Search clients
         if ($type === 'all' || $type === 'clients') {
             $results['clients'] = Client::where('agency_id', $agencyId)
-                ->where(function ($q) use ($escapedQuery) {
-                    $q->where('name', 'like', "%{$escapedQuery}%")
-                        ->orWhere('email', 'like', "%{$escapedQuery}%")
-                        ->orWhere('company', 'like', "%{$escapedQuery}%");
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'LIKE', '%'.$query.'%')
+                        ->orWhere('email', 'LIKE', '%'.$query.'%')
+                        ->orWhere('company', 'LIKE', '%'.$query.'%');
                 })
                 ->limit(10)
                 ->get();
@@ -69,9 +71,9 @@ class SearchController extends Controller
         // Search content
         if ($type === 'all' || $type === 'content') {
             $results['content'] = ContentAsset::where('agency_id', $agencyId)
-                ->where(function ($q) use ($escapedQuery) {
-                    $q->where('name', 'like', "%{$escapedQuery}%")
-                        ->orWhere('content', 'like', "%{$escapedQuery}%");
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'LIKE', '%'.$query.'%')
+                        ->orWhere('content', 'LIKE', '%'.$query.'%');
                 })
                 ->limit(10)
                 ->get();
@@ -80,7 +82,7 @@ class SearchController extends Controller
         // Search invoices
         if ($type === 'all' || $type === 'invoices') {
             $results['invoices'] = Invoice::where('agency_id', $agencyId)
-                ->where('invoice_number', 'like', "%{$escapedQuery}%")
+                ->where('invoice_number', 'LIKE', '%'.$query.'%')
                 ->limit(10)
                 ->get();
         }
@@ -88,7 +90,7 @@ class SearchController extends Controller
         // Search workflows
         if ($type === 'all' || $type === 'workflows') {
             $results['workflows'] = Workflow::where('agency_id', $agencyId)
-                ->where('name', 'like', "%{$escapedQuery}%")
+                ->where('name', 'LIKE', '%'.$query.'%')
                 ->limit(10)
                 ->get();
         }

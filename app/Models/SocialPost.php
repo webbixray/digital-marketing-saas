@@ -64,11 +64,6 @@ class SocialPost extends Model
         'is_pinned' => 'boolean',
     ];
 
-    public function getStatusEnum()
-    {
-        return new PostStatus($this->status);
-    }
-
     public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);

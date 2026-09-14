@@ -47,6 +47,11 @@ class Campaign extends Model
         return new CampaignStatus($this->status);
     }
 
+    public function scopeForAgency($query, int $agencyId)
+    {
+        return $query->where('agency_id', $agencyId);
+    }
+
     public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
