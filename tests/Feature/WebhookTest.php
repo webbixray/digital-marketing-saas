@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Agency;
 use App\Models\SocialAccount;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

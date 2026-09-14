@@ -3,10 +3,6 @@
 namespace Tests\Feature;
 
 use App\Jobs\RetryFailedPost;
-use App\Models\Agency;
-use App\Models\SocialAccount;
-use App\Models\SocialPost;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

@@ -71,12 +71,13 @@ class FacebookController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('facebook.index')
-                ->with('error', 'Facebook authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'Facebook authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('facebook.index')
                 ->with('error', 'No authorization code received.');
         }
@@ -84,10 +85,11 @@ class FacebookController extends Controller
         // Exchange code for token
         $tokenResult = $this->facebook->exchangeCodeForToken($code, route('facebook.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('Facebook token exchange failed', $tokenResult);
+
             return redirect()->route('facebook.index')
-                ->with('error', 'Failed to connect Facebook: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect Facebook: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -96,7 +98,7 @@ class FacebookController extends Controller
         // Get Facebook Pages
         $pagesResult = $this->facebook->getPages($accessToken);
 
-        if (!$pagesResult['success'] || empty($pagesResult['pages'])) {
+        if (! $pagesResult['success'] || empty($pagesResult['pages'])) {
             return redirect()->route('facebook.index')
                 ->with('error', 'No Facebook Pages found. Please ensure you have admin access to a Facebook Page.');
         }
@@ -162,7 +164,7 @@ class FacebookController extends Controller
         $account = SocialAccount::where('platform', 'facebook')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'Facebook account not found.');
         }
 
@@ -188,7 +190,7 @@ class FacebookController extends Controller
             ->where('platform', 'facebook')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('facebook.index')
             ->with('success', 'Facebook account status updated.');
@@ -205,7 +207,7 @@ class FacebookController extends Controller
             ->where('platform', 'facebook')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $insights = $this->facebook->getPageInsights(
                 $account->platform_account_id,
                 $account->access_token
@@ -234,14 +236,14 @@ class FacebookController extends Controller
             ->where('platform', 'facebook')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('facebook.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->facebook->validateToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('facebook.index')
                 ->with('error', 'Token validation failed. Please reconnect.');
         }
@@ -273,7 +275,7 @@ class FacebookController extends Controller
             ->where('platform', 'facebook')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -285,7 +287,7 @@ class FacebookController extends Controller
         $accessToken = $account->access_token;
 
         // Post with or without media
-        if (!empty($validated['media_url'])) {
+        if (! empty($validated['media_url'])) {
             $result = $validated['media_type'] === 'video'
                 ? $this->facebook->postVideo($pageId, $accessToken, $validated['media_url'], $validated['message'])
                 : $this->facebook->postPhoto($pageId, $accessToken, $validated['media_url'], $validated['message']);
@@ -293,7 +295,7 @@ class FacebookController extends Controller
             $result = $this->facebook->postText($pageId, $accessToken, $validated['message']);
         }
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 
@@ -319,7 +321,7 @@ class FacebookController extends Controller
             ->where('platform', 'facebook')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -328,7 +330,7 @@ class FacebookController extends Controller
             $account->access_token
         );
 
-        if (!$insights['success']) {
+        if (! $insights['success']) {
             return response()->json(['error' => $insights['error']], 422);
         }
 

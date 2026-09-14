@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class PinterestApiService
 {
     protected ?string $appId;
+
     protected ?string $appSecret;
+
     protected string $baseUrl = 'https://api.pinterest.com/v5';
 
     public function __construct()
@@ -51,8 +53,9 @@ class PinterestApiService
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest token exchange failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
@@ -66,7 +69,8 @@ class PinterestApiService
                 'scope' => $data['scope'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('Pinterest token exchange failed: ' . $e->getMessage());
+            Log::error('Pinterest token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -81,14 +85,16 @@ class PinterestApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/user_account");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest getUserProfile failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch profile'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('Pinterest getUserProfile failed: ' . $e->getMessage());
+            Log::error('Pinterest getUserProfile failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -105,8 +111,9 @@ class PinterestApiService
                     'page_size' => 100,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest getBoards failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch boards'];
             }
 
@@ -115,7 +122,8 @@ class PinterestApiService
                 'boards' => $response->json()['items'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Pinterest getBoards failed: ' . $e->getMessage());
+            Log::error('Pinterest getBoards failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -132,8 +140,9 @@ class PinterestApiService
                     'page_size' => $pageSize,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest getPins failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch pins'];
             }
 
@@ -142,7 +151,8 @@ class PinterestApiService
                 'pins' => $response->json()['items'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Pinterest getPins failed: ' . $e->getMessage());
+            Log::error('Pinterest getPins failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -172,8 +182,9 @@ class PinterestApiService
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("{$this->baseUrl}/pins", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest createPin failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['message'] ?? 'Failed to create pin'];
             }
 
@@ -182,7 +193,8 @@ class PinterestApiService
                 'pin_id' => $response->json()['id'],
             ];
         } catch (\Exception $e) {
-            Log::error('Pinterest createPin failed: ' . $e->getMessage());
+            Log::error('Pinterest createPin failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -197,14 +209,16 @@ class PinterestApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/pins/{$pinId}/analytics");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest getPinAnalytics failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch analytics'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('Pinterest getPinAnalytics failed: ' . $e->getMessage());
+            Log::error('Pinterest getPinAnalytics failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -219,14 +233,16 @@ class PinterestApiService
                 ->timeout(30)
                 ->delete("{$this->baseUrl}/pins/{$pinId}");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest deletePin failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to delete pin'];
             }
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Pinterest deletePin failed: ' . $e->getMessage());
+            Log::error('Pinterest deletePin failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -245,8 +261,9 @@ class PinterestApiService
                     'refresh_token' => $refreshToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Pinterest token refresh failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token refresh failed'];
             }
 
@@ -259,7 +276,8 @@ class PinterestApiService
                 'expires_in' => $data['expires_in'] ?? 3600,
             ];
         } catch (\Exception $e) {
-            Log::error('Pinterest refreshToken failed: ' . $e->getMessage());
+            Log::error('Pinterest refreshToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -270,6 +288,7 @@ class PinterestApiService
     public function validateToken(string $accessToken): array
     {
         $result = $this->getUserProfile($accessToken);
+
         return $result['success']
             ? ['success' => true, 'user' => $result['data']]
             : $result;

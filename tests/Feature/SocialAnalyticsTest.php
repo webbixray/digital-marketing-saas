@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Agency;
-use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +13,7 @@ class SocialAnalyticsTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
 
     protected function setUp(): void

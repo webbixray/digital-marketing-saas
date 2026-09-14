@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class LinkedInApiService
 {
     protected ?string $clientId;
+
     protected ?string $clientSecret;
+
     protected string $baseUrl = 'https://api.linkedin.com/v2';
 
     public function __construct()
@@ -45,14 +47,15 @@ class LinkedInApiService
             $response = Http::asForm()
                 ->timeout(30)
                 ->withBasicAuth($this->clientId, $this->clientSecret)
-                ->post("https://www.linkedin.com/oauth/v2/accessToken", [
+                ->post('https://www.linkedin.com/oauth/v2/accessToken', [
                     'grant_type' => 'authorization_code',
                     'code' => $code,
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn token exchange failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
@@ -66,7 +69,8 @@ class LinkedInApiService
                 'scope' => $data['scope'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('LinkedIn token exchange failed: ' . $e->getMessage());
+            Log::error('LinkedIn token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -81,14 +85,16 @@ class LinkedInApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/userinfo");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn getUserProfile failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch profile'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('LinkedIn getUserProfile failed: ' . $e->getMessage());
+            Log::error('LinkedIn getUserProfile failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -107,8 +113,9 @@ class LinkedInApiService
                     'count' => 100,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn getOrganizations failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch organizations'];
             }
 
@@ -125,7 +132,8 @@ class LinkedInApiService
 
             return ['success' => true, 'organizations' => $organizations];
         } catch (\Exception $e) {
-            Log::error('LinkedIn getOrganizations failed: ' . $e->getMessage());
+            Log::error('LinkedIn getOrganizations failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -170,8 +178,9 @@ class LinkedInApiService
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("{$this->baseUrl}/ugcPosts", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn share failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['message'] ?? 'Failed to share'];
             }
 
@@ -180,7 +189,8 @@ class LinkedInApiService
                 'post_id' => $response->headers()['X-RestLi-Id'][0] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('LinkedIn share failed: ' . $e->getMessage());
+            Log::error('LinkedIn share failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -195,13 +205,14 @@ class LinkedInApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/socialActions/{$shareUrn}/comments");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Failed to fetch share stats'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('LinkedIn getShareStats failed: ' . $e->getMessage());
+            Log::error('LinkedIn getShareStats failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -220,14 +231,16 @@ class LinkedInApiService
                     'timeIntervals' => '(start:1609459200000,end:1704067200000,timeGranularityType:DAY)',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn getOrganizationStats failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch organization stats'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('LinkedIn getOrganizationStats failed: ' . $e->getMessage());
+            Log::error('LinkedIn getOrganizationStats failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -241,13 +254,14 @@ class LinkedInApiService
             $response = Http::asForm()
                 ->timeout(30)
                 ->withBasicAuth($this->clientId, $this->clientSecret)
-                ->post("https://www.linkedin.com/oauth/v2/accessToken", [
+                ->post('https://www.linkedin.com/oauth/v2/accessToken', [
                     'grant_type' => 'refresh_token',
                     'refresh_token' => $refreshToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('LinkedIn token refresh failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token refresh failed'];
             }
 
@@ -260,7 +274,8 @@ class LinkedInApiService
                 'expires_in' => $data['expires_in'] ?? 5184000,
             ];
         } catch (\Exception $e) {
-            Log::error('LinkedIn token refresh failed: ' . $e->getMessage());
+            Log::error('LinkedIn token refresh failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -275,7 +290,7 @@ class LinkedInApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/userinfo");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Token is invalid'];
             }
 
@@ -289,7 +304,8 @@ class LinkedInApiService
                 'picture' => $data['picture'] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('LinkedIn validateToken failed: ' . $e->getMessage());
+            Log::error('LinkedIn validateToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

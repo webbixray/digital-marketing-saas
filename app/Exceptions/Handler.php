@@ -2,18 +2,18 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-use Throwable;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Sentry\State\Scope;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
     {
         // Report to Sentry if configured
         $this->reportable(function (Throwable $e) {
-            if (!$this->shouldReport($e) || !app()->bound('sentry')) {
+            if (! $this->shouldReport($e) || ! app()->bound('sentry')) {
                 return;
             }
             app('sentry')->configureScope(function (Scope $scope) {
@@ -67,6 +67,7 @@ class Handler extends ExceptionHandler
         $this->renderable(function (ModelNotFoundException $e, $request) {
             if ($request->is('api/*') || $request->wantsJson()) {
                 $model = class_basename($e->getModel());
+
                 return response()->json([
                     'message' => "{$model} not found.",
                     'error' => 'not_found',
@@ -122,7 +123,7 @@ class Handler extends ExceptionHandler
         if ($this->shouldReport($e) && $e instanceof \Exception) {
             Log::channel('errors')->error($e->getMessage(), [
                 'exception' => get_class($e),
-                'file' => $e->getFile() . ':' . $e->getLine(),
+                'file' => $e->getFile().':'.$e->getLine(),
                 'trace_id' => request()->header('X-Request-ID', Str::uuid()->toString()),
                 'user_id' => auth()->id(),
                 'agency_id' => auth()->user()?->agency_id,

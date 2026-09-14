@@ -68,22 +68,24 @@ class TikTokController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('tiktok.index')
-                ->with('error', 'TikTok authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'TikTok authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('tiktok.index')
                 ->with('error', 'No authorization code received.');
         }
 
         $tokenResult = $this->tiktok->exchangeCodeForToken($code, route('tiktok.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('TikTok token exchange failed', $tokenResult);
+
             return redirect()->route('tiktok.index')
-                ->with('error', 'Failed to connect TikTok: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect TikTok: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -92,7 +94,7 @@ class TikTokController extends Controller
         // Get user info
         $userInfo = $this->tiktok->getUserInfo($accessToken);
 
-        if (!$userInfo['success']) {
+        if (! $userInfo['success']) {
             return redirect()->route('tiktok.index')
                 ->with('error', 'Failed to fetch TikTok profile.');
         }
@@ -153,7 +155,7 @@ class TikTokController extends Controller
         $account = SocialAccount::where('platform', 'tiktok')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'TikTok account not found.');
         }
 
@@ -178,7 +180,7 @@ class TikTokController extends Controller
             ->where('platform', 'tiktok')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('tiktok.index')
             ->with('success', 'TikTok account status updated.');
@@ -195,7 +197,7 @@ class TikTokController extends Controller
             ->where('platform', 'tiktok')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $profile = $this->tiktok->getUserInfo($account->access_token);
         } else {
             $profile = ['success' => false, 'error' => 'Token expired. Please reconnect.'];
@@ -215,16 +217,16 @@ class TikTokController extends Controller
             ->where('platform', 'tiktok')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('tiktok.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->tiktok->refreshToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('tiktok.index')
-                ->with('error', 'Token refresh failed: ' . ($result['error'] ?? 'Unknown error'));
+                ->with('error', 'Token refresh failed: '.($result['error'] ?? 'Unknown error'));
         }
 
         $account->update([
@@ -259,7 +261,7 @@ class TikTokController extends Controller
             ->where('platform', 'tiktok')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -281,7 +283,7 @@ class TikTokController extends Controller
             $options
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 
@@ -309,7 +311,7 @@ class TikTokController extends Controller
             ->where('platform', 'tiktok')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -319,7 +321,7 @@ class TikTokController extends Controller
             $validated['max_count'] ?? 20
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 

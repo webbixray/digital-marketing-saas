@@ -431,7 +431,7 @@ class AnalyticsService
 
             $optimal = [];
             foreach ($hours as $row) {
-                if (!isset($optimal[$row->platform])) {
+                if (! isset($optimal[$row->platform])) {
                     $optimal[$row->platform] = sprintf('%02d:00', $row->hour);
                 }
             }

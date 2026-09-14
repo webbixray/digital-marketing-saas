@@ -68,22 +68,24 @@ class LinkedInController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('linkedin.index')
-                ->with('error', 'LinkedIn authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'LinkedIn authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('linkedin.index')
                 ->with('error', 'No authorization code received.');
         }
 
         $tokenResult = $this->linkedin->exchangeCodeForToken($code, route('linkedin.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('LinkedIn token exchange failed', $tokenResult);
+
             return redirect()->route('linkedin.index')
-                ->with('error', 'Failed to connect LinkedIn: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect LinkedIn: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -92,7 +94,7 @@ class LinkedInController extends Controller
         // Get user profile
         $profileResult = $this->linkedin->getUserProfile($accessToken);
 
-        if (!$profileResult['success']) {
+        if (! $profileResult['success']) {
             return redirect()->route('linkedin.index')
                 ->with('error', 'Failed to fetch LinkedIn profile.');
         }
@@ -148,7 +150,7 @@ class LinkedInController extends Controller
         $account = SocialAccount::where('platform', 'linkedin')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'LinkedIn account not found.');
         }
 
@@ -173,7 +175,7 @@ class LinkedInController extends Controller
             ->where('platform', 'linkedin')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('linkedin.index')
             ->with('success', 'LinkedIn account status updated.');
@@ -190,7 +192,7 @@ class LinkedInController extends Controller
             ->where('platform', 'linkedin')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $profile = $this->linkedin->getUserProfile($account->access_token);
         } else {
             $profile = ['success' => false, 'error' => 'Token expired. Please reconnect.'];
@@ -210,16 +212,16 @@ class LinkedInController extends Controller
             ->where('platform', 'linkedin')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('linkedin.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->linkedin->refreshToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('linkedin.index')
-                ->with('error', 'Token refresh failed: ' . ($result['error'] ?? 'Unknown error'));
+                ->with('error', 'Token refresh failed: '.($result['error'] ?? 'Unknown error'));
         }
 
         $account->update([
@@ -253,7 +255,7 @@ class LinkedInController extends Controller
             ->where('platform', 'linkedin')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -261,10 +263,10 @@ class LinkedInController extends Controller
             return response()->json(['error' => 'Token expired. Please reconnect.'], 401);
         }
 
-        $authorUrn = 'urn:li:person:' . $account->platform_account_id;
+        $authorUrn = 'urn:li:person:'.$account->platform_account_id;
 
         $options = [];
-        if (!empty($validated['media_url'])) {
+        if (! empty($validated['media_url'])) {
             $options['media_url'] = $validated['media_url'];
             $options['media_type'] = $validated['media_type'] ?? 'article';
             $options['title'] = $validated['title'] ?? '';
@@ -273,7 +275,7 @@ class LinkedInController extends Controller
 
         $result = $this->linkedin->share($account->access_token, $authorUrn, $validated['text'], $options);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 

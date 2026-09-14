@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Agency;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -13,17 +13,18 @@ class AdminDashboardTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->agency = Agency::factory()->create();
-        
+
         Role::create(['name' => 'owner', 'guard_name' => 'web']);
         Role::create(['name' => 'admin', 'guard_name' => 'web']);
         Role::create(['name' => 'member', 'guard_name' => 'web']);
-        
+
         $this->user = User::factory()->create([
             'agency_id' => $this->agency->id,
         ]);

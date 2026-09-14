@@ -68,22 +68,24 @@ class PinterestController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('pinterest.index')
-                ->with('error', 'Pinterest authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'Pinterest authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('pinterest.index')
                 ->with('error', 'No authorization code received.');
         }
 
         $tokenResult = $this->pinterest->exchangeCodeForToken($code, route('pinterest.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('Pinterest token exchange failed', $tokenResult);
+
             return redirect()->route('pinterest.index')
-                ->with('error', 'Failed to connect Pinterest: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect Pinterest: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -91,7 +93,7 @@ class PinterestController extends Controller
 
         $profileResult = $this->pinterest->getUserProfile($accessToken);
 
-        if (!$profileResult['success']) {
+        if (! $profileResult['success']) {
             return redirect()->route('pinterest.index')
                 ->with('error', 'Failed to fetch Pinterest profile.');
         }
@@ -146,7 +148,7 @@ class PinterestController extends Controller
         $account = SocialAccount::where('platform', 'pinterest')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'Pinterest account not found.');
         }
 
@@ -171,7 +173,7 @@ class PinterestController extends Controller
             ->where('platform', 'pinterest')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('pinterest.index')
             ->with('success', 'Pinterest account status updated.');
@@ -188,7 +190,7 @@ class PinterestController extends Controller
             ->where('platform', 'pinterest')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $profile = $this->pinterest->getUserProfile($account->access_token);
             $boards = $this->pinterest->getBoards($account->access_token);
         } else {
@@ -210,16 +212,16 @@ class PinterestController extends Controller
             ->where('platform', 'pinterest')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('pinterest.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->pinterest->refreshToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('pinterest.index')
-                ->with('error', 'Token refresh failed: ' . ($result['error'] ?? 'Unknown error'));
+                ->with('error', 'Token refresh failed: '.($result['error'] ?? 'Unknown error'));
         }
 
         $account->update([
@@ -253,7 +255,7 @@ class PinterestController extends Controller
             ->where('platform', 'pinterest')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -270,7 +272,7 @@ class PinterestController extends Controller
             $validated['link'] ?? null
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 

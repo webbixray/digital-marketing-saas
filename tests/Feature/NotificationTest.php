@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Notifications\SocialPostPublished;
 use App\Notifications\SocialAccountDisconnected;
+use App\Notifications\SocialPostPublished;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

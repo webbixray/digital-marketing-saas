@@ -14,6 +14,7 @@ class ApiCampaignTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
 
     protected function setUp(): void
@@ -55,7 +56,7 @@ class ApiCampaignTest extends TestCase
 
         // The API uses route model binding which may return 404 for cross-agency
         // depending on the controller implementation
-        $response = $this->actingAs($this->user)->getJson('/api/v1/posts/' . $post->id);
+        $response = $this->actingAs($this->user)->getJson('/api/v1/posts/'.$post->id);
         $this->assertTrue(in_array($response->status(), [403, 404]));
     }
 

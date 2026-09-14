@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laravel\Horizon\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Horizon dashboard (admin only)
 Route::prefix('horizon')->middleware(['auth', 'agency', 'role:owner|admin'])->group(function () {
     // Laravel Horizon web dashboard
-    \Laravel\Horizon\Http\Controllers\DashboardController::class;
+    DashboardController::class;
 });
 
 // Route::fallback(function () {

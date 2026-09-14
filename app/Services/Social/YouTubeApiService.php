@@ -8,10 +8,15 @@ use Illuminate\Support\Facades\Log;
 class YouTubeApiService
 {
     protected ?string $clientId;
+
     protected ?string $clientSecret;
+
     protected ?string $apiKey;
+
     protected string $baseUrl = 'https://www.googleapis.com/youtube/v3';
+
     protected string $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+
     protected string $tokenUrl = 'https://oauth2.googleapis.com/token';
 
     public function __construct()
@@ -65,8 +70,9 @@ class YouTubeApiService
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube token exchange failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
@@ -81,7 +87,8 @@ class YouTubeApiService
                 'token_type' => $data['token_type'] ?? 'Bearer',
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube token exchange failed: ' . $e->getMessage());
+            Log::error('YouTube token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -99,15 +106,16 @@ class YouTubeApiService
                     'mine' => 'true',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube getMyChannel failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch channel'];
             }
 
             $data = $response->json();
             $channel = $data['items'][0] ?? null;
 
-            if (!$channel) {
+            if (! $channel) {
                 return ['success' => false, 'error' => 'No channel found'];
             }
 
@@ -127,7 +135,8 @@ class YouTubeApiService
                 ],
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube getMyChannel failed: ' . $e->getMessage());
+            Log::error('YouTube getMyChannel failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -145,15 +154,16 @@ class YouTubeApiService
                     'id' => $channelId,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube getChannelStats failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch stats'];
             }
 
             $data = $response->json();
             $channel = $data['items'][0] ?? null;
 
-            if (!$channel) {
+            if (! $channel) {
                 return ['success' => false, 'error' => 'Channel not found'];
             }
 
@@ -167,7 +177,8 @@ class YouTubeApiService
                 ],
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube getChannelStats failed: ' . $e->getMessage());
+            Log::error('YouTube getChannelStats failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -193,8 +204,9 @@ class YouTubeApiService
                 ->timeout(30)
                 ->get("{$this->baseUrl}/videos", $params);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube getMyVideos failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch videos'];
             }
 
@@ -223,7 +235,8 @@ class YouTubeApiService
                 'total_results' => $data['pageInfo']['totalResults'] ?? 0,
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube getMyVideos failed: ' . $e->getMessage());
+            Log::error('YouTube getMyVideos failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -253,8 +266,9 @@ class YouTubeApiService
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("{$this->baseUrl}/videos?part=snippet,status", $metadata);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube uploadVideo failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to upload'];
             }
 
@@ -267,7 +281,8 @@ class YouTubeApiService
                 'url' => "https://www.youtube.com/watch?v={$data['id']}",
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube uploadVideo failed: ' . $e->getMessage());
+            Log::error('YouTube uploadVideo failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -285,15 +300,16 @@ class YouTubeApiService
                     'id' => $videoId,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube getVideoAnalytics failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch video analytics'];
             }
 
             $data = $response->json();
             $video = $data['items'][0] ?? null;
 
-            if (!$video) {
+            if (! $video) {
                 return ['success' => false, 'error' => 'Video not found'];
             }
 
@@ -307,7 +323,8 @@ class YouTubeApiService
                 ],
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube getVideoAnalytics failed: ' . $e->getMessage());
+            Log::error('YouTube getVideoAnalytics failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -327,8 +344,9 @@ class YouTubeApiService
                     'refresh_token' => $refreshToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('YouTube token refresh failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token refresh failed'];
             }
 
@@ -340,7 +358,8 @@ class YouTubeApiService
                 'expires_in' => $data['expires_in'] ?? 3600,
             ];
         } catch (\Exception $e) {
-            Log::error('YouTube token refresh failed: ' . $e->getMessage());
+            Log::error('YouTube token refresh failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -358,13 +377,14 @@ class YouTubeApiService
                     'mine' => 'true',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Token is invalid'];
             }
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('YouTube validateToken failed: ' . $e->getMessage());
+            Log::error('YouTube validateToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

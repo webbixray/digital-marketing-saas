@@ -18,6 +18,7 @@ class FacebookWebhookController extends Controller
 
         if ($mode === 'subscribe' && $token === config('services.facebook.webhook_verify_token')) {
             Log::info('Facebook webhook verified');
+
             return response()->json((int) $challenge);
         }
 
@@ -44,8 +45,9 @@ class FacebookWebhookController extends Controller
                 ->where('platform_account_id', $pageId)
                 ->first();
 
-            if (!$account) {
+            if (! $account) {
                 Log::warning('Facebook webhook: account not found', ['page_id' => $pageId]);
+
                 continue;
             }
 

@@ -4,8 +4,8 @@ namespace App\Jobs;
 
 use App\Events\PostFailed;
 use App\Events\PostPublished;
-use App\Models\SocialPost;
 use App\Models\SocialAccount;
+use App\Models\SocialPost;
 use App\Services\Social\FacebookApiService;
 use App\Services\Social\InstagramApiService;
 use App\Services\Social\LinkedInApiService;
@@ -35,7 +35,9 @@ class RetryFailedPost implements ShouldQueue
     public const BASE_DELAY = 60;
 
     public int $tries = 3;
+
     public int $timeout = 120;
+
     public int $backoff = 30;
 
     public function __construct(
@@ -47,24 +49,28 @@ class RetryFailedPost implements ShouldQueue
     {
         $post = SocialPost::find($this->postId);
 
-        if (!$post) {
+        if (! $post) {
             Log::warning("RetryFailedPost: Post {$this->postId} not found");
+
             return;
         }
 
         if ($post->status === 'published') {
             Log::info("RetryFailedPost: Post {$this->postId} already published, skipping retry");
+
             return;
         }
 
         if ($post->retry_count >= self::MAX_RETRIES) {
             Log::warning("RetryFailedPost: Post {$this->postId} exceeded max retries");
+
             return;
         }
 
         $account = SocialAccount::find($post->social_account_id);
-        if (!$account) {
+        if (! $account) {
             Log::error("RetryFailedPost: Social account {$post->social_account_id} not found for post {$this->postId}");
+
             return;
         }
 
@@ -132,7 +138,7 @@ class RetryFailedPost implements ShouldQueue
             'twitter' => app(TwitterApiService::class)->postTweet($post->content),
             'linkedin' => app(LinkedInApiService::class)->share(
                 $account->access_token,
-                'urn:li:person:' . $account->platform_account_id,
+                'urn:li:person:'.$account->platform_account_id,
                 $post->content,
             ),
             'tiktok' => app(TikTokApiService::class)->publishVideo(
@@ -163,10 +169,10 @@ class RetryFailedPost implements ShouldQueue
     {
         $options = [];
 
-        if (!empty($post->media['image_url'])) {
+        if (! empty($post->media['image_url'])) {
             $options['image_url'] = $post->media['image_url'];
         }
-        if (!empty($post->media['video_url'])) {
+        if (! empty($post->media['video_url'])) {
             $options['video_url'] = $post->media['video_url'];
         }
 

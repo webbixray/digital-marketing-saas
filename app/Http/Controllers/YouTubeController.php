@@ -68,22 +68,24 @@ class YouTubeController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('youtube.index')
-                ->with('error', 'YouTube authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'YouTube authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('youtube.index')
                 ->with('error', 'No authorization code received.');
         }
 
         $tokenResult = $this->youtube->exchangeCodeForToken($code, route('youtube.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('YouTube token exchange failed', $tokenResult);
+
             return redirect()->route('youtube.index')
-                ->with('error', 'Failed to connect YouTube: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect YouTube: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -91,7 +93,7 @@ class YouTubeController extends Controller
 
         $channelResult = $this->youtube->getMyChannel($accessToken);
 
-        if (!$channelResult['success']) {
+        if (! $channelResult['success']) {
             return redirect()->route('youtube.index')
                 ->with('error', 'Failed to fetch YouTube channel.');
         }
@@ -153,7 +155,7 @@ class YouTubeController extends Controller
         $account = SocialAccount::where('platform', 'youtube')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'YouTube account not found.');
         }
 
@@ -178,7 +180,7 @@ class YouTubeController extends Controller
             ->where('platform', 'youtube')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('youtube.index')
             ->with('success', 'YouTube account status updated.');
@@ -195,7 +197,7 @@ class YouTubeController extends Controller
             ->where('platform', 'youtube')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $channelStats = $this->youtube->getChannelStats($account->access_token, $account->platform_account_id);
             $videos = $this->youtube->getMyVideos($account->access_token, 25);
         } else {
@@ -217,16 +219,16 @@ class YouTubeController extends Controller
             ->where('platform', 'youtube')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('youtube.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->youtube->refreshToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('youtube.index')
-                ->with('error', 'Token refresh failed: ' . ($result['error'] ?? 'Unknown error'));
+                ->with('error', 'Token refresh failed: '.($result['error'] ?? 'Unknown error'));
         }
 
         $account->update([
@@ -258,7 +260,7 @@ class YouTubeController extends Controller
             ->where('platform', 'youtube')
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
 
@@ -274,7 +276,7 @@ class YouTubeController extends Controller
             ['privacy' => $validated['privacy'] ?? 'private']
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['error' => $result['error']], 422);
         }
 

@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class TikTokApiService
 {
     protected ?string $clientKey;
+
     protected ?string $clientSecret;
+
     protected string $baseUrl = 'https://open.tiktokapis.com/v2';
 
     public function __construct()
@@ -52,8 +54,9 @@ class TikTokApiService
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok token exchange failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
@@ -61,6 +64,7 @@ class TikTokApiService
 
             if ($data['error_code'] ?? 0 !== 0) {
                 Log::error('TikTok token error', ['error' => $data]);
+
                 return ['success' => false, 'error' => $data['message'] ?? 'Unknown error'];
             }
 
@@ -73,7 +77,8 @@ class TikTokApiService
                 'scope' => $data['data']['scope'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok token exchange failed: ' . $e->getMessage());
+            Log::error('TikTok token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -90,8 +95,9 @@ class TikTokApiService
                     'fields' => 'open_id,union_id,avatar_url,display_name,username,bio_description,follower_count,following_count,likes_count,video_count',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok getUserInfo failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch user info'];
             }
 
@@ -102,7 +108,8 @@ class TikTokApiService
 
             return ['success' => true, 'data' => $data['data']['user'] ?? []];
         } catch (\Exception $e) {
-            Log::error('TikTok getUserInfo failed: ' . $e->getMessage());
+            Log::error('TikTok getUserInfo failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -121,12 +128,14 @@ class TikTokApiService
                     'max_count' => $maxCount,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok getVideos failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch videos'];
             }
 
             $data = $response->json();
+
             return [
                 'success' => true,
                 'videos' => $data['data']['videos'] ?? [],
@@ -134,7 +143,8 @@ class TikTokApiService
                 'cursor' => $data['data']['cursor'] ?? 0,
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok getVideos failed: ' . $e->getMessage());
+            Log::error('TikTok getVideos failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -152,8 +162,9 @@ class TikTokApiService
                     'video_ids' => [$videoId],
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok getVideoStats failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch video stats'];
             }
 
@@ -165,7 +176,8 @@ class TikTokApiService
                 'data' => $videos[0] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok getVideoStats failed: ' . $e->getMessage());
+            Log::error('TikTok getVideoStats failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -189,13 +201,13 @@ class TikTokApiService
             }
 
             if (isset($options['allow_comment'])) {
-                $payload['disable_comment'] = !$options['allow_comment'];
+                $payload['disable_comment'] = ! $options['allow_comment'];
             }
             if (isset($options['allow_duet'])) {
-                $payload['disable_duet'] = !$options['allow_duet'];
+                $payload['disable_duet'] = ! $options['allow_duet'];
             }
             if (isset($options['allow_stitch'])) {
-                $payload['disable_stitch'] = !$options['allow_stitch'];
+                $payload['disable_stitch'] = ! $options['allow_stitch'];
             }
 
             $response = Http::withToken($accessToken)
@@ -203,18 +215,21 @@ class TikTokApiService
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("{$this->baseUrl}/publish/video/", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok publishVideo failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to publish'];
             }
 
             $data = $response->json();
+
             return [
                 'success' => true,
                 'publish_id' => $data['data']['publish_id'] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok publishVideo failed: ' . $e->getMessage());
+            Log::error('TikTok publishVideo failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -233,18 +248,21 @@ class TikTokApiService
                     'description' => $description ?? '',
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok uploadVideo failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to upload'];
             }
 
             $data = $response->json();
+
             return [
                 'success' => true,
                 'publish_id' => $data['data']['publish_id'] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok uploadVideo failed: ' . $e->getMessage());
+            Log::error('TikTok uploadVideo failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -264,12 +282,14 @@ class TikTokApiService
                     'count' => $count,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok getComments failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch comments'];
             }
 
             $data = $response->json();
+
             return [
                 'success' => true,
                 'comments' => $data['data']['comments'] ?? [],
@@ -277,7 +297,8 @@ class TikTokApiService
                 'cursor' => $data['data']['cursor'] ?? 0,
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok getComments failed: ' . $e->getMessage());
+            Log::error('TikTok getComments failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -296,14 +317,16 @@ class TikTokApiService
                     'content' => $text,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok replyToComment failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to reply'];
             }
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('TikTok replyToComment failed: ' . $e->getMessage());
+            Log::error('TikTok replyToComment failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -323,8 +346,9 @@ class TikTokApiService
                     'refresh_token' => $refreshToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('TikTok token refresh failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token refresh failed'];
             }
 
@@ -337,7 +361,8 @@ class TikTokApiService
                 'expires_in' => $data['data']['expires_in'] ?? 86400,
             ];
         } catch (\Exception $e) {
-            Log::error('TikTok refreshToken failed: ' . $e->getMessage());
+            Log::error('TikTok refreshToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -348,6 +373,7 @@ class TikTokApiService
     public function validateToken(string $accessToken): array
     {
         $result = $this->getUserInfo($accessToken);
+
         return $result['success']
             ? ['success' => true, 'user' => $result['data']]
             : $result;

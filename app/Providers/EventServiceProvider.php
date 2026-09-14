@@ -16,6 +16,7 @@ use App\Listeners\Agent\PostPublishedAgentListener;
 use App\Listeners\Agent\SubscriptionUpgradedAgentListener;
 use App\Listeners\Billing\LogInvoiceActivity;
 use App\Listeners\Billing\LogSubscriptionUpgrade;
+use App\Listeners\HandlePostFailure;
 use App\Listeners\SendWorkflowNotificationListener;
 use App\Listeners\Social\ClearPostCache;
 use App\Listeners\Social\LogPostActivity;
@@ -39,7 +40,7 @@ class EventServiceProvider extends ServiceProvider
             ClearPostCache::class.'@handlePostFailed',
             LogPostActivity::class.'@handlePostFailed',
             SendPostNotification::class.'@handlePostFailed',
-            \App\Listeners\HandlePostFailure::class,
+            HandlePostFailure::class,
         ],
         CampaignStatusChanged::class => [
             CampaignStatusChangedAgentListener::class,

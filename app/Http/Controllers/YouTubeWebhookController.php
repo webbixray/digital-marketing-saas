@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InboxMessage;
 use App\Models\SocialAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +15,7 @@ class YouTubeWebhookController extends Controller
         if ($challenge) {
             return response()->json($challenge);
         }
+
         return response()->json(['error' => 'Verification failed'], 403);
     }
 
@@ -24,15 +24,15 @@ class YouTubeWebhookController extends Controller
         $payload = $request->getContent();
         $xml = simplexml_load_string($payload);
 
-        if (!$xml) {
+        if (! $xml) {
             return response()->json(['error' => 'Invalid payload'], 400);
         }
 
         Log::info('YouTube webhook received', ['xml' => $payload]);
 
         // Parse PubSubHubbub notification
-        $videoId = (string)($xml->entry->id ?? '');
-        $channelId = (string)($xml->entry->author->uri ?? '');
+        $videoId = (string) ($xml->entry->id ?? '');
+        $channelId = (string) ($xml->entry->author->uri ?? '');
 
         if ($videoId) {
             $this->handleVideoUpdate($channelId, $videoId);
@@ -47,8 +47,9 @@ class YouTubeWebhookController extends Controller
             ->where('platform_account_id', $channelId)
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             Log::warning('YouTube webhook: account not found', ['channel_id' => $channelId]);
+
             return;
         }
 

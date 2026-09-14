@@ -2,9 +2,11 @@
 
 namespace App\Services\Social;
 
+use App\Enums\InboxMessageStatus;
 use App\Models\Agency;
 use App\Models\InboxMessage;
 use App\Models\SocialAccount;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class UnifiedInboxService
@@ -16,28 +18,28 @@ class UnifiedInboxService
      */
     public function getInbox(Agency $agency, array $filters = []): array
     {
-        $cacheKey = "inbox:{$agency->id}:" . md5(serialize($filters));
+        $cacheKey = "inbox:{$agency->id}:".md5(serialize($filters));
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($agency, $filters) {
             $query = InboxMessage::where('agency_id', $agency->id);
 
             // Apply filters
-            if (!empty($filters['platform'])) {
+            if (! empty($filters['platform'])) {
                 $query->byPlatform($filters['platform']);
             }
-            if (!empty($filters['type'])) {
+            if (! empty($filters['type'])) {
                 $query->byType($filters['type']);
             }
-            if (!empty($filters['status'])) {
+            if (! empty($filters['status'])) {
                 $query->where('status', $filters['status']);
             }
-            if (!empty($filters['search'])) {
-                $query->where('content', 'like', '%' . $filters['search'] . '%');
+            if (! empty($filters['search'])) {
+                $query->where('content', 'like', '%'.$filters['search'].'%');
             }
-            if (!empty($filters['date_from'])) {
+            if (! empty($filters['date_from'])) {
                 $query->whereDate('received_at', '>=', $filters['date_from']);
             }
-            if (!empty($filters['date_to'])) {
+            if (! empty($filters['date_to'])) {
                 $query->whereDate('received_at', '<=', $filters['date_to']);
             }
 
@@ -118,12 +120,13 @@ class UnifiedInboxService
     public function markAsRead(Agency $agency, int $messageId): bool
     {
         $message = $this->getMessage($agency, $messageId);
-        if (!$message) {
+        if (! $message) {
             return false;
         }
 
         InboxMessage::markRead($message);
         $this->clearCache($agency);
+
         return true;
     }
 
@@ -135,26 +138,28 @@ class UnifiedInboxService
         $count = InboxMessage::where('agency_id', $agency->id)
             ->unread()
             ->update([
-                'status' => \App\Enums\InboxMessageStatus::READ->value,
+                'status' => InboxMessageStatus::READ->value,
                 'read_at' => now(),
             ]);
 
         $this->clearCache($agency);
+
         return $count;
     }
 
     /**
      * Reply to a message.
      */
-    public function replyToMessage(Agency $agency, int $messageId, string $content, ?\App\Models\User $user = null): bool
+    public function replyToMessage(Agency $agency, int $messageId, string $content, ?User $user = null): bool
     {
         $message = $this->getMessage($agency, $messageId);
-        if (!$message) {
+        if (! $message) {
             return false;
         }
 
         InboxMessage::markReplied($message, $content, $user);
         $this->clearCache($agency);
+
         return true;
     }
 
@@ -164,12 +169,13 @@ class UnifiedInboxService
     public function deleteMessage(Agency $agency, int $messageId): bool
     {
         $message = $this->getMessage($agency, $messageId);
-        if (!$message) {
+        if (! $message) {
             return false;
         }
 
         $message->delete();
         $this->clearCache($agency);
+
         return true;
     }
 

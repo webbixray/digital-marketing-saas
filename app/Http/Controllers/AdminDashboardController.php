@@ -8,7 +8,9 @@ use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
 use App\Services\Analytics\AnalyticsService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -95,28 +97,30 @@ class AdminDashboardController extends Controller
     /**
      * Retry a failed job.
      */
-    public function retryJob(Request $request, string $jobId): \Illuminate\Http\RedirectResponse
+    public function retryJob(Request $request, string $jobId): RedirectResponse
     {
         $job = DB::table('failed_jobs')->where('id', $jobId)->first();
 
-        if (!$job) {
+        if (! $job) {
             return back()->with('error', 'Job not found');
         }
 
         try {
-            \Illuminate\Support\Facades\Artisan::call('queue:retry', ['id' => $jobId]);
+            Artisan::call('queue:retry', ['id' => $jobId]);
+
             return back()->with('success', 'Job dispatched for retry');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to retry job: ' . $e->getMessage());
+            return back()->with('error', 'Failed to retry job: '.$e->getMessage());
         }
     }
 
     /**
      * Delete a failed job.
      */
-    public function deleteFailedJob(Request $request, string $jobId): \Illuminate\Http\RedirectResponse
+    public function deleteFailedJob(Request $request, string $jobId): RedirectResponse
     {
         DB::table('failed_jobs')->where('id', $jobId)->delete();
+
         return back()->with('success', 'Failed job deleted');
     }
 
@@ -172,7 +176,7 @@ class AdminDashboardController extends Controller
     private function checkCache(): array
     {
         try {
-            $key = 'health_check_' . time();
+            $key = 'health_check_'.time();
             Cache::put($key, true, 10);
             $value = Cache::get($key);
             Cache::forget($key);
@@ -199,10 +203,10 @@ class AdminDashboardController extends Controller
     {
         try {
             $path = storage_path('framework/health');
-            if (!is_dir($path)) {
+            if (! is_dir($path)) {
                 mkdir($path, 0755, true);
             }
-            $file = $path . '/check.txt';
+            $file = $path.'/check.txt';
             file_put_contents($file, 'ok');
             $value = file_get_contents($file);
             unlink($file);

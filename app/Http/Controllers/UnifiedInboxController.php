@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InboxMessageStatus;
 use App\Services\Social\UnifiedInboxService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,12 +37,12 @@ class UnifiedInboxController extends Controller
         $agency = $request->user()->agency;
         $message = $this->inboxService->getMessage($agency, $messageId);
 
-        if (!$message) {
+        if (! $message) {
             abort(404);
         }
 
         // Auto-mark as read
-        if ($message->status === \App\Enums\InboxMessageStatus::UNREAD->value) {
+        if ($message->status === InboxMessageStatus::UNREAD->value) {
             $this->inboxService->markAsRead($agency, $messageId);
         }
 

@@ -3,9 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PostFailed;
-use App\Notifications\SocialAccountDisconnected;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 
 class HandlePostFailure
 {

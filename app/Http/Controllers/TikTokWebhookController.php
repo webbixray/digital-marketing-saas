@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InboxMessage;
 use App\Models\SocialAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +15,7 @@ class TikTokWebhookController extends Controller
         if ($challenge) {
             return response()->json(['challenge' => $challenge]);
         }
+
         return response()->json(['error' => 'Verification failed'], 403);
     }
 
@@ -46,7 +46,9 @@ class TikTokWebhookController extends Controller
     private function handleComment(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
-        if (!$account) return;
+        if (! $account) {
+            return;
+        }
 
         $account->inboxMessages()->create([
             'platform' => 'tiktok',
@@ -61,7 +63,9 @@ class TikTokWebhookController extends Controller
     private function handleMention(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
-        if (!$account) return;
+        if (! $account) {
+            return;
+        }
 
         $account->inboxMessages()->create([
             'platform' => 'tiktok',
@@ -76,7 +80,9 @@ class TikTokWebhookController extends Controller
     private function handleDirectMessage(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
-        if (!$account) return;
+        if (! $account) {
+            return;
+        }
 
         $account->inboxMessages()->create([
             'platform' => 'tiktok',

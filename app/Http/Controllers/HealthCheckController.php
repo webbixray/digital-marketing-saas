@@ -126,6 +126,13 @@ class HealthCheckController extends Controller
         try {
             $gateway = $this->aiGateway;
 
+            // If no providers are registered, AI is not configured — that's
+            // a valid state, not a failure. Only fail if providers exist but
+            // none are reachable.
+            if ($gateway->getProviders()->isEmpty()) {
+                return true;
+            }
+
             return $gateway->hasAvailableProvider();
         } catch (\Exception $e) {
             return false;
@@ -240,7 +247,7 @@ class HealthCheckController extends Controller
         ];
 
         $failedJobsTableExists = Schema::hasTable('failed_jobs');
-        
+
         if ($queueDriver === 'database') {
             $status['pending'] = DB::table('jobs')->count();
             $status['failed'] = $failedJobsTableExists ? DB::table('failed_jobs')->count() : 0;

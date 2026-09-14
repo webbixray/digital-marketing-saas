@@ -1,10 +1,16 @@
 <?php
 
+use Sentry\Breadcrumb;
+use Sentry\Event;
+use Sentry\Integration\FrameStacktraceIntegration;
+use Sentry\Integration\RequestIntegration;
+use Sentry\Integration\TransactionIntegration;
+
 return [
     'dsn' => env('SENTRY_LARAVEL_DSN', env('SENTRY_DSN')),
 
     // capture release as git sha
-    'release' => trim(exec('git --git-dir ' . base_path('.git') . ' log --pretty="%h" -1 HEAD')),
+    'release' => trim(exec('git --git-dir '.base_path('.git').' log --pretty="%h" -1 HEAD')),
 
     // When left empty or `null` the Laravel environment will be used
     'environment' => env('SENTRY_ENVIRONMENT'),
@@ -50,16 +56,16 @@ return [
     'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE') === null ? null : (float) env('SENTRY_PROFILES_SAMPLE_RATE'),
 
     'integrations' => [
-        \Sentry\Integration\RequestIntegration::class,
-        \Sentry\Integration\TransactionIntegration::class,
-        \Sentry\Integration\FrameStacktraceIntegration::class,
+        RequestIntegration::class,
+        TransactionIntegration::class,
+        FrameStacktraceIntegration::class,
     ],
 
-    'before_breadcrumb' => function (\Sentry\Breadcrumb $breadcrumb): ?\Sentry\Breadcrumb {
+    'before_breadcrumb' => function (Breadcrumb $breadcrumb): ?Breadcrumb {
         return $breadcrumb;
     },
 
-    'before_send' => function (\Sentry\Event $event): ?\Sentry\Event {
+    'before_send' => function (Event $event): ?Event {
         return $event;
     },
 ];

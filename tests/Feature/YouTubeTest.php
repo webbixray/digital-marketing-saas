@@ -13,6 +13,7 @@ class YouTubeTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
 
     protected function setUp(): void

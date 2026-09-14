@@ -12,12 +12,12 @@ class CacheWithEtag
     {
         $response = $next($request);
 
-        if (!$response->isSuccessful() || $request->getMethod() !== 'GET') {
+        if (! $response->isSuccessful() || $request->getMethod() !== 'GET') {
             return $response;
         }
 
         $content = $response->getContent();
-        $etag = '"' . md5($content) . '"';
+        $etag = '"'.md5($content).'"';
 
         $response->setEtag($etag);
         $response->setPublic();

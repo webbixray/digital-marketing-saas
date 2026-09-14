@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\SocialAccount;
 use App\Services\Social\InstagramApiService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,12 +70,13 @@ class InstagramController extends Controller
                 'error' => $request->get('error'),
                 'description' => $request->get('error_description'),
             ]);
+
             return redirect()->route('instagram.index')
-                ->with('error', 'Instagram authorization failed: ' . $request->get('error_description'));
+                ->with('error', 'Instagram authorization failed: '.$request->get('error_description'));
         }
 
         $code = $request->get('code');
-        if (!$code) {
+        if (! $code) {
             return redirect()->route('instagram.index')
                 ->with('error', 'No authorization code received.');
         }
@@ -84,10 +84,11 @@ class InstagramController extends Controller
         // Exchange code for token
         $tokenResult = $this->instagram->exchangeCodeForToken($code, route('instagram.callback'));
 
-        if (!$tokenResult['success']) {
+        if (! $tokenResult['success']) {
             Log::error('Instagram token exchange failed', $tokenResult);
+
             return redirect()->route('instagram.index')
-                ->with('error', 'Failed to connect Instagram: ' . ($tokenResult['error'] ?? 'Unknown error'));
+                ->with('error', 'Failed to connect Instagram: '.($tokenResult['error'] ?? 'Unknown error'));
         }
 
         $accessToken = $tokenResult['access_token'];
@@ -96,7 +97,7 @@ class InstagramController extends Controller
         // Get Facebook Pages with Instagram accounts
         $pagesResult = $this->instagram->getPages($accessToken);
 
-        if (!$pagesResult['success'] || empty($pagesResult['pages'])) {
+        if (! $pagesResult['success'] || empty($pagesResult['pages'])) {
             return redirect()->route('instagram.index')
                 ->with('error', 'No Facebook Pages found with connected Instagram Business account. Please ensure you have an Instagram Business account connected to a Facebook Page.');
         }
@@ -182,7 +183,7 @@ class InstagramController extends Controller
         $account = SocialAccount::where('platform', 'instagram')
             ->find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             abort(404, 'Instagram account not found.');
         }
 
@@ -208,7 +209,7 @@ class InstagramController extends Controller
             ->where('platform', 'instagram')
             ->findOrFail($accountId);
 
-        $account->update(['is_active' => !$account->is_active]);
+        $account->update(['is_active' => ! $account->is_active]);
 
         return redirect()->route('instagram.index')
             ->with('success', 'Instagram account status updated.');
@@ -225,7 +226,7 @@ class InstagramController extends Controller
             ->where('platform', 'instagram')
             ->findOrFail($accountId);
 
-        if (!$account->isExpired()) {
+        if (! $account->isExpired()) {
             $insights = $this->instagram->getAccountInsights(
                 $account->platform_account_id,
                 $account->access_token
@@ -254,16 +255,16 @@ class InstagramController extends Controller
             ->where('platform', 'instagram')
             ->findOrFail($accountId);
 
-        if (!$account->refresh_token) {
+        if (! $account->refresh_token) {
             return redirect()->route('instagram.index')
                 ->with('error', 'No refresh token available. Please reconnect.');
         }
 
         $result = $this->instagram->refreshToken($account->refresh_token);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return redirect()->route('instagram.index')
-                ->with('error', 'Token refresh failed: ' . ($result['error'] ?? 'Unknown error'));
+                ->with('error', 'Token refresh failed: '.($result['error'] ?? 'Unknown error'));
         }
 
         $account->update([

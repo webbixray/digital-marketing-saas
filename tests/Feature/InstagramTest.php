@@ -6,7 +6,6 @@ use App\Models\Agency;
 use App\Models\SocialAccount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class InstagramTest extends TestCase
@@ -14,6 +13,7 @@ class InstagramTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
 
     protected function setUp(): void

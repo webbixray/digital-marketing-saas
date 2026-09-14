@@ -2,14 +2,15 @@
 
 namespace App\Services\Social;
 
-use App\Models\SocialAccount;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class FacebookApiService
 {
     protected ?string $appId;
+
     protected ?string $appSecret;
+
     protected string $baseUrl = 'https://graph.facebook.com/v21.0';
 
     public function __construct()
@@ -52,8 +53,9 @@ class FacebookApiService
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook token exchange failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
@@ -66,7 +68,8 @@ class FacebookApiService
                 'expires_in' => $data['expires_in'] ?? 5184000,
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook token exchange failed: ' . $e->getMessage());
+            Log::error('Facebook token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -84,8 +87,9 @@ class FacebookApiService
                     'limit' => 100,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook getPages failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch pages'];
             }
 
@@ -94,7 +98,8 @@ class FacebookApiService
                 'pages' => $response->json()['data'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook getPages failed: ' . $e->getMessage());
+            Log::error('Facebook getPages failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -111,13 +116,14 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Failed to fetch page details'];
             }
 
             return ['success' => true, 'data' => $response->json()];
         } catch (\Exception $e) {
-            Log::error('Facebook getPage failed: ' . $e->getMessage());
+            Log::error('Facebook getPage failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -139,8 +145,9 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook getPageInsights failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch insights'];
             }
 
@@ -156,7 +163,8 @@ class FacebookApiService
 
             return ['success' => true, 'data' => $insights];
         } catch (\Exception $e) {
-            Log::error('Facebook getPageInsights failed: ' . $e->getMessage());
+            Log::error('Facebook getPageInsights failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -174,8 +182,9 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook postText failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to post'];
             }
 
@@ -184,7 +193,8 @@ class FacebookApiService
                 'post_id' => $response->json()['id'],
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook postText failed: ' . $e->getMessage());
+            Log::error('Facebook postText failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -208,8 +218,9 @@ class FacebookApiService
                 ->timeout(60)
                 ->post("{$this->baseUrl}/{$pageId}/photos", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook postPhoto failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to post photo'];
             }
 
@@ -219,7 +230,8 @@ class FacebookApiService
                 'photo_id' => $response->json()['post_id'] ?? null,
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook postPhoto failed: ' . $e->getMessage());
+            Log::error('Facebook postPhoto failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -243,8 +255,9 @@ class FacebookApiService
                 ->timeout(120)
                 ->post("{$this->baseUrl}/{$pageId}/videos", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook postVideo failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to post video'];
             }
 
@@ -253,7 +266,8 @@ class FacebookApiService
                 'video_id' => $response->json()['id'],
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook postVideo failed: ' . $e->getMessage());
+            Log::error('Facebook postVideo failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -272,8 +286,9 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook getPostInsights failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch post insights'];
             }
 
@@ -289,7 +304,8 @@ class FacebookApiService
 
             return ['success' => true, 'data' => $insights];
         } catch (\Exception $e) {
-            Log::error('Facebook getPostInsights failed: ' . $e->getMessage());
+            Log::error('Facebook getPostInsights failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -305,14 +321,16 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook deletePost failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to delete post'];
             }
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Facebook deletePost failed: ' . $e->getMessage());
+            Log::error('Facebook deletePost failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -330,8 +348,9 @@ class FacebookApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Facebook getPosts failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch posts'];
             }
 
@@ -340,7 +359,8 @@ class FacebookApiService
                 'posts' => $response->json()['data'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook getPosts failed: ' . $e->getMessage());
+            Log::error('Facebook getPosts failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -357,13 +377,13 @@ class FacebookApiService
                     'access_token' => "{$this->appId}|{$this->appSecret}",
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Token validation failed'];
             }
 
             $data = $response->json()['data'] ?? [];
 
-            if (!($data['is_valid'] ?? false)) {
+            if (! ($data['is_valid'] ?? false)) {
                 return ['success' => false, 'error' => 'Token is invalid'];
             }
 
@@ -374,7 +394,8 @@ class FacebookApiService
                 'scopes' => $data['scopes'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook validateToken failed: ' . $e->getMessage());
+            Log::error('Facebook validateToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

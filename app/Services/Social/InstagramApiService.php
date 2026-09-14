@@ -2,15 +2,15 @@
 
 namespace App\Services\Social;
 
-use App\Models\SocialAccount;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class InstagramApiService
 {
     protected ?string $appId;
+
     protected ?string $appSecret;
+
     protected string $baseUrl = 'https://graph.facebook.com/v21.0';
 
     public function __construct()
@@ -52,15 +52,16 @@ class InstagramApiService
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if (!$shortLived->successful()) {
+            if (! $shortLived->successful()) {
                 Log::error('Instagram short-lived token exchange failed', [
                     'response' => $shortLived->json(),
                 ]);
+
                 return ['success' => false, 'error' => 'Token exchange failed'];
             }
 
             $shortToken = $shortLived->json()['access_token'] ?? null;
-            if (!$shortToken) {
+            if (! $shortToken) {
                 return ['success' => false, 'error' => 'No access token returned'];
             }
 
@@ -73,10 +74,11 @@ class InstagramApiService
                     'fb_exchange_token' => $shortToken,
                 ]);
 
-            if (!$longLived->successful()) {
+            if (! $longLived->successful()) {
                 Log::error('Instagram long-lived token exchange failed', [
                     'response' => $longLived->json(),
                 ]);
+
                 // Fall back to short-lived token
                 return [
                     'success' => true,
@@ -97,7 +99,8 @@ class InstagramApiService
                 'long_lived' => true,
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram token exchange failed: ' . $e->getMessage());
+            Log::error('Instagram token exchange failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -114,15 +117,16 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram getPages failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch pages'];
             }
 
             $pages = $response->json()['data'] ?? [];
 
             // Filter only pages with connected Instagram accounts
-            $pagesWithIg = array_filter($pages, fn($p) => isset($p['instagram_business_account']));
+            $pagesWithIg = array_filter($pages, fn ($p) => isset($p['instagram_business_account']));
             $pagesWithIg = array_values($pagesWithIg);
 
             return [
@@ -130,7 +134,8 @@ class InstagramApiService
                 'pages' => $pagesWithIg,
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram getPages failed: ' . $e->getMessage());
+            Log::error('Instagram getPages failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -147,7 +152,7 @@ class InstagramApiService
                     'access_token' => $pageAccessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Failed to fetch Instagram account'];
             }
 
@@ -168,7 +173,8 @@ class InstagramApiService
 
             return ['success' => false, 'error' => 'No Instagram Business account found. Please connect an Instagram Business account to your Facebook Page.'];
         } catch (\Exception $e) {
-            Log::error('Instagram getInstagramAccount failed: ' . $e->getMessage());
+            Log::error('Instagram getInstagramAccount failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -185,8 +191,9 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram getUserProfile failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch user profile'];
             }
 
@@ -195,7 +202,8 @@ class InstagramApiService
                 'data' => $response->json(),
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram getUserProfile failed: ' . $e->getMessage());
+            Log::error('Instagram getUserProfile failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -213,8 +221,9 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram getAccountInsights failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch insights'];
             }
 
@@ -223,7 +232,8 @@ class InstagramApiService
                 'data' => $response->json()['data'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram getAccountInsights failed: ' . $e->getMessage());
+            Log::error('Instagram getAccountInsights failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -261,8 +271,7 @@ class InstagramApiService
                 if (isset($params['caption'])) {
                     $payload['caption'] = $params['caption'];
                 }
-            }
-            else {
+            } else {
                 return ['success' => false, 'error' => 'Invalid media parameters. Provide image_url, video_url, or children.'];
             }
 
@@ -275,10 +284,11 @@ class InstagramApiService
                 ->timeout(30)
                 ->post("{$this->baseUrl}/{$igUserId}/media", $payload);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram createMediaContainer failed', [
                     'response' => $response->json(),
                 ]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to create media container'];
             }
 
@@ -289,7 +299,8 @@ class InstagramApiService
                 'container_id' => $data['id'],
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram createMediaContainer failed: ' . $e->getMessage());
+            Log::error('Instagram createMediaContainer failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -307,10 +318,11 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram publishMedia failed', [
                     'response' => $response->json(),
                 ]);
+
                 return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to publish media'];
             }
 
@@ -321,7 +333,8 @@ class InstagramApiService
                 'media_id' => $data['id'],
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram publishMedia failed: ' . $e->getMessage());
+            Log::error('Instagram publishMedia failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -338,8 +351,9 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram getMediaInsights failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to fetch media insights'];
             }
 
@@ -357,7 +371,8 @@ class InstagramApiService
                 'data' => $insights,
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram getMediaInsights failed: ' . $e->getMessage());
+            Log::error('Instagram getMediaInsights failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -369,7 +384,7 @@ class InstagramApiService
     {
         // Step 1: Create media container
         $container = $this->createMediaContainer($igUserId, $accessToken, $params);
-        if (!$container['success']) {
+        if (! $container['success']) {
             return $container;
         }
 
@@ -384,7 +399,7 @@ class InstagramApiService
                     break;
                 }
                 if (($status['status_code'] ?? '') === 'ERROR') {
-                    return ['success' => false, 'error' => 'Media processing failed: ' . ($status['error'] ?? 'Unknown error')];
+                    return ['success' => false, 'error' => 'Media processing failed: '.($status['error'] ?? 'Unknown error')];
                 }
                 $attempt++;
             }
@@ -406,18 +421,20 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Failed to check container status'];
             }
 
             $data = $response->json();
+
             return [
                 'success' => true,
                 'status_code' => $data['status_code'] ?? 'UNKNOWN',
                 'status' => $data['status'] ?? 'Unknown',
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram getContainerStatus failed: ' . $e->getMessage());
+            Log::error('Instagram getContainerStatus failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -433,14 +450,16 @@ class InstagramApiService
                     'access_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Instagram deleteMedia failed', ['response' => $response->json()]);
+
                 return ['success' => false, 'error' => 'Failed to delete media'];
             }
 
             return ['success' => true];
         } catch (\Exception $e) {
-            Log::error('Instagram deleteMedia failed: ' . $e->getMessage());
+            Log::error('Instagram deleteMedia failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -459,7 +478,7 @@ class InstagramApiService
                     'fb_exchange_token' => $accessToken,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Token refresh failed'];
             }
 
@@ -471,7 +490,8 @@ class InstagramApiService
                 'expires_in' => $data['expires_in'] ?? 5184000,
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram refreshToken failed: ' . $e->getMessage());
+            Log::error('Instagram refreshToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -488,7 +508,7 @@ class InstagramApiService
                     'access_token' => "{$this->appId}|{$this->appSecret}",
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return ['success' => false, 'error' => 'Token validation failed'];
             }
 
@@ -498,7 +518,7 @@ class InstagramApiService
                 return ['success' => false, 'error' => $data['error']['message']];
             }
 
-            if (!($data['is_valid'] ?? false)) {
+            if (! ($data['is_valid'] ?? false)) {
                 return ['success' => false, 'error' => 'Token is invalid'];
             }
 
@@ -509,7 +529,8 @@ class InstagramApiService
                 'scopes' => $data['scopes'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram validateToken failed: ' . $e->getMessage());
+            Log::error('Instagram validateToken failed: '.$e->getMessage());
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

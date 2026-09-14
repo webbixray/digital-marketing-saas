@@ -35,10 +35,11 @@ class InstagramWebhookController extends Controller
                 ->where('platform_account_id', $igUserId)
                 ->first();
 
-            if (!$account) {
+            if (! $account) {
                 Log::warning('Instagram webhook: account not found', [
                     'ig_user_id' => $igUserId,
                 ]);
+
                 continue;
             }
 

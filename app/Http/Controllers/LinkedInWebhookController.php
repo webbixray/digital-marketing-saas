@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InboxMessage;
 use App\Models\SocialAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +15,7 @@ class LinkedInWebhookController extends Controller
         if ($challenge) {
             return response()->json(['challengeCode' => $challenge]);
         }
+
         return response()->json(['error' => 'Verification failed'], 403);
     }
 
@@ -41,7 +41,7 @@ class LinkedInWebhookController extends Controller
             ->where('platform_account_id', $actor)
             ->first();
 
-        if (!$account) {
+        if (! $account) {
             return;
         }
 
