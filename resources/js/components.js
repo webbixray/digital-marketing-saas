@@ -6,16 +6,10 @@
 // Component Registry
 const components = {};
 
-/**
- * Register a component
- */
 function registerComponent(name, config) {
     components[name] = config;
 }
 
-/**
- * Initialize all components
- */
 function initComponents() {
     document.querySelectorAll('[data-component]').forEach(el => {
         const name = el.dataset.component;
@@ -25,9 +19,6 @@ function initComponents() {
     });
 }
 
-/**
- * Base Component Class
- */
 class Component {
     constructor(element) {
         this.element = element;
@@ -53,9 +44,6 @@ class Component {
     }
 }
 
-/**
- * Modal Component
- */
 class Modal extends Component {
     init() {
         this.modal = this.find('[data-modal]');
@@ -81,9 +69,6 @@ class Modal extends Component {
     }
 }
 
-/**
- * Dropdown Component
- */
 class Dropdown extends Component {
     init() {
         this.button = this.find('[data-dropdown-button]');
@@ -106,9 +91,6 @@ class Dropdown extends Component {
     }
 }
 
-/**
- * Tabs Component
- */
 class Tabs extends Component {
     init() {
         this.tabButtons = this.findAll('[data-tab-button]');
@@ -132,9 +114,6 @@ class Tabs extends Component {
     }
 }
 
-/**
- * Accordion Component
- */
 class Accordion extends Component {
     init() {
         this.items = this.findAll('[data-accordion-item]');
@@ -158,9 +137,6 @@ class Accordion extends Component {
     }
 }
 
-/**
- * Tooltip Component
- */
 class Tooltip extends Component {
     init() {
         this.tooltip = this.find('[data-tooltip]');
@@ -189,9 +165,6 @@ class Tooltip extends Component {
     }
 }
 
-/**
- * Confirm Dialog Component
- */
 class ConfirmDialog extends Component {
     init() {
         this.buttons = this.findAll('[data-confirm]');
@@ -206,9 +179,6 @@ class ConfirmDialog extends Component {
     }
 }
 
-/**
- * Auto-dismiss Alert Component
- */
 class AutoDismissAlert extends Component {
     init() {
         this.alerts = this.findAll('[data-auto-dismiss]');
@@ -221,16 +191,14 @@ class AutoDismissAlert extends Component {
     }
 }
 
-/**
- * Form Validator Component
- */
-class FormValidatorComponent extends Component {
+class FormValidator extends Component {
     init() {
         this.form = this.element;
         this.errorClass = 'text-sm text-red-600 mt-1';
         this.inputErrorClass = 'border-red-500 focus:border-red-500 focus:ring-red-500';
 
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.form.addEventListener('blur', (e) => this.handleBlur(e), true);
     }
 
     handleSubmit(e) {
@@ -251,12 +219,16 @@ class FormValidatorComponent extends Component {
                     error = 'Please enter a valid email address';
                 } else if (ruleName === 'min' && value && value.length < parseInt(params[0])) {
                     error = `Must be at least ${params[0]} characters`;
+                } else if (ruleName === 'max' && value && value.length > parseInt(params[0])) {
+                    error = `Must be less than ${params[0]} characters`;
                 }
 
                 if (error) {
                     errors[field.name] = error;
                     this.showFieldError(field, error);
                     break;
+                } else {
+                    this.clearFieldError(field);
                 }
             }
         });
@@ -266,18 +238,49 @@ class FormValidatorComponent extends Component {
         }
     }
 
+    handleBlur(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            const rules = (e.target.dataset.validate || '').split('|');
+            const value = e.target.value.trim();
+            let error = null;
+
+            for (const rule of rules) {
+                const [ruleName, ...params] = rule.split(':');
+                if (ruleName === 'required' && !value) {
+                    error = 'This field is required';
+                } else if (ruleName === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    error = 'Please enter a valid email address';
+                } else if (ruleName === 'min' && value && value.length < parseInt(params[0])) {
+                    error = `Must be at least ${params[0]} characters`;
+                }
+                if (error) break;
+            }
+
+            if (error) {
+                this.showFieldError(e.target, error);
+            } else {
+                this.clearFieldError(e.target);
+            }
+        }
+    }
+
     showFieldError(field, message) {
+        this.clearFieldError(field);
         field.classList.add(...this.inputErrorClass.split(' '));
         const errorEl = document.createElement('p');
         errorEl.className = this.errorClass;
         errorEl.textContent = message;
+        errorEl.dataset.errorFor = field.name;
         field.parentNode.appendChild(errorEl);
+    }
+
+    clearFieldError(field) {
+        field.classList.remove(...this.inputErrorClass.split(' '));
+        const existingError = field.parentNode.querySelector(`[data-error-for="${field.name}"]`);
+        if (existingError) existingError.remove();
     }
 }
 
-/**
- * Toggle Switch Component
- */
 class ToggleSwitch extends Component {
     init() {
         this.toggle = this.find('[data-toggle]');
@@ -293,9 +296,6 @@ class ToggleSwitch extends Component {
     }
 }
 
-/**
- * Search Select Component
- */
 class SearchSelect extends Component {
     init() {
         this.input = this.find('[data-search-select]');
@@ -325,11 +325,10 @@ registerComponent('accordion', Accordion);
 registerComponent('tooltip', Tooltip);
 registerComponent('confirm-dialog', ConfirmDialog);
 registerComponent('auto-dismiss', AutoDismissAlert);
-registerComponent('form-validator', FormValidatorComponent);
+registerComponent('form-validator', FormValidator);
 registerComponent('toggle-switch', ToggleSwitch);
 registerComponent('search-select', SearchSelect);
 
-// Export
 window.DMSaaS_Components = {
     registerComponent,
     initComponents,
@@ -341,7 +340,7 @@ window.DMSaaS_Components = {
     Tooltip,
     ConfirmDialog,
     AutoDismissAlert,
-    FormValidatorComponent,
+    FormValidator,
     ToggleSwitch,
     SearchSelect,
 };
