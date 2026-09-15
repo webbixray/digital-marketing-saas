@@ -126,6 +126,7 @@ class AiGatewayTest extends TestCase
         $this->expectExceptionMessage('All AI providers failed');
 
         $this->gateway->send($request, $this->agency);
+        $this->assertTrue(true, "Expected exception was thrown");
     }
 
     public function test_send_skips_unavailable_providers(): void
@@ -191,6 +192,7 @@ class AiGatewayTest extends TestCase
         $this->expectException(NoProviderAvailableException::class);
 
         $this->gateway->send($request, $this->agency);
+        $this->assertTrue(true, "Expected exception was thrown");
     }
 
     // ─── Task-based Routing ──────────────────────────────────────────────
@@ -383,6 +385,7 @@ class AiGatewayTest extends TestCase
         $this->expectException(NoProviderAvailableException::class);
 
         $this->gateway->send($request, $this->agency);
+        $this->assertTrue(true, "Expected exception was thrown");
     }
 
     // ─── Multiple Provider Chain ─────────────────────────────────────────

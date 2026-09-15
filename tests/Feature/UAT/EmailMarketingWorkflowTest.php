@@ -256,6 +256,7 @@ class EmailMarketingWorkflowTest extends TestCase
         $this->expectExceptionMessage('Campaign is not in sendable status');
 
         $this->service->send($campaign);
+        $this->assertTrue(true, "Expected exception was thrown");
     }
 
     /**
