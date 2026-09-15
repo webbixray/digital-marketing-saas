@@ -46,7 +46,7 @@ class SecurityHeaders
             $csp .= "base-uri 'self'; ";
             $csp .= "form-action 'self'; ";
             $csp .= "object-src 'none'; ";
-            $csp .= "upgrade-insecure-requests'";
+            $csp .= 'upgrade-insecure-requests;';
             $response->headers->set('Content-Security-Policy', $csp);
             // Share nonce with views for script/style tags
             view()->share('cspNonce', $nonce);

@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalmarketingsaas/app
+    container_name: dmsaas-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=staging
+      - APP_DEBUG=false
+      - DB_HOST=db
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+  webserver:
+    image: nginx:alpine
+    container_name: dmsaas-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - dmsaas-network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: dmsaas-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: digitalmarketingsaas
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_PASSWORD: dmspassword
+      MYSQL_USER: dmsaas
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - dmsaas-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dmsaas-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - dmsaas-network
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalmarketingsaas/app
+    container_name: dmsaas-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work redis --sleep=3 --tries=3
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=staging
+      - DB_HOST=db
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalmarketingsaas/app
+    container_name: dmsaas-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=staging
+      - DB_HOST=db
+      - REDIS_HOST=redis
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+networks:
+  dmsaas-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
+

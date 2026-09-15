@@ -1,0 +1,13 @@
+parameters:
+    level: 8
+    paths:
+        - app
+        - config
+        - routes
+    excludePaths:
+        - app/Providers/*
+    rules:
+        - PHPStan\Rules\Debug\DumpDebugRule
+    composerAutoloader:
+        - vendor/autoload.php
+    reportUnmatchedIgnoredErrors: false
