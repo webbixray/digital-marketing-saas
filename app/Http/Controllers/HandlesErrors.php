@@ -24,6 +24,11 @@ trait HandlesErrors
         try {
             $result = $action();
 
+            // If action returned a response, use it directly
+            if ($result instanceof \Illuminate\Http\RedirectResponse || $result instanceof \Illuminate\Http\JsonResponse) {
+                return $result;
+            }
+
             // Handle success redirect for web routes
             if (! empty($successRedirect) && !$this->expectsJson()) {
                 return redirect()->route(

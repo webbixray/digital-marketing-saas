@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Email;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HandlesErrors;
 use App\Http\Requests\EmailCampaignRequest;
 use App\Models\EmailCampaign;
 use App\Services\Email\EmailCampaignService;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 
 class EmailCampaignController extends Controller
 {
+    use HandlesErrors;
     public function __construct(private EmailCampaignService $service)
     {
         $this->middleware(['auth', 'agency']);

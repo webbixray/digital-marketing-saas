@@ -81,8 +81,8 @@ class RegisterController extends Controller
 
             return redirect()->route('verification.notice')->with('success', 'Welcome! Your agency has been created. Please verify your email address. After that, we\'ll help you get set up in 5 easy steps.');
         }, 'Registration failed. Please try again.', [
-            'route' => 'register',
-            'message' => 'Registration failed. Please try again.',
+            'route' => 'verification.notice',
+            'message' => 'Welcome! Your agency has been created. Please verify your email address. After that, we\'ll help you get set up in 5 easy steps.',
         ]);
     }
 }
