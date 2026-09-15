@@ -129,27 +129,29 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    const events = @json($events);
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: false,
-        events: events,
-        eventClick: function(info) {
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const events = @json($events);
+        
+        const modal = document.getElementById('eventModal');
+        const renderEventModal = function(info) {
             const props = info.event.extendedProps;
             document.getElementById('modalPlatform').textContent = props.platform;
             document.getElementById('modalStatus').textContent = props.status;
             document.getElementById('modalDate').textContent = info.event.start.toLocaleString();
             document.getElementById('modalContent').textContent = info.event.title;
             document.getElementById('modalEdit').href = '/social/posts/' + info.event.id + '/edit';
-            $('#eventModal').modal('show');
-        },
-        height: 'auto',
+            if (modal) modal.style.display = 'block';
+        };
+        
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: false,
+            events: events,
+            eventClick: renderEventModal,
+            height: 'auto',
+        });
+        calendar.render();
     });
-
-    calendar.render();
-});
 </script>
 @endpush
