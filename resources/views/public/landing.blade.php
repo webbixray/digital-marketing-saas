@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.public-unified')
 @section('title', 'DigitalMarketingSaaS - Grow Your Business')
 
 @section('content')
