@@ -130,11 +130,10 @@
 
 @push('scripts')
 <script>
-function copyReferralLink() {
-    const link = document.getElementById('referralLink');
-    link.select();
-    document.execCommand('copy');
-    alert('Referral link copied!');
-}
+    async function copyReferralLink() {
+        const link = document.getElementById('referralLink');
+        await dmsaas.copyToClipboard(link.value);
+        dmsaas.toast('Referral link copied!');
+    }
 </script>
 @endpush

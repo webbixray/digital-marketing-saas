@@ -124,22 +124,23 @@
 
 @push('scripts')
 <script>
-$(function() {
-    let rowCount = 1;
-    $('#addInviteRow').click(function() {
-        const newRow = $('.invite-row').first().clone();
-        newRow.find('input, select').each(function() {
-            const name = $(this).attr('name').replace('[0]', '[' + rowCount + ']');
-            $(this).attr('name', name).val('');
+    document.addEventListener('DOMContentLoaded', function() {
+        var rowCount = 1;
+        document.getElementById('addInviteRow').addEventListener('click', function() {
+            var newRow = document.querySelector('.invite-row').cloneNode(true);
+            newRow.querySelectorAll('input, select').forEach(function(inp) {
+                inp.name = inp.name.replace('[0]', '[' + rowCount + ']');
+                inp.value = '';
+            });
+            newRow.querySelector('.remove-row').style.display = '';
+            document.getElementById('inviteRows').appendChild(newRow);
+            rowCount++;
         });
-        newRow.find('.remove-row').show();
-        $('#inviteRows').append(newRow);
-        rowCount++;
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-row')) {
+                e.target.closest('.invite-row').remove();
+            }
+        });
     });
-
-    $(document).on('click', '.remove-row', function() {
-        $(this).closest('.invite-row').remove();
-    });
-});
 </script>
 @endpush

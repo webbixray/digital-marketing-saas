@@ -121,19 +121,27 @@
 
 @push('scripts')
 <script>
-$(function() {
-    $('.btn-next').click(function() {
-        var next = $(this).data('next');
-        $('.onboarding-step').addClass('d-none');
-        $('#step' + next).removeClass('d-none');
-        $('#onboardingProgress').css('width', (next * 33) + '%').text('Step ' + next + ' of 3');
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-next').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var next = this.dataset.next;
+                document.querySelectorAll('.onboarding-step').forEach(function(s) { s.classList.add('d-none'); });
+                document.getElementById('step' + next).classList.remove('d-none');
+                var progress = document.getElementById('onboardingProgress');
+                progress.style.width = (next * 33) + '%';
+                progress.textContent = 'Step ' + next + ' of 3';
+            });
+        });
+        document.querySelectorAll('.btn-prev').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var prev = this.dataset.prev;
+                document.querySelectorAll('.onboarding-step').forEach(function(s) { s.classList.add('d-none'); });
+                document.getElementById('step' + prev).classList.remove('d-none');
+                var progress = document.getElementById('onboardingProgress');
+                progress.style.width = (prev * 33) + '%';
+                progress.textContent = 'Step ' + prev + ' of 3';
+            });
+        });
     });
-    $('.btn-prev').click(function() {
-        var prev = $(this).data('prev');
-        $('.onboarding-step').addClass('d-none');
-        $('#step' + prev).removeClass('d-none');
-        $('#onboardingProgress').css('width', (prev * 33) + '%').text('Step ' + prev + ' of 3');
-    });
-});
 </script>
 @endpush

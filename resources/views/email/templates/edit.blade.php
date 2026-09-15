@@ -17,16 +17,16 @@
 @push("scripts")
 <script>
     async function previewTemplate() {
-        const response = await fetch('{{ route("email.templates.preview", $template) }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: JSON.stringify({ variables: {} }),
-        });
-        const data = await response.json();
-        document.getElementById('previewContent').innerHTML = data.html;
+        try {
+            const response = await dmsaas.request('{{ route(email.templates.preview, ) }}', {
+                method: 'POST',
+                body: JSON.stringify({ variables: {} }),
+            });
+            const data = await response.json();
+            document.getElementById('previewContent').innerHTML = data.html;
+        } catch (err) {
+            dmsaas.toast('Failed to load preview.', 'error');
+        }
     }
 </script>
 @endpush

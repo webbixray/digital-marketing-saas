@@ -222,32 +222,37 @@
 
 @push('scripts')
 <script>
-$(function() {
-    $('#dispatchForm').on('submit', function(e) {
-        e.preventDefault();
-        const btn = $(this).find('button[type="submit"]');
-        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Dispatching...');
-        
-        $.ajax({
-            url: $(this).attr('action'),
-            method: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(data) {
-                if (data.success) {
-                    toastr.success('Task dispatched successfully!');
-                    location.reload();
-                } else {
-                    toastr.error(data.message || 'Failed to dispatch task.');
-                    btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> Dispatch Task');
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('dispatchForm');
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const btn = form.querySelector('button[type=submit]');
+                dmsaas.setLoading(btn, true);
+                
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new FormData(form)
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        dmsaas.toast('Task dispatched successfully!');
+                        location.reload();
+                    } else {
+                        dmsaas.toast(data.message || 'Failed to dispatch task.', 'error');
+                    }
+                } catch (err) {
+                    dmsaas.toast('Network error. Please try again.', 'error');
+                } finally {
+                    dmsaas.setLoading(btn, false);
                 }
-            },
-            error: function() {
-                toastr.error('Network error occurred.');
-                btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> Dispatch Task');
-            }
-        });
+            });
+        }
     });
-});
 </script>
 @endpush

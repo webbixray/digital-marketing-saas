@@ -33,30 +33,30 @@
 
 @push("scripts")
 <script>
-    const commentableType = @json($commentableType ?? null);
-    const commentableId = @json($commentableId ?? null);
+    const commentableType = @json( ?? null);
+    const commentableId = @json( ?? null);
 
     async function submitComment(e) {
         e.preventDefault();
         const body = document.getElementById('commentBody').value;
         if (!body.trim()) return;
 
-        const response = await fetch('{{ route('comments.store') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: JSON.stringify({
-                commentable_type: commentableType,
-                commentable_id: commentableId,
-                body: body,
-            }),
-        });
+        try {
+            const response = await dmsaas.request('{{ route('comments.store') }}', {
+                method: 'POST',
+                body: JSON.stringify({
+                    commentable_type: commentableType,
+                    commentable_id: commentableId,
+                    body: body,
+                }),
+            });
 
-        if (response.ok) {
-            document.getElementById('commentBody').value = '';
-            location.reload();
+            if (response.ok) {
+                dmsaas.toast('Comment posted!');
+                location.reload();
+            }
+        } catch (err) {
+            dmsaas.toast('Failed to post comment.', 'error');
         }
     }
 </script>

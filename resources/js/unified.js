@@ -64,13 +64,11 @@ window.dmsaas = {
      * Show a toast notification
      */
     toast(message, type = 'success') {
-        // Create toast element
         const toast = document.createElement('div');
         toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white ${this.toastClass(type)}`;
         toast.textContent = message;
         document.body.appendChild(toast);
         
-        // Auto-dismiss
         setTimeout(() => {
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 300);
@@ -131,7 +129,69 @@ window.dmsaas = {
      */
     confirm(message) {
         return confirm(message || 'Are you sure?');
-    }
+    },
+
+    /**
+     * Copy text to clipboard
+     */
+    async copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            return true;
+        }
+    },
+
+    /**
+     * Toggle loading state on a button
+     */
+    setLoading(btn, loading = true) {
+        if (loading) {
+            btn.dataset.originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="inline-block animate-spin mr-1">⟳</span> Loading...';
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+        }
+    },
+
+    /**
+     * Filter table rows by search input
+     */
+    filterTable(searchInput, tableSelector) {
+        const value = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll(`${tableSelector} tbody tr`);
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(value) ? '' : 'none';
+        });
+    },
+
+    /**
+     * Initialize character counter for a textarea
+     */
+    initCharCounter(inputSelector, counterSelector, maxLength = null) {
+        const input = document.querySelector(inputSelector);
+        const counter = document.querySelector(counterSelector);
+        if (!input || !counter) return;
+
+        const update = () => {
+            const len = input.value.length;
+            counter.textContent = maxLength ? `${len}/${maxLength}` : `${len}`;
+        };
+        input.addEventListener('input', update);
+        update();
+    },
 };
 
 // Tooltip functions

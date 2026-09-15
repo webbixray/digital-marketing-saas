@@ -100,10 +100,10 @@
 
 @push('scripts')
 <script>
-function copyCode() {
-    const code = document.querySelector('input[readonly]').value;
-    navigator.clipboard.writeText(code);
-    toastr.success('Code copied!');
-}
+    async function copyCode() {
+        const code = document.querySelector('input[readonly]').value;
+        await dmsaas.copyToClipboard(code);
+        dmsaas.toast('Code copied!');
+    }
 </script>
 @endpush

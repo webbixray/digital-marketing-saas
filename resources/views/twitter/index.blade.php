@@ -156,8 +156,8 @@
 
 @push('scripts')
 <script>
-    document.getElementById('text').addEventListener('input', function() {
-        document.getElementById('char-count').textContent = this.value.length;
+    document.addEventListener('DOMContentLoaded', function() {
+        dmsaas.initCharCounter('#text', '#char-count');
     });
 </script>
 @endpush

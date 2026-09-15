@@ -214,68 +214,27 @@
 
 @push('scripts')
 <script>
-function runAudit() {
-    if (confirm('Run a comprehensive security audit?')) {
-        fetch('{{ route("agents.dispatch") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                agent_name: 'security_agent',
-                task_type: 'security_audit',
-                prompt: 'Run comprehensive security audit for agency'
-            })
-        })
-        .then(r => r.json())
-        .then(data => {
+    async function runAudit() {
+        if (!confirm('Run a comprehensive security audit?')) return;
+        
+        try {
+            const response = await dmsaas.request('{{ route(agents.dispatch) }}', {
+                method: 'POST',
+                body: JSON.stringify({
+                    agent_name: 'security_agent',
+                    task_type: 'security_audit',
+                    prompt: 'Run comprehensive security audit for agency'
+                })
+            });
+            const data = await response.json();
             if (data.success) {
-                toastr.success('Security audit dispatched successfully!');
+                dmsaas.toast('Security audit dispatched successfully!');
             } else {
-                toastr.error(data.message || 'Failed to dispatch audit.');
+                dmsaas.toast(data.message || 'Failed to dispatch audit.', 'error');
             }
-        })
-        .catch(() => toastr.error('Network error occurred.'));
-    }
-}
-
-function runImprovement() {
-    if (confirm('Run self-improvement analysis on all agents?')) {
-        toastr.info('Self-improvement analysis initiated. Results will appear shortly.');
-    }
-}
-
-function dispatchTask(agentName) {
-    const taskType = prompt('Enter task type for ' + agentName + ':', 'content_generate');
-    if (!taskType) return;
-    
-    const prompt = prompt('Enter task prompt:');
-    if (!prompt) return;
-
-    fetch('{{ route("agents.dispatch") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-            agent_name: agentName,
-            task_type: taskType,
-            prompt: prompt
-        })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            toastr.success('Task dispatched to ' + agentName + ' successfully!');
-        } else {
-            toastr.error(data.message || 'Failed to dispatch task.');
+        } catch (err) {
+            dmsaas.toast('Network error. Please try again.', 'error');
         }
-    })
-    .catch(() => toastr.error('Network error occurred.'));
-}
+    }
 </script>
 @endpush

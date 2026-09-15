@@ -199,68 +199,58 @@
 
 @push('scripts')
 <script>
-function runWorkflow(workflowName) {
-    if (!confirm('Run the "' + workflowName.replace(/_/g, ' ') + '" workflow?')) {
-        return;
-    }
-    
-    const btn = document.querySelector(`button[onclick="runWorkflow('${workflowName}')"]`);
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Starting...';
-    
-    $.ajax({
-        url: '{{ route("agents.run-workflow") }}',
-        method: 'POST',
-        data: {
-            workflow_name: workflowName,
-            async: true,
-            _token: '{{ csrf_token() }}'
-        },
-        dataType: 'json',
-        success: function(data) {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            
+    async function runWorkflow(workflowName) {
+        if (!confirm('Run the "' + workflowName.replace(/_/g, ' ') + '" workflow?')) return;
+        
+        const btn = document.querySelector('button[onclick*="' + workflowName + '"]');
+        dmsaas.setLoading(btn, true);
+        
+        try {
+            const response = await dmsaas.request('/agents/run-workflow', {
+                method: 'POST',
+                body: JSON.stringify({
+                    workflow_name: workflowName,
+                    async: true,
+                })
+            });
+            const data = await response.json();
             if (data.success) {
-                toastr.success(`Workflow "${workflowName}" dispatched! Execution ID: ${data.data.execution_id}`);
+                dmsaas.toast('Workflow started successfully!');
                 setTimeout(() => location.reload(), 2000);
             } else {
-                toastr.error(data.message || 'Failed to start workflow.');
+                dmsaas.toast(data.message || 'Failed to start workflow.', 'error');
             }
-        },
-        error: function() {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            toastr.error('Network error occurred while starting workflow.');
+        } catch (err) {
+            dmsaas.toast('Network error. Please try again.', 'error');
+        } finally {
+            dmsaas.setLoading(btn, false);
         }
-    });
-}
-
-function viewWorkflowDetails(workflowName) {
-    const workflows = @json($workflows ?? []);
-    const workflow = workflows.find(w => w.name === workflowName);
-    
-    if (workflow) {
-        let stepsHtml = workflow.steps.map((step, i) => 
-            `<div class="d-flex align-items-center mb-2">
-                <span class="badge badge-primary mr-2">${i + 1}</span>
-                <span>${step.replace(/_/g, ' ')}</span>
-            </div>`
-        ).join('');
-        
-        $('#resultContent').html(`
-            <h5>${workflow.name.replace(/_/g, ' ')}</h5>
-            <p class="text-muted">${workflow.description}</p>
-            <hr>
-            <h6>Workflow Steps:</h6>
-            ${stepsHtml}
-            <hr>
-            <h6>Required Features:</h6>
-            <div>${workflow.required_features.map(f => `<span class="badge badge-info mr-1">${f.replace(/_/g, ' ')}</span>`).join('')}</div>
-        `);
-        $('#resultModal').modal('show');
     }
-}
+
+    function viewWorkflowDetails(workflowName) {
+        const workflows = @json($workflows ?? []);
+        const workflow = workflows.find(w => w.name === workflowName);
+        
+        if (workflow) {
+            let stepsHtml = workflow.steps.map((step, i) => 
+                `<div class="d-flex align-items-center mb-2">
+                    <span class="badge badge-primary mr-2">${i + 1}</span>
+                    <span>${step.replace(/_/g, ' ')}</span>
+                </div>`
+            ).join('');
+            
+            document.getElementById('resultContent').innerHTML = `
+                <h5>${workflow.name.replace(/_/g, ' ')}</h5>
+                <p class="text-muted">${workflow.description}</p>
+                <hr>
+                <h6>Workflow Steps:</h6>
+                ${stepsHtml}
+                <hr>
+                <h6>Required Features:</h6>
+                <div>${workflow.required_features.map(f => `<span class="badge badge-info mr-1">${f.replace(/_/g, ' ')}</span>`).join('')}</div>
+            `;
+            document.getElementById('resultModal').modal('show');
+        }
+    }
 </script>
 @endpush

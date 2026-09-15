@@ -189,13 +189,11 @@
 
 @push('scripts')
 <script>
-    $(function() {
-        $('#invoiceSearch').on('keyup', function() {
-            var value = $(this).val().toLowerCase();
-            $('#invoicesTable tbody tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        const search = document.getElementById('invoiceSearch');
+        if (search) {
+            search.addEventListener('input', () => dmsaas.filterTable(search, '#invoicesTable'));
+        }
     });
 </script>
 @endpush

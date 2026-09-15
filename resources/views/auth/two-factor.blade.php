@@ -35,11 +35,26 @@
 
 @push('scripts')
 <script>
-$('#enable2fa').click(function() {
-    $.post('{{ route("two-factor.enable") }}', {_token: '{{ csrf_token() }}'}, function(res) {
-        $('#qrCode').attr('src', 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + encodeURIComponent(res.qr_code));
-        $('#setupForm').removeClass('d-none');
+    document.addEventListener('DOMContentLoaded', function() {
+        const enableBtn = document.getElementById('enable2fa');
+        if (enableBtn) {
+            enableBtn.addEventListener('click', async function() {
+                try {
+                    const response = await dmsaas.request('{{ route(two-factor.enable) }}', {
+                        method: 'POST',
+                        body: JSON.stringify({ _token: '{{ csrf_token() }}' })
+                    });
+                    const data = await response.json();
+                    if (data.qr_code) {
+                        document.getElementById('qrCode').src = 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + encodeURIComponent(data.qr_code);
+                        document.getElementById('setupForm').classList.remove('d-none');
+                        dmsaas.toast('2FA enabled! Please scan the QR code.');
+                    }
+                } catch (err) {
+                    dmsaas.toast('Failed to enable 2FA.', 'error');
+                }
+            });
+        }
     });
-});
 </script>
 @endpush
