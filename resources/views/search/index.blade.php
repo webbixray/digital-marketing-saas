@@ -8,6 +8,7 @@
     </div>
     <div class="card-body">
         <form action="{{ route('search.index') }}" method="GET">
+            @csrf
             <div class="input-group mb-3">
                 <input type="text" name="q" class="form-control" placeholder="Search posts, campaigns, clients, content..." value="{{ $query }}">
                 <div class="input-group-append">

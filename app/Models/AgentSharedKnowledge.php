@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\Concerns\HasAgency;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AgentSharedKnowledge extends Model
 {
-    use HasFactory;
+    use HasFactory, HasAgency;
 
     protected $table = 'agent_shared_knowledge';
 

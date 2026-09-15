@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\Concerns\HasAgency;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ActivityFeed extends Model
 {
-    use HasFactory;
+    use HasFactory, HasAgency;
 
     protected $fillable = [
         'agency_id',

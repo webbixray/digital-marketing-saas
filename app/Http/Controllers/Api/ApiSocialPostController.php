@@ -18,7 +18,7 @@ class ApiSocialPostController extends ApiController
     public function index(Request $request): JsonResponse
     {
         $agencyId = $request->user()->agency_id;
-        $query = SocialPost::where('agency_id', $agencyId);
+        $query = SocialPost::forAgency($agencyId);
 
         if ($request->has('status')) {
             $query->where('status', $request->status);
