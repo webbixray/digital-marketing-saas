@@ -29,10 +29,17 @@ class Handler extends ExceptionHandler
     {
         // Report to Sentry if configured
         $this->reportable(function (Throwable $e) {
-            if (! $this->shouldReport($e) || ! app()->bound('sentry')) {
+            if (! $this->shouldReport($e)) {
                 return;
             }
-            app('sentry')->configureScope(function (Scope $scope) {
+
+            $hub = app(\Sentry\State\Hub::class);
+            
+            if ($hub->getClient() === null) {
+                return;
+            }
+
+            $hub->configureScope(function (Scope $scope) {
                 $scope->setContext('request', [
                     'url' => request()->fullUrl(),
                     'method' => request()->method(),
@@ -40,7 +47,8 @@ class Handler extends ExceptionHandler
                     'agency_id' => auth()->user()?->agency_id,
                 ]);
             });
-            app('sentry')->captureException($e);
+
+            $hub->captureException($e);
         });
 
         // JSON response for API auth failures
