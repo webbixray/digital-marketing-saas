@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Models;
-use App\Models\Concerns\HasAgency;
 
 use App\Enums\PostStatus;
+use App\Models\Concerns\HasAgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,6 +42,11 @@ class SocialPost extends Model
         'metrics',
         'quality_score',
         'is_pinned',
+        'approval_status',
+        'approved_by',
+        'approved_at',
+        'approval_notes',
+        'client_id',
     ];
 
     protected $casts = [
@@ -51,6 +56,7 @@ class SocialPost extends Model
         'mentions' => 'array',
         'tags' => 'array',
         'metrics' => 'array',
+        'approved_at' => 'datetime',
         'scheduled_at' => 'datetime',
         'published_at' => 'datetime',
         'failed_at' => 'datetime',
@@ -68,6 +74,16 @@ class SocialPost extends Model
     public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function socialAccount(): BelongsTo

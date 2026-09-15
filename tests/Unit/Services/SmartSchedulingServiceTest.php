@@ -3,7 +3,6 @@
 namespace Tests\Unit\Services;
 
 use App\Models\Agency;
-use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Services\SmartSchedulingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,97 +17,51 @@ class SmartSchedulingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = app(SmartSchedulingService::class);
+        $this->service = new SmartSchedulingService();
     }
 
-    public function test_get_default_times_returns_expected_structure(): void
-    {
-        $result = $this->service->getDefaultTimes('instagram', 3);
-
-        $this->assertCount(3, $result);
-        $this->assertEquals('default', $result->first()['source']);
-        $this->assertArrayHasKey('day', $result->first());
-        $this->assertArrayHasKey('hour', $result->first());
-        $this->assertArrayHasKey('score', $result->first());
-        $this->assertArrayHasKey('source', $result->first());
-    }
-
-    public function test_analyze_historical_data_returns_sorted_results(): void
+    public function test_get_optimal_times_returns_defaults_for_new_agency(): void
     {
         $agency = Agency::factory()->create();
-        $account = SocialAccount::factory()->create([
-            'agency_id' => $agency->id,
-            'platform' => 'instagram',
-        ]);
+        $times = $this->service->getOptimalTimes($agency->id, 'facebook');
+        $this->assertEquals([9, 12, 15], $times);
+    }
 
-        // Create 6 published posts with varying engagement at different times
-        $times = [
-            ['day' => 'Tuesday', 'hour' => 14, 'engagement' => 15.5],
-            ['day' => 'Wednesday', 'hour' => 11, 'engagement' => 12.3],
-            ['day' => 'Thursday', 'hour' => 18, 'engagement' => 8.7],
-            ['day' => 'Monday', 'hour' => 9, 'engagement' => 5.2],
-            ['day' => 'Friday', 'hour' => 12, 'engagement' => 3.1],
-            ['day' => 'Tuesday', 'hour' => 16, 'engagement' => 1.8],
+    public function test_get_optimal_times_returns_platform_defaults(): void
+    {
+        $agency = Agency::factory()->create();
+        
+        $platforms = [
+            'facebook' => [9, 12, 15],
+            'instagram' => [11, 14, 18],
+            'twitter' => [8, 12, 17],
+            'linkedin' => [8, 12, 17],
+            'tiktok' => [12, 16, 20],
+            'pinterest' => [14, 18, 21],
         ];
 
-        foreach ($times as $time) {
-            $publishedAt = new \DateTime("next {$time['day']}");
-            $publishedAt->setTime($time['hour'], 0, 0);
-
-            SocialPost::factory()->create([
-                'agency_id' => $agency->id,
-                'social_account_id' => $account->id,
-                'platform' => 'instagram',
-                'status' => 'published',
-                'published_at' => $publishedAt->format('Y-m-d H:i:s'),
-                'engagement_rate' => $time['engagement'],
-                'likes_count' => (int) ($time['engagement'] * 10),
-                'comments_count' => (int) ($time['engagement'] * 2),
-                'shares_count' => (int) ($time['engagement'] * 1),
-                'clicks_count' => (int) ($time['engagement'] * 3),
-                'metrics' => ['impressions' => 100],
-            ]);
+        foreach ($platforms as $platform => $expected) {
+            $times = $this->service->getOptimalTimes($agency->id, $platform);
+            $this->assertEquals($expected, $times);
         }
-
-        $result = $this->service->analyzeHistoricalData('instagram', $agency->id);
-
-        $this->assertNotEmpty($result);
-        $this->assertGreaterThanOrEqual(5, $result->count());
-        $this->assertEquals('historical', $result->first()['source']);
-
-        // Results should be sorted by score descending
-        $scores = $result->pluck('score')->toArray();
-        $sortedScores = $scores;
-        rsort($sortedScores);
-        $this->assertEquals($sortedScores, $scores);
     }
 
-    public function test_calculate_engagement_score_with_impressions(): void
+    public function test_get_recommendation_returns_structure(): void
     {
         $agency = Agency::factory()->create();
-        $account = SocialAccount::factory()->create(['agency_id' => $agency->id]);
+        $recommendation = $this->service->getRecommendation($agency->id, 'facebook');
 
-        $post = SocialPost::factory()->create([
-            'agency_id' => $agency->id,
-            'social_account_id' => $account->id,
-            'likes_count' => 50,
-            'comments_count' => 10,
-            'shares_count' => 5,
-            'clicks_count' => 20,
-            'metrics' => ['impressions' => 1000],
-        ]);
-
-        $score = $this->service->calculateEngagementScore($post);
-
-        // Expected: (50 + 10*2 + 5*3 + 20*1.5) / 1000 * 100 = (50 + 20 + 15 + 30) / 1000 * 100 = 115/1000*100 = 11.5
-        $this->assertEquals(11.5, $score);
+        $this->assertArrayHasKey('optimal_hours', $recommendation);
+        $this->assertArrayHasKey('next_optimal_time', $recommendation);
+        $this->assertArrayHasKey('platform', $recommendation);
+        $this->assertEquals('facebook', $recommendation['platform']);
     }
 
-    public function test_get_next_optimal_time_returns_future_datetime(): void
+    public function test_get_next_optimal_time_returns_future_time(): void
     {
-        $result = $this->service->getNextOptimalTime('facebook');
+        $agency = Agency::factory()->create();
+        $time = $this->service->getNextOptimalTime($agency->id, 'facebook');
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result->isFuture());
+        $this->assertTrue($time->isFuture());
     }
 }

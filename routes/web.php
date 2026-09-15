@@ -441,3 +441,12 @@ Route::get('/live', [HealthCheckController::class, 'liveness'])->name('live');
 Route::get('/status', [HealthCheckController::class, 'status'])->name('status');
 Route::get('/disk-space', [HealthCheckController::class, 'diskSpace'])->name('disk-space');
 Route::get('/queue-status', [HealthCheckController::class, 'queueStatus'])->name('queue-status');
+
+// Client Approval Workflow
+Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->group(function () {
+    Route::post('/posts/{post}/submit', [ApprovalController::class, 'submit'])->name('submit');
+    Route::post('/posts/{post}/approve', [ApprovalController::class, 'approve'])->name('approve');
+    Route::post('/posts/{post}/reject', [ApprovalController::class, 'reject'])->name('reject');
+    Route::get('/pending', [ApprovalController::class, 'pending'])->name('pending');
+    Route::get('/client/{client}/posts', [ApprovalController::class, 'clientPosts'])->name('client.posts');
+});

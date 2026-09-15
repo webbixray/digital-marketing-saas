@@ -4,14 +4,10 @@ namespace App\Services;
 
 use App\Models\SocialPost;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class SmartSchedulingService
 {
-    /**
-     * Platform-specific default optimal hours (24h format).
-     * Used as fallback when insufficient historical data exists.
-     */
     private const PLATFORM_DEFAULTS = [
         'facebook' => [9, 12, 15],
         'instagram' => [11, 14, 18],
@@ -21,174 +17,96 @@ class SmartSchedulingService
         'pinterest' => [14, 18, 21],
     ];
 
-    /**
-     * Minimum number of published posts required to use historical data.
-     */
     private const MIN_HISTORICAL_POSTS = 5;
 
-    /**
-     * Get optimal posting times for a platform.
-     *
-     * @param  int  $limit  Number of suggestions to return
-     * @param  int|null  $agencyId  Optional agency ID to scope historical data
-     * @return Collection<int, array{day: string, hour: int, score: float, source: string}>
-     */
-    public function getOptimalTimes(string $platform, int $limit = 3, ?int $agencyId = null): Collection
+    public function getOptimalTimes(int $agencyId, string $platform): array
     {
-        $historical = $this->analyzeHistoricalData($platform, $agencyId);
+        $publishedCount = SocialPost::where('agency_id', $agencyId)
+            ->where('platform', $platform)
+            ->where('status', 'published')
+            ->count();
 
-        if ($historical->isEmpty()) {
-            return $this->getDefaultTimes($platform, $limit);
+        if ($publishedCount >= self::MIN_HISTORICAL_POSTS) {
+            return $this->analyzeHistoricalData($agencyId, $platform);
         }
 
-        return $historical->take($limit);
+        return self::PLATFORM_DEFAULTS[$platform] ?? [9, 12, 17];
     }
 
-    /**
-     * Analyze historical engagement data to find optimal posting times.
-     *
-     * @return Collection<int, array{day: string, hour: int, score: float, source: string}>
-     */
-    public function analyzeHistoricalData(string $platform, ?int $agencyId = null): Collection
+    private function analyzeHistoricalData(int $agencyId, string $platform): array
     {
-        $query = SocialPost::query()
+        $posts = SocialPost::where('agency_id', $agencyId)
             ->where('platform', $platform)
             ->where('status', 'published')
             ->whereNotNull('published_at')
-            ->where(function ($q) {
-                $q->where('engagement_rate', '>', 0)
-                    ->orWhere('likes_count', '>', 0)
-                    ->orWhere('comments_count', '>', 0)
-                    ->orWhere('shares_count', '>', 0);
-            });
+            ->orderBy('published_at', 'desc')
+            ->limit(50)
+            ->get();
 
-        if ($agencyId !== null) {
-            $query->where('agency_id', $agencyId);
-        }
-
-        $posts = $query->get();
-
-        if ($posts->count() < self::MIN_HISTORICAL_POSTS) {
-            return collect();
-        }
-
-        // Group by day of week and hour, calculate average engagement
-        $timeSlots = [];
+        $hourlyEngagement = [];
 
         foreach ($posts as $post) {
-            $publishedAt = Carbon::parse($post->published_at);
-            $day = $publishedAt->format('l');
-            $hour = (int) $publishedAt->format('G');
+            $hour = $post->published_at->hour;
+            $engagement = ($post->likes_count ?? 0) + ($post->comments_count ?? 0) + ($post->shares_count ?? 0);
 
-            $engagement = $this->calculateEngagementScore($post);
-            $key = "{$day}-{$hour}";
-
-            if (! isset($timeSlots[$key])) {
-                $timeSlots[$key] = [
-                    'day' => $day,
-                    'hour' => $hour,
-                    'total_engagement' => 0,
-                    'count' => 0,
-                ];
+            if (!isset($hourlyEngagement[$hour])) {
+                $hourlyEngagement[$hour] = ['total' => 0, 'count' => 0];
             }
 
-            $timeSlots[$key]['total_engagement'] += $engagement;
-            $timeSlots[$key]['count']++;
+            $hourlyEngagement[$hour]['total'] += $engagement;
+            $hourlyEngagement[$hour]['count']++;
         }
 
-        // Calculate average engagement per time slot
-        $results = collect($timeSlots)->map(function ($slot) {
-            $avgEngagement = $slot['total_engagement'] / $slot['count'];
+        $averages = [];
+        foreach ($hourlyEngagement as $hour => $data) {
+            $averages[$hour] = $data['count'] > 0 ? $data['total'] / $data['count'] : 0;
+        }
 
-            return [
-                'day' => $slot['day'],
-                'hour' => $slot['hour'],
-                'score' => round($avgEngagement, 2),
-                'source' => 'historical',
-            ];
-        });
+        arsort($averages);
+        $topHours = array_slice(array_keys($averages), 0, 3);
+        sort($topHours);
 
-        // Sort by score descending
-        return $results->sortByDesc('score')->values();
+        return !empty($topHours) ? $topHours : (self::PLATFORM_DEFAULTS[$platform] ?? [9, 12, 17]);
     }
 
-    /**
-     * Get default optimal times for a platform when no historical data exists.
-     *
-     * @return Collection<int, array{day: string, hour: int, score: float, source: string}>
-     */
-    public function getDefaultTimes(string $platform, int $limit = 3): Collection
+    public function getNextOptimalTime(int $agencyId, string $platform): Carbon
     {
-        $hours = self::PLATFORM_DEFAULTS[$platform] ?? [9, 12, 17];
-        $days = ['Tuesday', 'Wednesday', 'Thursday'];
-
-        $results = collect();
-
-        foreach ($days as $day) {
-            foreach ($hours as $hour) {
-                $results->push([
-                    'day' => $day,
-                    'hour' => $hour,
-                    'score' => 0.0,
-                    'source' => 'default',
-                ]);
-            }
-        }
-
-        return $results->take($limit);
-    }
-
-    /**
-     * Calculate engagement score for a post.
-     */
-    public function calculateEngagementScore(SocialPost $post): float
-    {
-        $engagement = $post->likes_count
-            + ($post->comments_count * 2)
-            + ($post->shares_count * 3)
-            + ($post->clicks_count * 1.5);
-
-        $impressions = $post->metrics['impressions'] ?? 0;
-
-        if ($impressions > 0) {
-            return round(($engagement / $impressions) * 100, 2);
-        }
-
-        return round($engagement, 2);
-    }
-
-    /**
-     * Get the next optimal posting datetime for a platform.
-     */
-    public function getNextOptimalTime(string $platform, ?int $agencyId = null): ?Carbon
-    {
-        $optimalTimes = $this->getOptimalTimes($platform, 1, $agencyId);
-
-        if ($optimalTimes->isEmpty()) {
-            return null;
-        }
-
-        $best = $optimalTimes->first();
-        $dayMap = [
-            'Sunday' => 0,
-            'Monday' => 1,
-            'Tuesday' => 2,
-            'Wednesday' => 3,
-            'Thursday' => 4,
-            'Friday' => 5,
-            'Saturday' => 6,
-        ];
-
-        $targetDay = $dayMap[$best['day']] ?? 2;
-        $targetHour = $best['hour'];
-
+        $optimalHours = $this->getOptimalTimes($agencyId, $platform);
         $now = Carbon::now();
-        $candidate = $now->copy()->next($targetDay)->setTime($targetHour, 0, 0);
 
-        if ($candidate->isPast()) {
-            $candidate->addWeek();
+        foreach ($optimalHours as $hour) {
+            $candidate = $now->copy()->setHour($hour)->setMinute(0)->setSecond(0);
+            if ($candidate->isFuture()) {
+                return $candidate;
+            }
         }
 
-        return $candidate;
+        return $now->copy()->addDay()->setHour($optimalHours[0])->setMinute(0)->setSecond(0);
+    }
+
+    public function scheduleAtOptimalTime(SocialPost $post): Carbon
+    {
+        $optimalTime = $this->getNextOptimalTime($post->agency_id, $post->platform);
+        
+        $post->update([
+            'scheduled_at' => $optimalTime,
+            'status' => 'scheduled',
+        ]);
+
+        Log::info('Post scheduled at optimal time', [
+            'post_id' => $post->id,
+            'scheduled_at' => $optimalTime->toDateTimeString(),
+        ]);
+
+        return $optimalTime;
+    }
+
+    public function getRecommendation(int $agencyId, string $platform): array
+    {
+        return [
+            'optimal_hours' => $this->getOptimalTimes($agencyId, $platform),
+            'next_optimal_time' => $this->getNextOptimalTime($agencyId, $platform)->toDateTimeString(),
+            'platform' => $platform,
+        ];
     }
 }

@@ -3,23 +3,20 @@
 namespace App\Observers;
 
 use App\Models\SocialPost;
-use App\Services\Analytics\AnalyticsService;
-use App\Services\QuotaService;
 use Illuminate\Support\Facades\Log;
 
 class SocialPostObserver
 {
-    public function __construct(
-        private QuotaService $quota,
-        private AnalyticsService $analytics
-    ) {}
-
     public function created(SocialPost $post): void
     {
         $agency = $post->agency;
         if ($agency) {
-            $this->quota->incrementPostCount($agency);
-            $this->analytics->clearCache($agency);
+            try {
+                app(\App\Services\QuotaService::class)->incrementPostCount($agency);
+                app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+            } catch (\Throwable $e) {
+                Log::warning('SocialPostObserver: Failed to update quotas', ['error' => $e->getMessage()]);
+            }
         }
     }
 
@@ -27,8 +24,12 @@ class SocialPostObserver
     {
         $agency = $post->agency;
         if ($agency) {
-            $this->quota->decrementPostCount($agency);
-            $this->analytics->clearCache($agency);
+            try {
+                app(\App\Services\QuotaService::class)->decrementPostCount($agency);
+                app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+            } catch (\Throwable $e) {
+                Log::warning('SocialPostObserver: Failed to update quotas', ['error' => $e->getMessage()]);
+            }
         }
     }
 
@@ -36,7 +37,6 @@ class SocialPostObserver
     {
         $agency = $post->agency;
 
-        // Handle status changes
         if ($post->isDirty('status')) {
             $oldStatus = $post->getOriginal('status');
             $newStatus = $post->status;
@@ -46,10 +46,13 @@ class SocialPostObserver
             }
         }
 
-        // Clear cache if relevant fields changed
         if ($post->isDirty(['status', 'engagement_rate', 'platform', 'agency_id'])) {
             if ($agency) {
-                $this->analytics->clearCache($agency);
+                try {
+                    app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+                } catch (\Throwable $e) {
+                    Log::warning('SocialPostObserver: Failed to clear cache', ['error' => $e->getMessage()]);
+                }
             }
         }
     }
