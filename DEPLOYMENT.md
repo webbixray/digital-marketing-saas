@@ -13,7 +13,7 @@
 1. **Clone and configure:**
    ```bash
    git clone https://github.com/webbixray/digital-marketing-saas.git
-   cd digital-marketing-saas
+   cd digitalmarkingsaas
    cp .env.example .env
    php artisan key:generate
    ```
@@ -49,6 +49,15 @@
    MAIL_PORT=587
    MAIL_USERNAME=postmaster@your-domain.com
    MAIL_PASSWORD=your_mail_password
+   MAIL_ENCRYPTION=tls
+   MAIL_FROM_ADDRESS="hello@your-domain.com"
+   MAIL_FROM_NAME="Digital Marketing SaaS"
+
+   STRIPE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxx
+   STRIPE_SECRET=sk_live_xxxxxxxxxxxxxxxxxxxxxxxx
+   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxx
+
+   SENTRY_LARAVEL_DSN=https://xxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
    ```
 
 4. **Run migrations and seed:**
@@ -80,58 +89,171 @@ The following tasks run automatically:
 
 | Task | Frequency | Command |
 |------|-----------|---------|
-| Process scheduled posts | Every minute | `posts:process-scheduled` |
-| Retry failed posts | Every 5 minutes | `posts:retry-failed` |
-| Clean up old logs | Weekly | `model:prune` |
-| Self-improvement analysis | Daily | `agents:improve --auto-tune` |
-| Security audit | Every 6 hours | `agents:audit --auto-fix` |
-| System backup | Daily at 2:00 AM | `system:backup --compress` |
-| System cleanup | Daily at 3:00 AM | `system:cleanup --all` |
+| Process scheduled posts | Every minute | `social:process-scheduled` |
+| Retry failed posts | Every 5 minutes | `social:retry-failed` |
+| Send email campaigns | Every minute | `email:send-campaigns` |
+| Fetch platform metrics | Every hour | `social:fetch-metrics` |
+| Run workflow scheduler | Every minute | `workflows:run-scheduler` |
 
-## API Authentication
+## Stripe Webhook Setup
 
-The API uses Laravel Sanctum for token-based authentication.
+1. Go to Stripe Dashboard → Developers → Webhooks
+2. Add endpoint: `https://your-domain.com/billing/webhook`
+3. Select events:
+   - `checkout.session.completed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+   - `invoice.paid`
+   - `invoice.payment_failed`
+4. Copy webhook secret to `STRIPE_WEBHOOK_SECRET`
 
-1. **Create a token:**
-   ```bash
-   curl -X POST https://your-domain.com/api/v1/login \
-     -H "Content-Type: application/json" \
-     -d '{"email": "<EMAIL>", "password": "password"}'
+## Email Configuration
+
+### Recommended: Mailgun (Free tier: 100 emails/month)
+
+1. Sign up at https://www.mailgun.com
+2. Add your domain
+3. Set environment variables:
+   ```env
+   MAIL_MAILER=smtp
+   MAIL_HOST=smtp.mailgun.org
+   MAIL_PORT=587
+   MAIL_USERNAME=postmaster@your-domain.com
+   MAIL_PASSWORD=your_mailgun_password
    ```
 
-2. **Use the token:**
-   ```bash
-   curl https://your-domain.com/api/v1/posts \
-     -H "Authorization: Bearer YOUR_TOKEN_HERE"
-   ```
+### Alternative: Amazon SES
 
-## Rate Limiting
+```env
+MAIL_MAILER=ses
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+AWS_DEFAULT_REGION=us-east-1
+```
 
-- API: 60 requests per minute per user
-- AI generation: 5 requests per minute
-- Report export: 10 requests per minute
+## Sentry Error Tracking (Recommended)
+
+1. Create account at https://sentry.io
+2. Create new project → Laravel
+3. Copy DSN to `SENTRY_LARAVEL_DSN`
+
+## File Storage
+
+### Local (Default)
+
+```env
+FILESYSTEM_DISK=local
+```
+
+### Amazon S3 (Recommended for production)
+
+```env
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your-bucket-name
+```
+
+## SSL/HTTPS
+
+For production, ensure SSL is configured:
+
+1. Use Cloudflare (free) or Let's Encrypt
+2. Set `APP_URL=https://your-domain.com`
+3. Set `SESSION_SECURE_COOKIE=true` in `.env`
 
 ## Monitoring
 
-Access Telescope at `/telescope` (local environment only).
+### Health Check Endpoint
+
+```
+GET /api/health
+```
+
+Returns JSON with status of database, cache, queue, and storage.
+
+### Telescope (Local Only)
+
+```bash
+php artisan telescope:publish
+```
+
+Access at `/telescope` (disabled in production by default).
+
+## Backup Strategy
+
+1. **Database:** Daily automated backups
+   ```bash
+   mysqldump -u dmsaas -p digitalmarketingsaas > backup_$(date +%Y%m%d).sql
+   ```
+
+2. **Files:** Sync to S3
+   ```bash
+   aws s3 sync storage/app/public s3://your-bucket/backups/
+   ```
+
+## Production Checklist
+
+- [ ] `APP_ENV=production`
+- [ ] `APP_DEBUG=false`
+- [ ] `APP_URL` set to production domain
+- [ ] Database migrated and seeded
+- [ ] Queue workers running
+- [ ] Scheduler running
+- [ ] Stripe configured with live keys
+- [ ] Email configured (Mailgun/SES)
+- [ ] Sentry configured
+- [ ] SSL certificate installed
+- [ ] Backups scheduled
+- [ ] File storage configured (S3 recommended)
+- [ ] Webhook endpoints registered
+- [ ] API rate limiting enabled
+- [ ] Error logging active
 
 ## Troubleshooting
 
-**Queue not processing:**
+### Queue Jobs Not Processing
+
 ```bash
-php artisan queue:restart
-php artisan queue:work redis --sleep=3 --tries=3
+# Check queue worker is running
+docker-compose ps queue
+
+# Restart queue worker
+docker-compose restart queue
+
+# Check failed jobs
+php artisan queue:failed
 ```
 
-**Cache issues:**
+### Emails Not Sending
+
 ```bash
-php artisan cache:clear
-php artisan config:clear
-php artisan view:clear
+# Test email configuration
+php artisan tinker
+Mail::raw('Test email', function($msg) { $msg->to('test@example.com')->subject('Test'); });
 ```
 
-**Database issues:**
+### Stripe Webhook Failing
+
 ```bash
-php artisan migrate:status
-php artisan migrate --force
+# List recent webhooks
+stripe webhook_endpoints list
+
+# Test webhook locally
+stripe listen --forward-to localhost:8000/billing/webhook
 ```
+
+## Security Recommendations
+
+1. **Use strong passwords** for all services
+2. **Enable 2FA** on all admin accounts
+3. **Regularly update** dependencies: `composer update && npm update`
+4. **Monitor Sentry** for security exceptions
+5. **Review access logs** regularly
+6. **Encrypt sensitive data** at rest
+7. **Use environment variables** for all secrets
+8. **Disable debug mode** in production
+9. **Rate limit API endpoints**
+10. **Validate all user input**

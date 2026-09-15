@@ -84,4 +84,25 @@ return [
         'client_secret' => env('YOUTUBE_CLIENT_SECRET'),
         'api_key' => env('YOUTUBE_API_KEY'),
     ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'currency' => env('STRIPE_CURRENCY', 'usd'),
+        'plans' => [
+            'starter' => [
+                'month' => env('STRIPE_STARTER_MONTHLY_PRICE_ID'),
+                'year' => env('STRIPE_STARTER_YEARLY_PRICE_ID'),
+            ],
+            'pro' => [
+                'month' => env('STRIPE_PRO_MONTHLY_PRICE_ID'),
+                'year' => env('STRIPE_PRO_YEARLY_PRICE_ID'),
+            ],
+            'enterprise' => [
+                'month' => env('STRIPE_ENTERPRISE_MONTHLY_PRICE_ID'),
+                'year' => env('STRIPE_ENTERPRISE_YEARLY_PRICE_ID'),
+            ],
+        ],
+    ],
 ];
