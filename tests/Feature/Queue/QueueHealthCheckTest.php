@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Queue;
 
+use App\Jobs\Email\SendEmailCampaign;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class QueueHealthCheckTest extends TestCase
@@ -30,15 +32,15 @@ class QueueHealthCheckTest extends TestCase
         Queue::fake();
 
         // Test that a job can be dispatched
-        \App\Jobs\Email\SendEmailCampaign::dispatch(1);
+        SendEmailCampaign::dispatch(1);
 
-        Queue::assertPushed(\App\Jobs\Email\SendEmailCampaign::class);
+        Queue::assertPushed(SendEmailCampaign::class);
     }
 
     public function test_failed_jobs_table_exists(): void
     {
         $this->assertTrue(
-            \Illuminate\Support\Facades\Schema::hasTable('failed_jobs')
+            Schema::hasTable('failed_jobs')
         );
     }
 }

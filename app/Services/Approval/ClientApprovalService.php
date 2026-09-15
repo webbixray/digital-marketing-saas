@@ -2,6 +2,7 @@
 
 namespace App\Services\Approval;
 
+use App\Models\Client;
 use App\Models\SocialPost;
 use App\Notifications\PostApprovedNotification;
 use App\Notifications\PostRejectedNotification;
@@ -18,7 +19,7 @@ class ClientApprovalService
             'client_id' => $clientId,
         ]);
 
-        $client = \App\Models\Client::find($clientId);
+        $client = Client::find($clientId);
         if ($client && $client->email) {
             Notification::route('mail', $client->email)
                 ->notify(new PostSubmittedForApprovalNotification($post));

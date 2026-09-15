@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\Email\SendEmailCampaign;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -14,10 +15,10 @@ trait HandlesErrors
     /**
      * Handle an action with centralized error handling.
      *
-     * @param callable $action The action to execute
-     * @param string $errorMessage Generic error message for unexpected errors
-     * @param array $successRedirect ['route' => ..., 'params' => [...], 'message' => ...]
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @param  callable  $action  The action to execute
+     * @param  string  $errorMessage  Generic error message for unexpected errors
+     * @param  array  $successRedirect  ['route' => ..., 'params' => [...], 'message' => ...]
+     * @return RedirectResponse|JsonResponse
      */
     protected function handleAction(callable $action, string $errorMessage = 'An error occurred', array $successRedirect = []): mixed
     {
@@ -25,12 +26,12 @@ trait HandlesErrors
             $result = $action();
 
             // If action returned a response, use it directly
-            if ($result instanceof \Illuminate\Http\RedirectResponse || $result instanceof \Illuminate\Http\JsonResponse) {
+            if ($result instanceof RedirectResponse || $result instanceof JsonResponse) {
                 return $result;
             }
 
             // Handle success redirect for web routes
-            if (! empty($successRedirect) && !$this->expectsJson()) {
+            if (! empty($successRedirect) && ! $this->expectsJson()) {
                 return redirect()->route(
                     $successRedirect['route'],
                     $successRedirect['params'] ?? []
@@ -53,6 +54,7 @@ trait HandlesErrors
                     'message' => $e->getMessage(),
                 ], 422);
             }
+
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         } catch (Throwable $e) {
             report($e); // Log the error
@@ -70,10 +72,6 @@ trait HandlesErrors
 
     /**
      * Handle an API action with centralized error handling.
-     *
-     * @param callable $action
-     * @param string $errorMessage
-     * @return mixed
      */
     protected function handleApiAction(callable $action, string $errorMessage = 'An error occurred'): mixed
     {
@@ -97,6 +95,7 @@ trait HandlesErrors
             ], 404);
         } catch (Throwable $e) {
             report($e);
+
             return response()->json([
                 'success' => false,
                 'message' => app()->isProduction() ? $errorMessage : $e->getMessage(),

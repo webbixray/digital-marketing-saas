@@ -12,16 +12,16 @@ class ThrottleApiRequests
     /**
      * Handle an incoming request with per-user rate limiting.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, int $maxAttempts = 60, int $decaySeconds = 60): Response
     {
         $user = $request->user();
 
         if ($user) {
-            $key = 'api:' . $user->id;
+            $key = 'api:'.$user->id;
         } elseif ($request->ip()) {
-            $key = 'api:ip:' . $request->ip();
+            $key = 'api:ip:'.$request->ip();
         } else {
             $key = 'api:anonymous';
         }
@@ -31,6 +31,7 @@ class ThrottleApiRequests
         // Check if too many attempts
         if ($limiter->attempts($key) >= $maxAttempts) {
             $retryAfter = $limiter->availableIn($key);
+
             return response()->json([
                 'message' => 'Too many requests. Please try again later.',
                 'error' => 'rate_limit_exceeded',

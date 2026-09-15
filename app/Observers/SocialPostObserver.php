@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\SocialPost;
+use App\Services\Analytics\AnalyticsService;
+use App\Services\QuotaService;
 use Illuminate\Support\Facades\Log;
 
 class SocialPostObserver
@@ -12,8 +14,8 @@ class SocialPostObserver
         $agency = $post->agency;
         if ($agency) {
             try {
-                app(\App\Services\QuotaService::class)->incrementPostCount($agency);
-                app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+                app(QuotaService::class)->incrementPostCount($agency);
+                app(AnalyticsService::class)->clearCache($agency);
             } catch (\Throwable $e) {
                 Log::warning('SocialPostObserver: Failed to update quotas', ['error' => $e->getMessage()]);
             }
@@ -25,8 +27,8 @@ class SocialPostObserver
         $agency = $post->agency;
         if ($agency) {
             try {
-                app(\App\Services\QuotaService::class)->decrementPostCount($agency);
-                app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+                app(QuotaService::class)->decrementPostCount($agency);
+                app(AnalyticsService::class)->clearCache($agency);
             } catch (\Throwable $e) {
                 Log::warning('SocialPostObserver: Failed to update quotas', ['error' => $e->getMessage()]);
             }
@@ -49,7 +51,7 @@ class SocialPostObserver
         if ($post->isDirty(['status', 'engagement_rate', 'platform', 'agency_id'])) {
             if ($agency) {
                 try {
-                    app(\App\Services\Analytics\AnalyticsService::class)->clearCache($agency);
+                    app(AnalyticsService::class)->clearCache($agency);
                 } catch (\Throwable $e) {
                     Log::warning('SocialPostObserver: Failed to clear cache', ['error' => $e->getMessage()]);
                 }

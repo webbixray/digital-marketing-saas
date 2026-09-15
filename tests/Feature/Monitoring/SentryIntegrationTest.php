@@ -2,19 +2,20 @@
 
 namespace Tests\Feature\Monitoring;
 
+use Sentry\State\Hub;
 use Tests\TestCase;
 
 class SentryIntegrationTest extends TestCase
 {
     public function test_sentry_service_provider_is_registered(): void
     {
-        $this->assertTrue(app()->bound(\Sentry\State\Hub::class));
+        $this->assertTrue(app()->bound(Hub::class));
     }
 
     public function test_sentry_hub_returns_instance(): void
     {
-        $hub = app(\Sentry\State\Hub::class);
-        $this->assertInstanceOf(\Sentry\State\Hub::class, $hub);
+        $hub = app(Hub::class);
+        $this->assertInstanceOf(Hub::class, $hub);
     }
 
     public function test_sentry_config_exists(): void

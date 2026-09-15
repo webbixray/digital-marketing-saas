@@ -23,7 +23,7 @@ class SubscriptionExpiredNotification extends Notification implements ShouldQueu
 
         return (new MailMessage)
             ->subject('Subscription Expired')
-            ->greeting('Hello ' . $notifiable->name)
+            ->greeting('Hello '.$notifiable->name)
             ->line('Your subscription has expired and your account has been downgraded to the free plan.')
             ->line('To restore your premium features, please renew your subscription.')
             ->action('Renew Subscription', $billingUrl)

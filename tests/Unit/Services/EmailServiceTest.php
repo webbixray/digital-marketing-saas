@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\Email\SmtpEmailService;
-use App\Services\Email\TrackingService;
 use App\Models\Agency;
 use App\Models\EmailCampaign;
 use App\Models\EmailCampaignRecipient;
+use App\Services\Email\SmtpEmailService;
+use App\Services\Email\TrackingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,7 +29,7 @@ class EmailServiceTest extends TestCase
 
         $campaign->update(['recipients_count' => 3]);
 
-        $service = new SmtpEmailService();
+        $service = new SmtpEmailService;
         $results = $service->sendCampaign($campaign);
 
         $this->assertEquals(3, $results['sent']);
@@ -56,7 +56,7 @@ class EmailServiceTest extends TestCase
 
         $campaign->update(['recipients_count' => 3]);
 
-        $service = new SmtpEmailService();
+        $service = new SmtpEmailService;
         $results = $service->sendCampaign($campaign);
 
         $this->assertEquals(2, $results['sent']);
@@ -66,7 +66,7 @@ class EmailServiceTest extends TestCase
 
     public function test_tracking_service_generates_pixel(): void
     {
-        $service = new TrackingService();
+        $service = new TrackingService;
         $pixel = $service->getTrackingPixel(1);
 
         $this->assertStringContainsString('<img', $pixel);
@@ -76,7 +76,7 @@ class EmailServiceTest extends TestCase
 
     public function test_tracking_service_generates_tracked_link(): void
     {
-        $service = new TrackingService();
+        $service = new TrackingService;
         $url = 'https://example.com/test';
         $trackedUrl = $service->getTrackedLink($url, 1);
 
@@ -86,14 +86,14 @@ class EmailServiceTest extends TestCase
 
     public function test_tracking_service_verifies_hash(): void
     {
-        $service = new TrackingService();
+        $service = new TrackingService;
         $url = 'https://example.com/test';
-        
+
         // Create a recipient for tracking
         $recipient = EmailCampaignRecipient::factory()->create([
             'status' => 'sent',
         ]);
-        
+
         $trackedUrl = $service->getTrackedLink($url, $recipient->id);
 
         // Extract hash and encoded URL from the tracked link
@@ -108,7 +108,7 @@ class EmailServiceTest extends TestCase
 
     public function test_tracking_service_rejects_invalid_hash(): void
     {
-        $service = new TrackingService();
+        $service = new TrackingService;
         $url = 'https://example.com/test';
 
         $result = $service->trackClick(1, 'invalid_hash', $url);

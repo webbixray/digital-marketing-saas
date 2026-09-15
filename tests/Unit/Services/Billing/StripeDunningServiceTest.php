@@ -18,7 +18,7 @@ class StripeDunningServiceTest extends TestCase
             'customer_id' => 'cus_test123',
         ]);
 
-        $service = new StripeDunningService();
+        $service = new StripeDunningService;
         $result = $service->hasActiveSubscription($agency);
 
         $this->assertFalse($result);
@@ -31,7 +31,7 @@ class StripeDunningServiceTest extends TestCase
             'customer_id' => null,
         ]);
 
-        $service = new StripeDunningService();
+        $service = new StripeDunningService;
         $result = $service->hasActiveSubscription($agency);
 
         $this->assertFalse($result);
@@ -43,7 +43,7 @@ class StripeDunningServiceTest extends TestCase
             'subscription_id' => null,
         ]);
 
-        $service = new StripeDunningService();
+        $service = new StripeDunningService;
         $result = $service->getUpcomingInvoice($agency);
 
         $this->assertNull($result);

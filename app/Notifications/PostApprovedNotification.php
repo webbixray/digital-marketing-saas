@@ -25,8 +25,8 @@ class PostApprovedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Post Approved')
             ->line('Your post has been approved.')
-            ->line('Platform: ' . ucfirst($this->post->platform))
-            ->line('Content: ' . Str::limit($this->post->content ?? '', 100))
+            ->line('Platform: '.ucfirst($this->post->platform))
+            ->line('Content: '.Str::limit($this->post->content ?? '', 100))
             ->line('Thank you!');
     }
 
@@ -35,7 +35,7 @@ class PostApprovedNotification extends Notification implements ShouldQueue
         return [
             'post_id' => $this->post->id,
             'type' => 'post_approved',
-            'message' => 'Post approved: ' . Str::limit($this->post->content ?? '', 50),
+            'message' => 'Post approved: '.Str::limit($this->post->content ?? '', 50),
         ];
     }
 }

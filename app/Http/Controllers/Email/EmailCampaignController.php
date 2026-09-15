@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 class EmailCampaignController extends Controller
 {
     use HandlesErrors;
+
     public function __construct(private EmailCampaignService $service)
     {
         $this->middleware(['auth', 'agency']);

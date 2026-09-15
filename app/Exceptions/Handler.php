@@ -9,6 +9,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Sentry\State\Hub;
 use Sentry\State\Scope;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,8 +34,8 @@ class Handler extends ExceptionHandler
                 return;
             }
 
-            $hub = app(\Sentry\State\Hub::class);
-            
+            $hub = app(Hub::class);
+
             if ($hub->getClient() === null) {
                 return;
             }

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SocialPost extends Model
 {
-    use HasFactory, SoftDeletes, HasAgency;
+    use HasAgency, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'agency_id',

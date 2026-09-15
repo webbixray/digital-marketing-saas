@@ -3,7 +3,6 @@
 namespace Tests\Unit\Services;
 
 use App\Models\Agency;
-use App\Models\SocialPost;
 use App\Services\SmartSchedulingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +16,7 @@ class SmartSchedulingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new SmartSchedulingService();
+        $this->service = new SmartSchedulingService;
     }
 
     public function test_get_optimal_times_returns_defaults_for_new_agency(): void
@@ -30,7 +29,7 @@ class SmartSchedulingServiceTest extends TestCase
     public function test_get_optimal_times_returns_platform_defaults(): void
     {
         $agency = Agency::factory()->create();
-        
+
         $platforms = [
             'facebook' => [9, 12, 15],
             'instagram' => [11, 14, 18],

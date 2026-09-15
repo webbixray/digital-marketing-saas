@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ApiSocialAccountController;
 use App\Http\Controllers\Api\ApiSocialPostController;
 use App\Http\Controllers\Api\ApiWorkflowController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\WorkflowWebhookController;
@@ -111,4 +112,4 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 
 // Public webhook endpoint (no auth)
 Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');
-Route::get('/health', [\App\Http\Controllers\HealthCheckController::class, 'check'])->name('api.health');
+Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health');

@@ -11,7 +11,7 @@ class MailDeliverabilityService
     {
         $mailer = config('mail.default');
         $host = config('mail.mailers.smtp.host');
-        
+
         return $mailer !== 'log' && ! empty($host) && $host !== '127.0.0.1';
     }
 
@@ -34,11 +34,13 @@ class MailDeliverabilityService
             Mail::raw('This is a test email from Digital Marketing SaaS.', function ($message) use ($to) {
                 $message->to($to)->subject('Test Email - Digital Marketing SaaS');
             });
-            
+
             Log::info('Test email sent successfully', ['to' => $to]);
+
             return true;
         } catch (\Exception $e) {
             Log::error('Test email failed', ['to' => $to, 'error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -57,19 +59,19 @@ class MailDeliverabilityService
     {
         $status = $this->getStatus();
         $issues = [];
-        
+
         if ($status['mailer'] === 'log') {
             $issues[] = 'Mail driver is set to log. Emails will not be sent.';
         }
-        
+
         if (empty($status['host'])) {
             $issues[] = 'SMTP host is not configured.';
         }
-        
+
         if (empty($status['from_address'])) {
             $issues[] = 'From address is not configured.';
         }
-        
+
         return [
             'healthy' => empty($issues) && $status['configured'],
             'status' => $status,

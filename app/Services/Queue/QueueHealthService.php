@@ -12,6 +12,7 @@ class QueueHealthService
     public function isConfigured(): bool
     {
         $driver = config('queue.default');
+
         return in_array($driver, ['redis', 'beanstalkd', 'sqs']);
     }
 
@@ -66,9 +67,11 @@ class QueueHealthService
             DB::table('failed_jobs')->where('id', $jobId)->delete();
 
             Log::info('Failed job retried', ['job_id' => $jobId]);
+
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to retry job', ['job_id' => $jobId, 'error' => $e->getMessage()]);
+
             return false;
         }
     }

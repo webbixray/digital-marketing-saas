@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Concerns\StructuredLogger;
-use App\Http\Controllers\HandlesErrors;
 use App\Models\Invoice;
 use App\Services\Billing\StripeGateway;
 use Illuminate\Http\Request;
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class BillingController extends Controller
 {
-    use StructuredLogger, HandlesErrors;
+    use HandlesErrors, StructuredLogger;
 
     public function __construct()
     {

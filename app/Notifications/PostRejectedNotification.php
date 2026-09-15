@@ -28,9 +28,9 @@ class PostRejectedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Post Needs Revision')
             ->line('Your post has been rejected with feedback.')
-            ->line('Platform: ' . ucfirst($this->post->platform))
-            ->line('Content: ' . Str::limit($this->post->content ?? '', 100))
-            ->line('Feedback: ' . $this->feedback)
+            ->line('Platform: '.ucfirst($this->post->platform))
+            ->line('Content: '.Str::limit($this->post->content ?? '', 100))
+            ->line('Feedback: '.$this->feedback)
             ->line('Please revise and resubmit.');
     }
 
@@ -39,7 +39,7 @@ class PostRejectedNotification extends Notification implements ShouldQueue
         return [
             'post_id' => $this->post->id,
             'type' => 'post_rejected',
-            'message' => 'Post rejected: ' . Str::limit($this->post->content ?? '', 50),
+            'message' => 'Post rejected: '.Str::limit($this->post->content ?? '', 50),
             'feedback' => $this->feedback,
         ];
     }

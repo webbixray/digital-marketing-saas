@@ -19,7 +19,7 @@ class ClientApprovalServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ClientApprovalService();
+        $this->service = new ClientApprovalService;
     }
 
     public function test_submit_for_approval_updates_post(): void

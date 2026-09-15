@@ -49,7 +49,7 @@ class SmartSchedulingService
             $hour = $post->published_at->hour;
             $engagement = ($post->likes_count ?? 0) + ($post->comments_count ?? 0) + ($post->shares_count ?? 0);
 
-            if (!isset($hourlyEngagement[$hour])) {
+            if (! isset($hourlyEngagement[$hour])) {
                 $hourlyEngagement[$hour] = ['total' => 0, 'count' => 0];
             }
 
@@ -66,7 +66,7 @@ class SmartSchedulingService
         $topHours = array_slice(array_keys($averages), 0, 3);
         sort($topHours);
 
-        return !empty($topHours) ? $topHours : (self::PLATFORM_DEFAULTS[$platform] ?? [9, 12, 17]);
+        return ! empty($topHours) ? $topHours : (self::PLATFORM_DEFAULTS[$platform] ?? [9, 12, 17]);
     }
 
     public function getNextOptimalTime(int $agencyId, string $platform): Carbon
@@ -87,7 +87,7 @@ class SmartSchedulingService
     public function scheduleAtOptimalTime(SocialPost $post): Carbon
     {
         $optimalTime = $this->getNextOptimalTime($post->agency_id, $post->platform);
-        
+
         $post->update([
             'scheduled_at' => $optimalTime,
             'status' => 'scheduled',

@@ -128,7 +128,7 @@ class EmailCampaignServiceTest extends TestCase
         $this->expectExceptionMessage('Campaign is not in sendable status');
 
         $this->service->send($campaign);
-        $this->assertTrue(true, "Expected exception was thrown");
+        $this->assertTrue(true, 'Expected exception was thrown');
     }
 
     public function test_get_stats_returns_correct_counts(): void
@@ -378,6 +378,6 @@ class EmailCampaignServiceTest extends TestCase
         $this->expectExceptionMessage('Cannot delete campaign while sending');
 
         $this->service->delete($campaign);
-        $this->assertTrue(true, "Expected exception was thrown");
+        $this->assertTrue(true, 'Expected exception was thrown');
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature\Billing;
 
 use App\Models\Agency;
 use App\Models\User;
+use App\Services\Billing\StripeGateway;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -48,6 +49,6 @@ class StripeWebhookTest extends TestCase
 
     public function test_stripe_gateway_has_webhook_handler(): void
     {
-        $this->assertTrue(method_exists(\App\Services\Billing\StripeGateway::class, 'handleWebhook'));
+        $this->assertTrue(method_exists(StripeGateway::class, 'handleWebhook'));
     }
 }

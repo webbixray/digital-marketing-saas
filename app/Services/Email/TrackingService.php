@@ -61,16 +61,16 @@ class TrackingService
         // URL may be base64 encoded or plain text - try both
         $decodedUrl = base64_decode($url, true);
         $urlsToCheck = [$url];
-        
+
         // Only add decoded URL if it's different and valid
         if ($decodedUrl !== false && $decodedUrl !== $url) {
             $urlsToCheck[] = $decodedUrl;
         }
-        
+
         foreach ($urlsToCheck as $checkUrl) {
-            if ($this->verifyHash($recipientId . ':' . $checkUrl, $hash)) {
+            if ($this->verifyHash($recipientId.':'.$checkUrl, $hash)) {
                 $recipient = EmailCampaignRecipient::find($recipientId);
-                if (!$recipient) {
+                if (! $recipient) {
                     return null;
                 }
 

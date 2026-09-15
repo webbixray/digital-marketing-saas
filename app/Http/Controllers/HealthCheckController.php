@@ -20,7 +20,7 @@ class HealthCheckController extends Controller
             'cache' => $this->checkCache(),
         ];
 
-        $healthy = collect($checks)->every(fn($check) => $check['healthy'] ?? false);
+        $healthy = collect($checks)->every(fn ($check) => $check['healthy'] ?? false);
 
         return response()->json([
             'status' => $healthy ? 'ready' : 'not_ready',
@@ -61,6 +61,7 @@ class HealthCheckController extends Controller
     {
         try {
             DB::connection()->getPdo();
+
             return ['healthy' => true];
         } catch (\Exception $e) {
             return ['healthy' => false, 'message' => $e->getMessage()];
@@ -73,6 +74,7 @@ class HealthCheckController extends Controller
             Cache::put('health_check', true, 10);
             $value = Cache::get('health_check');
             Cache::forget('health_check');
+
             return ['healthy' => $value === true];
         } catch (\Exception $e) {
             return ['healthy' => false, 'message' => $e->getMessage()];

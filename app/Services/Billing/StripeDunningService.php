@@ -7,6 +7,7 @@ use App\Notifications\PaymentFailedNotification;
 use App\Notifications\SubscriptionExpiredNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use Stripe\Invoice;
 use Stripe\Stripe;
 use Stripe\Subscription;
 
@@ -21,6 +22,7 @@ class StripeDunningService
     {
         if (! $agency->customer_id) {
             Log::warning('No customer ID for agency', ['agency_id' => $agency->id]);
+
             return;
         }
 
@@ -47,7 +49,7 @@ class StripeDunningService
 
         $owner = $agency->users()->where('role', 'owner')->first();
         if ($owner) {
-            Notification::send($owner, new SubscriptionExpiredNotification());
+            Notification::send($owner, new SubscriptionExpiredNotification);
         }
 
         Log::info('Subscription expired, downgraded to free', [
@@ -58,9 +60,10 @@ class StripeDunningService
     public function retryPayment(Agency $agency, string $invoiceId): bool
     {
         try {
-            $invoice = \Stripe\Invoice::retrieve($invoiceId);
+            $invoice = Invoice::retrieve($invoiceId);
             if ($invoice->status === 'open') {
                 $invoice->pay();
+
                 return true;
             }
         } catch (\Exception $e) {
@@ -81,7 +84,7 @@ class StripeDunningService
         }
 
         try {
-            $invoice = \Stripe\Invoice::upcoming([
+            $invoice = Invoice::upcoming([
                 'customer' => $agency->customer_id,
             ]);
 
@@ -108,6 +111,7 @@ class StripeDunningService
 
         try {
             $subscription = Subscription::retrieve($agency->subscription_id);
+
             return in_array($subscription->status, ['active', 'trialing']);
         } catch (\Exception $e) {
             return false;

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Jobs;
 
-use App\Jobs\Social\PublishPost;
+use App\Jobs\RetryFailedPost;
 use App\Jobs\Social\ProcessScheduledPost;
 use App\Jobs\Social\ProcessScheduledPostsJob;
-use App\Jobs\RetryFailedPost;
+use App\Jobs\Social\PublishPost;
 use App\Models\Agency;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
@@ -20,6 +20,7 @@ class QueueJobTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void
@@ -42,7 +43,7 @@ class QueueJobTest extends TestCase
             'scheduled_at' => now()->subMinute(),
         ]);
 
-        $job = new ProcessScheduledPostsJob();
+        $job = new ProcessScheduledPostsJob;
         $job->handle();
 
         Bus::assertDispatched(ProcessScheduledPost::class);
@@ -147,7 +148,7 @@ class QueueJobTest extends TestCase
         ]);
 
         $job = new PublishPost($post);
-        
+
         $this->assertEquals(3, $job->tries);
         $this->assertEquals(120, $job->timeout);
     }
@@ -174,7 +175,7 @@ class QueueJobTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $job = new ProcessScheduledPostsJob();
+        $job = new ProcessScheduledPostsJob;
         $job->handle();
 
         // Should dispatch 3 jobs for due posts

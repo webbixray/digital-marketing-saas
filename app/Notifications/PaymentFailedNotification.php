@@ -27,7 +27,7 @@ class PaymentFailedNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject('Payment Failed - Action Required')
-            ->greeting('Hello ' . $notifiable->name)
+            ->greeting('Hello '.$notifiable->name)
             ->line('We were unable to process your payment.')
             ->line('Please update your payment method to avoid service interruption.')
             ->action('Update Payment Method', $retryUrl)

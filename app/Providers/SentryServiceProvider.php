@@ -14,9 +14,9 @@ class SentryServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Hub::class, function () {
             $dsn = config('services.sentry.dsn', env('SENTRY_LARAVEL_DSN'));
-            
+
             if (empty($dsn)) {
-                return new Hub();
+                return new Hub;
             }
 
             $clientBuilder = ClientBuilder::create([
@@ -49,7 +49,7 @@ class SentryServiceProvider extends ServiceProvider
             });
 
             SentrySdk::init()->setHub($hub);
-            
+
             return $hub;
         });
     }
