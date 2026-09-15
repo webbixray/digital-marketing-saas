@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', $agent['name'] ?? 'Agent Details')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
@@ -6,8 +6,8 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <!-- Agent Info Card -->
+<div class="space-y-6">
+<!-- Agent Info Card -->
     <div class="col-md-4">
         <div class="card card-primary card-outline">
             <div class="card-header">
@@ -216,6 +216,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

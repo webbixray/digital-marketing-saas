@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Feature Flags')
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>Feature Flags</h1>
-                <a href="{{ route('feature-flags.create') }}" class="btn btn-primary">Create Flag</a>
-            </div>
-        </div>
-    </div>
+    
     <div class="content">
         <div class="container-fluid">
             <div class="card">
@@ -54,4 +48,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

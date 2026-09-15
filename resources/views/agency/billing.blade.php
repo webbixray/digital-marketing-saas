@@ -1,33 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Billing')
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <h1>Subscription & Billing</h1>
-        </div>
-    </div>
-    <div class="content">
-        <div class="container-fluid">
-            <!-- Current Plan -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Current Plan: {{ ucfirst($currentPlan) }}</h3>
-                        </div>
-                        <div class="card-body">
-                            @if($agency->subscription_status === 'active')
-                                <p>Your subscription is active until {{ $agency->subscription_end?->format('M d, Y') ?? 'N/A' }}.</p>
-                            @elseif($currentPlan === 'free')
-                                <p>You are on the free plan. Upgrade to unlock more features.</p>
-                            @else
-                                <p>Subscription status: {{ $agency->subscription_status ?? 'inactive' }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+    
             </div>
 
             <!-- Plans -->
@@ -107,4 +84,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

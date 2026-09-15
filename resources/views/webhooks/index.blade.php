@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Webhooks')
 
 @section('content')
+<div class="space-y-6">
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-plug mr-2"></i>Webhooks</h3>
@@ -35,4 +36,6 @@
         </table>
     </div>
 </div>
+</div>
 @endsection
+

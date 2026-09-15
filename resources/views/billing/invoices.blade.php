@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 
 @section('title', 'Invoices')
 
@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <div class="col-12">
+<div class="space-y-6">
+<div class="col-12">
         <div class="card card-outline card-secondary">
             <div class="card-header">
                 <h3 class="card-title">
@@ -184,6 +184,7 @@
     </div>
 </div>
 @endif
+</div>
 @endsection
 
 @push('scripts')

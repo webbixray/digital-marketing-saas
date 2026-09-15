@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends("layouts.unified")
 @section('title', 'Quick Start')
 
 @section('content')

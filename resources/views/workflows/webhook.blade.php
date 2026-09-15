@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends("layouts.unified")
 @section('title', 'Webhook Info')
 @section('content')
 <div class="row">

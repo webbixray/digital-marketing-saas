@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', $form->name)
 
 @section('content')
+<div class="space-y-6">
 <div class="row">
     <div class="col-md-4">
         <div class="card card-primary">
@@ -35,4 +36,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

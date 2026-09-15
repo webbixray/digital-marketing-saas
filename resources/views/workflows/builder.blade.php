@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Workflow Builder')
 
 @section('styles')
@@ -895,6 +895,7 @@
 @endsection
 
 @section('content')
+<div class="space-y-6">
 <div class="workflow-builder" id="workflowBuilder">
     <!-- Node Palette -->
     <div class="node-palette">
@@ -1197,7 +1198,9 @@
     <div class="context-menu-divider"></div>
     <div class="context-menu-item danger" onclick="builder.contextDelete()"><i class="fas fa-trash"></i> Delete</div>
 </div>
+</div>
 @endsection
+
 
 @push('scripts')
 <script>

@@ -1,31 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', $asset->name)
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <h1>{{ $asset->name }}</h1>
-        </div>
-    </div>
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            @if($asset->file_type === 'image')
-                                <img src="{{ $asset->thumbnail_url }}" alt="{{ $asset->alt_text ?? $asset->name }}" class="img-fluid" style="max-height: 500px">
-                            @elseif($asset->file_type === 'video')
-                                <video controls style="max-width: 100%; max-height: 500px">
-                                    <source src="{{ $asset->thumbnail_url }}" type="{{ $asset->mime_type }}">
-                                </video>
-                            @else
-                                <i class="fas fa-file-alt fa-5x text-muted"></i>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+    
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header"><h3 class="card-title">Details</h3></div>
@@ -54,4 +33,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

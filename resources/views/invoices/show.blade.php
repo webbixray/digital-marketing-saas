@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Invoice ' . $invoice->invoice_number)
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">Invoice {{ $invoice->invoice_number }}</h3></div>
     <div class="card-body">
         <div class="row mb-4">
@@ -19,5 +20,7 @@
         </table>
         @if($invoice->notes)<p class="text-muted"><strong>Notes:</strong> {{ $invoice->notes }}</p>@endif
     </div>
-</div></div></div>
+</div>
+</div>
 @endsection
+

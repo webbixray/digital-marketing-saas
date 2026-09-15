@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Forms')
 
 @section('content')
+<div class="space-y-6">
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i>Forms</h3>
@@ -37,4 +38,6 @@
         </table>
     </div>
 </div>
+</div>
 @endsection
+

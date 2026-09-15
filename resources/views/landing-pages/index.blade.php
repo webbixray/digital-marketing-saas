@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Landing Pages')
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<div class="space-y-6">
+<div class="card-header">
         <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i>Landing Pages</h3>
         <div class="card-tools">
             <a href="{{ route('landing-pages.create') }}" class="btn btn-sm btn-primary">
@@ -60,5 +60,6 @@
             </table>
         </div>
     </div>
+</div>
 </div>
 @endsection

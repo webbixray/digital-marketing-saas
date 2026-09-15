@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Create Campaign')
 @section('content')
+<div class="space-y-6">
 <div class="row">
     <div class="col-md-8">
         <div class="card">
@@ -23,8 +24,8 @@
                         </select>
                     </div>
                     <div class="row">
-                        <div class="col-md-6"><div class="form-group"><label>Start Date</label><input type="date" name="start_date" class="form-control"></div></div>
-                        <div class="col-md-6"><div class="form-group"><label>End Date</label><input type="date" name="end_date" class="form-control"></div></div>
+                        <div class="col-md-6"><div class="form-group"><label>Start Date</label><input type="date" name="start_date" class="form-control">
+                        <div class="col-md-6"><div class="form-group"><label>End Date</label><input type="date" name="end_date" class="form-control">
                     </div>
                 </div>
                 <div class="card-footer"><button class="btn btn-primary">Create</button> <a href="{{ route('campaigns.index') }}" class="btn btn-default">Cancel</a></div>
@@ -32,4 +33,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Welcome')
 
 @section('content')
+<div class="space-y-6">
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card card-primary">
@@ -114,7 +115,9 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
 
 @push('scripts')
 <script>

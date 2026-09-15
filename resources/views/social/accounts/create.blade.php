@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Connect Account')
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">Connect Social Account</h3></div>
     <form action="{{ route('social.accounts.store') }}" method="POST">@csrf
         <div class="card-body">
@@ -18,6 +19,8 @@
         </div>
         <div class="card-footer"><button class="btn btn-primary"><i class="fas fa-plug mr-1"></i> Connect</button> <a href="{{ route('social.accounts.index') }}" class="btn btn-default">Cancel</a></div>
     </form>
-</div></div>
-<div class="col-md-4"><div class="card"><div class="card-header"><h3 class="card-title">Instructions</h3></div><div class="card-body"><p>Enter your platform access token to connect your account. You can get this token from the platform's developer console.</p><p class="text-muted text-sm">All credentials are encrypted and stored securely.</p></div></div></div></div></div>
+
+<div class="col-md-4"><div class="card"><div class="card-header"><h3 class="card-title">Instructions</h3></div><div class="card-body"><p>Enter your platform access token to connect your account. You can get this token from the platform's developer console.</p><p class="text-muted text-sm">All credentials are encrypted and stored securely.</p></div>
+</div>
 @endsection
+

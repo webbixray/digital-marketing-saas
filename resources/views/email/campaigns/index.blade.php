@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Email Campaigns')
 @section('content')
+<div class="space-y-6">
 <div class="flex items-center justify-between mb-4">
     <a href="{{ route('email.campaigns.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Create Campaign
@@ -71,4 +72,6 @@
         @endif
     </div>
 </div>
+</div>
 @endsection
+

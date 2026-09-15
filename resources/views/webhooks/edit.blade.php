@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Edit Webhook')
 
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">Edit Webhook</h3></div>
     <form action="{{ route('webhooks.update', $webhook) }}" method="POST">@csrf @method('PUT')
         <div class="card-body">
@@ -15,9 +16,11 @@
                     </div>
                 @endforeach
             </div>
-            <div class="form-group"><div class="icheck-primary"><input type="checkbox" name="is_active" id="is_active" value="1" {{ $webhook->is_active ? 'checked' : '' }}><label for="is_active">Active</label></div></div>
+            <div class="form-group"><div class="icheck-primary"><input type="checkbox" name="is_active" id="is_active" value="1" {{ $webhook->is_active ? 'checked' : '' }}><label for="is_active">Active</label>
         </div>
         <div class="card-footer"><button class="btn btn-primary">Update</button> <a href="{{ route('webhooks.show', $webhook) }}" class="btn btn-default">Cancel</a></div>
     </form>
-</div></div></div>
+</div>
+</div>
 @endsection
+

@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Invite Team Members')
 
 @section('content')
+<div class="space-y-6">
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -117,7 +118,9 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
 
 @push('scripts')
 <script>

@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Activity Details')
 
 @section('content')
+<div class="space-y-6">
 <div class="row">
     <div class="col-md-8">
         <div class="card">
@@ -19,4 +20,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

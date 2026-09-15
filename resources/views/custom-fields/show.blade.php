@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Field: {{ $field->name }}')
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between">
-                <h1>{{ $field->name }}</h1>
-                <a href="{{ route('custom-fields.index') }}" class="btn btn-secondary">Back</a>
-            </div>
-        </div>
-    </div>
+    
     <div class="content">
         <div class="container-fluid">
             <div class="card">
@@ -32,4 +26,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

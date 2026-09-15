@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 
 @section('title', 'Upgrade Plan')
 
@@ -9,6 +9,7 @@
 @endsection
 
 @section('content')
+<div class="space-y-6">
 <div class="row mb-4">
     <div class="col-12 text-center">
         <h2><i class="fas fa-rocket text-primary mr-2"></i>Choose Your Plan</h2>
@@ -149,7 +150,9 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
 
 @push('styles')
 <style>

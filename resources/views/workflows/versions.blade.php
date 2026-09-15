@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Workflow Versions')
 @section('content')
-<div class="card">
-    <div class="card-header">
+<div class="space-y-6">
+<div class="card-header">
         <h3 class="card-title"><i class="fas fa-history mr-2"></i>Version History: {{ $workflow->name }}</h3>
         <div class="card-tools">
             <a href="{{ route('workflows.show', $workflow) }}" class="btn btn-default btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back</a>
@@ -35,5 +35,6 @@
         </table>
     </div>
     <div class="card-footer">{{ $versions->links() }}</div>
+</div>
 </div>
 @endsection

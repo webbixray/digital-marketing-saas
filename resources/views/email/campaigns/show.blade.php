@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', "{$campaign->name}")
 @section('content')
+<div class="space-y-6">
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
@@ -178,4 +179,6 @@
         <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
 @endif
+</div>
 @endsection
+

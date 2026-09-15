@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Search')
 
 @section('content')
+<div class="space-y-6">
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-search mr-2"></i>Global Search</h3>
@@ -65,4 +66,6 @@
         @endif
     </div>
 </div>
+</div>
 @endsection
+

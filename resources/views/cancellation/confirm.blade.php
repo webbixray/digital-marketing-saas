@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends("layouts.unified")
 @section('title', 'Subscription Cancelled')
 
 @section('content')

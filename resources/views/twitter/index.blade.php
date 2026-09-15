@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends("layouts.unified")
 
 @section('content')
 <div class="content-wrapper">

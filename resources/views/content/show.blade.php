@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', $asset->name)
 @section('content')
-<div class="row"><div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">{{ $asset->name }}</h3></div>
+<div class="space-y-6">
+<div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">{{ $asset->name }}</h3></div>
     <div class="card-body">
         <div class="mb-3">{{ $asset->content }}</div>
         @if($asset->media_url)<div class="mb-3"><img src="{{ $asset->media_url }}" class="img-fluid rounded" alt=""></div>@endif
@@ -12,4 +13,5 @@
     </div>
     <div class="card-footer"><a href="{{ route('content.edit', $asset) }}" class="btn btn-warning"><i class="fas fa-edit mr-1"></i> Edit</a></div>
 </div></div></div>
+</div>
 @endsection

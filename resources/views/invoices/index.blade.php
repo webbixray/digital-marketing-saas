@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Invoices')
 @section('content')
+<div class="space-y-6">
 <div class="row">
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="info-box"><span class="info-box-icon bg-info"><i class="fas fa-file-invoice-dollar"></i></span>
@@ -56,4 +57,6 @@
         </table>
     </div>
 </div>
+</div>
 @endsection
+

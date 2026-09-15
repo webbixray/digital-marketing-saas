@@ -1,51 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Privacy & Data')
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <h1>Privacy & Data Management</h1>
-        </div>
-    </div>
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header"><h3 class="card-title">Data Export</h3></div>
-                        <div class="card-body">
-                            <p>Request a copy of your data in JSON or CSV format.</p>
-                            <form action="{{ route('gdpr.export') }}" method="POST">
-                                @csrf
-                                <div class="form-group">
-                                    <label>Select data to export:</label>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="export_types[]" value="posts" id="export_posts" class="form-check-input">
-                                        <label for="export_posts" class="form-check-label">Posts</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="export_types[]" value="campaigns" id="export_campaigns" class="form-check-input">
-                                        <label for="export_campaigns" class="form-check-label">Campaigns</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="export_types[]" value="clients" id="export_clients" class="form-check-input">
-                                        <label for="export_clients" class="form-check-label">Clients</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="export_types[]" value="invoices" id="export_invoices" class="form-check-input">
-                                        <label for="export_invoices" class="form-check-label">Invoices</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="export_types[]" value="activity" id="export_activity" class="form-check-input">
-                                        <label for="export_activity" class="form-check-label">Activity Logs</label>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Request Export</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+    
             </div>
 
             <div class="row">
@@ -97,4 +56,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

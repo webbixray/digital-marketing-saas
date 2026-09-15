@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Email Templates')
 
 @section('content')
+<div class="space-y-6">
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>Email Templates</h1>
-                <a href="{{ route('email.templates.create') }}" class="btn btn-primary">Create Template</a>
-            </div>
-        </div>
-    </div>
+    
     <div class="content">
         <div class="container-fluid">
             <div class="card">
@@ -50,4 +44,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

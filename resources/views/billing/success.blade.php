@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 
 @section('title', 'Subscription Success')
 
@@ -9,6 +9,7 @@
 @endsection
 
 @section('content')
+<div class="space-y-6">
 <div class="row justify-content-center">
     <div class="col-md-8 text-center">
         <div class="card card-outline card-success">
@@ -33,7 +34,9 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
 
 @push('styles')
 <style>

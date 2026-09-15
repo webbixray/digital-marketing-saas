@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Agent Dashboard')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-<!-- Quick Actions Row -->
+<div class="space-y-6">
 <div class="row mb-3">
     <div class="col-md-12">
         <div class="d-flex flex-wrap gap-2">
@@ -208,6 +208,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

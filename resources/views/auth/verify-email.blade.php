@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Verify Email')
 
 @section('content')
+<div class="space-y-6">
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -29,4 +30,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

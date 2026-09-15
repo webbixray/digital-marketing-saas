@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Team Members')
 @section('content')
+<div class="space-y-6">
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-user-friends mr-2"></i>Team Members</h3>
@@ -58,4 +59,6 @@
         </form>
     </div>
 </div>
+</div>
 @endsection
+

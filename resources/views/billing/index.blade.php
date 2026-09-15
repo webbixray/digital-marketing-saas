@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 
 @section('title', 'Billing & Subscription')
 
@@ -8,8 +8,8 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <!-- Current Plan -->
+<div class="space-y-6">
+<!-- Current Plan -->
     <div class="col-md-8">
         <div class="card card-outline card-primary">
             <div class="card-header">
@@ -249,5 +249,6 @@
             @endif
         </div>
     </div>
+</div>
 </div>
 @endsection

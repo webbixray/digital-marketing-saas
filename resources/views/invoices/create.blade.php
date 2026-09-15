@@ -1,12 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Create Invoice')
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-10"><div class="card"><div class="card-header"><h3 class="card-title">Create Invoice</h3></div>
     <form action="{{ route('invoices.store') }}" method="POST">@csrf
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6"><div class="form-group"><label>Issue Date</label><input type="date" name="issue_date" class="form-control" value="{{ date('Y-m-d') }}" required></div></div>
-                <div class="col-md-6"><div class="form-group"><label>Due Date</label><input type="date" name="due_date" class="form-control" value="{{ date('Y-m-d', strtotime('+30 days')) }}" required></div></div>
+                <div class="col-md-6"><div class="form-group"><label>Issue Date</label><input type="date" name="issue_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                <div class="col-md-6"><div class="form-group"><label>Due Date</label><input type="date" name="due_date" class="form-control" value="{{ date('Y-m-d', strtotime('+30 days')) }}" required>
             </div>
             <div class="form-group"><label>Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
             <h5>Line Items</h5>
@@ -22,8 +23,10 @@
         </div>
         <div class="card-footer"><button class="btn btn-primary">Create</button> <a href="{{ route('invoices.index') }}" class="btn btn-default">Cancel</a></div>
     </form>
-</div></div></div>
+</div>
+</div>
 @endsection
+
 @push('scripts')
 <script>
 let itemCount = 1;

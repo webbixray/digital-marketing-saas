@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Agent Workflows')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
@@ -6,8 +6,8 @@
 @endsection
 
 @section('content')
-<div class="row">
-    <div class="col-md-12">
+<div class="space-y-6">
+<div class="col-md-12">
         <div class="card card-outline card-primary">
             <div class="card-header">
                 <h3 class="card-title"><i class="fas fa-project-diagram mr-2"></i>Workflow Templates</h3>
@@ -193,6 +193,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

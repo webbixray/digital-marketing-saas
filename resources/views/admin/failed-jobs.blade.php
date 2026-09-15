@@ -1,4 +1,4 @@
-@extends('layouts.modern')
+@extends("layouts.unified")
 
 @section('title', 'Failed Jobs')
 

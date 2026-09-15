@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Bad Request')
 @section('content')
+<div class="space-y-6">
 <div class="error-page" style="text-align: center; padding: 40px;">
     <h2 class="headline text-danger" style="font-size: 120px; font-weight: 700; margin: 0; line-height: 1;">400</h2>
     <div class="error-content">
@@ -21,4 +22,6 @@
         </a>
     </div>
 </div>
+</div>
 @endsection
+

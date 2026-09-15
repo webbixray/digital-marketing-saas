@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Create Workflow')
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-10"><div class="card"><div class="card-header"><h3 class="card-title">Create Workflow</h3></div>
     <form action="{{ route('workflows.store') }}" method="POST">@csrf
         <div class="card-body">
@@ -20,5 +21,7 @@
         </div>
         <div class="card-footer"><button class="btn btn-primary">Create</button> <a href="{{ route('workflows.index') }}" class="btn btn-default">Cancel</a></div>
     </form>
-</div></div></div>
+</div>
+</div>
 @endsection
+

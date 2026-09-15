@@ -1,7 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Create First Campaign')
 
 @section('content')
+<div class="space-y-6">
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -149,4 +150,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+

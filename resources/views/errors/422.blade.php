@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Validation Error')
 @section('content')
+<div class="space-y-6">
 <div class="error-page" style="text-align: center; padding: 40px;">
     <h2 class="headline text-warning" style="font-size: 120px; font-weight: 700; margin: 0; line-height: 1;">422</h2>
     <div class="error-content">
@@ -21,4 +22,6 @@
         </a>
     </div>
 </div>
+</div>
 @endsection
+

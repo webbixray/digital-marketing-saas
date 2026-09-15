@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Post #' . $post->id)
 @section('content')
+<div class="space-y-6">
 <div class="row">
     <div class="col-md-8">
         <div class="card">
@@ -12,13 +13,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="mb-3"><strong>Content:</strong><div class="p-3 bg-light rounded">{{ $post->content }}</div></div>
+                <div class="mb-3"><strong>Content:</strong><div class="p-3 bg-light rounded">{{ $post->content }}
                 @if($post->hashtags)<div class="mb-3"><strong>Hashtags:</strong> @foreach($post->hashtags as $tag)<span class="badge badge-primary mr-1">{{ $tag }}</span>@endforeach</div>@endif
                 @if($post->media)<div class="mb-3"><strong>Media:</strong><pre class="text-sm">{{ json_encode($post->media, JSON_PRETTY_PRINT) }}</pre></div>@endif
                 @if($post->quality_score)<div class="mb-3"><strong>Quality Score:</strong><span class="badge badge-{{ $post->quality_score >= 60 ? 'success' : 'warning' }}">{{ $post->quality_score }}/100</span></div>@endif
                 @if($post->scheduled_at)<div class="mb-3"><strong>Scheduled:</strong> {{ $post->scheduled_at->format('M d, Y H:i') }}</div>@endif
                 @if($post->published_at)<div class="mb-3"><strong>Published:</strong> {{ $post->published_at->format('M d, Y H:i') }}</div>@endif
-                @if($post->error_message)<div class="mb-3"><strong>Error:</strong><div class="alert alert-danger">{{ $post->error_message }}</div></div>@endif
+                @if($post->error_message)<div class="mb-3"><strong>Error:</strong><div class="alert alert-danger">{{ $post->error_message }}@endif
                 @if($post->external_post_id)<div class="mb-3"><strong>External ID:</strong> {{ $post->external_post_id }}</div>@endif
             </div>
             <div class="card-footer">
@@ -60,4 +61,6 @@
         @endif
     </div>
 </div>
+</div>
 @endsection
+

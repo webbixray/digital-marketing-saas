@@ -1,25 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'System Status')
 
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0">System Status</h1>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">System Status</li>
-                </ol>
-            </div>
-        </div>
-    </div>
+<div class="space-y-6">
+
 </div>
 
-<section class="content">
-    <div class="container-fluid">
+
         <div class="row">
             <!-- Database -->
             <div class="col-md-3">
@@ -112,5 +99,7 @@
             </div>
         </div>
     </div>
-</section>
+
+</div>
 @endsection
+

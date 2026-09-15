@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.unified')
 @section('title', 'Edit Client')
 @section('content')
+<div class="space-y-6">
 <div class="row"><div class="col-md-8"><div class="card"><div class="card-header"><h3 class="card-title">Edit Client</h3></div>
     <form action="{{ route('clients.update', $client) }}" method="POST">@csrf @method('PUT')
         <div class="card-body">
@@ -20,5 +21,7 @@
         </div>
         <div class="card-footer"><button class="btn btn-primary">Update</button> <a href="{{ route('clients.show', $client) }}" class="btn btn-default">Cancel</a></div>
     </form>
-</div></div></div>
+</div>
+</div>
 @endsection
+
