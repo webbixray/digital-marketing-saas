@@ -116,15 +116,16 @@ class EmailCampaignController extends Controller
 
         $this->authorize('update', $campaign);
 
-        try {
+        return $this->handleAction(function () use ($campaign) {
             $this->service->send($campaign);
 
             return redirect()->route('email.campaigns.show', $campaign)
                 ->with('success', 'Campaign is being sent!');
-        } catch (\InvalidArgumentException $e) {
-            return redirect()->back()
-                ->withErrors(['error' => $e->getMessage()]);
-        }
+        }, 'Failed to send campaign.', [
+            'route' => 'email.campaigns.show',
+            'params' => ['campaign' => $campaign],
+            'message' => 'Failed to send campaign.',
+        ]);
     }
 
     public function addClients(Request $request, $id)

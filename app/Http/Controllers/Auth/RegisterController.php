@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Concerns\StructuredLogger;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HandlesErrors;
 use App\Models\Agency;
 use App\Models\User;
 use App\Services\ReferralService;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
-    use StructuredLogger;
+    use StructuredLogger, HandlesErrors;
 
     public function showRegistrationForm()
     {
@@ -33,7 +34,7 @@ class RegisterController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        try {
+        return $this->handleAction(function () use ($request, $validated) {
             $referralService = app(ReferralService::class);
             $referralCode = $request->query('ref') ?? session('referral_code');
 
@@ -58,11 +59,9 @@ class RegisterController extends Controller
                     'is_approved' => true,
                 ]);
 
-                // Assign referral code to user
                 $referralService->assignCode($user);
                 $referralService->assignCodeToAgency($agency);
 
-                // Process referral if code exists
                 if ($referralCode) {
                     $referralService->processReferral($referralCode, $user);
                 }
@@ -71,8 +70,6 @@ class RegisterController extends Controller
             });
 
             Auth::login($user);
-
-            // Trigger email verification notification
             event(new Registered($user));
 
             $this->logAuth('registration', [
@@ -83,14 +80,9 @@ class RegisterController extends Controller
             ]);
 
             return redirect()->route('verification.notice')->with('success', 'Welcome! Your agency has been created. Please verify your email address. After that, we\'ll help you get set up in 5 easy steps.');
-        } catch (\Exception $e) {
-            Log::error('Registration failed', [
-                'email' => $validated['email'],
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return back()->with('error', 'Registration failed. Please try again.')->withInput();
-        }
+        }, 'Registration failed. Please try again.', [
+            'route' => 'register',
+            'message' => 'Registration failed. Please try again.',
+        ]);
     }
 }

@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Http\Controllers\HandlesErrors;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class InvoiceController extends Controller
 {
+    use HandlesErrors;
+
     public function __construct()
     {
         $this->middleware(['auth', 'agency']);
@@ -18,52 +21,35 @@ class InvoiceController extends Controller
 
     public function index(Request $request)
     {
-        try {
-            $agency = $request->user()->agency;
+        $agency = $request->user()->agency;
 
-            $query = Invoice::where('agency_id', $agency->id);
+        $query = Invoice::where('agency_id', $agency->id);
 
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
-
-            $invoices = $query->orderBy('created_at', 'desc')->paginate(15);
-
-            $stats = [
-                'total' => Invoice::where('agency_id', $agency->id)->sum('total'),
-                'pending' => Invoice::where('agency_id', $agency->id)->pending()->sum('total'),
-                'overdue' => Invoice::where('agency_id', $agency->id)->overdue()->sum('total'),
-            ];
-
-            return view('invoices.index', compact('agency', 'invoices', 'stats'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load invoices', [
-                'agency_id' => $request->user()->agency_id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to load invoices. Please try again.');
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
+
+        $invoices = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        $stats = [
+            'total' => Invoice::where('agency_id', $agency->id)->sum('total'),
+            'pending' => Invoice::where('agency_id', $agency->id)->pending()->sum('total'),
+            'overdue' => Invoice::where('agency_id', $agency->id)->overdue()->sum('total'),
+        ];
+
+        return view('invoices.index', compact('agency', 'invoices', 'stats'));
     }
 
     public function create(Request $request)
     {
-        try {
-            $agency = $request->user()->agency;
+        $agency = $request->user()->agency;
 
-            return view('invoices.create', compact('agency'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load invoice create form', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'An error occurred. Please try again.');
-        }
+        return view('invoices.create', compact('agency'));
     }
 
     public function store(Request $request)
     {
-        try {
+        return $this->handleAction(function () use ($request) {
             $agency = $request->user()->agency;
 
             $validated = $request->validate([
@@ -81,7 +67,7 @@ class InvoiceController extends Controller
                 $subtotal += $item['quantity'] * $item['unit_price'];
             }
 
-            $tax = $subtotal * 0.0; // Tax rate can be configured
+            $tax = $subtotal * 0.0;
             $total = $subtotal + $tax;
 
             $invoice = Invoice::create([
@@ -108,17 +94,10 @@ class InvoiceController extends Controller
 
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice created successfully.');
-        } catch (ValidationException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            Log::error('Failed to create invoice', [
-                'agency_id' => $request->user()->agency_id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return back()->with('error', 'Failed to create invoice. Please try again.');
-        }
+        }, 'Failed to create invoice. Please try again.', [
+            'route' => 'invoices.create',
+            'message' => 'Failed to create invoice. Please try again.',
+        ]);
     }
 
     public function show(Request $request, Invoice $invoice)
@@ -129,18 +108,9 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        try {
-            $invoice->load('items', 'client', 'agency');
+        $invoice->load('items', 'client', 'agency');
 
-            return view('invoices.show', compact('agency', 'invoice'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load invoice details', [
-                'invoice_id' => $invoice->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to load invoice details.');
-        }
+        return view('invoices.show', compact('agency', 'invoice'));
     }
 
     public function edit(Request $request, Invoice $invoice)
@@ -151,16 +121,7 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        try {
-            return view('invoices.edit', compact('agency', 'invoice'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load invoice edit form', [
-                'invoice_id' => $invoice->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to load invoice details.');
-        }
+        return view('invoices.edit', compact('agency', 'invoice'));
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -171,7 +132,7 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        try {
+        return $this->handleAction(function () use ($request, $invoice) {
             $validated = $request->validate([
                 'issue_date' => 'required|date',
                 'due_date' => 'required|date|after_or_equal:issue_date',
@@ -182,16 +143,11 @@ class InvoiceController extends Controller
 
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice updated successfully.');
-        } catch (ValidationException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            Log::error('Failed to update invoice', [
-                'invoice_id' => $invoice->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to update invoice.');
-        }
+        }, 'Failed to update invoice.', [
+            'route' => 'invoices.edit',
+            'params' => ['invoice' => $invoice],
+            'message' => 'Failed to update invoice.',
+        ]);
     }
 
     public function destroy(Request $request, Invoice $invoice)
@@ -202,19 +158,15 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        try {
+        return $this->handleAction(function () use ($invoice) {
             $invoice->delete();
 
             return redirect()->route('invoices.index')
                 ->with('success', 'Invoice deleted.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete invoice', [
-                'invoice_id' => $invoice->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to delete invoice.');
-        }
+        }, 'Failed to delete invoice.', [
+            'route' => 'invoices.index',
+            'message' => 'Failed to delete invoice.',
+        ]);
     }
 
     public function markPaid(Request $request, Invoice $invoice)
@@ -225,20 +177,17 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        try {
+        return $this->handleAction(function () use ($request, $invoice) {
             $invoice->markPaid(
                 $request->input('payment_method', 'manual'),
                 $request->input('transaction_id', '')
             );
 
             return back()->with('success', 'Invoice marked as paid.');
-        } catch (\Exception $e) {
-            Log::error('Failed to mark invoice as paid', [
-                'invoice_id' => $invoice->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to mark invoice as paid.');
-        }
+        }, 'Failed to mark invoice as paid.', [
+            'route' => 'invoices.show',
+            'params' => ['invoice' => $invoice],
+            'message' => 'Failed to mark invoice as paid.',
+        ]);
     }
 }
