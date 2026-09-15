@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $page->title ?? $page->name }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="{{ asset("build/css/unified.css") }}">
     <style>
         body { background: {{ $page->background_color }}; color: {{ $page->text_color }}; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
         .container { max-width: 800px; text-align: center; padding: 2rem; }
