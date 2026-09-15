@@ -8,8 +8,10 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/modern.css',
+                'resources/css/unified.css',
                 'resources/js/app.js',
                 'resources/js/modern.js',
+                'resources/js/unified.js',
             ],
             refresh: true,
         }),
