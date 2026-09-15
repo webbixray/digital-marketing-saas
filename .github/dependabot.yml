@@ -1,35 +1,32 @@
+# Dependabot configuration
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
 version: 2
 updates:
-  # PHP / Composer dependencies
+  # PHP dependencies
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "04:00"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "php"
-      - "security"
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
-    # Security updates are always opened regardless of open-pull-requests-limit
-    # Dependabot also uses advisory data to raise PRs for vulnerabilities
 
-  # JavaScript / npm dependencies
+  # JavaScript dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "04:00"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "javascript"
-      - "security"
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
@@ -39,12 +36,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "04:00"
-    open-pull-requests-limit: 5
     labels:
       - "dependencies"
-      - "github-actions"
       - "ci"
     commit-message:
       prefix: "chore(ci)"

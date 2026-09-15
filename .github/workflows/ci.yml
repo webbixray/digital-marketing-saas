@@ -8,21 +8,25 @@ on:
 
 jobs:
   test:
+    name: Test (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4']
     
     services:
       mysql:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: <REDACTED>
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    strategy:
-      matrix:
-        php-version: ['8.3']
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
     - uses: actions/checkout@v4
@@ -30,38 +34,94 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
-        extensions: mbstring, mysql, redis, gd, curl, zip
-        coverage: xdebug
+        php-version: ${{ matrix.php }}
+        extensions: mbstring, intl, pdo_mysql, pdo_sqlite, sqlite3, redis, bcmath, gd
+        coverage: pcov
 
     - name: Copy .env
-      run: cp .env.example .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-    - name: Install Dependencies
-      run: |
-        composer install --no-interaction --prefer-dist --optimize-autoloader
+    - name: Install Composer dependencies
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
     - name: Generate key
       run: php artisan key:generate
 
-    - name: Run linter
-      run: vendor/bin/pint --test
+    - name: Run Laravel Pint
+      run: ./vendor/bin/pint --test
 
-    - name: Run tests
-      run: php artisan test --parallel --coverage --min=80
+    - name: Run tests with coverage
+      run: php artisan test --coverage --min=80
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: test_db
+        DB_USERNAME: test_user
+        DB_PASSWORD: <REDACTED>
+        REDIS_HOST: 127.0.0.1
+        CACHE_DRIVER: array
+        SESSION_DRIVER: array
+        QUEUE_CONNECTION: sync
 
-    - name: Check security
-      run: composer audit
+    - name: Upload coverage to Codecov
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
 
-  deploy:
-    needs: test
+  security:
+    name: Security Audit
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
+    
     steps:
     - uses: actions/checkout@v4
 
-    - name: Deploy to production
-      run: |
-        echo "Deployment would happen here"
-        # ssh user@server "cd /var/www && git pull && composer install && php artisan migrate"
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: mbstring, intl, pdo_sqlite
+
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+    - name: Install Composer dependencies
+      run: composer install --no-interaction --prefer-dist
+
+    - name: Run security audit
+      run: composer audit
+
+    - name: Run PHPStan
+      run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+      continue-on-error: true
+
+  deploy:
+    name: Deploy to Production
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /var/www/digitalmarketingsaas
+          git pull origin main
+          composer install --no-dev --optimize-autoloader
+          php artisan migrate --force
+          php artisan cache:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan queue:restart
+          sudo systemctl reload php8.4-fpm

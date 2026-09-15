@@ -5,6 +5,7 @@ Enterprise-grade multi-tenant digital marketing platform built with Laravel 13. 
 ![PHP Version](https://img.shields.io/badge/PHP-8.4-777BB4)
 ![Laravel Version](https://img.shields.io/badge/Laravel-13-FF2D20)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Tests](https://img.shields.io/badge/Tests-912%20passing-brightgreen)
 
 ## Features
 

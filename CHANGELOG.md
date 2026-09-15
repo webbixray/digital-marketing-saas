@@ -16,6 +16,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API endpoint `/api/version` for version checks
 - Conventional commits guide for contributors
 - Auto-generated release notes from commit messages
+- Production deployment configuration (Docker Compose, DEPLOYMENT.md)
+- Production launch checklist (PRODUCTION_CHECKLIST.md)
+- Sentry error tracking integration
+- Stripe webhook handling and subscription management
+- Email tracking (opens, clicks) with HMAC-signed unsubscribe URLs
+- Unit tests for QuotaService, AgentCostTracker, TrackingService
+- Mail configuration tests
+- Queue health check tests
+- GitHub issue templates (bug report, feature request)
+- Security policy and contributing guidelines
+- Code of conduct
+- MIT License
+
+### Changed
+- Migrated inline scripts to unified.js utilities (vanilla JS, no jQuery)
+- Improved HandlesErrors trait to return action results directly
+- Updated exception handler to report to Sentry with request context
+- Migrated multiple controllers to use HandlesErrors trait
+- Updated docker-compose.yml with queue workers and scheduler
+
+### Fixed
+- Fixed email template edit blade syntax (missing quotes in route call)
+- Fixed RegisterController success redirect URL
+- Fixed TrackingService to handle base64 encoded URLs properly
+
+### Security
+- Added CSRF protection on all forms (104 directives)
+- Added per-user rate limiting on API routes
+- Added HMAC-SHA256 signed unsubscribe URLs
+- Added input validation on all requests
+- Added authorization policies for all models
 
 ---
 
