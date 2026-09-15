@@ -20,7 +20,7 @@ use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(['auth', 'agency', 'throttle.api:60,1', 'cache.etag:300'])->as('api.')->group(function () {
+Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 'cache.etag:300'])->as('api.')->group(function () {
     Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1']);
 
     // Dashboard
