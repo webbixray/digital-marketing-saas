@@ -29,12 +29,26 @@
 
 @push('scripts')
 <script>
-let itemCount = 1;
-$('#addItem').on('click', function() {
-    const html = `<div class="row line-item mb-2"><div class="col-md-5"><input type="text" name="items[${itemCount}][description]" class="form-control" placeholder="Description" required></div><div class="col-md-3"><input type="number" name="items[${itemCount}][quantity]" class="form-control" placeholder="Qty" value="1" min="0" step="0.01" required></div><div class="col-md-3"><input type="number" name="items[${itemCount}][unit_price]" class="form-control" placeholder="Unit Price" value="0" min="0" step="0.01" required></div><div class="col-md-1"><button type="button" class="btn btn-danger btn-sm remove-item"><i class="fas fa-times"></i></button></div></div>`;
-    $('#lineItems').append(html);
-    itemCount++;
-});
-$(document).on('click', '.remove-item', function() { $(this).closest('.line-item').remove(); });
+    document.addEventListener('DOMContentLoaded', function() {
+        let itemCount = 1;
+        const addBtn = document.getElementById('addItem');
+        if (addBtn) {
+            addBtn.addEventListener('click', function() {
+                const html = `<div class="row line-item mb-2">
+                    <div class="col-md-5"><input type="text" name="items[${itemCount}][description]" class="form-control" placeholder="Description" required></div>
+                    <div class="col-md-3"><input type="number" name="items[${itemCount}][quantity]" class="form-control" placeholder="Qty" value="1" min="0" step="0.01" required></div>
+                    <div class="col-md-3"><input type="number" name="items[${itemCount}][unit_price]" class="form-control" placeholder="Unit Price" value="0" min="0" step="0.01" required></div>
+                    <div class="col-md-1"><button type="button" class="btn btn-danger btn-sm remove-item"><i class="fas fa-times"></i></button></div>
+                </div>`;
+                document.getElementById('lineItems').insertAdjacentHTML('beforeend', html);
+                itemCount++;
+            });
+        }
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                e.target.closest('.line-item').remove();
+            }
+        });
+    });
 </script>
 @endpush

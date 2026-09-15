@@ -85,17 +85,15 @@
 
 @push('scripts')
 <script>
-function copyWebhookUrl() {
-    const url = document.getElementById('webhookUrl');
-    url.select();
-    document.execCommand('copy');
-    toastr.success('Webhook URL copied!');
-}
-function copySecret() {
-    const secret = document.getElementById('webhookSecret');
-    secret.select();
-    document.execCommand('copy');
-    toastr.success('Secret copied!');
-}
+    async function copyWebhookUrl() {
+        const url = document.getElementById('webhookUrl');
+        await dmsaas.copyToClipboard(url.value);
+        dmsaas.toast('Webhook URL copied!');
+    }
+    async function copySecret() {
+        const secret = document.getElementById('webhookSecret');
+        await dmsaas.copyToClipboard(secret.value);
+        dmsaas.toast('Secret copied!');
+    }
 </script>
 @endpush
