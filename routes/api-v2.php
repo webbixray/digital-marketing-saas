@@ -28,10 +28,11 @@ use Illuminate\Support\Facades\Route;
 | - Better error handling
 | - Pagination by default
 | - Rate limiting per user
+| - Sanctum authentication
 |
 */
 
-Route::prefix('v2')->middleware(['auth', 'agency', 'throttle:120,1'])->as('api.v2.')->group(function () {
+Route::prefix('v2')->middleware(['auth:sanctum', 'agency', 'throttle.api:120,1'])->as('api.v2.')->group(function () {
     Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v2']);
 
     // Dashboard
@@ -46,7 +47,7 @@ Route::prefix('v2')->middleware(['auth', 'agency', 'throttle:120,1'])->as('api.v
     Route::apiResource('workflows', ApiWorkflowController::class);
 
     // AI
-    Route::post('/ai/generate', [ApiAiController::class, 'generate'])->middleware('throttle:10,1');
+    Route::post('/ai/generate', [ApiAiController::class, 'generate'])->middleware('throttle.api:10,1');
 
     // Agent Management
     Route::prefix('agents')->name('agents.')->group(function () {
@@ -54,14 +55,14 @@ Route::prefix('v2')->middleware(['auth', 'agency', 'throttle:120,1'])->as('api.v
         Route::get('/stats', [ApiAgentController::class, 'stats']);
         Route::get('/health', [ApiAgentController::class, 'health']);
         Route::get('/{name}', [ApiAgentController::class, 'show']);
-        Route::post('/{name}/dispatch', [ApiAgentController::class, 'dispatch'])->middleware('throttle:5,1');
+        Route::post('/{name}/dispatch', [ApiAgentController::class, 'dispatch'])->middleware('throttle.api:5,1');
         Route::get('/{name}/history', [ApiAgentController::class, 'history']);
     });
 
     // Agent Workflows
     Route::prefix('agent-workflows')->name('agent-workflows.')->group(function () {
         Route::get('/', [ApiAgentWorkflowController::class, 'index']);
-        Route::post('/{name}/run', [ApiAgentWorkflowController::class, 'run'])->middleware('throttle:5,1');
+        Route::post('/{name}/run', [ApiAgentWorkflowController::class, 'run'])->middleware('throttle.api:5,1');
         Route::get('/{name}/status/{executionId}', [ApiAgentWorkflowController::class, 'status']);
         Route::delete('/{name}/status/{executionId}', [ApiAgentWorkflowController::class, 'cancel']);
     });

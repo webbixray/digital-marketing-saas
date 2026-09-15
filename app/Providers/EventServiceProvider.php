@@ -2,25 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\AgentWorkflowCompleted;
-use App\Events\CampaignStatusChanged;
-use App\Events\ClientCreated;
-use App\Events\InvoicePaid;
-use App\Events\PostFailed;
-use App\Events\PostPublished;
-use App\Events\PostScheduled;
-use App\Events\SubscriptionUpgraded;
-use App\Listeners\Agent\CampaignStatusChangedAgentListener;
-use App\Listeners\Agent\ClientCreatedAgentListener;
-use App\Listeners\Agent\PostPublishedAgentListener;
-use App\Listeners\Agent\SubscriptionUpgradedAgentListener;
-use App\Listeners\Billing\LogInvoiceActivity;
-use App\Listeners\Billing\LogSubscriptionUpgrade;
-use App\Listeners\HandlePostFailure;
-use App\Listeners\SendWorkflowNotificationListener;
-use App\Listeners\Social\ClearPostCache;
-use App\Listeners\Social\LogPostActivity;
-use App\Listeners\Social\SendPostNotification;
+use App\Models\Agency;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\EmailCampaign;
@@ -28,42 +10,51 @@ use App\Models\Invoice;
 use App\Models\SocialPost;
 use App\Models\Workflow;
 use App\Observers\AuditObserver;
+use App\Policies\AgencyPolicy;
+use App\Policies\CampaignPolicy;
+use App\Policies\ClientPolicy;
+use App\Policies\EmailCampaignPolicy;
+use App\Policies\InvoicePolicy;
+use App\Policies\SocialAccountPolicy;
+use App\Policies\SocialPostPolicy;
+use App\Policies\WorkflowPolicy;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        PostPublished::class => [
-            ClearPostCache::class.'@handlePostPublished',
-            LogPostActivity::class.'@handlePostPublished',
-            SendPostNotification::class.'@handlePostPublished',
-            PostPublishedAgentListener::class,
+        \App\Events\AgentWorkflowCompleted::class => [
+            \App\Listeners\SendWorkflowNotificationListener::class,
         ],
-        PostScheduled::class => [
-            ClearPostCache::class.'@handlePostScheduled',
-            LogPostActivity::class.'@handlePostScheduled',
+        \App\Events\CampaignStatusChanged::class => [
+            \App\Listeners\Agent\CampaignStatusChangedAgentListener::class,
         ],
-        PostFailed::class => [
-            ClearPostCache::class.'@handlePostFailed',
-            LogPostActivity::class.'@handlePostFailed',
-            SendPostNotification::class.'@handlePostFailed',
-            HandlePostFailure::class,
+        \App\Events\ClientCreated::class => [
+            \App\Listeners\Agent\ClientCreatedAgentListener::class,
         ],
-        CampaignStatusChanged::class => [
-            CampaignStatusChangedAgentListener::class,
+        \App\Events\InvoicePaid::class => [
+            \App\Listeners\Billing\LogInvoiceActivity::class.'@handle',
         ],
-        ClientCreated::class => [
-            ClientCreatedAgentListener::class,
+        \App\Events\PostFailed::class => [
+            \App\Listeners\Social\ClearPostCache::class.'@handlePostFailed',
+            \App\Listeners\Social\LogPostActivity::class.'@handlePostFailed',
+            \App\Listeners\Social\SendPostNotification::class.'@handlePostFailed',
+            \App\Listeners\HandlePostFailure::class,
         ],
-        InvoicePaid::class => [
-            LogInvoiceActivity::class.'@handle',
+        \App\Events\PostPublished::class => [
+            \App\Listeners\Social\ClearPostCache::class.'@handlePostPublished',
+            \App\Listeners\Social\LogPostActivity::class.'@handlePostPublished',
+            \App\Listeners\Social\SendPostNotification::class.'@handlePostPublished',
+            \App\Listeners\Agent\PostPublishedAgentListener::class,
         ],
-        SubscriptionUpgraded::class => [
-            LogSubscriptionUpgrade::class.'@handle',
-            SubscriptionUpgradedAgentListener::class,
+        \App\Events\PostScheduled::class => [
+            \App\Listeners\Social\ClearPostCache::class.'@handlePostScheduled',
+            \App\Listeners\Social\LogPostActivity::class.'@handlePostScheduled',
         ],
-        AgentWorkflowCompleted::class => [
-            SendWorkflowNotificationListener::class,
+        \App\Events\SubscriptionUpgraded::class => [
+            \App\Listeners\Billing\LogSubscriptionUpgrade::class.'@handle',
+            \App\Listeners\Agent\SubscriptionUpgradedAgentListener::class,
         ],
     ];
 
@@ -76,6 +67,16 @@ class EventServiceProvider extends ServiceProvider
         SocialPost::observe(AuditObserver::class);
         Workflow::observe(AuditObserver::class);
         EmailCampaign::observe(AuditObserver::class);
+
+        // Register policies
+        Gate::policy(Agency::class, AgencyPolicy::class);
+        Gate::policy(Campaign::class, CampaignPolicy::class);
+        Gate::policy(Client::class, ClientPolicy::class);
+        Gate::policy(Invoice::class, InvoicePolicy::class);
+        Gate::policy(SocialPost::class, SocialPostPolicy::class);
+        Gate::policy(Workflow::class, WorkflowPolicy::class);
+        Gate::policy(EmailCampaign::class, EmailCampaignPolicy::class);
+        Gate::policy(\App\Models\SocialAccount::class, SocialAccountPolicy::class);
     }
 
     public function shouldDiscoverEvents(): bool
