@@ -28,7 +28,7 @@ class ThrottleApiRequests
 
         if (RateLimiter::tooMany($key, $maxAttempts)) {
             return response()->json([
-                'message' => 'Too many requests. Please try again later.',
+                'message' => 'Too many requests.',
                 'error' => 'rate_limit_exceeded',
                 'retry_after' => RateLimiter::availableIn($key),
             ], 429);
