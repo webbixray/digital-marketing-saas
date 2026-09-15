@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 
 class ThrottleApiRequests
@@ -26,15 +26,20 @@ class ThrottleApiRequests
             $key = 'api:anonymous';
         }
 
-        if (RateLimiter::tooMany($key, $maxAttempts)) {
+        $limiter = app(RateLimiter::class);
+
+        // Check if too many attempts
+        if ($limiter->attempts($key) >= $maxAttempts) {
+            $retryAfter = $limiter->availableIn($key);
             return response()->json([
-                'message' => 'Too many requests.',
+                'message' => 'Too many requests. Please try again later.',
                 'error' => 'rate_limit_exceeded',
-                'retry_after' => RateLimiter::availableIn($key),
+                'retry_after' => $retryAfter,
             ], 429);
         }
 
-        RateLimiter::hit($key, $decaySeconds);
+        // Record the hit
+        $limiter->hit($key, $decaySeconds);
 
         return $next($request);
     }
