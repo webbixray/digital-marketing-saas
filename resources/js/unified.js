@@ -6,8 +6,13 @@ window.Alpine = Alpine;
 // Auto-initialize Alpine
 Alpine.start();
 
-// Flash message auto-dismiss
+// Initialize components when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize component system
+    if (window.DMSaaS_Components) {
+        window.DMSaaS_Components.initComponents();
+    }
+    
     // Auto-dismiss alerts after 5 seconds
     const alerts = document.querySelectorAll('[data-auto-dismiss]');
     alerts.forEach(alert => {
@@ -35,13 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // Initialize tooltips
-    const tooltips = document.querySelectorAll('[data-tooltip]');
-    tooltips.forEach(el => {
-        el.addEventListener('mouseenter', showTooltip);
-        el.addEventListener('mouseleave', hideTooltip);
-    });
 });
 
 // CSRF token for AJAX requests

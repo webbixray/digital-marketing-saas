@@ -12,6 +12,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/modern.js',
                 'resources/js/unified.js',
+                'resources/js/components.js',
             ],
             refresh: true,
         }),
