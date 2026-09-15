@@ -10,6 +10,7 @@ use App\Http\Middleware\FeatureGate;
 use App\Http\Middleware\HstsMiddleware;
 use App\Http\Middleware\RequestId;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\ThrottleApiRequests;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -45,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '2fa' => Enforce2FA::class,
             'platform.rate_limit' => EnforcePlatformRateLimit::class,
             'agent.rate_limit' => AgentRateLimit::class,
+            'throttle.api' => ThrottleApiRequests::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
         ]);
