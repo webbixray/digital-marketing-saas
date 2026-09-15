@@ -111,3 +111,4 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 
 // Public webhook endpoint (no auth)
 Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');
+Route::get('/health', [\App\Http\Controllers\HealthCheckController::class, 'check'])->name('api.health');
