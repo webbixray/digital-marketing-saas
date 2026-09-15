@@ -18,7 +18,7 @@
 <script>
     async function previewTemplate() {
         try {
-            const response = await dmsaas.request('{{ route(email.templates.preview, ) }}', {
+            const response = await dmsaas.request('{{ route("email.templates.preview", $template) }}', {
                 method: 'POST',
                 body: JSON.stringify({ variables: {} }),
             });
