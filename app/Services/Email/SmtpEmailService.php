@@ -19,7 +19,7 @@ class SmtpEmailService
         ];
 
         $recipients = $campaign->recipients()
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'unsubscribed'])
             ->get();
 
         $results['total'] = $recipients->count();

@@ -30,7 +30,7 @@ class TrackingController extends Controller
     public function click(int $recipient, Request $request, TrackingService $service)
     {
         $hash = $request->query('h', '');
-        $url = $request->query('url', '');
+        $url = base64_decode($request->query('url', ''));
         $redirectUrl = $service->trackClick($recipient, $hash, $url);
 
         if (! $redirectUrl) {
