@@ -11,7 +11,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-body text-center">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($agency->name) }}&background=6366f1&color=fff&size=80" class="w-20 h-20 rounded-full mx-auto mb-4" alt="">
+                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($agency->name) }}&background=6366f1&color=fff&size=80" class="w-20 h-20 rounded-full mx-auto mb-4" alt="">
                 <h3 class="font-bold text-gray-900 dark:text-white">{{ $agency->name }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ $agency->website ?? 'No website' }}</p>
             </div>

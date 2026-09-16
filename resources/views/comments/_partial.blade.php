@@ -7,7 +7,7 @@
         <form id="commentForm" class="mb-4" onsubmit="submitComment(event)">
             @csrf
             <div class="d-flex gap-2">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=random&size=40" class="rounded-circle" width="40" height="40" alt="">
+                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=random&size=40" class="rounded-circle" width="40" height="40" alt="">
                 <div class="flex-grow-1">
                     <textarea id="commentBody" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="2" placeholder="Write a comment..." required></textarea>
                     <button type="submit" class="btn btn-primary btn-sm mt-2">Post Comment</button>
@@ -19,7 +19,7 @@
         <div id="commentsList">
             @foreach($comments ?? [] as $comment)
             <div class="d-flex gap-2 mb-3">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random&size=32" class="rounded-circle" width="32" height="32" alt="">
+                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random&size=32" class="rounded-circle" width="32" height="32" alt="">
                 <div>
                     <strong>{{ $comment->user->name ?? 'Unknown' }}</strong>
                     <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>

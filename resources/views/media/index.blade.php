@@ -241,7 +241,7 @@
                                     <div class="media-card" onclick="window.location='{{ route('media.show', $asset) }}'">
                                         <div class="media-preview">
                                             @if($asset->file_type === 'image')
-                                                <img src="{{ $asset->thumbnail_url }}" alt="{{ $asset->alt_text ?? $asset->name }}">
+                                                <img loading="lazy" src="{{ $asset->thumbnail_url }}" alt="{{ $asset->alt_text ?? $asset->name }}">
                                             @elseif($asset->file_type === 'video')
                                                 <i class="fas fa-video"></i>
                                             @else

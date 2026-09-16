@@ -5,7 +5,7 @@
 <div class="col-span-12 md:col-span-8"><div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700"><div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">{{ $asset->name }}</h3></div>
     <div class="p-6">
         <div class="mb-3">{{ $asset->content }}</div>
-        @if($asset->media_url)<div class="mb-3"><img src="{{ $asset->media_url }}" class="img-fluid rounded" alt=""></div>@endif
+        @if($asset->media_url)<div class="mb-3"><img loading="lazy" src="{{ $asset->media_url }}" class="img-fluid rounded" alt=""></div>@endif
         <hr>
         <p><strong>Type:</strong> {{ \App\Models\ContentAsset::ASSET_TYPES[$asset->type] ?? $asset->type }}</p>
         <p><strong>Tags:</strong> @foreach($asset->tags ?? [] as $tag)<span class="badge badge-secondary mr-1">{{ $tag }}</span>@endforeach</p>

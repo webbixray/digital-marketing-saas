@@ -54,7 +54,7 @@
                         <tr>
                             <td>
                                 <div class="flex items-center gap-3">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($client->name) }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="">
+                                    <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($client->name) }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="">
                                     <span class="font-medium text-gray-900 dark:text-white">{{ $client->name }}</span>
                                 </div>
                             </td>
