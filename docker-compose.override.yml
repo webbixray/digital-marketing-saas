@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    env_file:
+      - docker.env
+    volumes:
+      - ./:/var/www/html
+
+  webserver:
+    ports:
+      - "8080:80"
+
+  db:
+    environment:
+      MYSQL_DATABASE: digitalmarketingsaas
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: dmsaas
+    ports:
+      - "3306:3306"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  queue:
+    env_file:
+      - docker.env
+    volumes:
+      - ./:/var/www/html
+
+  scheduler:
+    env_file:
+      - docker.env
+    volumes:
+      - ./:/var/www/html

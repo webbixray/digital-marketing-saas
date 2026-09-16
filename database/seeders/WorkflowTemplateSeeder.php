@@ -9,6 +9,11 @@ class WorkflowTemplateSeeder extends Seeder
 {
     public function run(): void
     {
+        if (WorkflowTemplate::exists()) {
+            $this->command->warn('Workflow templates already exist — skipping.');
+            return;
+        }
+
         $templates = [
             // Social Media Automation
             [
