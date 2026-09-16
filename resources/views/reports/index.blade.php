@@ -6,7 +6,7 @@
 <div class="content-wrapper">
     
     <div class="content">
-        <div class="container-fluid">
+        
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="d-flex justify-content-between">

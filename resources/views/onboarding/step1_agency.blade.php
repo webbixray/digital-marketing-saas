@@ -2,7 +2,7 @@
 @section('title', 'Step 1: Agency Profile')
 
 @section('content')
-<div class="container-fluid">
+
     <div class="grid grid-cols-12 gap-4 justify-center>
         <div class="col-span-12 lg:col-span-8">
             <!-- Progress Bar -->

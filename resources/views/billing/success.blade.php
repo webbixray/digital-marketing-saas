@@ -3,9 +3,9 @@
 @section('title', 'Subscription Success')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('agency.billing') }}">Billing</a></li>
-    <li class="breadcrumb-item active">Success</li>
+    <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+    <li class="hover:text-gray-700"><a href="{{ route('agency.billing') }}">Billing</a></li>
+    <li class="text-gray-900 font-medium">Success</li>
 @endsection
 
 @section('content')

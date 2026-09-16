@@ -2,24 +2,24 @@
 @section('title', 'Referral Program')
 
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
+
+    
         <div class="grid grid-cols-12 gap-4 mb-2>
             <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Referral Program</h1>
             </div>
             <div class="col-span-12 sm:col-span-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Referrals</li>
+                <ol class="flex gap-2 text-sm text-gray-500">
+                    <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="text-gray-900 font-medium">Referrals</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 
-<section class="content">
-    <div class="container-fluid">
+
+    
         <!-- Referral Stats -->
         <div class="grid grid-cols-12 gap-4>
             <div class="col-lg-3 col-6">

@@ -139,7 +139,7 @@
     </div>
 
     <div class="content">
-        <div class="container-fluid">
+        
             <!-- Stats Row -->
             <div class="row mb-3">
                 <div class="col-span-12 md:col-span-3">

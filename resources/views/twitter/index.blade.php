@@ -2,16 +2,16 @@
 
 @section('content')
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
+    
+        
             <div class="grid grid-cols-12 gap-4 mb-2>
                 <div class="col-span-12 sm:col-span-6">
                     <h1 class="m-0">Twitter / X Integration</h1>
                 </div>
                 <div class="col-span-12 sm:col-span-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Twitter</li>
+                    <ol class="flex gap-2 text-sm text-gray-500">
+                        <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="text-gray-900 font-medium">Twitter</li>
                     </ol>
                 </div>
             </div>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="content">
-        <div class="container-fluid">
+        
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>

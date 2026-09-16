@@ -2,24 +2,24 @@
 @section('title', 'Subscription Cancelled')
 
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
+
+    
         <div class="grid grid-cols-12 gap-4 mb-2>
             <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Subscription Cancelled</h1>
             </div>
             <div class="col-span-12 sm:col-span-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Cancelled</li>
+                <ol class="flex gap-2 text-sm text-gray-500">
+                    <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="text-gray-900 font-medium">Cancelled</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 
-<section class="content">
-    <div class="container-fluid">
+
+    
         <div class="grid grid-cols-12 gap-4 justify-center>
             <div class="col-span-12 lg:col-span-8">
                 <div class="card card-outline card-danger">

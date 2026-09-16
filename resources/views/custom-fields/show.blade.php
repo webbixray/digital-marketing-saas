@@ -6,7 +6,7 @@
 <div class="content-wrapper">
     
     <div class="content">
-        <div class="container-fluid">
+        
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6">
                     <p><strong>Type:</strong> <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ $types[$field->type] ?? $field->type }}</span></p>

@@ -2,24 +2,24 @@
 @section('title', 'Support Tickets')
 
 @section('content')
-<div class="content-header">
-    <div class="container-fluid">
+
+    
         <div class="grid grid-cols-12 gap-4 mb-2>
             <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Support Tickets</h1>
             </div>
             <div class="col-span-12 sm:col-span-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Support</li>
+                <ol class="flex gap-2 text-sm text-gray-500">
+                    <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="text-gray-900 font-medium">Support</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
 
-<section class="content">
-    <div class="container-fluid">
+
+    
         <div class="grid grid-cols-12 gap-4>
             <div class="col-span-12">
                 <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">

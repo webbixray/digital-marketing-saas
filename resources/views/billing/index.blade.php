@@ -3,8 +3,8 @@
 @section('title', 'Billing & Subscription')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Billing</li>
+    <li class="hover:text-gray-700"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+    <li class="text-gray-900 font-medium">Billing</li>
 @endsection
 
 @section('content')

@@ -1,8 +1,8 @@
 @extends('layouts.unified')
 @section('title', 'Agent Workflows')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
-    <li class="breadcrumb-item active">Workflows</li>
+    <li class="hover:text-gray-700"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
+    <li class="text-gray-900 font-medium">Workflows</li>
 @endsection
 
 @section('content')

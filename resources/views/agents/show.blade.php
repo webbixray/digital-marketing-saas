@@ -1,8 +1,8 @@
 @extends('layouts.unified')
 @section('title', $agent['name'] ?? 'Agent Details')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
-    <li class="breadcrumb-item active">{{ ucwords(str_replace('_', ' ', $agentName)) }}</li>
+    <li class="hover:text-gray-700"><a href="{{ route('agents.dashboard') }}">Agents</a></li>
+    <li class="text-gray-900 font-medium">{{ ucwords(str_replace('_', ' ', $agentName)) }}</li>
 @endsection
 
 @section('content')
