@@ -11,57 +11,26 @@
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="stat-label">Total Posts</p>
-                    <p class="stat-value">{{ $stats['total_posts'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-pen-nib text-indigo-600 dark:text-indigo-400 text-xl"></i>
-                </div>
-            </div>
-            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 12% from last month</p>
-        </div>
-
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="stat-label">Published</p>
-                    <p class="stat-value">{{ $stats['published_posts'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl"></i>
+        @foreach([
+            ['label' => 'Total Posts', 'value' => $stats['total_posts'] ?? 0, 'icon' => 'pen-nib', 'color' => 'indigo'],
+            ['label' => 'Published', 'value' => $stats['published_posts'] ?? 0, 'icon' => 'check-circle', 'color' => 'green'],
+            ['label' => 'Scheduled', 'value' => $stats['pending_posts'] ?? 0, 'icon' => 'clock', 'color' => 'yellow'],
+            ['label' => 'Failed', 'value' => $stats['failed_posts'] ?? 0, 'icon' => 'exclamation-triangle', 'color' => 'red'],
+        ] as $stat)
+        <div class="card">
+            <div class="card-body">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $stat['label'] }}</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stat['value'] }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-{{ $stat['color'] }}-100 dark:bg-{{ $stat['color'] }}-900/30 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-{{ $stat['icon'] }} text-{{ $stat['color'] }}-600 dark:text-{{ $stat['color'] }}-400 text-xl"></i>
+                    </div>
                 </div>
             </div>
-            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 8% from last month</p>
         </div>
-
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="stat-label">Scheduled</p>
-                    <p class="stat-value">{{ $stats['pending_posts'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-clock text-yellow-600 dark:text-yellow-400 text-xl"></i>
-                </div>
-            </div>
-            <p class="stat-change up"><i class="fas fa-arrow-up"></i> 24% from last month</p>
-        </div>
-
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="stat-label">Failed</p>
-                    <p class="stat-value">{{ $stats['failed_posts'] ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
-                </div>
-            </div>
-            <p class="stat-change down"><i class="fas fa-arrow-down"></i> 3% from last month</p>
-        </div>
+        @endforeach
     </div>
 
     <!-- Platform Stats & Recent Activity -->
