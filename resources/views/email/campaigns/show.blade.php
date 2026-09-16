@@ -2,8 +2,8 @@
 @section('title', "{$campaign->name}")
 @section('content')
 <div class="space-y-6">
-<div class="card">
-    <div class="card-header">
+<div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div class="d-flex justify-content-between align-items-center">
             <span>Details</span>
             <div>
@@ -21,17 +21,17 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <table class="table table-bordered">
+    <div class="p-6">
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12 md:col-span-6">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Name</th>
                         <td>{{ $campaign->name }}</td>
                     </tr>
                     <tr>
                         <th>Type</th>
-                        <td><span class="badge badge-info">{{ ucfirst($campaign->type) }}</span></td>
+                        <td><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ ucfirst($campaign->type) }}</span></td>
                     </tr>
                     <tr>
                         <th>Status</th>
@@ -59,8 +59,8 @@
                     </tr>
                 </table>
             </div>
-            <div class="col-md-6">
-                <table class="table table-bordered">
+            <div class="col-span-12 md:col-span-6">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Sent</th>
                         <td>{{ $campaign->sent_count }}</td>
@@ -113,7 +113,7 @@
             <div class="mt-4">
                 <h5>Content</h5>
                 <div class="card bg-light">
-                    <div class="card-body">
+                    <div class="p-6">
                         {{ $campaign->content }}
                     </div>
                 </div>
@@ -122,7 +122,7 @@
 
         @if($campaign->scheduled_at)
             <div class="mt-4">
-                <table class="table table-bordered">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Scheduled At</th>
                         <td>{{ $campaign->scheduled_at->format('Y-m-d H:i') }}</td>
@@ -135,11 +135,11 @@
 
 @if($campaign->recipients->count() > 0)
     <div class="card mt-3">
-        <div class="card-header">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <span>Recipients ({{ $campaign->recipients->count() }})</span>
         </div>
-        <div class="card-body">
-            <table class="table table-hover">
+        <div class="p-6">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                 <thead>
                     <tr>
                         <th>Email</th>
@@ -168,7 +168,7 @@
 @endif
 
 <div class="mt-3">
-    <a href="{{ route('email.campaigns.index') }}" class="btn btn-secondary">
+    <a href="{{ route('email.campaigns.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors">
         <i class="fas fa-arrow-left"></i> Back to Campaigns
     </a>
 </div>

@@ -4,11 +4,11 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
+        <div class="grid grid-cols-12 gap-4 mb-2>
+            <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Referral Program</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-span-12 sm:col-span-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item active">Referrals</li>
@@ -21,7 +21,7 @@
 <section class="content">
     <div class="container-fluid">
         <!-- Referral Stats -->
-        <div class="row">
+        <div class="grid grid-cols-12 gap-4>
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
@@ -61,18 +61,18 @@
         </div>
 
         <!-- Referral Link -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-link mr-2"></i>Your Referral Link</h3>
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-link mr-2"></i>Your Referral Link</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <p>Share your referral link with friends and colleagues. When they sign up and make their first payment, you both get <strong>$10 in credits</strong>!</p>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="referralLink" value="{{ $stats['referral_link'] }}" readonly>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" id="referralLink" value="{{ $stats['referral_link'] }}" readonly>
                             <div class="input-group-append">
-                                <button class="btn btn-primary" onclick="copyReferralLink()">
+                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors" onclick="copyReferralLink()">
                                     <i class="fas fa-copy mr-1"></i>Copy
                                 </button>
                             </div>
@@ -84,17 +84,17 @@
         </div>
 
         <!-- Referrals List -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-list mr-2"></i>Your Referrals</h3>
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-list mr-2"></i>Your Referrals</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         @if($stats['referrals']->isEmpty())
                             <p class="text-center text-muted py-4">No referrals yet. Share your link to start earning!</p>
                         @else
-                            <table class="table table-bordered">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -111,9 +111,9 @@
                                             <td>{{ $referral['joined_at'] }}</td>
                                             <td>
                                                 @if($referral['paid'])
-                                                    <span class="badge badge-success"><i class="fas fa-check mr-1"></i>Paid</span>
+                                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"><i class="fas fa-check mr-1"></i>Paid</span>
                                                 @else
-                                                    <span class="badge badge-warning"><i class="fas fa-clock mr-1"></i>Pending</span>
+                                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300"><i class="fas fa-clock mr-1"></i>Pending</span>
                                                 @endif
                                             </td>
                                         </tr>

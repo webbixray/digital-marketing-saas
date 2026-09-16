@@ -8,14 +8,14 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Roles & Permissions</h2>
             <p class="text-gray-500 dark:text-gray-400 mt-1">Manage user roles and their permissions.</p>
         </div>
-        <a href="{{ route('roles.create') }}" class="btn btn-primary">
+        <a href="{{ route('roles.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
             <i class="fas fa-plus"></i> Create Role
         </a>
     </div>
 
-    <div class="card">
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="table-responsive">
-            <table class="table">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Role</th>
@@ -38,10 +38,10 @@
                             <td>
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($role->permissions->take(3) as $permission)
-                                        <span class="badge badge-info">{{ $permission->name }}</span>
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ $permission->name }}</span>
                                     @endforeach
                                     @if($role->permissions->count() > 3)
-                                        <span class="badge badge-secondary">+{{ $role->permissions->count() - 3 }} more</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">+{{ $role->permissions->count() - 3 }} more</span>
                                     @endif
                                 </div>
                             </td>

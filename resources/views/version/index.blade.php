@@ -3,20 +3,20 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Changelog</h3>
+<div class="grid grid-cols-12 gap-4>
+    <div class="col-span-12 md:col-span-8">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-history mr-2"></i>Changelog</h3>
                 <div class="card-tools">
-                    <span class="badge badge-info">v{{ $currentVersion['full'] ?? '1.0.0' }}</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">v{{ $currentVersion['full'] ?? '1.0.0' }}</span>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 @forelse($changelog ?? [] as $entry)
                 <div class="changelog-entry mb-4">
                     <h4 class="mb-2">
-                        <span class="badge badge-primary">v{{ $entry['version'] }}</span>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300">v{{ $entry['version'] }}</span>
                         <small class="text-muted ml-2">{{ $entry['date'] }}</small>
                     </h4>
                     
@@ -97,12 +97,12 @@
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-info-circle mr-2"></i>Version Info</h3>
+    <div class="col-span-12 md:col-span-4">
+        <div class="bg-white rounded-xl shadow-sm border-2 border-indigo-300 dark:bg-gray-800 dark:border-indigo-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-info-circle mr-2"></i>Version Info</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <p><strong>Current Version:</strong> v{{ $currentVersion['full'] ?? '1.0.0' }}</p>
                 <p><strong>Codename:</strong> {{ $currentVersion['codename'] ?? 'Genesis' }}</p>
                 <p><strong>Release Date:</strong> {{ $currentVersion['release_date'] ?? '2026-09-05' }}</p>
@@ -112,14 +112,14 @@
         </div>
 
         <div class="card card-outline card-info">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-code mr-2"></i>API Versions</h3>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-code mr-2"></i>API Versions</h3>
             </div>
-            <div class="card-body">
-                <p><strong>Latest:</strong> <span class="badge badge-success">{{ config('version.api.latest', 'v1') }}</span></p>
+            <div class="p-6">
+                <p><strong>Latest:</strong> <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">{{ config('version.api.latest', 'v1') }}</span></p>
                 <p><strong>Supported:</strong> {{ implode(', ', config('version.api.supported', ['v1'])) }}</p>
                 @if(!empty(config('version.api.deprecated', [])))
-                <p><strong>Deprecated:</strong> <span class="badge badge-warning">{{ implode(', ', config('version.api.deprecated')) }}</span></p>
+                <p><strong>Deprecated:</strong> <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{{ implode(', ', config('version.api.deprecated')) }}</span></p>
                 @endif
             </div>
         </div>

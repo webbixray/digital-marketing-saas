@@ -8,19 +8,19 @@
     </div>
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table table-bordered">
+            <div class="grid grid-cols-12 gap-4>
+                <div class="col-span-12 md:col-span-8">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-6">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                                 <tr><th>Subject</th><td>{{ $template->subject }}</td></tr>
                                 <tr><th>Category</th><td>{{ ucfirst($template->category) }}</td></tr>
                             </table>
                             <h5>HTML Content</h5>
-                            <div class="card bg-light"><div class="card-body">{{ $template->html_content }}
+                            <div class="card bg-light"><div class="p-6">{{ $template->html_content }}
                             @if($template->plain_text_content)
                                 <h5 class="mt-3">Plain Text</h5>
-                                <div class="card bg-light"><div class="card-body">{{ $template->plain_text_content }}
+                                <div class="card bg-light"><div class="p-6">{{ $template->plain_text_content }}
                             @endif
                         </div>
                     </div>

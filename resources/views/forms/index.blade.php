@@ -3,15 +3,15 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i>Forms</h3>
+<div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-file-alt mr-2"></i>Forms</h3>
         <div class="card-tools">
-            <a href="{{ route('forms.create') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus mr-1"></i> New Form</a>
+            <a href="{{ route('forms.create') }}" class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm"><i class="fas fa-plus mr-1"></i> New Form</a>
         </div>
     </div>
     <div class="card-body p-0">
-        <table class="table table-striped">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Name</th><th>Status</th><th>Submissions</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($forms as $form)

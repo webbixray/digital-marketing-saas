@@ -8,14 +8,14 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Campaigns</h2>
             <p class="text-gray-500 dark:text-gray-400 mt-1">Manage your marketing campaigns.</p>
         </div>
-        <a href="{{ route('campaigns.create') }}" class="btn btn-primary">
+        <a href="{{ route('campaigns.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
             <i class="fas fa-plus"></i> New Campaign
         </a>
     </div>
 
     <!-- Filters -->
-    <div class="card mb-6">
-        <div class="card-body">
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+        <div class="p-6">
             <form method="GET" class="flex flex-wrap gap-4">
                 <div class="flex-1 min-w-[200px]">
                     <select name="status" class="form-input">
@@ -28,7 +28,7 @@
                 <div class="flex-1 min-w-[200px]">
                     <input type="text" name="search" class="form-input" placeholder="Search campaigns..." value="{{ request('search') }}">
                 </div>
-                <button type="submit" class="btn btn-secondary">
+                <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors">
                     <i class="fas fa-filter"></i> Filter
                 </button>
             </form>
@@ -36,9 +36,9 @@
     </div>
 
     <!-- Campaigns Table -->
-    <div class="card">
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="table-responsive">
-            <table class="table">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Name</th>

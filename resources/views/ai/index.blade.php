@@ -27,16 +27,16 @@
     </div>
 
     <!-- Generation Form -->
-    <div class="card mb-6">
-        <div class="card-header">
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="font-semibold text-gray-900 dark:text-white">Generate Content</h3>
         </div>
-        <div class="card-body">
+        <div class="p-6">
             <form method="POST" action="{{ route('ai.generate') }}">
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label class="form-label">Content Type</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Content Type</label>
                         <select name="type" class="form-input">
                             <option value="caption">Social Media Caption</option>
                             <option value="hashtags">Hashtags</option>
@@ -45,11 +45,11 @@
                         </select>
                     </div>
                     <div>
-                        <label class="form-label">Topic / Prompt</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Topic / Prompt</label>
                         <textarea name="prompt" rows="3" class="form-input" placeholder="Describe what you want to generate..."></textarea>
                     </div>
                     <div>
-                        <label class="form-label">Tone</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
                         <select name="tone" class="form-input">
                             <option value="professional">Professional</option>
                             <option value="casual">Casual</option>
@@ -57,7 +57,7 @@
                             <option value="formal">Formal</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                         <i class="fas fa-sparkles"></i> Generate
                     </button>
                 </div>
@@ -66,12 +66,12 @@
     </div>
 
     <!-- History -->
-    <div class="card">
-        <div class="card-header">
+    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="font-semibold text-gray-900 dark:text-white">Recent Generations</h3>
         </div>
         <div class="table-responsive">
-            <table class="table">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Type</th>

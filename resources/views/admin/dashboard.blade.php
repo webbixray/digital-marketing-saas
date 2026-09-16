@@ -101,12 +101,12 @@
     <!-- Recent Activity & Failed Posts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Activity -->
-        <div class="card">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-header flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
                 <a href="{{ route('social.posts.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @forelse($recentActivity ?? [] as $post)
                         <div class="flex items-start gap-3">
@@ -129,12 +129,12 @@
         </div>
 
         <!-- Failed Posts -->
-        <div class="card">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-header flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Failed Posts</h3>
                 <a href="{{ route('admin.failed-jobs') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @forelse($failedPosts ?? [] as $post)
                         <div class="flex items-start gap-3">

@@ -12,21 +12,21 @@
 @section('content')
 <div class="space-y-6">
 <div class="row mb-3">
-    <div class="col-md-12">
+    <div class="col-span-12">
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('agents.dashboard') }}" class="btn btn-primary">
+            <a href="{{ route('agents.dashboard') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                 <i class="fas fa-robot mr-1"></i> Agent Dashboard
             </a>
-            <a href="{{ route('agents.workflows') }}" class="btn btn-info">
+            <a href="{{ route('agents.workflows') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 inline-flex items-center gap-2 font-medium transition-colors">
                 <i class="fas fa-project-diagram mr-1"></i> Workflows
             </a>
-            <button class="btn btn-success" onclick="runAudit()">
+            <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 inline-flex items-center gap-2 font-medium transition-colors" onclick="runAudit()">
                 <i class="fas fa-shield-alt mr-1"></i> Run Audit
             </button>
-            <button class="btn btn-warning" onclick="runImprovement()">
+            <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 inline-flex items-center gap-2 font-medium transition-colors" onclick="runImprovement()">
                 <i class="fas fa-magic mr-1"></i> Run Improvement
             </button>
-            <a href="#costSummary" class="btn btn-secondary">
+            <a href="#costSummary" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors">
                 <i class="fas fa-dollar-sign mr-1"></i> View Costs
             </a>
         </div>
@@ -34,11 +34,11 @@
 </div>
 
 <!-- System Health Score -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-heartbeat mr-2"></i>System Health</h3>
+<div class="grid grid-cols-12 gap-4>
+    <div class="col-span-12">
+        <div class="bg-white rounded-xl shadow-sm border-2 border-indigo-300 dark:bg-gray-800 dark:border-indigo-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-heartbeat mr-2"></i>System Health</h3>
                 <div class="card-tools">
                     @php
                         $overallStatus = $agentHealth['overall_status'] ?? 'healthy';
@@ -48,8 +48,8 @@
                     </span>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row">
+            <div class="p-6">
+                <div class="grid grid-cols-12 gap-4>
                     <div class="col-md-3 text-center">
                         <div class="progress progress-lg">
                             <div class="progress-bar progress-bar-striped {{ ($agentHealth['system_score'] ?? 100) >= 95 ? 'bg-success' : (($agentHealth['system_score'] ?? 100) >= 80 ? 'bg-warning' : 'bg-danger') }}" 
@@ -88,12 +88,12 @@
 </div>
 
 <!-- Agent Cards Row -->
-<div class="row">
+<div class="grid grid-cols-12 gap-4>
     @forelse($agents ?? [] as $name => $agent)
         @include('agents._agent-card', ['name' => $name, 'agent' => $agent])
     @empty
-    <div class="col-md-12">
-        <div class="alert alert-info">
+    <div class="col-span-12">
+        <div class="bg-blue-50 text-blue-800 border border-blue-200 rounded-lg p-4 mb-4">
             <i class="fas fa-info-circle mr-2"></i> No agents registered yet. Agents will appear here once they are registered with the orchestrator.
         </div>
     </div>
@@ -101,13 +101,13 @@
 </div>
 
 <!-- Cost Summary Row -->
-<div class="row" id="costSummary">
-    <div class="col-md-6">
+<div class="grid grid-cols-12 gap-4 id="costSummary">
+    <div class="col-span-12 md:col-span-6">
         <div class="card card-outline card-info">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-chart-pie mr-2"></i>Cost Summary (This Month)</h3>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-chart-pie mr-2"></i>Cost Summary (This Month)</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Total AI Cost:</span>
                     <span class="h4 text-primary">${{ number_format($costSummary['total'] ?? 0, 4) }}</span>
@@ -118,7 +118,7 @@
                     @forelse($costSummary['by_agent'] ?? [] as $agentName => $costData)
                     <li class="d-flex justify-content-between align-items-center mb-2">
                         <span>{{ ucwords(str_replace('_', ' ', $agentName)) }}</span>
-                        <span class="badge badge-primary">${{ number_format($costData['total_cost_usd'] ?? 0, 4) }}</span>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300">${{ number_format($costData['total_cost_usd'] ?? 0, 4) }}</span>
                     </li>
                     @empty
                     <li class="text-muted">No costs recorded this month</li>
@@ -127,12 +127,12 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card card-outline card-warning">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-wallet mr-2"></i>Budget Status</h3>
+    <div class="col-span-12 md:col-span-6">
+        <div class="bg-white rounded-xl shadow-sm border-2 border-yellow-300 dark:bg-gray-800 dark:border-yellow-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-wallet mr-2"></i>Budget Status</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Budget Limit:</span>
                     <span class="h4">${{ number_format($budgetLimit ?? 5.00, 2) }}</span>
@@ -156,13 +156,13 @@
 </div>
 
 <!-- Recent Activity Feed -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Agent Activity</h3>
+<div class="grid grid-cols-12 gap-4>
+    <div class="col-span-12">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-history mr-2"></i>Recent Agent Activity</h3>
                 <div class="card-tools">
-                    <span class="badge badge-info">Last 10 executions</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">Last 10 executions</span>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -186,9 +186,9 @@
                             <td>{{ str_replace('_', ' ', $activity->task_type ?? 'N/A') }}</td>
                             <td>
                                 @if($activity->cost_usd > 0)
-                                    <span class="badge badge-success"><i class="fas fa-check mr-1"></i>Success</span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"><i class="fas fa-check mr-1"></i>Success</span>
                                 @else
-                                    <span class="badge badge-warning"><i class="fas fa-minus mr-1"></i>Recorded</span>
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300"><i class="fas fa-minus mr-1"></i>Recorded</span>
                                 @endif
                             </td>
                             <td>${{ number_format($activity->cost_usd ?? 0, 6) }}</td>

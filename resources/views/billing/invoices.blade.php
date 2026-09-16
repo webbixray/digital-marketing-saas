@@ -12,13 +12,13 @@
 <div class="space-y-6">
 <div class="col-12">
         <div class="card card-outline card-secondary">
-            <div class="card-header">
-                <h3 class="card-title">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-file-invoice-dollar text-secondary mr-2"></i>Billing Invoices
                 </h3>
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 200px;">
-                        <input type="text" class="form-control float-right" placeholder="Search invoices..." id="invoiceSearch">
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white float-right" placeholder="Search invoices..." id="invoiceSearch">
                         <div class="input-group-append">
                             <button type="button" class="btn btn-default"><i class="fas fa-search"></i></button>
                         </div>
@@ -27,7 +27,7 @@
             </div>
             <div class="card-body table-responsive p-0">
                 @if($invoices->count())
-                    <table class="table table-hover" id="invoicesTable">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50" id="invoicesTable">
                         <thead>
                             <tr>
                                 <th>Invoice #</th>

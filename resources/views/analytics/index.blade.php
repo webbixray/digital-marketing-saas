@@ -69,11 +69,11 @@
     <!-- Platform Performance & Engagement Chart -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Platform Stats -->
-        <div class="card">
-            <div class="card-header">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white">By Platform</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @foreach($platformStats as $platform => $stat)
                         <div class="flex items-center gap-4">
@@ -99,11 +99,11 @@
         </div>
 
         <!-- Best Posts -->
-        <div class="card">
-            <div class="card-header">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Top Performing Posts</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @forelse($bestPosts as $post)
                         <div class="flex items-start gap-3">

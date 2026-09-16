@@ -4,11 +4,11 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
+        <div class="grid grid-cols-12 gap-4 mb-2>
+            <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Ticket #{{ $ticket->ticket_number }}</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-span-12 sm:col-span-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('support.index') }}">Support</a></li>
@@ -21,16 +21,16 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ $ticket->subject }}</h3>
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12 md:col-span-8">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">{{ $ticket->subject }}</h3>
                         <div class="card-tools">
                             <span class="badge badge-{{ $ticket->status === 'open' ? 'success' : ($ticket->status === 'resolved' ? 'primary' : 'secondary') }}">{{ ucfirst($ticket->status) }}</span>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div class="timeline">
                             <!-- Original message -->
                             <div class="time-label">
@@ -76,9 +76,9 @@
                             <form action="/support/{{ $ticket->id }}/reply" method="POST">
                                 @csrf
                                 <div class="input-group">
-                                    <input type="text" name="message" class="form-control" placeholder="Type your reply..." required>
+                                    <input type="text" name="message" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type your reply..." required>
                                     <div class="input-group-append">
-                                        <button type="submit" class="btn btn-primary">Reply</button>
+                                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Reply</button>
                                     </div>
                                 </div>
                             </form>
@@ -86,12 +86,12 @@
                     @endif
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Details</h3>
+            <div class="col-span-12 md:col-span-4">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Details</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <p><strong>Category:</strong> {{ ucfirst($ticket->category ?? 'Other') }}</p>
                         <p><strong>Priority:</strong> <span class="badge badge-{{ $ticket->priority === 'urgent' ? 'danger' : ($ticket->priority === 'high' ? 'warning' : 'info') }}">{{ ucfirst($ticket->priority) }}</span></p>
                         <p><strong>Status:</strong> {{ ucfirst($ticket->status) }}</p>

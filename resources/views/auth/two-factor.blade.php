@@ -27,7 +27,7 @@
                     <i class="fas fa-qrcode mr-1"></i> Enable 2FA
                 </button>
                 <div id="setupForm" class="mt-4 hidden">
-                    <div class="mb-3"><img id="qrCode" class="mx-auto" style="max-width: 200px;"></div>
+                    <div class="mb-3"><img id="qrCode" class="mx-auto" style="max-width: 200px;" alt="Two-factor authentication QR code"></div>
                     <p class="text-gray-500">Scan the QR code with your authenticator app, then enter the code:</p>
                     <form action="{{ route('two-factor.verify') }}" method="POST" class="mt-4">
                         @csrf

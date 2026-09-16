@@ -5,11 +5,11 @@
 <div class="space-y-6">
 <div class="content-wrapper">
     
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header"><h3 class="card-title">Details</h3></div>
-                        <div class="card-body">
-                            <table class="table table-sm">
+                <div class="col-span-12 md:col-span-4">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Details</h3></div>
+                        <div class="p-6">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                                 <tr><td><strong>Name</strong></td><td>{{ $asset->name }}</td></tr>
                                 <tr><td><strong>Type</strong></td><td><span class="badge badge-{{ $asset->file_type === 'image' ? 'success' : ($asset->file_type === 'video' ? 'info' : 'secondary') }}">{{ $asset->file_type }}</span></td></tr>
                                 <tr><td><strong>Size</strong></td><td>{{ $asset->human_size }}</td></tr>

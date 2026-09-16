@@ -7,9 +7,9 @@
     
     <div class="content">
         <div class="container-fluid">
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-hover">
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -24,7 +24,7 @@
                             @forelse($fields as $field)
                             <tr>
                                 <td>{{ $field->name }}</td>
-                                <td><span class="badge badge-info">{{ $types[$field->type] ?? $field->type }}</span></td>
+                                <td><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ $types[$field->type] ?? $field->type }}</span></td>
                                 <td>{{ $field->model_type }}</td>
                                 <td>
                                     <span class="badge badge-{{ $field->is_required ? 'danger' : 'secondary' }}">

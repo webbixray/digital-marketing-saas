@@ -8,7 +8,7 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Connected Accounts</h2>
             <p class="text-gray-500 dark:text-gray-400 mt-1">Manage your social media platform connections.</p>
         </div>
-        <a href="{{ route('social.accounts.create') }}" class="btn btn-primary">
+        <a href="{{ route('social.accounts.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
             <i class="fas fa-plus"></i> Connect Account
         </a>
     </div>
@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($accounts as $account)
             <div class="card hover:shadow-md transition-shadow">
-                <div class="card-body">
+                <div class="p-6">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-xl flex items-center justify-center {{ $account->is_active ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-100 dark:bg-gray-700' }}">
                             @switch($account->platform)
@@ -63,7 +63,7 @@
                     <i class="fas fa-share-alt text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
                     <h3 class="font-semibold text-gray-900 dark:text-white mb-2">No accounts connected</h3>
                     <p class="text-gray-500 dark:text-gray-400 mb-4">Connect your social media accounts to start posting.</p>
-                    <a href="{{ route('social.accounts.create') }}" class="btn btn-primary">
+                    <a href="{{ route('social.accounts.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                         <i class="fas fa-plus"></i> Connect Account
                     </a>
                 </div>

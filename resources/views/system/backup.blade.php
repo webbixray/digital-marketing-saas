@@ -7,29 +7,29 @@
 </div>
 
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">System Backups</h3>
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">System Backups</h3>
                         <div class="card-tools">
                             <form action="{{ route('system.backup.store') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-primary btn-sm">
+                                <button type="submit" class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm">
                                     <i class="fas fa-plus"></i> Create Backup
                                 </button>
                             </form>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         @if(session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
+                            <div class="bg-green-50 text-green-800 border border-green-200 rounded-lg p-4 mb-4">{{ session('success') }}</div>
                         @endif
                         @if(session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            <div class="bg-red-50 text-red-800 border border-red-200 rounded-lg p-4 mb-4">{{ session('error') }}</div>
                         @endif
 
-                        <table class="table table-bordered">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                             <thead>
                                 <tr>
                                     <th>Filename</th>

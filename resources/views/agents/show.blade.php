@@ -8,12 +8,12 @@
 @section('content')
 <div class="space-y-6">
 <!-- Agent Info Card -->
-    <div class="col-md-4">
+    <div class="col-span-12 md:col-span-4">
         <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-robot mr-2"></i>{{ ucwords(str_replace('_', ' ', $agent['name'] ?? $agentName)) }}</h3>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-robot mr-2"></i>{{ ucwords(str_replace('_', ' ', $agent['name'] ?? $agentName)) }}</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="text-center mb-3">
                     <div class="fa-3x text-primary mb-2">
                         <i class="fas fa-robot"></i>
@@ -28,7 +28,7 @@
                 <p class="text-muted">{{ $agent['description'] ?? 'An intelligent AI agent handling specialized tasks.' }}</p>
                 
                 <p><strong><i class="fas fa-tags mr-2"></i>Category:</strong></p>
-                <span class="badge badge-info">{{ ucfirst($agent['category'] ?? 'General') }}</span>
+                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ ucfirst($agent['category'] ?? 'General') }}</span>
                 
                 <p class="mt-3"><strong><i class="fas fa-tasks mr-2"></i>Supported Task Types:</strong></p>
                 <div>
@@ -47,11 +47,11 @@
         </div>
 
         <!-- Learned Patterns Card -->
-        <div class="card card-outline card-warning">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-brain mr-2"></i>Learned Patterns</h3>
+        <div class="bg-white rounded-xl shadow-sm border-2 border-yellow-300 dark:bg-gray-800 dark:border-yellow-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-brain mr-2"></i>Learned Patterns</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 @if(!empty($learnedPatterns))
                     <ul class="list-unstyled">
                         @foreach($learnedPatterns as $pattern)
@@ -71,10 +71,10 @@
     </div>
 
     <!-- Performance Metrics & History -->
-    <div class="col-md-8">
+    <div class="col-span-12 md:col-span-8">
         <!-- Performance Metrics -->
-        <div class="row">
-            <div class="col-md-4">
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12 md:col-span-4">
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>{{ number_format(($agent['success_rate'] ?? 0) * 100, 1) }}%</h3>
@@ -83,7 +83,7 @@
                     <div class="icon"><i class="fas fa-check-circle"></i></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-span-12 md:col-span-4">
                 <div class="small-box bg-info">
                     <div class="inner">
                         <h3>{{ number_format($agent['total_executed'] ?? 0) }}</h3>
@@ -92,7 +92,7 @@
                     <div class="icon"><i class="fas fa-play-circle"></i></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-span-12 md:col-span-4">
                 <div class="small-box bg-primary">
                     <div class="inner">
                         <h3>${{ number_format($agent['avg_cost_per_task'] ?? 0, 4) }}</h3>
@@ -104,25 +104,25 @@
         </div>
 
         <!-- Additional Metrics -->
-        <div class="row">
-            <div class="col-md-6">
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12 md:col-span-6">
                 <div class="card card-outline card-info">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-tachometer-alt mr-2"></i>Performance Scores</h3>
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-tachometer-alt mr-2"></i>Performance Scores</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div class="progress-group">
                             <span class="progress-text">Speed Score</span>
                             <span class="float-right"><b>{{ number_format(($agent['speed_score'] ?? 0.5) * 100) }}%</b></span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-info" style="width: {{ ($agent['speed_score'] ?? 0.5) * 100 }}%"></div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: {{ ($agent['speed_score'] ?? 0.5) * 100 }}%"></div>
                             </div>
                         </div>
                         <div class="progress-group">
                             <span class="progress-text">Cost Efficiency</span>
                             <span class="float-right"><b>{{ number_format(($agent['cost_score'] ?? 0.5) * 100) }}%</b></span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-success" style="width: {{ ($agent['cost_score'] ?? 0.5) * 100 }}%"></div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: {{ ($agent['cost_score'] ?? 0.5) * 100 }}%"></div>
                             </div>
                         </div>
                         <div class="progress-group">
@@ -136,27 +136,27 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-span-12 md:col-span-6">
                 <div class="card card-outline card-success">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-paper-plane mr-2"></i>Dispatch Task</h3>
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-paper-plane mr-2"></i>Dispatch Task</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <form id="dispatchForm" action="{{ route('agents.dispatch') }}" method="POST">
                             @csrf
                             <input type="hidden" name="agent_name" value="{{ $agentName }}">
-                            <div class="form-group">
+                            <div class="mb-4">
                                 <label for="task_type">Task Type</label>
-                                <select name="task_type" id="task_type" class="form-control" required>
+                                <select name="task_type" id="task_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                                     <option value="">Select a task type...</option>
                                     @foreach($agent['supported_types'] ?? [] as $type)
                                         <option value="{{ $type }}">{{ str_replace('_', ' ', ucwords($type)) }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-4">
                                 <label for="prompt">Task Prompt</label>
-                                <textarea name="prompt" id="prompt" class="form-control" rows="4" 
+                                <textarea name="prompt" id="prompt" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="4" 
                                           placeholder="Describe what you want the agent to do..."
                                           required maxlength="10000"></textarea>
                             </div>
@@ -170,11 +170,11 @@
         </div>
 
         <!-- Recent Execution History -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Execution History</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-history mr-2"></i>Recent Execution History</h3>
                 <div class="card-tools">
-                    <span class="badge badge-info">{{ count($executions ?? []) }} records</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ count($executions ?? []) }} records</span>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -194,9 +194,9 @@
                             @forelse($executions ?? [] as $exec)
                             <tr>
                                 <td>{{ $exec->executed_at ? \Carbon\Carbon::parse($exec->executed_at)->format('M d, Y H:i') : 'N/A' }}</td>
-                                <td><span class="badge badge-secondary">{{ str_replace('_', ' ', $exec->task_type ?? 'N/A') }}</span></td>
+                                <td><span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">{{ str_replace('_', ' ', $exec->task_type ?? 'N/A') }}</span></td>
                                 <td>
-                                    <span class="badge badge-success"><i class="fas fa-check mr-1"></i>Recorded</span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"><i class="fas fa-check mr-1"></i>Recorded</span>
                                 </td>
                                 <td>${{ number_format($exec->cost_usd ?? 0, 6) }}</td>
                                 <td>{{ number_format($exec->tokens_used ?? 0) }}</td>

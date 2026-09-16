@@ -4,13 +4,13 @@
 @section('content')
 <div class="space-y-6">
 <div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+    <div class="grid grid-cols-12 gap-4 justify-center>
+        <div class="col-span-12 lg:col-span-8">
             <!-- Progress Bar -->
             <div class="card card-outline card-primary mb-4">
-                <div class="card-body">
+                <div class="p-6">
                     <h5 class="text-center mb-3">Step 5 of 5: Enable AI Agents</h5>
-                    <div class="progress" style="height: 25px;">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700" style="height: 25px;">
                         <div class="progress-bar bg-success progress-bar-striped" role="progressbar" style="width: 100%;">
                             100%
                         </div>
@@ -25,14 +25,14 @@
                 </div>
             </div>
 
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-robot mr-2"></i>Activate AI Agents</h3>
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-robot mr-2"></i>Activate AI Agents</h3>
                 </div>
 
                 <form action="{{ route('onboarding.step5') }}" method="POST">
                     @csrf
-                    <div class="card-body">
+                    <div class="p-6">
                         @if(session('success'))
                             <div class="alert alert-success alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -46,7 +46,7 @@
                             <p class="text-muted">Enable AI agents to automate and optimize your marketing workflows.</p>
                         </div>
 
-                        <div class="row">
+                        <div class="grid grid-cols-12 gap-4>
                             <div class="col-md-6 mb-3">
                                 <div class="card card-outline card-info h-100">
                                     <div class="card-body text-center">
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="card-footer d-flex justify-content-between">
-                        <a href="{{ route('onboarding.step4') }}" class="btn btn-secondary">
+                        <a href="{{ route('onboarding.step4') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors">
                             <i class="fas fa-arrow-left mr-1"></i> Back
                         </a>
                         <button type="submit" class="btn btn-success btn-lg">

@@ -2,10 +2,10 @@
 @section('title', $workflow->name)
 @section('content')
 <div class="space-y-6">
-<div class="col-md-4">
-        <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Workflow Details</h3></div>
-            <div class="card-body">
+<div class="col-span-12 md:col-span-4">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Workflow Details</h3></div>
+            <div class="p-6">
                 <strong><i class="fas fa-bolt mr-1"></i> Trigger</strong><p class="text-muted">{{ \App\Models\Workflow::TRIGGER_TYPES[$workflow->trigger_type] ?? $workflow->trigger_type }}</p><hr>
                 <strong><i class="fas fa-info-circle mr-1"></i> Status</strong><span class="badge badge-{{ $workflow->status === 'active' ? 'success' : 'secondary' }}">{{ ucfirst($workflow->status) }}</span><hr>
                 <strong><i class="fas fa-redo mr-1"></i> Executions</strong><p class="text-muted">{{ $workflow->execution_count }}</p><hr>
@@ -14,11 +14,11 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Execution History</h3></div>
+    <div class="col-span-12 md:col-span-8">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Execution History</h3></div>
             <div class="card-body p-0">
-                <table class="table table-striped">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead><tr><th>Status</th><th>Started</th><th>Duration</th><th>Error</th></tr></thead>
                     <tbody>
                         @forelse($executions as $exec)

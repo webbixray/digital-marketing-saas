@@ -7,8 +7,8 @@
 
 <div class="col-lg-4 col-md-6 mb-3">
     <div class="card {{ $statusClass }} card-outline agent-card">
-        <div class="card-header">
-            <h3 class="card-title">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
                 <i class="fas fa-robot mr-2"></i>{{ ucwords(str_replace('_', ' ', $name)) }}
             </h3>
             <div class="card-tools">
@@ -17,8 +17,8 @@
                 </span>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
+        <div class="p-6">
+            <div class="grid grid-cols-12 gap-4>
                 <div class="col-6">
                     <div class="description-block border-right">
                         <h5 class="description-header text-{{ ($agent['success_rate'] ?? 0) >= 0.8 ? 'success' : (($agent['success_rate'] ?? 0) >= 0.5 ? 'warning' : 'danger') }}">
@@ -61,7 +61,7 @@
                 <br>
                 <small class="text-muted">
                     <i class="fas fa-layer-group mr-1"></i>
-                    Category: <span class="badge badge-info">{{ $agent['category'] ?? 'General' }}</span>
+                    Category: <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ $agent['category'] ?? 'General' }}</span>
                 </small>
             </div>
             @if(!empty($agent['description']))
@@ -76,7 +76,7 @@
                         <span class="badge badge-light">{{ str_replace('_', ' ', $type) }}</span>
                     @endforeach
                     @if(count($agent['supported_types'] ?? []) > 4)
-                        <span class="badge badge-secondary">+{{ count($agent['supported_types']) - 4 }}</span>
+                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">+{{ count($agent['supported_types']) - 4 }}</span>
                     @endif
                 </div>
             </div>

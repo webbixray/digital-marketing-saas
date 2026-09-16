@@ -3,15 +3,15 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="card-header">
-        <h3 class="card-title"><i class="fas fa-file-alt mr-2"></i>Landing Pages</h3>
+<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-file-alt mr-2"></i>Landing Pages</h3>
         <div class="card-tools">
             <a href="{{ route('landing-pages.create') }}" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus mr-1"></i> New Landing Page
             </a>
         </div>
     </div>
-    <div class="card-body">
+    <div class="p-6">
         <div class="table-responsive">
             <table class="table table-hover text-nowrap">
                 <thead>

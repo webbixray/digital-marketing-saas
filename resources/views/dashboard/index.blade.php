@@ -17,8 +17,8 @@
             ['label' => 'Scheduled', 'value' => $stats['pending_posts'] ?? 0, 'icon' => 'clock', 'color' => 'yellow'],
             ['label' => 'Failed', 'value' => $stats['failed_posts'] ?? 0, 'icon' => 'exclamation-triangle', 'color' => 'red'],
         ] as $stat)
-        <div class="card">
-            <div class="card-body">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $stat['label'] }}</p>
@@ -41,7 +41,7 @@
                 <h3 class="font-semibold text-gray-900 dark:text-white">Platform Performance</h3>
                 <a href="{{ route('analytics.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @foreach(['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'] as $platform)
                         @php
@@ -67,12 +67,12 @@
         </div>
 
         <!-- Recent Activity -->
-        <div class="card">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-header flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
                 <a href="{{ route('activity.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <div class="space-y-4">
                     @forelse($recentActivity ?? [] as $activity)
                         <div class="flex items-start gap-3">

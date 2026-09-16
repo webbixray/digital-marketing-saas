@@ -4,11 +4,11 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
+        <div class="grid grid-cols-12 gap-4 mb-2>
+            <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Cancel Subscription</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-span-12 sm:col-span-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('agency.billing') }}">Billing</a></li>
@@ -21,28 +21,28 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
+        <div class="grid grid-cols-12 gap-4 justify-center>
+            <div class="col-span-12 lg:col-span-8">
                 <!-- Retention Offer -->
                 @if($offer['urgency'] !== 'low')
-                    <div class="alert alert-warning">
+                    <div class="bg-yellow-50 text-yellow-800 border border-yellow-200 rounded-lg p-4 mb-4">
                         <h5><i class="fas fa-gift mr-2"></i>Wait! Before you go...</h5>
                         <p>{{ $offer['message'] }}</p>
-                        <a href="{{ route('agency.billing') }}" class="btn btn-primary">Claim Your Discount</a>
+                        <a href="{{ route('agency.billing') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Claim Your Discount</a>
                     </div>
                 @endif
 
                 <!-- Cancellation Survey -->
                 <div class="card card-warning">
-                    <div class="card-header">
-                        <h3 class="card-title">We're sorry to see you go</h3>
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">We're sorry to see you go</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <p>Help us improve by telling us why you're canceling:</p>
 
                         <form action="{{ route('cancellation.submit') }}" method="POST">
                             @csrf
-                            <div class="form-group">
+                            <div class="mb-4">
                                 <div class="custom-control custom-radio mb-2">
                                     <input type="radio" id="reason1" name="reason" value="too_expensive" class="custom-control-input" required>
                                     <label class="custom-control-label" for="reason1">Too expensive</label>
@@ -65,15 +65,15 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="mb-4">
                                 <label for="feedback">Additional feedback (optional)</label>
-                                <textarea class="form-control" id="feedback" name="feedback" rows="3" placeholder="Tell us what we could do better..."></textarea>
+                                <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" id="feedback" name="feedback" rows="3" placeholder="Tell us what we could do better..."></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-warning">
+                            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 inline-flex items-center gap-2 font-medium transition-colors">
                                 <i class="fas fa-frown mr-2"></i>Continue with Cancellation
                             </button>
-                            <a href="{{ route('agency.billing') }}" class="btn btn-link">Go Back</a>
+                            <a href="{{ route('agency.billing') }}" class="text-indigo-600 hover:text-indigo-700 underline font-medium">Go Back</a>
                         </form>
                     </div>
                 </div>

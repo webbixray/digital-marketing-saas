@@ -2,7 +2,7 @@
 @section('title', 'Invoices')
 @section('content')
 <div class="space-y-6">
-<div class="row">
+<div class="grid grid-cols-12 gap-4>
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="info-box"><span class="info-box-icon bg-info"><i class="fas fa-file-invoice-dollar"></i></span>
             <div class="info-box-content"><span class="info-box-text">Total Revenue</span><span class="info-box-number">${{ number_format($stats['total'], 2) }}</span></div>
@@ -19,13 +19,13 @@
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-file-invoice mr-2"></i>Invoices</h3>
-        <div class="card-tools"><a href="{{ route('invoices.create') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus mr-1"></i> New Invoice</a></div>
+<div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-file-invoice mr-2"></i>Invoices</h3>
+        <div class="card-tools"><a href="{{ route('invoices.create') }}" class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm"><i class="fas fa-plus mr-1"></i> New Invoice</a></div>
     </div>
     <div class="card-body p-0">
-        <table class="table table-striped">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Invoice #</th><th>Amount</th><th>Status</th><th>Issue Date</th><th>Due Date</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($invoices as $invoice)

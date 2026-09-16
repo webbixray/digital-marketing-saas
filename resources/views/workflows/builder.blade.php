@@ -1158,11 +1158,11 @@
 <div class="modal-overlay" id="saveModal">
     <div class="modal-content">
         <h4><i class="fas fa-save"></i> Save Workflow</h4>
-        <div class="form-group">
+        <div class="mb-4">
             <label>Workflow Name *</label>
             <input type="text" id="workflowName" placeholder="My Workflow">
         </div>
-        <div class="form-group">
+        <div class="mb-4">
             <label>Description</label>
             <textarea id="workflowDescription" placeholder="What does this workflow do?"></textarea>
         </div>
@@ -1602,7 +1602,7 @@ class WorkflowBuilder {
             </div>
             <div class="property-section">
                 <div class="property-section-title">General</div>
-                <div class="form-group">
+                <div class="mb-4">
                     <label>Label</label>
                     <input type="text" value="${node.label}" onchange="builder.updateNodeLabel(this.value)">
                 </div>
@@ -1622,24 +1622,24 @@ class WorkflowBuilder {
     getNodeConfigFields(node) {
         const configs = {
             trigger: {
-                post_published: `<div class="form-group"><label>Platform</label><select onchange="builder.updateNodeConfig('platform', this.value)"><option value="">Any</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option><option value="twitter">Twitter</option><option value="linkedin">LinkedIn</option></select></div>`,
-                schedule: `<div class="form-group"><label>Cron Expression</label><input type="text" value="${node.config.cron || ''}" placeholder="0 9 * * *" onchange="builder.updateNodeConfig('cron', this.value)"></div>`,
-                webhook: `<div class="form-group"><label>Webhook URL</label><input type="url" value="${node.config.url || ''}" placeholder="https://..." onchange="builder.updateNodeConfig('url', this.value)"></div>`
+                post_published: `<div class="mb-4"><label>Platform</label><select onchange="builder.updateNodeConfig('platform', this.value)"><option value="">Any</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option><option value="twitter">Twitter</option><option value="linkedin">LinkedIn</option></select></div>`,
+                schedule: `<div class="mb-4"><label>Cron Expression</label><input type="text" value="${node.config.cron || ''}" placeholder="0 9 * * *" onchange="builder.updateNodeConfig('cron', this.value)"></div>`,
+                webhook: `<div class="mb-4"><label>Webhook URL</label><input type="url" value="${node.config.url || ''}" placeholder="https://..." onchange="builder.updateNodeConfig('url', this.value)"></div>`
             },
             action: {
-                send_notification: `<div class="form-group"><label>Message</label><textarea rows="2" onchange="builder.updateNodeConfig('message', this.value)">${node.config.message || 'New post published!'}</textarea></div>`,
-                auto_reply: `<div class="form-group"><label>Reply Message</label><textarea rows="2" onchange="builder.updateNodeConfig('message', this.value)">${node.config.message || 'Thanks for reaching out!'}</textarea></div>`,
-                create_post: `<div class="form-group"><label>Content</label><textarea rows="3" onchange="builder.updateNodeConfig('content', this.value)">${node.config.content || ''}</textarea></div>`,
-                ai_generate: `<div class="form-group"><label>Prompt</label><textarea rows="3" onchange="builder.updateNodeConfig('prompt', this.value)">${node.config.prompt || 'Generate a social post about...'}</textarea></div>`,
-                send_email: `<div class="form-group"><label>To</label><input type="email" value="${node.config.to || ''}" onchange="builder.updateNodeConfig('to', this.value)"></div><div class="form-group"><label>Subject</label><input type="text" value="${node.config.subject || ''}" onchange="builder.updateNodeConfig('subject', this.value)"></div>`,
-                webhook_call: `<div class="form-group"><label>URL</label><input type="url" value="${node.config.url || ''}" onchange="builder.updateNodeConfig('url', this.value)"></div><div class="form-group"><label>Method</label><select onchange="builder.updateNodeConfig('method', this.value)"><option value="POST">POST</option><option value="GET">GET</option><option value="PUT">PUT</option></select></div>`
+                send_notification: `<div class="mb-4"><label>Message</label><textarea rows="2" onchange="builder.updateNodeConfig('message', this.value)">${node.config.message || 'New post published!'}</textarea></div>`,
+                auto_reply: `<div class="mb-4"><label>Reply Message</label><textarea rows="2" onchange="builder.updateNodeConfig('message', this.value)">${node.config.message || 'Thanks for reaching out!'}</textarea></div>`,
+                create_post: `<div class="mb-4"><label>Content</label><textarea rows="3" onchange="builder.updateNodeConfig('content', this.value)">${node.config.content || ''}</textarea></div>`,
+                ai_generate: `<div class="mb-4"><label>Prompt</label><textarea rows="3" onchange="builder.updateNodeConfig('prompt', this.value)">${node.config.prompt || 'Generate a social post about...'}</textarea></div>`,
+                send_email: `<div class="mb-4"><label>To</label><input type="email" value="${node.config.to || ''}" onchange="builder.updateNodeConfig('to', this.value)"></div><div class="mb-4"><label>Subject</label><input type="text" value="${node.config.subject || ''}" onchange="builder.updateNodeConfig('subject', this.value)"></div>`,
+                webhook_call: `<div class="mb-4"><label>URL</label><input type="url" value="${node.config.url || ''}" onchange="builder.updateNodeConfig('url', this.value)"></div><div class="mb-4"><label>Method</label><select onchange="builder.updateNodeConfig('method', this.value)"><option value="POST">POST</option><option value="GET">GET</option><option value="PUT">PUT</option></select></div>`
             },
             condition: {
-                if: `<div class="form-group"><label>Field</label><input type="text" value="${node.config.field || ''}" placeholder="platform" onchange="builder.updateNodeConfig('field', this.value)"></div><div class="form-group"><label>Operator</label><select onchange="builder.updateNodeConfig('operator', this.value)"><option value="equals">Equals</option><option value="contains">Contains</option><option value="not_empty">Not Empty</option></select></div><div class="form-group"><label>Value</label><input type="text" value="${node.config.value || ''}" onchange="builder.updateNodeConfig('value', this.value)"></div>`
+                if: `<div class="mb-4"><label>Field</label><input type="text" value="${node.config.field || ''}" placeholder="platform" onchange="builder.updateNodeConfig('field', this.value)"></div><div class="mb-4"><label>Operator</label><select onchange="builder.updateNodeConfig('operator', this.value)"><option value="equals">Equals</option><option value="contains">Contains</option><option value="not_empty">Not Empty</option></select></div><div class="mb-4"><label>Value</label><input type="text" value="${node.config.value || ''}" onchange="builder.updateNodeConfig('value', this.value)"></div>`
             },
             util: {
-                delay: `<div class="form-group"><label>Seconds</label><input type="number" value="${node.config.seconds || 5}" onchange="builder.updateNodeConfig('seconds', this.value)"></div>`,
-                loop: `<div class="form-group"><label>Iterations</label><input type="number" value="${node.config.iterations || 5}" onchange="builder.updateNodeConfig('iterations', this.value)"></div>`
+                delay: `<div class="mb-4"><label>Seconds</label><input type="number" value="${node.config.seconds || 5}" onchange="builder.updateNodeConfig('seconds', this.value)"></div>`,
+                loop: `<div class="mb-4"><label>Iterations</label><input type="number" value="${node.config.iterations || 5}" onchange="builder.updateNodeConfig('iterations', this.value)"></div>`
             }
         };
         

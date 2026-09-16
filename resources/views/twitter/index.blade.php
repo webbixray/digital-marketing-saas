@@ -4,11 +4,11 @@
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
+            <div class="grid grid-cols-12 gap-4 mb-2>
+                <div class="col-span-12 sm:col-span-6">
                     <h1 class="m-0">Twitter / X Integration</h1>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-span-12 sm:col-span-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Twitter</li>
@@ -36,13 +36,13 @@
                 </div>
             @endif
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Connect Twitter Account</h3>
+            <div class="grid grid-cols-12 gap-4>
+                <div class="col-span-12 md:col-span-6">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Connect Twitter Account</h3>
                         </div>
-                        <div class="card-body">
+                        <div class="p-6">
                             <p>Connect your Twitter account to enable:</p>
                             <ul>
                                 <li>Automated tweet posting</li>
@@ -50,24 +50,24 @@
                                 <li>Timeline monitoring</li>
                                 <li>AI-powered content generation</li>
                             </ul>
-                            <a href="{{ route('twitter.connect') }}" class="btn btn-primary">
+                            <a href="{{ route('twitter.connect') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                                 <i class="fa fa-twitter"></i> Connect Twitter Account
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-span-12 md:col-span-6">
                     <div class="card card-info">
-                        <div class="card-header">
-                            <h3 class="card-title">Post a Tweet</h3>
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Post a Tweet</h3>
                         </div>
-                        <div class="card-body">
+                        <div class="p-6">
                             <form action="{{ route('twitter.post') }}" method="POST">
                                 @csrf
-                                <div class="form-group">
+                                <div class="mb-4">
                                     <label for="account_id">Select Account</label>
-                                    <select name="account_id" id="account_id" class="form-control" required>
+                                    <select name="account_id" id="account_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                                         <option value="">Select a Twitter account</option>
                                         @foreach($twitterAccounts ?? [] as $account)
                                             <option value="{{ $account->id }}">
@@ -76,12 +76,12 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-4">
                                     <label for="text">Tweet Text</label>
-                                    <textarea name="text" id="text" class="form-control" rows="3" maxlength="280" required placeholder="What's happening?"></textarea>
+                                    <textarea name="text" id="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3" maxlength="280" required placeholder="What's happening?"></textarea>
                                     <small class="form-text text-muted"><span id="char-count">0</span>/280 characters</small>
                                 </div>
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 inline-flex items-center gap-2 font-medium transition-colors">
                                     <i class="fa fa-paper-plane"></i> Post Tweet
                                 </button>
                             </form>
@@ -91,11 +91,11 @@
             </div>
 
             @if(isset($twitterAccounts) && count($twitterAccounts) > 0)
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Connected Twitter Accounts</h3>
+            <div class="grid grid-cols-12 gap-4>
+                <div class="col-span-12">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Connected Twitter Accounts</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
@@ -121,9 +121,9 @@
                                         </td>
                                         <td>
                                             @if($account->is_active)
-                                                <span class="badge badge-success">Active</span>
+                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Active</span>
                                             @else
-                                                <span class="badge badge-danger">Inactive</span>
+                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Inactive</span>
                                             @endif
                                         </td>
                                         <td>

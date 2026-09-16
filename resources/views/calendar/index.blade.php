@@ -8,7 +8,7 @@
 
 
         <!-- Stats Cards -->
-        <div class="row">
+        <div class="grid grid-cols-12 gap-4>
             <div class="col-lg-2 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
@@ -63,11 +63,11 @@
         </div>
 
         <!-- Calendar -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">
                             <i class="far fa-calendar-alt"></i>
                             {{ date('F Y', mktime(0, 0, 0, $month, 1, $year)) }}
                         </h3>
@@ -83,7 +83,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="p-6">
                         <div id="calendar"></div>
                     </div>
                 </div>
@@ -108,8 +108,8 @@
                 <div id="modalContent" class="border p-2 bg-light"></div>
             </div>
             <div class="modal-footer">
-                <a id="modalEdit" href="#" class="btn btn-primary">Edit Post</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a id="modalEdit" href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Edit Post</a>
+                <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

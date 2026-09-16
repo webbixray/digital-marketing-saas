@@ -4,11 +4,11 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
+        <div class="grid grid-cols-12 gap-4 mb-2>
+            <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">A/B Testing</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-span-12 sm:col-span-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item active">A/B Testing</li>
@@ -20,19 +20,19 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Your A/B Tests</h3>
+        <div class="grid grid-cols-12 gap-4>
+            <div class="col-span-12">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Your A/B Tests</h3>
                         <div class="card-tools">
-                            <a href="{{ route('ab-testing.create') }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('ab-testing.create') }}" class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm">
                                 <i class="fas fa-plus mr-1"></i>New Test
                             </a>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
+                    <div class="p-6">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                             <thead>
                                 <tr>
                                     <th>Name</th>

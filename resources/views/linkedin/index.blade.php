@@ -9,15 +9,15 @@
     <div class="container">
         <h1>LinkedIn Integration</h1>
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="bg-green-50 text-green-800 border border-green-200 rounded-lg p-4 mb-4">{{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+            <div class="bg-red-50 text-red-800 border border-red-200 rounded-lg p-4 mb-4">{{ session('error') }}</div>
         @endif
         
         @if($linkedinAccounts->isEmpty())
             <p>No LinkedIn accounts connected.</p>
-            <a href="{{ route('linkedin.connect') }}" class="btn btn-primary">Connect LinkedIn Account</a>
+            <a href="{{ route('linkedin.connect') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Connect LinkedIn Account</a>
         @else
             <h2>Connected Accounts</h2>
             <ul>

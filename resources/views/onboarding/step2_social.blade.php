@@ -4,13 +4,13 @@
 @section('content')
 <div class="space-y-6">
 <div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+    <div class="grid grid-cols-12 gap-4 justify-center>
+        <div class="col-span-12 lg:col-span-8">
             <!-- Progress Bar -->
             <div class="card card-outline card-primary mb-4">
-                <div class="card-body">
+                <div class="p-6">
                     <h5 class="text-center mb-3">Step 2 of 5: Connect Social Accounts</h5>
-                    <div class="progress" style="height: 25px;">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700" style="height: 25px;">
                         <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" style="width: 40%;">
                             40%
                         </div>
@@ -25,14 +25,14 @@
                 </div>
             </div>
 
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-share-alt mr-2"></i>Connect Your Social Media Accounts</h3>
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-share-alt mr-2"></i>Connect Your Social Media Accounts</h3>
                 </div>
 
                 <form action="{{ route('onboarding.step2') }}" method="POST">
                     @csrf
-                    <div class="card-body">
+                    <div class="p-6">
                         @if(session('success'))
                             <div class="alert alert-success alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -42,7 +42,7 @@
 
                         <p class="text-muted">Select the social platforms you want to manage. You can always add more later.</p>
 
-                        <div class="row">
+                        <div class="grid grid-cols-12 gap-4>
                             @foreach($platforms as $key => $name)
                                 <div class="col-md-6 col-lg-4 mb-3">
                                     <div class="card card-outline {{ isset($connectedAccounts[$key]) ? 'card-success' : 'card-secondary' }}">
@@ -93,10 +93,10 @@
                     </div>
 
                     <div class="card-footer d-flex justify-content-between">
-                        <a href="{{ route('onboarding.step1') }}" class="btn btn-secondary">
+                        <a href="{{ route('onboarding.step1') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors">
                             <i class="fas fa-arrow-left mr-1"></i> Back
                         </a>
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors text-lg">
                             Next: Invite Team <i class="fas fa-arrow-right ml-1"></i>
                         </button>
                     </div>

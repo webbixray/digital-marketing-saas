@@ -10,10 +10,10 @@
 @section('content')
 <div class="space-y-6">
 <!-- Current Plan -->
-    <div class="col-md-8">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title">
+    <div class="col-span-12 md:col-span-8">
+        <div class="bg-white rounded-xl shadow-sm border-2 border-indigo-300 dark:bg-gray-800 dark:border-indigo-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-crown text-warning mr-2"></i>Current Plan
                 </h3>
                 <div class="card-tools">
@@ -22,9 +22,9 @@
                     </span>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
+            <div class="p-6">
+                <div class="grid grid-cols-12 gap-4>
+                    <div class="col-span-12 md:col-span-6">
                         <h4 class="text-primary">{{ $plans[$currentPlan]['name'] ?? 'Free' }}</h4>
                         @if(isset($plans[$currentPlan]['price']))
                             <h2 class="mb-0">${{ number_format($plans[$currentPlan]['price'], 0) }}<small class="text-muted">/mo</small></h2>
@@ -41,7 +41,7 @@
                         @endif
                     </div>
                     <div class="col-md-6 text-right">
-                        <a href="{{ route('billing.upgrade') }}" class="btn btn-primary btn-lg">
+                        <a href="{{ route('billing.upgrade') }}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors text-lg">
                             <i class="fas fa-arrow-circle-up mr-1"></i>
                             {{ $currentPlan === 'free' ? 'Upgrade Plan' : 'Change Plan' }}
                         </a>
@@ -60,16 +60,16 @@
 
         <!-- Usage Stats -->
         <div class="card card-outline card-info">
-            <div class="card-header">
-                <h3 class="card-title">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-chart-pie text-info mr-2"></i>Usage This Month
                 </h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 @if(isset($plans[$currentPlan]['features']))
-                    <div class="row">
+                    <div class="grid grid-cols-12 gap-4>
                         @if(isset($plans[$currentPlan]['features']['posts_per_month']))
-                        <div class="col-md-4">
+                        <div class="col-span-12 md:col-span-4">
                             <div class="info-box bg-light">
                                 <span class="info-box-icon bg-primary"><i class="fas fa-pen-fancy"></i></span>
                                 <div class="info-box-content">
@@ -82,8 +82,8 @@
                                         @php
                                             $percent = min(100, (($agency->posts_count ?? 0) / $plans[$currentPlan]['features']['posts_per_month']) * 100);
                                         @endphp
-                                        <div class="progress">
-                                            <div class="progress-bar bg-primary" style="width: {{ $percent }}%"></div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $percent }}%"></div>
                                         </div>
                                         <small class="text-muted">{{ round($percent) }}% used</small>
                                     @endif
@@ -93,7 +93,7 @@
                         @endif
 
                         @if(isset($plans[$currentPlan]['features']['ai_generations_per_month']))
-                        <div class="col-md-4">
+                        <div class="col-span-12 md:col-span-4">
                             <div class="info-box bg-light">
                                 <span class="info-box-icon bg-success"><i class="fas fa-sparkles"></i></span>
                                 <div class="info-box-content">
@@ -106,8 +106,8 @@
                                         @php
                                             $percent = min(100, (($agency->ai_generations_count ?? 0) / $plans[$currentPlan]['features']['ai_generations_per_month']) * 100);
                                         @endphp
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" style="width: {{ $percent }}%"></div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-green-600 h-2 rounded-full" style="width: {{ $percent }}%"></div>
                                         </div>
                                         <small class="text-muted">{{ round($percent) }}% used</small>
                                     @endif
@@ -117,7 +117,7 @@
                         @endif
 
                         @if(isset($plans[$currentPlan]['features']['team_members']))
-                        <div class="col-md-4">
+                        <div class="col-span-12 md:col-span-4">
                             <div class="info-box bg-light">
                                 <span class="info-box-icon bg-warning"><i class="fas fa-users"></i></span>
                                 <div class="info-box-content">
@@ -130,8 +130,8 @@
                                         @php
                                             $percent = min(100, (($agency->users_count ?? 0) / $plans[$currentPlan]['features']['team_members']) * 100);
                                         @endphp
-                                        <div class="progress">
-                                            <div class="progress-bar bg-warning" style="width: {{ $percent }}%"></div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ $percent }}%"></div>
                                         </div>
                                         <small class="text-muted">{{ round($percent) }}% used</small>
                                     @endif
@@ -148,10 +148,10 @@
     </div>
 
     <!-- Plan Summary Sidebar -->
-    <div class="col-md-4">
+    <div class="col-span-12 md:col-span-4">
         <div class="card card-outline card-success">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-list-check text-success mr-2"></i>Plan Features</h3>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-list-check text-success mr-2"></i>Plan Features</h3>
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
@@ -168,11 +168,11 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt text-warning mr-2"></i>Quick Actions</h3>
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-bolt text-warning mr-2"></i>Quick Actions</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <a href="{{ route('billing.upgrade') }}" class="btn btn-block btn-outline-primary">
                     <i class="fas fa-exchange-alt mr-1"></i> Compare Plans
                 </a>
@@ -185,11 +185,11 @@
 </div>
 
 <!-- Billing History -->
-<div class="row">
+<div class="grid grid-cols-12 gap-4>
     <div class="col-12">
         <div class="card card-outline card-secondary">
-            <div class="card-header">
-                <h3 class="card-title">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-history text-secondary mr-2"></i>Recent Billing History
                 </h3>
                 <div class="card-tools">
@@ -198,7 +198,7 @@
             </div>
             <div class="card-body table-responsive p-0">
                 @if($invoices->count())
-                    <table class="table table-hover">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                         <thead>
                             <tr>
                                 <th>Invoice #</th>

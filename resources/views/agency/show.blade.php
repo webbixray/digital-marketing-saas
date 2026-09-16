@@ -9,7 +9,7 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="card">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-body text-center">
                 <img src="https://ui-avatars.com/api/?name={{ urlencode($agency->name) }}&background=6366f1&color=fff&size=80" class="w-20 h-20 rounded-full mx-auto mb-4" alt="">
                 <h3 class="font-bold text-gray-900 dark:text-white">{{ $agency->name }}</h3>
@@ -22,11 +22,11 @@
                 <h3 class="font-semibold text-gray-900 dark:text-white">Details</h3>
                 <a href="{{ route('agency.edit') }}" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i> Edit</a>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <dl class="space-y-3">
                     <div class="flex justify-between">
                         <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
-                        <dd><span class="badge badge-success">{{ ucfirst($agency->status ?? 'active') }}</span></dd>
+                        <dd><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">{{ ucfirst($agency->status ?? 'active') }}</span></dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-sm text-gray-500 dark:text-gray-400">Created</dt>

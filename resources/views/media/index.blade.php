@@ -142,7 +142,7 @@
         <div class="container-fluid">
             <!-- Stats Row -->
             <div class="row mb-3">
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-primary"><i class="fas fa-images"></i></span>
                         <div class="info-box-content">
@@ -151,7 +151,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-success"><i class="fas fa-image"></i></span>
                         <div class="info-box-content">
@@ -160,7 +160,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-info"><i class="fas fa-video"></i></span>
                         <div class="info-box-content">
@@ -169,7 +169,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-warning"><i class="fas fa-hdd"></i></span>
                         <div class="info-box-content">
@@ -180,9 +180,9 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="grid grid-cols-12 gap-4>
                 <!-- Folders Sidebar -->
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="folder-sidebar">
                         <h5><i class="fas fa-folder-open"></i> Folders</h5>
                         <hr>
@@ -208,21 +208,21 @@
                         <p>Drag & drop files here or click to browse. Max 10MB per file.</p>
                     </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Files</h3>
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Files</h3>
                             <div class="card-tools">
                                 <form action="{{ route('media.index') }}" method="GET" class="form-inline">
                                     <div class="input-group input-group-sm" style="width: 250px;">
-                                        <input type="text" name="search" class="form-control" placeholder="Search files..." value="{{ request('search') }}">
+                                        <input type="text" name="search" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Search files..." value="{{ request('search') }}">
                                         <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors"><i class="fas fa-search"></i></button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="p-6">
                             <form id="uploadForm" action="{{ route('media.store') }}" method="POST" enctype="multipart/form-data" style="display:none">
                                 @csrf
                                 <input type="file" id="fileInput" name="files[]" multiple accept="image/*,video/*,.pdf,.doc,.docx" onchange="this.form.submit()">

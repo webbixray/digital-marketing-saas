@@ -2,10 +2,10 @@
 @section('title', $client->name)
 @section('content')
 <div class="space-y-6">
-<div class="col-md-4">
-        <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Client Details</h3></div>
-            <div class="card-body">
+<div class="col-span-12 md:col-span-4">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Client Details</h3></div>
+            <div class="p-6">
                 <strong><i class="fas fa-user mr-1"></i> Name</strong><p class="text-muted">{{ $client->name }}</p><hr>
                 <strong><i class="fas fa-envelope mr-1"></i> Email</strong><p class="text-muted">{{ $client->email }}</p><hr>
                 <strong><i class="fas fa-phone mr-1"></i> Phone</strong><p class="text-muted">{{ $client->phone ?? '—' }}</p><hr>
@@ -16,11 +16,11 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Campaigns</h3></div>
+    <div class="col-span-12 md:col-span-8">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Campaigns</h3></div>
             <div class="card-body p-0">
-                <table class="table table-striped">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Posts</th></tr></thead>
                     <tbody>
                         @forelse($campaigns as $campaign)

@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<div class="row justify-content-center">
+<div class="grid grid-cols-12 gap-4 justify-center>
     @foreach($plans as $key => $plan)
         @if($key === 'free')
             @continue
@@ -78,9 +78,9 @@
 <!-- Feature Comparison Table -->
 <div class="row mt-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-table text-info mr-2"></i>Full Feature Comparison
                 </h3>
             </div>
@@ -93,7 +93,7 @@
                                 <th class="text-center {{ $currentPlan === $key ? 'table-success' : '' }}">
                                     {{ $plan['name'] }}
                                     @if($currentPlan === $key)
-                                        <br><span class="badge badge-success">Current</span>
+                                        <br><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Current</span>
                                     @endif
                                 </th>
                             @endforeach

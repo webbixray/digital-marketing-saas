@@ -19,8 +19,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Settings Navigation -->
         <div class="lg:col-span-1">
-            <div class="card">
-                <div class="card-body">
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6">
                     <nav class="space-y-1">
                         <a href="#profile" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400">
                             <i class="fas fa-building"></i> Agency Profile
@@ -47,13 +47,13 @@
             <form method="POST" action="{{ route('agency.settings.update') }}">
                 @csrf @method('PUT')
 
-                <div class="card mb-6">
-                    <div class="card-header">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Agency Profile</h3>
                     </div>
                     <div class="card-body space-y-4">
                         <div>
-                            <label class="form-label">Agency Name</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Agency Name</label>
                             <input type="text" name="agency_name" value="{{ old('agency_name', $agency->name ?? '') }}" class="form-input">
                             @error('agency_name')
                                 <div class="form-error">{{ $message }}</div>
@@ -61,35 +61,35 @@
                         </div>
 
                         <div>
-                            <label class="form-label">Website</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Website</label>
                             <input type="url" name="website" value="{{ old('website', $agency->website ?? '') }}" class="form-input" placeholder="https://example.com">
                         </div>
 
                         <div>
-                            <label class="form-label">Description</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                             <textarea name="description" rows="3" class="form-input">{{ old('description', $agency->description ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                <div class="card mb-6">
-                    <div class="card-header">
+                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Branding</h3>
                     </div>
                     <div class="card-body space-y-4">
                         <div>
-                            <label class="form-label">Primary Color</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary Color</label>
                             <input type="color" name="primary_color" value="{{ old('primary_color', $agency->primary_color ?? '#4f46e5') }}" class="form-input h-10 w-20">
                         </div>
                         <div>
-                            <label class="form-label">Logo URL</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo URL</label>
                             <input type="url" name="logo_url" value="{{ old('logo_url', $agency->logo_url ?? '') }}" class="form-input">
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Save Changes</button>
                 </div>
             </form>
         </div>

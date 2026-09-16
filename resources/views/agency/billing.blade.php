@@ -8,9 +8,9 @@
             </div>
 
             <!-- Plans -->
-            <div class="row">
+            <div class="grid grid-cols-12 gap-4>
                 @foreach($plans as $key => $plan)
-                <div class="col-md-3">
+                <div class="col-span-12 md:col-span-3">
                     <div class="card {{ ($agency->subscription_plan ?? 'free') === $key ? 'card-primary' : '' }}">
                         <div class="card-header text-center">
                             <h4>{{ $plan['name'] }}</h4>
@@ -22,7 +22,7 @@
                                 @endif
                             </h2>
                         </div>
-                        <div class="card-body">
+                        <div class="p-6">
                             <ul class="list-unstyled">
                                 <li><i class="fas fa-check text-success"></i> {{ $plan['features']['posts_per_month'] == -1 ? 'Unlimited' : $plan['features']['posts_per_month'] }} posts/month</li>
                                 <li><i class="fas fa-check text-success"></i> {{ $plan['features']['ai_generations_per_month'] == -1 ? 'Unlimited' : $plan['features']['ai_generations_per_month'] }} AI generations</li>
@@ -32,11 +32,11 @@
                         </div>
                         <div class="card-footer text-center">
                             @if(($agency->subscription_plan ?? 'free') === $key)
-                                <button class="btn btn-secondary" disabled>Current Plan</button>
+                                <button class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors" disabled>Current Plan</button>
                             @elseif($plan['price'] === 0)
-                                <a href="{{ route('billing.checkout', $key) }}" class="btn btn-outline-primary">Downgrade</a>
+                                <a href="{{ route('billing.checkout', $key) }}" class="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 inline-flex items-center gap-2 font-medium transition-colors">Downgrade</a>
                             @else
-                                <a href="{{ route('billing.checkout', $key) }}" class="btn btn-primary">Upgrade</a>
+                                <a href="{{ route('billing.checkout', $key) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Upgrade</a>
                             @endif
                         </div>
                     </div>
@@ -45,14 +45,14 @@
             </div>
 
             <!-- Invoices -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Invoices</h3>
+            <div class="grid grid-cols-12 gap-4>
+                <div class="col-span-12">
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Invoices</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
-                            <table class="table table-hover">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                                 <thead>
                                     <tr>
                                         <th>Invoice #</th>

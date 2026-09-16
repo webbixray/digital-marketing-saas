@@ -3,11 +3,11 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="row">
-    <div class="col-md-4">
-        <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Webhook Details</h3></div>
-            <div class="card-body">
+<div class="grid grid-cols-12 gap-4>
+    <div class="col-span-12 md:col-span-4">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Webhook Details</h3></div>
+            <div class="p-6">
                 <strong>Name:</strong> {{ $webhook->name }}<hr>
                 <strong>URL:</strong> <small>{{ $webhook->url }}</small><hr>
                 <strong>Events:</strong> @foreach($webhook->events ?? [] as $event)<span class="badge badge-info mr-1">{{ $event }}</span>@endforeach<hr>
@@ -18,16 +18,16 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Logs</h3></div>
+    <div class="col-span-12 md:col-span-8">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Logs</h3></div>
             <div class="card-body p-0">
-                <table class="table table-striped">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead><tr><th>Event</th><th>Status</th><th>Response Time</th><th>Date</th></tr></thead>
                     <tbody>
                         @forelse($logs as $log)
                             <tr>
-                                <td><span class="badge badge-info">{{ $log->event }}</span></td>
+                                <td><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ $log->event }}</span></td>
                                 <td><span class="badge badge-{{ $log->is_success ? 'success' : 'danger' }}">{{ $log->status_code ?? 'Error' }}</span></td>
                                 <td>{{ $log->response_time_ms }}ms</td>
                                 <td>{{ $log->created_at->diffForHumans() }}</td>

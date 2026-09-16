@@ -7,15 +7,15 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="col-md-12">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-project-diagram mr-2"></i>Workflow Templates</h3>
+<div class="col-span-12">
+        <div class="bg-white rounded-xl shadow-sm border-2 border-indigo-300 dark:bg-gray-800 dark:border-indigo-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-project-diagram mr-2"></i>Workflow Templates</h3>
                 <div class="card-tools">
-                    <span class="badge badge-info">{{ count($workflows ?? []) }} workflows</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ count($workflows ?? []) }} workflows</span>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <p class="text-muted">
                     Workflows chain multiple AI agents together to accomplish complex tasks automatically.
                 </p>
@@ -25,12 +25,12 @@
 </div>
 
 <!-- Workflow Templates Grid -->
-<div class="row">
+<div class="grid grid-cols-12 gap-4>
     @forelse($workflows ?? [] as $index => $workflow)
     <div class="col-lg-6 col-md-12 mb-3">
         <div class="card card-outline card-{{ $loop->even ? 'info' : 'success' }}">
-            <div class="card-header">
-                <h3 class="card-title">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">
                     <i class="fas fa-project-diagram mr-2"></i>{{ ucwords(str_replace('_', ' ', $workflow['name'])) }}
                 </h3>
                 <div class="card-tools">
@@ -39,7 +39,7 @@
                     </span>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                 <p>{{ $workflow['description'] }}</p>
                 
                 <div class="mb-3">
@@ -74,8 +74,8 @@
         </div>
     </div>
     @empty
-    <div class="col-md-12">
-        <div class="alert alert-info">
+    <div class="col-span-12">
+        <div class="bg-blue-50 text-blue-800 border border-blue-200 rounded-lg p-4 mb-4">
             <i class="fas fa-info-circle mr-2"></i> No workflow templates available.
         </div>
     </div>
@@ -83,13 +83,13 @@
 </div>
 
 <!-- Execution History -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Workflow Execution History</h3>
+<div class="grid grid-cols-12 gap-4>
+    <div class="col-span-12">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-history mr-2"></i>Workflow Execution History</h3>
                 <div class="card-tools">
-                    <span class="badge badge-info">{{ count($executions ?? []) }} executions</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{ count($executions ?? []) }} executions</span>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -131,7 +131,7 @@
                                             ? round(($exec->steps_completed ?? 0) / $exec->steps_total * 100) 
                                             : 0;
                                     @endphp
-                                    <div class="progress progress-sm" style="width: 100px;">
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700" style="width: 100px;">
                                         <div class="progress-bar bg-{{ $progress >= 100 ? 'success' : 'primary' }}" style="width: {{ $progress }}%"></div>
                                     </div>
                                     <small>{{ $exec->steps_completed ?? 0 }}/{{ $exec->steps_total ?? 0 }}</small>
@@ -189,7 +189,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

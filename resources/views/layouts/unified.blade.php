@@ -21,6 +21,11 @@
 </head>
 <body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100" style="font-family: 'Inter', sans-serif;">
     
+    <!-- Skip to main content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
+        Skip to main content
+    </a>
+    
     <!-- Mobile sidebar overlay -->
     <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-gray-900/50 lg:hidden" @click="sidebarOpen = false"></div>
     
@@ -35,7 +40,7 @@
                     </div>
                     <span class="font-bold text-gray-900 dark:text-white">DMSaaS</span>
                 </a>
-                <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400" aria-label="Close menu">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -44,7 +49,7 @@
             <nav class="flex-1 overflow-y-auto px-3 py-4">
                 <!-- Main Navigation -->
                 <div class="space-y-1">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" aria-label="Dashboard">
                         <i class="fas fa-th-large w-4"></i> Dashboard
                     </a>
                 </div>
@@ -126,14 +131,14 @@
             <!-- User panel -->
             <div class="border-t border-gray-200 dark:border-gray-800 p-4">
                 <div class="flex items-center gap-3">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="{{ auth()->user()?->name ?? 'User' }} avatar">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ auth()->user()?->name ?? 'User' }}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ auth()->user()?->email ?? '' }}</p>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="Logout">
+                        <button type="submit" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="Logout" aria-label="Logout">
                             <i class="fas fa-sign-out-alt"></i>
                         </button>
                     </form>
@@ -146,27 +151,27 @@
     <div class="flex flex-1 flex-col lg:pl-0">
         <!-- Top bar -->
         <header class="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 bg-white/80 dark:bg-gray-900/80 dark:border-gray-800 px-6 backdrop-blur-sm">
-            <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400">
+            <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400" aria-label="Open menu">
                 <i class="fas fa-bars text-xl"></i>
             </button>
             <div class="flex-1">
                 <h1 class="text-lg font-semibold text-gray-900 dark:text-white">@yield('title', 'Dashboard')</h1>
             </div>
             <div class="flex items-center gap-4">
-                <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors">
+                <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors" aria-label="Toggle dark mode">
                     <i x-show="!darkMode" class="fas fa-moon"></i>
                     <i x-show="darkMode" class="fas fa-sun"></i>
                 </button>
-                <button class="relative text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                <button class="relative text-gray-500 hover:text-gray-700 dark:text-gray-400" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
-                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full cursor-pointer" alt="">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full cursor-pointer" alt="{{ auth()->user()?->name ?? 'User' }} avatar">
             </div>
         </header>
 
         <!-- Page content -->
-        <main class="flex-1 overflow-auto p-6">
+        <main class="flex-1 overflow-auto p-6" id="main-content">
             @yield('content')
         </main>
     </div>

@@ -3,17 +3,17 @@
 
 @section('content')
 <div class="space-y-6">
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-search mr-2"></i>Global Search</h3>
+<div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-search mr-2"></i>Global Search</h3>
     </div>
-    <div class="card-body">
+    <div class="p-6">
         <form action="{{ route('search.index') }}" method="GET">
             @csrf
             <div class="input-group mb-3">
-                <input type="text" name="q" class="form-control" placeholder="Search posts, campaigns, clients, content..." value="{{ $query }}">
+                <input type="text" name="q" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Search posts, campaigns, clients, content..." value="{{ $query }}">
                 <div class="input-group-append">
-                    <select name="type" class="form-control" style="width: auto;">
+                    <select name="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="width: auto;">
                         <option value="all" {{ $type === 'all' ? 'selected' : '' }}>All</option>
                         <option value="posts" {{ $type === 'posts' ? 'selected' : '' }}>Posts</option>
                         <option value="campaigns" {{ $type === 'campaigns' ? 'selected' : '' }}>Campaigns</option>
@@ -22,7 +22,7 @@
                         <option value="invoices" {{ $type === 'invoices' ? 'selected' : '' }}>Invoices</option>
                         <option value="workflows" {{ $type === 'workflows' ? 'selected' : '' }}>Workflows</option>
                     </select>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors"><i class="fas fa-search"></i></button>
                 </div>
             </div>
         </form>
