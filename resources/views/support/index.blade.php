@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                             <thead>
                                 <tr>
                                     <th>Ticket #</th>
@@ -57,7 +57,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     <div class="card-footer">
                         {{ $tickets->links() }}

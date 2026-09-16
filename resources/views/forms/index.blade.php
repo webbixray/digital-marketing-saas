@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Name</th><th>Status</th><th>Submissions</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($forms as $form)
@@ -35,7 +35,7 @@
                     <tr><td colspan="4" class="text-center text-muted">No forms</td></tr>
                 @endforelse
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 </div>

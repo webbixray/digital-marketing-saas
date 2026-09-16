@@ -29,7 +29,7 @@
                             <div class="bg-red-50 text-red-800 border border-red-200 rounded-lg p-4 mb-4">{{ session('error') }}</div>
                         @endif
 
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                             <thead>
                                 <tr>
                                     <th>Filename</th>
@@ -60,7 +60,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

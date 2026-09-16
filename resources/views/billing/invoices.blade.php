@@ -27,7 +27,7 @@
             </div>
             <div class="card-body table-responsive p-0">
                 @if($invoices->count())
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50" id="invoicesTable">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50" id="invoicesTable">
                         <thead>
                             <tr>
                                 <th>Invoice #</th>
@@ -117,7 +117,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table></div>
                 @else
                     <div class="text-center py-5 text-muted">
                         <i class="fas fa-file-invoice fa-3x mb-3 d-block"></i>

@@ -8,7 +8,7 @@
         <div class="card-tools"><button class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm" data-toggle="modal" data-target="#inviteModal"><i class="fas fa-user-plus mr-1"></i> Invite</button></div>
     </div>
     <div class="card-body p-0">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($members as $member)
@@ -39,7 +39,7 @@
                     <tr><td colspan="6" class="text-center text-muted">No members</td></tr>
                 @endforelse
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 <!-- Invite Modal -->

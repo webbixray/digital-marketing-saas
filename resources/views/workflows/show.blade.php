@@ -18,7 +18,7 @@
         <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Execution History</h3></div>
             <div class="card-body p-0">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead><tr><th>Status</th><th>Started</th><th>Duration</th><th>Error</th></tr></thead>
                     <tbody>
                         @forelse($executions as $exec)
@@ -32,7 +32,7 @@
                             <tr><td colspan="4" class="text-center text-muted">No executions yet</td></tr>
                         @endforelse
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

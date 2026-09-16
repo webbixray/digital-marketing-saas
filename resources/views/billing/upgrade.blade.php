@@ -85,7 +85,7 @@
                 </h3>
             </div>
             <div class="card-body table-responsive p-0">
-                <table class="table table-bordered table-hover comparison-table">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="table table-bordered table-hover comparison-table">
                     <thead class="thead-light">
                         <tr>
                             <th>Feature</th>
@@ -145,7 +145,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

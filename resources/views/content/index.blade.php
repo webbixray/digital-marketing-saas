@@ -15,7 +15,7 @@
 
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="table-responsive">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -63,7 +63,7 @@
                         </tr>
                     @endforelse
                 </tbody>
-            </table>
+            </table></div>
         </div>
         @if($assets->hasPages())
             <div class="p-4 border-t border-gray-200 dark:border-gray-700">

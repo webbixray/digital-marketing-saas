@@ -9,7 +9,7 @@
         
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -49,7 +49,7 @@
                             <tr><td colspan="6" class="text-center">No custom fields found.</td></tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="card-footer">
                     {{ $fields->links() }}

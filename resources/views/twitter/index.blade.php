@@ -98,7 +98,7 @@
                             <h3 class="font-semibold text-gray-900 dark:text-white">Connected Twitter Accounts</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
-                            <table class="table table-hover text-nowrap">
+                            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="table table-hover text-nowrap">
                                 <thead>
                                     <tr>
                                         <th>Account</th>
@@ -144,7 +144,7 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>

@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Version</th><th>Name</th><th>Trigger</th><th>Changes</th><th>Created</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($versions as $version)
@@ -32,7 +32,7 @@
                     <tr><td colspan="6" class="text-center text-muted">No versions found</td></tr>
                 @endforelse
             </tbody>
-        </table>
+        </table></div>
     </div>
     <div class="card-footer">{{ $versions->links() }}</div>
 </div>

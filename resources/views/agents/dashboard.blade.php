@@ -166,7 +166,7 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <table class="table table-striped mb-0">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="table table-striped mb-0">
                     <thead>
                         <tr>
                             <th>Agent</th>
@@ -204,7 +204,7 @@
                         </tr>
                         @endforelse
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

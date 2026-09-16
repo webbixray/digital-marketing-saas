@@ -19,7 +19,7 @@
         <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Submissions</h3></div>
             <div class="card-body p-0">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead><tr><th>Data</th><th>Date</th></tr></thead>
                     <tbody>
                         @forelse($responses as $response)
@@ -31,7 +31,7 @@
                             <tr><td colspan="2" class="text-center text-muted">No submissions</td></tr>
                         @endforelse
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

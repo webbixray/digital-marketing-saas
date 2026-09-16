@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                         <thead>
                             <tr><th>Name</th><th>Type</th><th>Format</th><th>Schedule</th><th>Status</th><th>Actions</th></tr>
                         </thead>
@@ -38,7 +38,7 @@
                             <tr><td colspan="6" class="text-center">No reports found</td></tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="card-footer">{{ $reports->links() }}</div>
             </div>

@@ -52,7 +52,7 @@
                             <h3 class="font-semibold text-gray-900 dark:text-white">Invoices</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
+                            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                                 <thead>
                                     <tr>
                                         <th>Invoice #</th>
@@ -75,7 +75,7 @@
                                     <tr><td colspan="5" class="text-center">No invoices yet</td></tr>
                                     @endforelse
                                 </tbody>
-                            </table>
+                            </table></div>
                         </div>
                         <div class="card-footer">{{ $invoices->links() }}</div>
                     </div>

@@ -25,7 +25,7 @@
         <div class="card-tools"><a href="{{ route('invoices.create') }}" class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm"><i class="fas fa-plus mr-1"></i> New Invoice</a></div>
     </div>
     <div class="card-body p-0">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Invoice #</th><th>Amount</th><th>Status</th><th>Issue Date</th><th>Due Date</th><th>Actions</th></tr></thead>
             <tbody>
                 @forelse($invoices as $invoice)
@@ -54,7 +54,7 @@
                     <tr><td colspan="6" class="text-center text-muted">No invoices</td></tr>
                 @endforelse
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 </div>

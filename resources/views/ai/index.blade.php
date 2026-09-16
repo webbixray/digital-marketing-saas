@@ -71,7 +71,7 @@
             <h3 class="font-semibold text-gray-900 dark:text-white">Recent Generations</h3>
         </div>
         <div class="table-responsive">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Type</th>
@@ -100,7 +100,7 @@
                         </tr>
                     @endforelse
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 @endsection

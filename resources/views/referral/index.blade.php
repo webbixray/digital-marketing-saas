@@ -94,7 +94,7 @@
                         @if($stats['referrals']->isEmpty())
                             <p class="text-center text-muted py-4">No referrals yet. Share your link to start earning!</p>
                         @else
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -119,7 +119,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table></div>
                         @endif
                     </div>
                 </div>

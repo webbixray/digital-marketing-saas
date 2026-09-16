@@ -13,7 +13,7 @@
     </div>
     <div class="p-6">
         <div class="table-responsive">
-            <table class="table table-hover text-nowrap">
+            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="table table-hover text-nowrap">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -57,7 +57,7 @@
                     </tr>
                     @endforelse
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

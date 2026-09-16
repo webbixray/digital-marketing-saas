@@ -24,7 +24,7 @@
     <div class="p-6">
         <div class="grid grid-cols-12 gap-4>
             <div class="col-span-12 md:col-span-6">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Name</th>
                         <td>{{ $campaign->name }}</td>
@@ -57,10 +57,10 @@
                         <th>Reply To</th>
                         <td>{{ $campaign->reply_to ?? '—' }}</td>
                     </tr>
-                </table>
+                </table></div>
             </div>
             <div class="col-span-12 md:col-span-6">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Sent</th>
                         <td>{{ $campaign->sent_count }}</td>
@@ -105,7 +105,7 @@
                             @endif
                         </td>
                     </tr>
-                </table>
+                </table></div>
             </div>
         </div>
 
@@ -122,12 +122,12 @@
 
         @if($campaign->scheduled_at)
             <div class="mt-4">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200">
                     <tr>
                         <th style="width: 120px">Scheduled At</th>
                         <td>{{ $campaign->scheduled_at->format('Y-m-d H:i') }}</td>
                     </tr>
-                </table>
+                </table></div>
             </div>
         @endif
     </div>
@@ -139,7 +139,7 @@
             <span>Recipients ({{ $campaign->recipients->count() }})</span>
         </div>
         <div class="p-6">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
+            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 hover:bg-gray-50">
                 <thead>
                     <tr>
                         <th>Email</th>
@@ -162,7 +162,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 @endif

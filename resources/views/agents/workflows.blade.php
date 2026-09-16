@@ -94,7 +94,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="table table-striped table-hover mb-0">
                         <thead>
                             <tr>
                                 <th>Execution ID</th>
@@ -165,7 +165,7 @@
                             </tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

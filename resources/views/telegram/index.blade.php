@@ -60,7 +60,7 @@
             </div>
             <div class="p-6">
                 <p>Once linked, you can use these commands in Telegram:</p>
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                     <thead><tr><th>Command</th><th>Description</th></tr></thead>
                     <tbody>
                         <tr><td><code>/start</code></td><td>Get started with the bot</td></tr>
@@ -73,7 +73,7 @@
                         <tr><td><code>/ai [prompt]</code></td><td>Generate AI content</td></tr>
                         <tr><td><code>/help</code></td><td>Show all commands</td></tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
