@@ -15,11 +15,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Tailwind CSS -->
-    @vite(['resources/css/unified.css'])
-    
+    @vite(['resources/css/unified.css', 'resources/js/unified.js'])
+
     @stack('styles')
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100" style="font-family: 'Inter', sans-serif;">
+
+    <!-- Skip to main content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
+        Skip to main content
+    </a>
     
     <!-- Navigation -->
     <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -34,27 +39,65 @@
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Login</a>
-                    <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Get Started</a>
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Dashboard</a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Login</a>
+                        <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Get Started</a>
+                    @endauth
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Page content -->
-    <main>
+    <main id="main-content">
         @yield('content')
     </main>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                <div class="flex gap-4">
-                    <a href="{{ route('public.terms') }}">Terms</a>
-                    <a href="{{ route('public.privacy') }}">Privacy</a>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('public.features') }}">Features</a></li>
+                        <li><a href="{{ route('public.pricing') }}">Pricing</a></li>
+                        <li><a href="{{ route('public.docs') }}">Documentation</a></li>
+                    </ul>
                 </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('public.blog') }}">Blog</a></li>
+                        <li><a href="{{ route('public.contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('public.terms') }}">Terms</a></li>
+                        <li><a href="{{ route('public.privacy') }}">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Stay Updated</h4>
+                    <p class="text-sm">Get the latest marketing tips and product updates.</p>
+                    <form method="POST" action="{{ route('public.newsletter') }}" class="mt-4 flex gap-2">
+                        @csrf
+                        <input type="email" name="email" placeholder="Enter your email" required class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <hr class="border-gray-800 my-8">
+            <div class="text-center">
+                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
             </div>
         </div>
     </footer>
