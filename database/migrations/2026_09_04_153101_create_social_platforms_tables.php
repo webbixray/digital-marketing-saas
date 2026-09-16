@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('platform_username')->nullable();
             $table->string('platform_display_name')->nullable();
             $table->string('platform_account_type')->nullable(); // page, user, channel
-            $table->string('access_token')->nullable();
-            $table->string('refresh_token')->nullable();
+            $table->text('access_token')->nullable();
+            $table->text('refresh_token')->nullable();
             $tokenExpiresAt = $table->timestamp('token_expires_at')->nullable();
             $table->string('token_type')->nullable();
             $table->integer('scope')->nullable();
