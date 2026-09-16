@@ -221,7 +221,7 @@ return new class extends Migration
         // Invoice Items
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnDelete();
+            $table->foreignId('invoice_id')->nullable();
             $table->string('description');
             $table->string('type')->default('line_item'); // line_item, tax, discount, shipping
             $table->decimal('quantity', 8, 2)->default(1);

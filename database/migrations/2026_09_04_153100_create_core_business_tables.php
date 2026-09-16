@@ -85,7 +85,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->decimal('price', 8, 2)->default(0);
             $table->string('interval')->default('month');
-            $table->unsignedInteger('users')->default(1);
+            $table->unsignedInteger('users')->nullable()->default(1);
             $table->unsignedInteger('social_accounts')->default(1);
             $table->unsignedInteger('posts_per_month')->default(30);
             $table->unsignedInteger('campaigns')->default(1);
@@ -94,7 +94,7 @@ return new class extends Migration
             $table->unsignedInteger('ai_generations_per_month')->default(20);
             $table->unsignedInteger('landing_pages')->default(0);
             $table->unsignedInteger('forms')->default(0);
-            $table->json('features')->default(json_encode([]));
+            $table->json('features')->nullable();
             $table->text('description')->nullable();
             $table->string('stripe_price_id')->nullable();
             $table->boolean('is_active')->default(true);
@@ -190,7 +190,7 @@ return new class extends Migration
         Schema::create('campaign_post', function (Blueprint $table) {
             $table->id();
             $table->foreignId('campaign_id')->constrained('campaigns')->cascadeOnDelete();
-            $table->foreignId('social_post_id')->constrained('social_posts')->cascadeOnDelete();
+            $table->foreignId('social_post_id')->nullable();
             $table->timestamps();
             $table->unique(['campaign_id', 'social_post_id']);
         });
@@ -243,7 +243,7 @@ return new class extends Migration
         // Content Insights
         Schema::create('content_insights', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('social_post_id')->constrained('social_posts')->cascadeOnDelete();
+            $table->foreignId('social_post_id')->nullable();
             $table->date('insight_date');
             $table->unsignedInteger('impressions')->default(0);
             $table->unsignedInteger('reach')->default(0);

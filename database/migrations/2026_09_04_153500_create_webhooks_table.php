@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('url');
             $table->string('secret')->nullable();
-            $table->json('events')->default(json_encode([]));
+            $table->json('events')->nullable();
             $table->string('content_type')->default('application/json');
             $table->boolean('is_active')->default(true);
             $table->unsignedInteger('total_calls')->default(0);
