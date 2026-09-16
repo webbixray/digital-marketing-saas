@@ -228,64 +228,74 @@ class DemoSeeder extends Seeder
     }
 
     protected function seedUsers(Agency $agency): array
-    {
-        $users = [];
+        {
+            $users = [];
 
-        // Owner
-        $users['owner'] = User::create([
-            'name' => 'Sarah Johnson',
-            'email' => 'owner@agency.com',
-            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
-            'agency_id' => $agency->id,
-            'role' => 'owner',
-            'title' => 'CEO & Founder',
-            'phone' => '+1 (555) 111-2222',
-            'is_active' => true,
-            'is_approved' => true,
-            'last_active_at' => Carbon::now(),
-        ]);
+            // Create roles using Spatie
+            $roles = ['owner', 'admin', 'manager', 'staff'];
+            foreach ($roles as $roleName) {
+                \Spatie\Permission\Models\Role::firstOrCreate(['name' => $roleName]);
+            }
 
-        // Admin
-        $users['admin'] = User::create([
-            'name' => 'Michael Chen',
-            'email' => 'admin@agency.com',
-            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
-            'agency_id' => $agency->id,
-            'role' => 'admin',
-            'title' => 'Operations Manager',
-            'phone' => '+1 (555) 222-3333',
-            'is_active' => true,
-            'is_approved' => true,
-            'last_active_at' => Carbon::now()->subHours(2),
-        ]);
+            // Owner
+            $users['owner'] = User::create([
+                'name' => 'Sarah Johnson',
+                'email' => 'owner@agency.com',
+                'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
+                'agency_id' => $agency->id,
+                'role' => 'owner',
+                'title' => 'CEO & Founder',
+                'phone' => '+1 (555) 111-2222',
+                'is_active' => true,
+                'is_approved' => true,
+                'last_active_at' => Carbon::now(),
+            ]);
+            $users['owner']->assignRole('owner');
 
-        // Manager
-        $users['manager'] = User::create([
-            'name' => 'Emily Rodriguez',
-            'email' => 'manager@agency.com',
-            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
-            'agency_id' => $agency->id,
-            'role' => 'manager',
-            'title' => 'Social Media Manager',
-            'phone' => '+1 (555) 333-4444',
-            'is_active' => true,
-            'is_approved' => true,
-            'last_active_at' => Carbon::now()->subHours(5),
-        ]);
+            // Admin
+            $users['admin'] = User::create([
+                'name' => 'Michael Chen',
+                'email' => 'admin@agency.com',
+                'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
+                'agency_id' => $agency->id,
+                'role' => 'admin',
+                'title' => 'Operations Manager',
+                'phone' => '+1 (555) 222-3333',
+                'is_active' => true,
+                'is_approved' => true,
+                'last_active_at' => Carbon::now()->subHours(2),
+            ]);
+            $users['admin']->assignRole('admin');
 
-        // Member
-        $users['member'] = User::create([
-            'name' => 'David Kim',
-            'email' => 'member@agency.com',
-            'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
-            'agency_id' => $agency->id,
-            'role' => 'member',
-            'title' => 'Content Creator',
-            'phone' => '+1 (555) 444-5555',
-            'is_active' => true,
-            'is_approved' => true,
-            'last_active_at' => Carbon::now()->subDays(1),
-        ]);
+            // Manager
+            $users['manager'] = User::create([
+                'name' => 'Emily Rodriguez',
+                'email' => 'manager@agency.com',
+                'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
+                'agency_id' => $agency->id,
+                'role' => 'manager',
+                'title' => 'Social Media Manager',
+                'phone' => '+1 (555) 333-4444',
+                'is_active' => true,
+                'is_approved' => true,
+                'last_active_at' => Carbon::now()->subHours(5),
+            ]);
+            $users['manager']->assignRole('manager');
+
+            // Staff
+            $users['member'] = User::create([
+                'name' => 'David Kim',
+                'email' => 'member@agency.com',
+                'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
+                'agency_id' => $agency->id,
+                'role' => 'staff',
+                'title' => 'Content Creator',
+                'phone' => '+1 (555) 444-5555',
+                'is_active' => true,
+                'is_approved' => true,
+                'last_active_at' => Carbon::now()->subDays(1),
+            ]);
+            $users['member']->assignRole('staff');
 
         return $users;
     }
