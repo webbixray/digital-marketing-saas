@@ -1,113 +1,116 @@
-# Staging Environment Setup
+# Staging Deployment
 
-## Docker Desktop Installation (Windows)
-
-Since Docker Desktop requires a GUI installer, please follow these steps:
-
-### Step 1: Download Docker Desktop
-1. Go to: https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe
-2. Download the installer
-
-### Step 2: Install Docker Desktop
-1. Run the installer
-2. Make sure "Use WSL 2 instead of Hyper-V" is selected
-3. Click Install
-4. Restart your computer when prompted
-
-### Step 3: Start Docker Desktop
-1. Open Docker Desktop from Start Menu
-2. Wait for it to start (whale icon in system tray)
-3. Accept the license agreement if prompted
-
-### Step 4: Verify Installation
-```bash
-docker --version
-docker-compose version
-```
-
-## Staging Environment Files
-
-The following files have been prepared for your staging environment:
-
-| File | Purpose |
-|------|---------|
-| `docker-compose.staging.yml` | Docker Compose configuration for staging |
-| `Dockerfile.staging` | Docker image with PHP 8.4, Nginx, Node.js |
-| `docker/nginx/default.conf` | Nginx server configuration |
-| `docker/mysql/my.cnf` | MySQL configuration for staging |
-| `docker/redis/redis.conf` | Redis configuration for staging |
-
-## Quick Start (After Docker Install)
+## Quick Start (Hybrid: Databases in Docker, App on Host)
 
 ```bash
-# Navigate to project
-cd C:\xampp\htdocs\digitalmarketingsaas
+# 1. Start databases
+docker-compose -f docker-compose.hybrid.yml up -d
 
-# Start staging environment
-docker-compose -f docker-compose.staging.yml up -d
+# 2. First-time setup: create MySQL user
+docker exec dmsaas-db mysql -u root -prootpassword -e "CREATE USER IF NOT EXISTS 'dmsaas'@'%' IDENTIFIED BY 'dmspassword'; GRANT ALL PRIVILEGES ON digitalmarketingsaas.* TO 'dmsaas'@'%'; CREATE DATABASE IF NOT EXISTS digitalmarketingsaas; FLUSH PRIVILEGES;"
 
-# Run database migrations
-docker-compose -f docker-compose.staging.yml exec app php artisan migrate --force
+# 3. Run migrations
+php artisan migrate --force
 
-# Seed demo data (optional)
-docker-compose -f docker-compose.staging.yml exec app php artisan db:seed --force
-
-# Access the application
-# http://localhost:8080
+# 4. Start app
+php artisan serve --host=0.0.0.0 --port=8000
 ```
 
-## Staging Configuration
+## Access
 
-The staging environment uses:
+- **App**: http://localhost:8000
+- **DB**: localhost:3306 (dmsaas / dmspassword / digitalmarketingsaas)
+- **Redis**: localhost:6379
 
-- **App**: PHP 8.4 + Nginx + Node.js
-- **Database**: MySQL 8.0
-- **Cache/Queue**: Redis 7
-- **Port**: 8080 (change in docker-compose.staging.yml if needed)
+## Services
+
+| Service | Port | Container | Status |
+|---------|------|-----------|--------|
+| App (host PHP) | 8000 | — | ✅ Running |
+| MySQL 8.0 | 3306 | dmsaas-db | ✅ Running |
+| Redis 7 | 6379 | dmsaas-redis | ✅ Running |
+
+## Database Credentials
+
+| User | Password | Database |
+|------|----------|----------|
+| root | rootpassword | — |
+| dmsaas | dmspassword | digitalmarketingsaas |
+
+## Configuration
+
+Current `.env` for staging:
+
+```
+APP_ENV=staging
+APP_DEBUG=false
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=digitalmarketingsaas
+DB_USERNAME=dmsaas
+DB_PASSWORD=dmspassword
+SESSION_DRIVER=file
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+```
 
 ## Useful Commands
 
 ```bash
+# Start databases
+docker-compose -f docker-compose.hybrid.yml up -d
+
+# Stop all
+docker-compose -f docker-compose.hybrid.yml down
+
 # View logs
-docker-compose -f docker-compose.staging.yml logs -f
+docker-compose -f docker-compose.hybrid.yml logs -f
 
-# Stop all services
-docker-compose -f docker-compose.staging.yml down
+# MySQL shell
+docker exec -it dmsaas-db mysql -u dmsaas -p dmspassword digitalmarketingsaas
 
-# Rebuild after code changes
-docker-compose -f docker-compose.staging.yml up -d --build
+# Redis CLI
+docker exec -it dmsaas-redis redis-cli
 
-# Run artisan commands
-docker-compose -f docker-compose.staging.yml exec app php artisan [command]
-
-# Access MySQL
-docker-compose -f docker-compose.staging.yml exec db mysql -u dmsaas -p
-
-# Access Redis
-docker-compose -f docker-compose.staging.yml exec redis redis-cli
-
-# Clear caches
-docker-compose -f docker-compose.staging.yml exec app php artisan cache:clear
-docker-compose -f docker-compose.staging.yml exec app php artisan config:clear
-docker-compose -f docker-compose.staging.yml exec app php artisan route:clear
-docker-compose -f docker-compose.staging.yml exec app php artisan view:clear
+# Run artisan
+php artisan [command]
 ```
+
+## Full Docker Deployment (Future)
+
+When Docker networking is fixed:
+
+```bash
+# Build and run everything in Docker
+docker-compose -f docker-compose.zero-build.yml up -d
+
+# Access at http://localhost:8080
+```
+
+## File Reference
+
+| File | Purpose |
+|------|---------|
+| `docker-compose.hybrid.yml` | Databases only (Docker) + app on host |
+| `docker-compose.zero-build.yml` | Full stack (official images, no build) |
+| `docker-compose.staging.yml` | Full stack with custom Dockerfile |
+| `docker/nginx/default.conf` | Nginx config (fastcgi_pass app:9000) |
+| `docker/mysql/my.cnf` | MySQL config (UTF8MB4, InnoDB) |
+| `docker/redis/redis.conf` | Redis config (persistence, LRU) |
+| `docker/php/local.ini` | PHP config (256M, UTC) |
+| `docker.env` | Environment for Docker containers |
+| `Dockerfile` | Custom PHP image (Alpine + Redis ext) |
+| `docker-entrypoint.sh` | Container startup script |
 
 ## Troubleshooting
 
-### Docker won't start
-- Enable Virtualization in BIOS (Intel VT-x / AMD-V)
-- Enable Hyper-V or WSL2 in Windows Features
-- Restart computer
-
-### Port already in use
-- Change ports in `docker-compose.staging.yml`
-- Default: 8080 (app), 3306 (mysql), 6379 (redis)
-
-### Database connection failed
-- Wait 30 seconds for MySQL to start
-- Check credentials in docker-compose.staging.yml
-
-## Production Deployment
-
-For production deployment, use the main `docker-compose.yml` file with production environment variables.
+| Issue | Solution |
+|-------|----------|
+| MySQL access denied | Run the CREATE USER command above |
+| Port 3306 in use | Change port in docker-compose.hybrid.yml |
+| Port 8000 in use | Stop other servers or use --port=8080 |
+| Redis class not found | Host lacks ext-redis; using predis instead |
+| Class "Redis" not found | Switch REDIS_CLIENT=predis or install ext-redis |

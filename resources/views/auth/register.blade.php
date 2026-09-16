@@ -1,4 +1,4 @@
-@extends('layouts.unified')
+@extends('layouts.public-unified')
 
 @section('title', 'Create Account')
 
