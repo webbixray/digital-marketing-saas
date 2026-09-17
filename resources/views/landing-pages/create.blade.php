@@ -10,18 +10,20 @@
             <div class="mb-4"><label>Headline</label><input type="text" name="headline" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Your compelling headline"></div>
             <div class="mb-4"><label>Content</label><textarea name="content" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="6" placeholder="Page content (HTML supported)"></textarea></div>
             <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>CTA Text</label><input type="text" name="cta_text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Get Started">
-                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>CTA URL</label><input type="url" name="cta_url" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://...">
+                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>CTA Text</label><input type="text" name="cta_text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Get Started"></div></div>
+                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>CTA URL</label><input type="url" name="cta_url" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://..."></div></div>
             </div>
             <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Background</label><input type="color" name="background_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#ffffff">
-                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Text Color</label><input type="color" name="text_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#333333">
-                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Button Color</label><input type="color" name="button_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#007bff">
-                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Button Text</label><input type="color" name="button_text_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#ffffff">
+                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Background</label><input type="color" name="background_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#ffffff"></div></div>
+                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Text Color</label><input type="color" name="text_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#333333"></div></div>
+                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Button Color</label><input type="color" name="button_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#007bff"></div></div>
+                <div class="col-span-12 md:col-span-3"><div class="mb-4"><label>Button Text</label><input type="color" name="button_text_color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="#ffffff"></div></div>
             </div>
         </div>
         <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700"><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Create</button> <a href="{{ route('landing-pages.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 inline-flex items-center gap-2 font-medium transition-colors">Cancel</a></div>
     </form>
+</div>
+</div>
 </div>
 </div>
 @endsection

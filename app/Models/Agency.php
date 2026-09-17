@@ -43,6 +43,13 @@ class Agency extends Model
         'forms_count',
         'custom_settings',
         'branding',
+        'ai_credits',
+        'ai_credits_purchased',
+        'free_posts_limit',
+        'free_ai_limit',
+        'free_accounts_limit',
+        'free_team_limit',
+        'free_clients_limit',
     ];
 
     protected $casts = [

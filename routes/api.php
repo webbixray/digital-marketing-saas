@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AI\AICreditController;
 use App\Http\Controllers\Api\ApiAgencyController;
 use App\Http\Controllers\Api\ApiAgentController;
 use App\Http\Controllers\Api\ApiAgentWorkflowController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Api\ApiSocialPostController;
 use App\Http\Controllers\Api\ApiWorkflowController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\HealthCheckController;
+use App\Http\Controllers\QuotaController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\WorkflowWebhookController;
@@ -108,6 +110,31 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
         Route::get('/optimal-times', [ApiAnalyticsController::class, 'optimalTimes']);
         Route::get('/best-platform', [ApiAnalyticsController::class, 'bestPlatform']);
     });
+
+    // Quota management
+    Route::get('/quota', [QuotaController::class, 'status']);
+    Route::post('/quota/check', [QuotaController::class, 'check']);
+
+    // AI Credits
+    Route::get('/ai/credits/balance', [AICreditController::class, 'balance']);
+    Route::post('/ai/credits/purchase', [AICreditController::class, 'purchase']);
+    Route::get('/ai/credits/success', [AICreditController::class, 'success']);
+
+    // Client Reports
+    Route::get('client-reports', [ClientReportController::class, 'index']);
+    Route::post('client-reports', [ClientReportController::class, 'generate']);
+    Route::get('client-reports/{report}', [ClientReportController::class, 'show']);
+    Route::post('client-reports/{report}/publish', [ClientReportController::class, 'publish']);
+    Route::delete('client-reports/{report}', [ClientReportController::class, 'destroy']);
+
+    // Referrals
+    Route::get('/referrals/stats', [ReferralController::class, 'stats']);
+
+    // Metrics (admin only)
+    Route::get('/metrics', [MetricsController::class, 'index']);
+
+    // Dashboard insights
+    Route::get('/dashboard/insights', [DashboardInsightsController::class, 'index']);
 });
 
 // Public webhook endpoint (no auth)

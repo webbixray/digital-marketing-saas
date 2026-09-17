@@ -92,6 +92,7 @@ class EventServiceProvider extends ServiceProvider
         Gate::policy(Agency::class, AgencyPolicy::class);
         Gate::policy(Campaign::class, CampaignPolicy::class);
         Gate::policy(Client::class, ClientPolicy::class);
+        Gate::policy(ClientReport::class, ClientReportPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(SocialPost::class, SocialPostPolicy::class);
         Gate::policy(Workflow::class, WorkflowPolicy::class);

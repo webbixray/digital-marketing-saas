@@ -10,6 +10,7 @@ use App\Models\EmailCampaign;
 use App\Models\Invoice;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -496,5 +497,87 @@ class AnalyticsService
             ->orderByDesc('open_rate')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Generate a client-facing report for a specific date range.
+     */
+    public function generateClientReport(Agency $agency, Client $client, string $startDate, string $endDate): array
+    {
+        $start = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
+
+        $posts = SocialPost::where('agency_id', $agency->id)
+            ->where('client_id', $client->id)
+            ->whereBetween('published_at', [$start, $end])
+            ->get();
+
+        $campaigns = Campaign::where('agency_id', $agency->id)
+            ->where('client_id', $client->id)
+            ->whereBetween('start_date', [$start, $end])
+            ->get();
+
+        // Calculate engagement from individual metrics
+        $totalEngagement = $posts->sum(function ($post) {
+            return ($post->likes_count ?? 0) + ($post->comments_count ?? 0) + ($post->shares_count ?? 0);
+        });
+        $totalImpressions = $posts->sum('views_count');
+        $avgEngagementRate = $totalImpressions > 0
+            ? round(($totalEngagement / $totalImpressions) * 100, 2)
+            : 0;
+
+        $platformStats = $posts->groupBy('platform')->map(function ($platformPosts) {
+            $engagement = $platformPosts->sum(function ($post) {
+                return ($post->likes_count ?? 0) + ($post->comments_count ?? 0) + ($post->shares_count ?? 0);
+            });
+            $impressions = $platformPosts->sum('views_count');
+
+            return [
+                'posts_count' => $platformPosts->count(),
+                'total_engagement' => $engagement,
+                'total_impressions' => $impressions,
+                'avg_engagement_rate' => $impressions > 0
+                    ? round(($engagement / $impressions) * 100, 2)
+                    : 0,
+            ];
+        });
+
+        return [
+            'period' => [
+                'start' => $start->toDateString(),
+                'end' => $end->toDateString(),
+                'days' => $start->diffInDays($end) + 1,
+            ],
+            'summary' => [
+                'total_posts' => $posts->count(),
+                'total_campaigns' => $campaigns->count(),
+                'total_engagement' => $totalEngagement,
+                'total_impressions' => $totalImpressions,
+                'avg_engagement_rate' => $avgEngagementRate,
+            ],
+            'platform_breakdown' => $platformStats,
+            'top_posts' => $posts->sortByDesc('engagement_rate')->take(5)->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'platform' => $post->platform,
+                    'content' => Str::limit($post->content, 100),
+                    'engagement_rate' => $post->engagement_rate,
+                    'views_count' => $post->views_count,
+                    'likes_count' => $post->likes_count,
+                    'comments_count' => $post->comments_count,
+                    'shares_count' => $post->shares_count,
+                    'published_at' => $post->published_at?->toDateString(),
+                ];
+            })->values(),
+            'campaigns' => $campaigns->map(function ($campaign) {
+                return [
+                    'id' => $campaign->id,
+                    'name' => $campaign->name,
+                    'status' => $campaign->status,
+                    'posts_count' => $campaign->posts_count,
+                ];
+            }),
+            'generated_at' => now()->toDateTimeString(),
+        ];
     }
 }

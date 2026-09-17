@@ -180,7 +180,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <!-- Billing History -->
 <div class="grid grid-cols-12 gap-4>
@@ -245,6 +244,5 @@
             @endif
         </div>
     </div>
-</div>
 </div>
 @endsection

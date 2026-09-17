@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Concerns\StructuredLogger;
 use App\Models\Invoice;
 use App\Services\Billing\StripeGateway;
+use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -72,6 +73,13 @@ class BillingController extends Controller
 
     public function success(Request $request)
     {
+        // Award referral credits if user was referred
+        $user = $request->user();
+        if ($user && $user->referred_by) {
+            $referralService = app(ReferralService::class);
+            $referralService->awardReferralCredits($user);
+        }
+
         return view('billing.success');
     }
 

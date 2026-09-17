@@ -602,13 +602,13 @@ class AIContentWorkflowTest extends TestCase
     {
         $agency = Agency::factory()->create([
             'subscription_plan' => 'starter',
-            'ai_generations_count' => 50,
+            'ai_generations_count' => 25,
         ]);
 
         $quotaService = app(QuotaService::class);
         $percentage = $quotaService->usagePercentage($agency, 'ai_generations');
 
-        // 50 out of 100 = 50%
+        // 25 out of 50 = 50%
         $this->assertEquals(50.0, $percentage);
     }
 

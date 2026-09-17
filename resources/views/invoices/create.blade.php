@@ -7,8 +7,8 @@
     <form action="{{ route('invoices.store') }}" method="POST">@csrf
         <div class="p-6">
             <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>Issue Date</label><input type="date" name="issue_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ date('Y-m-d') }}" required>
-                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>Due Date</label><input type="date" name="due_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ date('Y-m-d', strtotime('+30 days')) }}" required>
+                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>Issue Date</label><input type="date" name="issue_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ date('Y-m-d') }}" required></div></div>
+                <div class="col-span-12 md:col-span-6"><div class="mb-4"><label>Due Date</label><input type="date" name="due_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ date('Y-m-d', strtotime('+30 days')) }}" required></div></div>
             </div>
             <div class="mb-4"><label>Notes</label><textarea name="notes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="2"></textarea></div>
             <h5>Line Items</h5>
@@ -24,6 +24,8 @@
         </div>
         <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700"><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Create</button> <a href="{{ route('invoices.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 inline-flex items-center gap-2 font-medium transition-colors">Cancel</a></div>
     </form>
+</div>
+</div>
 </div>
 </div>
 @endsection

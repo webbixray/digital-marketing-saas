@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: digitalmarketingsaas/app:latest
+    container_name: dmsaas-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_HOST=db
+      - DB_DATABASE=digitalmarketingsaas
+      - DB_USERNAME=dmsaas
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+  webserver:
+    image: nginx:alpine
+    container_name: dmsaas-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - dmsaas-network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: dmsaas-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: digitalmarketingsaas
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: dmsaas
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - dmsaas-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dmsaas-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - dmsaas-network
+
+  queue:
+    image: digitalmarketingsaas/app:latest
+    container_name: dmsaas-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work redis --sleep=3 --tries=3
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - DB_DATABASE=digitalmarketingsaas
+      - DB_USERNAME=dmsaas
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+  scheduler:
+    image: digitalmarketingsaas/app:latest
+    container_name: dmsaas-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - DB_DATABASE=digitalmarketingsaas
+      - DB_USERNAME=dmsaas
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - dmsaas-network
+    depends_on:
+      - db
+      - redis
+
+networks:
+  dmsaas-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local

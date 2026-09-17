@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReferralService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ReferralController extends Controller
@@ -32,5 +33,16 @@ class ReferralController extends Controller
         session(['referral_code' => $code]);
 
         return redirect()->route('register');
+    }
+
+    /**
+     * Get referral stats for API
+     */
+    public function stats(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $stats = $this->referralService->getStats($user);
+
+        return response()->json($stats);
     }
 }

@@ -28,7 +28,7 @@
                         @endforeach
                     </div>
                 </div>
-            @endif>
+            @endif
 
             <h4 class="font-medium text-gray-900 dark:text-white mb-3">Send Invitations</h4>
             <form action="{{ route('onboarding.step3') }}" method="POST" id="inviteForm">

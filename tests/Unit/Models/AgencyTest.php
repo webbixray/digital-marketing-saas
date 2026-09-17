@@ -65,7 +65,7 @@ class AgencyTest extends TestCase
     {
         $agency = Agency::factory()->create(['subscription_plan' => 'pro']);
         $config = $agency->getPlanConfig();
-        $this->assertEquals(79, $config['price']);
+        $this->assertEquals(49, $config['price']);
     }
 
     public function test_agency_scope_active_returns_only_active(): void

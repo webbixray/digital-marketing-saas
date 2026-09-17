@@ -30,6 +30,7 @@
             outline: 2px solid #6366f1;
             outline-offset: 2px;
         }
+        [x-cloak] { display: none !important; }
         /* Smooth dark mode transition */
         html {
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -107,8 +108,9 @@
     @stack('styles')
 </head>
 <body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter" 
-      x-data="{ 
-          sidebarOpen: false, 
+      x-data="{
+          srAnnouncement: '',
+          sidebarOpen: false,
           sidebarMini: localStorage.getItem('sidebarMini') === 'true',
           darkMode: localStorage.getItem('darkMode') === 'true',
           searchOpen: false,
@@ -164,7 +166,7 @@
     <div id="loading-bar" :class="{ 'loading': loading }" aria-hidden="true"></div>
 
     <!-- Screen reader announcements -->
-    <div aria-live="polite" aria-atomic="true" class="sr-only" x-text="srAnnouncement"></div>
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="sr-announcements"></div>
 
     <!-- Skip to main content -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:dark:bg-gray-800">
@@ -734,8 +736,8 @@
     </div>
 
     <!-- Toast Container -->
-    <div class="fixed bottom-4 right-4 z-[70] space-y-2" aria-live="polite" aria-atomic="true">
-        <template x-for="toast in toasts" :key="toast.id">
+    <div x-data class="fixed bottom-4 right-4 z-[70] space-y-2" aria-live="polite" aria-atomic="true">
+        <template x-for="toast in $store.toasts.items" :key="toast.id">
             <div x-show="toast.visible"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-x-8"
@@ -754,33 +756,28 @@
     <!-- Toast helper script -->
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('toast', () => ({
-                toasts: [],
+            Alpine.store('toasts', {
+                items: [],
                 toastId: 0,
                 show(message, type = 'info') {
                     const id = ++this.toastId;
-                    this.toasts.push({ id, message, type, visible: true });
+                    this.items.push({ id, message, type, visible: true });
                     setTimeout(() => {
-                        const toast = this.toasts.find(t => t.id === id);
+                        const toast = this.items.find(t => t.id === id);
                         if (toast) toast.visible = false;
                         setTimeout(() => {
-                            this.toasts = this.toasts.filter(t => t.id !== id);
+                            this.items = this.items.filter(t => t.id !== id);
                         }, 300);
                     }, 4000);
                 }
-            }));
+            });
         });
-        // Global toast function
+        // Global toast function - uses Alpine.store for reliable global access
         window.showToast = function(message, type = 'info') {
-            const event = new CustomEvent('toast', { detail: { message, type } });
-            document.dispatchEvent(event);
-        };
-        document.addEventListener('toast', (e) => {
-            const container = document.querySelector('[x-data="toast"]');
-            if (container && container._x_dataStack) {
-                container._x_dataStack[0].show(e.detail.message, e.detail.type);
+            if (typeof Alpine !== 'undefined' && Alpine.store('toasts')) {
+                Alpine.store('toasts').show(message, type);
             }
-        });
+        };
     </script>
 
     @stack('scripts')

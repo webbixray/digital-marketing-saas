@@ -76,15 +76,17 @@ class MediaLibraryController extends Controller
         foreach ($request->file('files') as $file) {
             try {
                 $mime = $file->getMimeType();
-                if (!in_array($mime, $allowedMimes)) {
+                if (! in_array($mime, $allowedMimes)) {
                     $errors[] = "File {$file->getClientOriginalName()} has invalid MIME type.";
+
                     continue;
                 }
 
-                if (str_starts_with($mime, 'image/') && !str_contains($mime, 'svg')) {
+                if (str_starts_with($mime, 'image/') && ! str_contains($mime, 'svg')) {
                     $imageInfo = @getimagesize($file->getRealPath());
-                    if (!$imageInfo) {
+                    if (! $imageInfo) {
                         $errors[] = "File {$file->getClientOriginalName()} is not a valid image.";
+
                         continue;
                     }
                 }
@@ -102,9 +104,9 @@ class MediaLibraryController extends Controller
             }
         }
 
-        $message = count($uploaded) . ' file(s) uploaded successfully.';
+        $message = count($uploaded).' file(s) uploaded successfully.';
         if (count($errors) > 0) {
-            $message .= ' ' . count($errors) . ' file(s) failed.';
+            $message .= ' '.count($errors).' file(s) failed.';
         }
 
         return redirect()->route('media.index')
@@ -129,9 +131,11 @@ class MediaLibraryController extends Controller
 
         try {
             $uploadService->delete($asset);
+
             return redirect()->route('media.index')->with('success', 'File deleted successfully.');
         } catch (\Exception $e) {
             Log::error('File delete failed', ['asset_id' => $asset->id, 'error' => $e->getMessage()]);
+
             return redirect()->route('media.index')->with('error', 'Failed to delete file.');
         }
     }

@@ -5,7 +5,7 @@
 
  
  <x-flash-messages />
- <div class="grid grid-cols-12 gap-4 mb-2><div class="col-span-12 sm:col-span-6">
+ <div class="grid grid-cols-12 gap-4 mb-2"><div class="col-span-12 sm:col-span-6">
   <h1 class="m-0">Create A/B Test</h1>
   </div>
   <div class="col-span-12 sm:col-span-6">
@@ -15,9 +15,7 @@
    <li class="text-gray-900 font-medium">Create</li>
   </ol>
   </div>
- </div>
- </div>
-</div>
+  </div>
 
 
  
@@ -129,6 +127,5 @@
    </form>
   </div>
   </div>
- </div>
  </div>
 </section>

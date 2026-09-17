@@ -5,7 +5,7 @@
 
  
   <x-flash-messages />
-  <div class="grid grid-cols-12 gap-4 mb-2><div class="col-span-12 sm:col-span-6">
+  <div class="grid grid-cols-12 gap-4 mb-2"><div class="col-span-12 sm:col-span-6">
     <h1 class="m-0">{{ $test->name }}</h1>
    </div>
    <div class="col-span-12 sm:col-span-6">
@@ -16,12 +16,11 @@
     </ol>
    </div>
   </div>
- </div>
 </div>
 
 
  
-  <div class="grid grid-cols-12 gap-4><div class="col-span-12 md:col-span-8">
+  <div class="grid grid-cols-12 gap-4"><div class="col-span-12 md:col-span-8">
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <h3 class="font-semibold text-gray-900 dark:text-white">Test Results</h3>
@@ -136,6 +135,4 @@
      </div>
     </div>
    </div>
-  </div>
- </div>
-</section>
+   </section>

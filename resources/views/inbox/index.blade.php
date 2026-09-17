@@ -44,6 +44,7 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach($inbox['messages'] as $message)
+                                @if(!is_object($message)) @continue; @endif
                                 <tr class="{{ $message->status === 'unread' ? 'bg-indigo-50 dark:bg-indigo-900/20' : '' }} hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                         {{ ucfirst($message->platform) }}

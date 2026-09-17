@@ -16,7 +16,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <div class="content">
         
@@ -154,9 +153,6 @@
                 </div>
             </div>
             @endif
-        </div>
-    </div>
-</div>
 
 @push('scripts')
 <script>
@@ -165,3 +161,4 @@
     });
 </script>
 @endpush
+</div>

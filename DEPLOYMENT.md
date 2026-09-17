@@ -1,259 +1,229 @@
 # Digital Marketing SaaS - Production Deployment Guide
 
+## Overview
+
+Multi-tenant SaaS platform for digital marketing agencies. AI-powered social media management across Facebook, Instagram, X (Twitter), LinkedIn, TikTok, Pinterest, and YouTube.
+
 ## Prerequisites
 
-- Docker & Docker Compose
-- MySQL 8.0+
-- Redis 7.0+
-- PHP 8.4+
-- Composer 2.x
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- Docker Compose v2+
+- Git
+- Domain name (for production)
 
-## Quick Start
+## Quick Start (Production)
 
-1. **Clone and configure:**
-   ```bash
-   git clone https://github.com/webbixray/digital-marketing-saas.git
-   cd digitalmarkingsaas
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   composer install --no-dev --optimize-autoloader
-   npm install && npm run build
-   ```
-
-3. **Configure environment:**
-   ```env
-   APP_ENV=production
-   APP_DEBUG=false
-   APP_URL=https://your-domain.com
-
-   DB_CONNECTION=mysql
-   DB_HOST=db
-   DB_PORT=3306
-   DB_DATABASE=digitalmarketingsaas
-   DB_USERNAME=dmsaas
-   DB_PASSWORD=your_secure_password
-
-   REDIS_HOST=redis
-   REDIS_PORT=6379
-
-   QUEUE_CONNECTION=redis
-   SESSION_DRIVER=redis
-   CACHE_DRIVER=redis
-
-   MAIL_MAILER=smtp
-   MAIL_HOST=smtp.mailgun.org
-   MAIL_PORT=587
-   MAIL_USERNAME=postmaster@your-domain.com
-   MAIL_PASSWORD=your_mail_password
-   MAIL_ENCRYPTION=tls
-   MAIL_FROM_ADDRESS="hello@your-domain.com"
-   MAIL_FROM_NAME="Digital Marketing SaaS"
-
-   STRIPE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxx
-   STRIPE_SECRET=sk_live_xxxxxxxxxxxxxxxxxxxxxxxx
-   STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxx
-
-   SENTRY_LARAVEL_DSN=https://xxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
-   ```
-
-4. **Run migrations and seed:**
-   ```bash
-   php artisan migrate --force
-   php artisan db:seed --force
-   ```
-
-5. **Start services:**
-   ```bash
-   docker-compose up -d
-   ```
-
-## Queue Workers
-
-Queue workers run automatically via Docker Compose. For manual setup:
+### 1. Clone and configure
 
 ```bash
-# Start queue worker
-php artisan queue:work redis --sleep=3 --tries=3
-
-# Start scheduler
-php artisan schedule:work
+git clone https://github.com/webbixray/digital-marketing-saas.git
+cd digital-marketingsaas
+cp env.production.example .env
 ```
 
-## Scheduled Tasks
+### 2. Configure environment
 
-The following tasks run automatically:
-
-| Task | Frequency | Command |
-|------|-----------|---------|
-| Process scheduled posts | Every minute | `social:process-scheduled` |
-| Retry failed posts | Every 5 minutes | `social:retry-failed` |
-| Send email campaigns | Every minute | `email:send-campaigns` |
-| Fetch platform metrics | Every hour | `social:fetch-metrics` |
-| Run workflow scheduler | Every minute | `workflows:run-scheduler` |
-
-## Stripe Webhook Setup
-
-1. Go to Stripe Dashboard → Developers → Webhooks
-2. Add endpoint: `https://your-domain.com/billing/webhook`
-3. Select events:
-   - `checkout.session.completed`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-   - `invoice.paid`
-   - `invoice.payment_failed`
-4. Copy webhook secret to `STRIPE_WEBHOOK_SECRET`
-
-## Email Configuration
-
-### Recommended: Mailgun (Free tier: 100 emails/month)
-
-1. Sign up at https://www.mailgun.com
-2. Add your domain
-3. Set environment variables:
-   ```env
-   MAIL_MAILER=smtp
-   MAIL_HOST=smtp.mailgun.org
-   MAIL_PORT=587
-   MAIL_USERNAME=postmaster@your-domain.com
-   MAIL_PASSWORD=your_mailgun_password
-   ```
-
-### Alternative: Amazon SES
+Edit `.env` with your production values:
 
 ```env
-MAIL_MAILER=ses
-AWS_ACCESS_KEY_ID=your_key
-AWS_SECRET_ACCESS_KEY=your_secret
-AWS_DEFAULT_REGION=us-east-1
+APP_NAME="Digital Marketing SaaS"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+DB_HOST=db
+DB_DATABASE=digitalmarketingsaas
+DB_USERNAME=dmsaas
+DB_PASSWORD=<REDACTED>
+
+REDIS_HOST=redis
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+
+# Generate a secure key
+APP_KEY=base64:your-generated-key-here
 ```
 
-## Sentry Error Tracking (Recommended)
+### 3. Build and start containers
 
-1. Create account at https://sentry.io
-2. Create new project → Laravel
-3. Copy DSN to `SENTRY_LARAVEL_DSN`
-
-## File Storage
-
-### Local (Default)
-
-```env
-FILESYSTEM_DISK=local
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-### Amazon S3 (Recommended for production)
+### 4. Run migrations and seeders
 
-```env
-FILESYSTEM_DISK=s3
-AWS_ACCESS_KEY_ID=your_key
-AWS_SECRET_ACCESS_KEY=your_secret
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=your-bucket-name
+```bash
+docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+docker-compose -f docker-compose.prod.yml exec app php artisan db:seed --force
 ```
 
-## SSL/HTTPS
+### 5. Generate application key
 
-For production, ensure SSL is configured:
+```bash
+docker-compose -f docker-compose.prod.yml exec app php artisan key:generate --force
+```
 
-1. Use Cloudflare (free) or Let's Encrypt
-2. Set `APP_URL=https://your-domain.com`
-3. Set `SESSION_SECURE_COOKIE=true` in `.env`
+### 6. Optimize
+
+```bash
+docker-compose -f docker-compose.prod.yml exec app php artisan config:cache
+docker-compose -f docker-compose.prod.yml exec app php artisan route:cache
+docker-compose -f docker-compose.prod.yml exec app php artisan view:cache
+```
+
+### 7. Set up SSL (Let's Encrypt)
+
+```bash
+# Install certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obtain certificate
+sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+
+# Auto-renewal
+sudo certbot renew --dry-run
+```
+
+## Architecture
+
+### Services
+
+| Service | Port | Description |
+|---------|------|-------------|
+| app | 9000 | PHP-FPM application |
+| webserver | 80/443 | Nginx reverse proxy |
+| db | 3306 | MySQL 8.0 |
+| redis | 6379 | Redis (cache/sessions/queue) |
+| queue | - | Laravel queue worker |
+| scheduler | - | Laravel task scheduler |
+
+### Docker Compose Files
+
+| File | Purpose |
+|------|---------|
+| `docker-compose.yml` | Local development |
+| `docker-compose.staging.yml` | Staging environment |
+| `docker-compose.prod.yml` | Production environment |
+
+## Security
+
+### Implemented
+
+- Multi-tenant isolation (agency_id on all models)
+- Role-based access control (Spatie permissions)
+- API rate limiting (per-user and per-platform)
+- Quota enforcement (plan-based limits)
+- Webhook secret validation
+- Security headers (CSP, HSTS, X-Frame-Options, etc.)
+- Input validation on all endpoints
+- CSRF protection
+- Encrypted sessions
+- SQL injection prevention (Eloquent ORM)
+- XSS prevention (Blade templating)
+
+### Production Checklist
+
+- [ ] `APP_DEBUG=false`
+- [ ] `APP_ENV=production`
+- [ ] Strong `APP_KEY` generated
+- [ ] Database passwords changed
+- [ ] Redis password set
+- [ ] SSL certificate installed
+- [ ] Security headers verified
+- [ ] Backups configured
+- [ ] Monitoring enabled (Sentry)
+- [ ] Log rotation configured
 
 ## Monitoring
 
-### Health Check Endpoint
-
-```
-GET /api/health
-```
-
-Returns JSON with status of database, cache, queue, and storage.
-
-### Telescope (Local Only)
+### Health Checks
 
 ```bash
-php artisan telescope:publish
+# Application health
+curl https://your-domain.com/up
+
+# API status
+curl https://your-domain.com/api/v1/status
 ```
 
-Access at `/telescope` (disabled in production by default).
+### Logs
 
-## Backup Strategy
+```bash
+# Application logs
+docker-compose -f docker-compose.prod.yml logs -f app
 
-1. **Database:** Daily automated backups
-   ```bash
-   mysqldump -u dmsaas -p digitalmarketingsaas > backup_$(date +%Y%m%d).sql
-   ```
+# Nginx logs
+docker-compose -f docker-compose.prod.yml logs -f webserver
 
-2. **Files:** Sync to S3
-   ```bash
-   aws s3 sync storage/app/public s3://your-bucket/backups/
-   ```
+# Database logs
+docker-compose -f docker-compose.prod.yml logs -f db
+```
 
-## Production Checklist
+## Backup
 
-- [ ] `APP_ENV=production`
-- [ ] `APP_DEBUG=false`
-- [ ] `APP_URL` set to production domain
-- [ ] Database migrated and seeded
-- [ ] Queue workers running
-- [ ] Scheduler running
-- [ ] Stripe configured with live keys
-- [ ] Email configured (Mailgun/SES)
-- [ ] Sentry configured
-- [ ] SSL certificate installed
-- [ ] Backups scheduled
-- [ ] File storage configured (S3 recommended)
-- [ ] Webhook endpoints registered
-- [ ] API rate limiting enabled
-- [ ] Error logging active
+### Database Backup
+
+```bash
+# Manual backup
+docker-compose -f docker-compose.prod.yml exec db mysqldump -u dmsaas -p digitalmarketingsaas > backup.sql
+
+# Automated backup (add to crontab)
+0 2 * * * docker-compose -f docker-compose.prod.yml exec db mysqldump -u dmsaas -p digitalmarketingsaas > /backups/backup-$(date +\%Y\%m\%d).sql
+```
+
+### Restore
+
+```bash
+docker-compose -f docker-compose.prod.yml exec db mysql -u dmsaas -p digitalmarketingsaas < backup.sql
+```
+
+## Scaling
+
+### Horizontal Scaling
+
+```bash
+# Scale app containers
+docker-compose -f docker-compose.prod.yml up -d --scale app=3
+
+# Scale queue workers
+docker-compose -f docker-compose.prod.yml up -d --scale queue=5
+```
+
+### Database Scaling
+
+- Use RDS Multi-AZ for high availability
+- Enable read replicas for read-heavy workloads
+- Use connection pooling (ProxySQL)
 
 ## Troubleshooting
 
-### Queue Jobs Not Processing
+### Common Issues
 
+**500 Internal Server Error**
 ```bash
-# Check queue worker is running
-docker-compose ps queue
-
-# Restart queue worker
-docker-compose restart queue
-
-# Check failed jobs
-php artisan queue:failed
+docker-compose -f docker-compose.prod.yml logs app
+docker-compose -f docker-compose.prod.yml exec app php artisan cache:clear
 ```
 
-### Emails Not Sending
-
+**Queue Not Processing**
 ```bash
-# Test email configuration
-php artisan tinker
-Mail::raw('Test email', function($msg) { $msg->to('test@example.com')->subject('Test'); });
+docker-compose -f docker-compose.prod.yml logs queue
+docker-compose -f docker-compose.prod.yml exec app php artisan queue:restart
 ```
 
-### Stripe Webhook Failing
-
+**Database Connection Failed**
 ```bash
-# List recent webhooks
-stripe webhook_endpoints list
-
-# Test webhook locally
-stripe listen --forward-to localhost:8000/billing/webhook
+docker-compose -f docker-compose.prod.yml logs db
+docker-compose -f docker-compose.prod.yml exec db mysql -u dmsaas -p
 ```
 
-## Security Recommendations
+## Support
 
-1. **Use strong passwords** for all services
-2. **Enable 2FA** on all admin accounts
-3. **Regularly update** dependencies: `composer update && npm update`
-4. **Monitor Sentry** for security exceptions
-5. **Review access logs** regularly
-6. **Encrypt sensitive data** at rest
-7. **Use environment variables** for all secrets
-8. **Disable debug mode** in production
-9. **Rate limit API endpoints**
-10. **Validate all user input**
+- Documentation: https://your-domain.com/docs
+- API Documentation: https://your-domain.com/api/docs
+- Support Email: <REDACTED>
+
+## License
+
+MIT License

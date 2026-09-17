@@ -338,6 +338,10 @@ Route::middleware(['auth', 'agency'])->group(function () {
 // Billing webhook (public - Stripe can't authenticate)
 Route::post('billing/webhook', [BillingController::class, 'webhook'])->name('billing.webhook');
 
+// Public client report (no auth required)
+Route::get('reports/{slug}/{token}', [PublicClientReportController::class, 'show'])
+    ->name('public.client-report');
+
 Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 

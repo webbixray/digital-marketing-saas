@@ -11,6 +11,7 @@ class WorkflowTemplateSeeder extends Seeder
     {
         if (WorkflowTemplate::exists()) {
             $this->command->warn('Workflow templates already exist — skipping.');
+
             return;
         }
 

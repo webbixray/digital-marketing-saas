@@ -33,8 +33,8 @@
 
 @push("scripts")
 <script>
-    const commentableType = @json( ?? null);
-    const commentableId = @json( ?? null);
+    const commentableType = @json($commentable_type ?? null);
+    const commentableId = @json($commentable_id ?? null);
 
     async function submitComment(e) {
         e.preventDefault();

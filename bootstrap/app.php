@@ -3,10 +3,10 @@
 use App\Http\Middleware\AgentRateLimit;
 use App\Http\Middleware\CacheWithEtag;
 use App\Http\Middleware\Enforce2FA;
+use App\Http\Middleware\EnforceAiCredits;
 use App\Http\Middleware\EnforcePlatformRateLimit;
 use App\Http\Middleware\EnforceQuota;
 use App\Http\Middleware\EnsureAgencyAccess;
-use App\Http\Middleware\FeatureGate;
 use App\Http\Middleware\HstsMiddleware;
 use App\Http\Middleware\RequestId;
 use App\Http\Middleware\SecurityHeaders;
@@ -41,8 +41,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'agency' => EnsureAgencyAccess::class,
             'cache.etag' => CacheWithEtag::class,
-            'feature' => FeatureGate::class,
             'quota' => EnforceQuota::class,
+            'ai.credits' => EnforceAiCredits::class,
             '2fa' => Enforce2FA::class,
             'platform.rate_limit' => EnforcePlatformRateLimit::class,
             'agent.rate_limit' => AgentRateLimit::class,

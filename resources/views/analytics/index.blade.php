@@ -92,7 +92,7 @@
        </div>
       </div>
      @endforeach
-     @if($platformStats->isEmpty())
+     @if(empty($platformStats))
       <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No platform data available</p>
      @endif
     </div>

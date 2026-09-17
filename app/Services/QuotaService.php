@@ -232,6 +232,14 @@ class QuotaService
                 'remaining' => $this->remainingAiGenerations($agency),
                 'percentage' => $this->usagePercentage($agency, 'ai_generations'),
             ],
+            'ai_credits' => [
+                'used' => (int) $agency->ai_credits_purchased - (int) $agency->ai_credits,
+                'limit' => (int) $agency->ai_credits_purchased,
+                'remaining' => (int) $agency->ai_credits,
+                'percentage' => $agency->ai_credits_purchased > 0
+                    ? round((($agency->ai_credits_purchased - $agency->ai_credits) / $agency->ai_credits_purchased) * 100, 1)
+                    : 0,
+            ],
             'social_accounts' => [
                 'used' => (int) $agency->social_accounts_count,
                 'limit' => $agency->getPlanConfig()['social_accounts'] ?? 0,
@@ -251,5 +259,36 @@ class QuotaService
                 'percentage' => $this->usagePercentage($agency, 'clients'),
             ],
         ];
+    }
+
+    /**
+     * Check if agency has AI credits available
+     */
+    public function hasAiCredits(Agency $agency): bool
+    {
+        return $agency->ai_credits > 0;
+    }
+
+    /**
+     * Deduct AI credit from agency
+     */
+    public function deductAiCredit(Agency $agency): bool
+    {
+        if ($agency->ai_credits <= 0) {
+            return false;
+        }
+
+        $agency->decrement('ai_credits');
+
+        return true;
+    }
+
+    /**
+     * Add AI credits to agency
+     */
+    public function addAiCredits(Agency $agency, int $credits): void
+    {
+        $agency->increment('ai_credits', $credits);
+        $agency->increment('ai_credits_purchased', $credits);
     }
 }

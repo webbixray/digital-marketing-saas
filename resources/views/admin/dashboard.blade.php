@@ -147,7 +147,7 @@
         <p class="text-xs text-red-600 dark:text-red-400 truncate">{{ $post->error_message ?? 'Unknown error' }}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->failed_at ? \Carbon\Carbon::parse($post->failed_at)->diffForHumans() : '' }}</p>
        </div>
-       <form method="POST" action="{{ route('failed-jobs.retry', $post->id) }}">
+       <form method="POST" action="{{ route('admin.retry-job', $post->id) }}">
         @csrf
         <button type="submit" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 inline-flex items-center gap-1 text-sm font-medium transition-colors text-gray-700 dark:text-gray-200">
          <i class="fas fa-redo"></i> Retry

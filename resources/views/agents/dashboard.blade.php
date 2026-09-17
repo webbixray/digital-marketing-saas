@@ -218,7 +218,7 @@
   if (!confirm('Run a comprehensive security audit?')) return;
   
   try {
-   const response = await dmsaas.request('{{ route(agents.dispatch) }}', {
+   const response = await dmsaas.request('{{ route('agents.dispatch') }}', {
     method: 'POST',
     body: JSON.stringify({
      agent_name: 'security_agent',

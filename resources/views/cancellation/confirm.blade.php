@@ -16,9 +16,6 @@
                 </ol>
             </div>
         </div>
-    </div>
-</div>
-
 
     
         <div class="grid grid-cols-12 gap-4 justify-center">
@@ -45,5 +42,4 @@
                 </div>
             </div>
         </div>
-    </div>
 </section>
