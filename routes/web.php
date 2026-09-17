@@ -36,6 +36,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MediaLibraryController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PublicClientReportController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
