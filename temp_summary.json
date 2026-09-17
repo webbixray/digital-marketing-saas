@@ -1,0 +1,13 @@
+{
+  "files_fixed": [
+    "resources/views/inbox/index.blade.php",
+    "resources/views/inbox/show.blade.php",
+    "resources/views/ab-testing/index.blade.php",
+    "resources/views/support/index.blade.php",
+    "resources/views/agency/billing.blade.php",
+    "resources/views/landing-pages/index.blade.php",
+    "resources/views/white-label/index.blade.php",
+    "resources/views/dashboard/index.blade.php"
+  ],
+  "summary": "Fixed 8 broken admin panel views:\n1. inbox/index.blade.php - Rewrote from standalone HTML to extend layouts.unified with proper Tailwind cards, table with overflow-x-auto, status badges, action buttons, and breadcrumb\n2. inbox/show.blade.php - Rewrote from standalone HTML to extend layouts.unified with message display, metadata, and reply/delete actions\n3. ab-testing/index.blade.php - Fixed broken Blade syntax (unclosed quotes in class attributes, single quotes in single-quoted attributes) by moving logic to @php blocks with proper class variables; fixed orphaned closing tags\n4. support/index.blade.php - Fixed broken HTML (opens with </div></div>) by adding proper breadcrumb wrapper; fixed broken Blade ternary in class attributes by using @php blocks\n5. agency/billing.blade.php - Fixed unclosed div tags (removed orphaned </div> at end), proper nesting of plans grid and invoices section\n6. landing-pages/index.blade.php - Fixed orphaned closing div tags, removed broken curly brace Blade syntax in class attributes by using @php blocks\n7. white-label/index.blade.php - Rewrote from bare HTML to extend layouts.unified with proper Tailwind markup, configuration display, and custom CSS handling via @push('styles')\n8. dashboard/index.blade.php - Already fixed by sibling subagent with static color map replacing dynamic bg-{{ $stat['color'] }} classes\n\nTests: 928 total, 924 passed, 4 failed, 11 risky. All 4 failures are in unrelated files (content-templates/edit, features/edit, forms/edit) not part of this task - no regressions introduced."
+}

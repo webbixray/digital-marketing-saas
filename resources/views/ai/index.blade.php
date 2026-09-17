@@ -3,6 +3,7 @@
 @section('title', 'AI Content')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">AI Content</h2>
@@ -37,7 +38,7 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Content Type</label>
-                        <select name="type" class="form-input">
+                        <select name="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="caption">Social Media Caption</option>
                             <option value="hashtags">Hashtags</option>
                             <option value="blog">Blog Post</option>
@@ -46,11 +47,11 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Topic / Prompt</label>
-                        <textarea name="prompt" rows="3" class="form-input" placeholder="Describe what you want to generate..."></textarea>
+                        <textarea name="prompt" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe what you want to generate..."></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
-                        <select name="tone" class="form-input">
+                        <select name="tone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="professional">Professional</option>
                             <option value="casual">Casual</option>
                             <option value="friendly">Friendly</option>
@@ -70,7 +71,7 @@
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="font-semibold text-gray-900 dark:text-white">Recent Generations</h3>
         </div>
-        <div class="table-responsive">
+        <div class="overflow-x-auto">
             <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
@@ -86,7 +87,7 @@
                         <tr>
                             <td class="capitalize">{{ $log->action ?? 'content' }}</td>
                             <td>
-                                <span class="badge {{ $log->status === 'success' ? 'badge-success' : 'badge-danger' }}">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $log->status === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">
                                     {{ ucfirst($log->status) }}
                                 </span>
                             </td>

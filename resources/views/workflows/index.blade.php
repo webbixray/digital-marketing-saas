@@ -3,6 +3,7 @@
 @section('title', 'Workflows')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workflows</h2>
@@ -14,8 +15,7 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-        <div class="table-responsive">
-            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -42,7 +42,7 @@
                             </td>
                             <td class="capitalize text-gray-500 dark:text-gray-400">{{ $workflow->trigger_type ?? 'manual' }}</td>
                             <td>
-                                <span class="badge {{ ($workflow->status ?? 'draft') === 'active' ? 'badge-success' : 'badge-warning' }}">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ ($workflow->status ?? 'draft') === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' }}">
                                     {{ ucfirst($workflow->status ?? 'draft') }}
                                 </span>
                             </td>
@@ -50,11 +50,11 @@
                             <td class="text-gray-500 dark:text-gray-400">{{ $workflow->last_executed_at ? $workflow->last_executed_at->diffForHumans() : 'Never' }}</td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('workflows.show', $workflow) }}" class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('workflows.edit', $workflow) }}" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('workflows.show', $workflow) }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 inline-flex items-center gap-1 font-medium transition-colors text-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('workflows.edit', $workflow) }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 inline-flex items-center gap-1 font-medium transition-colors text-sm"><i class="fas fa-edit"></i></a>
                                     <form method="POST" action="{{ route('workflows.destroy', $workflow) }}" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></button>
+                                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 inline-flex items-center gap-1 font-medium transition-colors text-sm" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </div>
                             </td>

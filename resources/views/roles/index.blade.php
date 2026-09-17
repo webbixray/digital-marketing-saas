@@ -3,6 +3,7 @@
 @section('title', 'Roles & Permissions')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Roles & Permissions</h2>
@@ -48,12 +49,12 @@
                             <td class="text-gray-500 dark:text-gray-400">{{ $role->users_count ?? 0 }}</td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('roles.edit', $role) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                    <a href="{{ route('roles.edit', $role) }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium transition-colors inline-flex items-center gap-1" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form method="POST" action="{{ route('roles.destroy', $role) }}" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                        <button type="submit" class="px-4 py-2 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors" title="Delete" onclick="return confirm('Are you sure?')">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

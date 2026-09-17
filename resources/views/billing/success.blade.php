@@ -9,24 +9,25 @@
 @endsection
 
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
-<div class="grid grid-cols-12 gap-4 justify-center>
-    <div class="col-md-8 text-center">
-        <div class="card card-outline card-success">
-            <div class="card-body py-5">
-                <div class="success-icon mb-4">
-                    <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+<div class="grid grid-cols-12 gap-4 justify-center">
+    <div class="md:col-span-8 text-center">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 py-5">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-green-600 dark:text-green-400" style="font-size: 5rem;"></i>
                 </div>
-                <h2 class="text-success">Subscription Activated!</h2>
-                <p class="lead text-muted">
+                <h2 class="text-green-600 dark:text-green-400">Subscription Activated!</h2>
+                <p class="text-gray-500 dark:text-gray-400">
                     Your subscription has been successfully upgraded. You now have access to all the features of your new plan.
                 </p>
-                <hr>
-                <div class="mt-4">
-                    <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg mr-2">
+                <hr class="border-t border-gray-200 dark:border-gray-700 my-4">
+                <div class="mt-4 flex justify-center gap-4">
+                    <a href="{{ route('dashboard') }}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors text-lg mr-2">
                         <i class="fas fa-tachometer-alt mr-1"></i>Go to Dashboard
                     </a>
-                    <a href="{{ route('agency.billing') }}" class="btn btn-outline-secondary btn-lg">
+                    <a href="{{ route('agency.billing') }}" class="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 inline-flex items-center gap-2 font-medium transition-colors text-lg">
                         <i class="fas fa-credit-card mr-1"></i>Manage Billing
                     </a>
                 </div>

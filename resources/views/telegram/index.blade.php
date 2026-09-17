@@ -2,10 +2,11 @@
 @section('title', 'Telegram Integration')
 
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
-<div class="grid grid-cols-12 gap-4>
+<div class="grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-8">
-        <div class="card card-primary card-outline">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fab fa-telegram mr-2"></i>Telegram Bot Integration</h3>
             </div>
@@ -19,9 +20,9 @@
                 <a href="https://t.me/{{ config('telegram.bot_username', 'YourBot') }}" target="_blank" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                     <i class="fab fa-telegram mr-1"></i> Open Telegram Bot
                 </a>
-                <form action="{{ route('telegram.link.unlink') }}" method="POST" class="d-inline">
+                <form action="{{ route('telegram.link.unlink') }}" method="POST" class="inline">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-outline-danger">Unlink Account</button>
+                    <button type="submit" class="border border-red-300 text-red-700 px-4 py-2 rounded-lg hover:bg-red-50 inline-flex items-center gap-2 font-medium transition-colors">Unlink Account</button>
                 </form>
                 @else
                 <div class="bg-blue-50 text-blue-800 border border-blue-200 rounded-lg p-4 mb-4">
@@ -38,23 +39,21 @@
 
                 <div class="mb-4">
                     <label>Your Link Code:</label>
-                    <div class="input-group">
+                    <div class="flex gap-2">
                         <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $user->telegram_link_code }}" readonly>
-                        <div class="input-group-append">
-                            <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 inline-flex items-center gap-2 font-medium transition-colors" onclick="copyCode()">Copy</button>
-                        </div>
+                        <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 inline-flex items-center gap-2 font-medium transition-colors" onclick="copyCode()">Copy</button>
                     </div>
                 </div>
 
                 <form action="{{ route('telegram.link.regenerate') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">Generate New Code</button>
+                    <button type="submit" class="border border-gray-300 text-gray-700 px-3 py-1 text-sm rounded-lg hover:bg-gray-50 inline-flex items-center gap-2 font-medium transition-colors">Generate New Code</button>
                 </form>
                 @endif
             </div>
         </div>
 
-        <div class="card card-outline card-info">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mt-6">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-magic mr-2"></i>AI Assistant Commands</h3>
             </div>
@@ -84,11 +83,11 @@
                 <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-shield-alt mr-2"></i>Security</h3>
             </div>
             <div class="p-6">
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-check text-success mr-2"></i> Unique link code per user</li>
-                    <li><i class="fas fa-check text-success mr-2"></i> Webhook signature verification</li>
-                    <li><i class="fas fa-check text-success mr-2"></i> No credentials stored in Telegram</li>
-                    <li><i class="fas fa-check text-success mr-2"></i> Unlink anytime</li>
+                <ul class="space-y-2">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Unique link code per user</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Webhook signature verification</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> No credentials stored in Telegram</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Unlink anytime</li>
                 </ul>
             </div>
         </div>

@@ -4,13 +4,27 @@
 
 @section('content')
     <!-- Welcome Section -->
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()?->name ?? 'User' }}</h2>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your social media today.</p>
+    <x-flash-messages />
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()?->name ?? 'User' }}</h2>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your social media today.</p>
+        </div>
+        <a href="{{ route('social.posts.create') }}" class="btn btn-primary inline-flex items-center gap-2 self-start sm:self-auto">
+            <i class="fas fa-plus"></i> Create Post
+        </a>
     </div>
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        @php
+            $colors = [
+                'indigo' => ['bg' => 'bg-indigo-100 dark:bg-indigo-900/30', 'text' => 'text-indigo-600 dark:text-indigo-400'],
+                'green' => ['bg' => 'bg-green-100 dark:bg-green-900/30', 'text' => 'text-green-600 dark:text-green-400'],
+                'yellow' => ['bg' => 'bg-yellow-100 dark:bg-yellow-900/30', 'text' => 'text-yellow-600 dark:text-yellow-400'],
+                'red' => ['bg' => 'bg-red-100 dark:bg-red-900/30', 'text' => 'text-red-600 dark:text-red-400'],
+            ];
+        @endphp
         @foreach([
             ['label' => 'Total Posts', 'value' => $stats['total_posts'] ?? 0, 'icon' => 'pen-nib', 'color' => 'indigo'],
             ['label' => 'Published', 'value' => $stats['published_posts'] ?? 0, 'icon' => 'check-circle', 'color' => 'green'],
@@ -24,8 +38,8 @@
                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $stat['label'] }}</p>
                         <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stat['value'] }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-{{ $stat['color'] }}-100 dark:bg-{{ $stat['color'] }}-900/30 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-{{ $stat['icon'] }} text-{{ $stat['color'] }}-600 dark:text-{{ $stat['color'] }}-400 text-xl"></i>
+                    <div class="w-12 h-12 {{ $colors[$stat['color']]['bg'] }} rounded-xl flex items-center justify-center">
+                        <i class="fas fa-{{ $stat['icon'] }} {{ $colors[$stat['color']]['text'] }} text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -36,8 +50,8 @@
     <!-- Platform Stats & Recent Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Platform Breakdown -->
-        <div class="lg:col-span-2 card">
-            <div class="card-header flex items-center justify-between">
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Platform Performance</h3>
                 <a href="{{ route('analytics.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>
@@ -68,7 +82,7 @@
 
         <!-- Recent Activity -->
         <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <div class="card-header flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
                 <a href="{{ route('activity.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</a>
             </div>

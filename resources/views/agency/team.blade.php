@@ -1,13 +1,14 @@
 @extends('layouts.unified')
 @section('title', 'Team Members')
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
 <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-user-friends mr-2"></i>Team Members</h3>
-        <div class="card-tools"><button class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm" data-toggle="modal" data-target="#inviteModal"><i class="fas fa-user-plus mr-1"></i> Invite</button></div>
+        <button class="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-1 font-medium transition-colors text-sm" onclick="document.getElementById('inviteModal').showModal()"><i class="fas fa-user-plus mr-1"></i> Invite</button>
     </div>
-    <div class="card-body p-0">
+    <div class="p-0">
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th></tr></thead>
             <tbody>
@@ -15,50 +16,57 @@
                     <tr>
                         <td>{{ $member->name }}</td>
                         <td>{{ $member->email }}</td>
-                        <td><span class="badge badge-{{ $member->role === 'owner' ? 'primary' : ($member->role === 'admin' ? 'info' : 'secondary') }}">{{ ucfirst($member->role) }}</span></td>
-                        <td><span class="badge badge-{{ $member->is_active ? 'success' : 'secondary' }}">{{ $member->is_active ? 'Active' : 'Inactive' }}</span></td>
+                        <td>
+                            @php
+                                $roleColor = $member->role === 'owner' ? 'indigo' : ($member->role === 'admin' ? 'blue' : 'gray');
+                            @endphp
+                            <span class="{{ $roleColor === 'indigo' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' : ($roleColor === 'blue' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300') }} text-xs font-medium px-2.5 py-0.5 rounded-full">{{ ucfirst($member->role) }}</span>
+                        </td>
+                        <td><span class="{{ $member->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }} text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $member->is_active ? 'Active' : 'Inactive' }}</span></td>
                         <td>{{ $member->last_active_at?->diffForHumans() ?? 'Never' }}</td>
                         <td>
                             @if($member->id !== $user->id && !$member->isOwner())
-                                <form action="{{ route('agency.team.role', $member) }}" method="POST" class="d-inline">
+                                <div class="flex items-center gap-2">
+                                <form action="{{ route('agency.team.role', $member) }}" method="POST" class="inline">
                                     @csrf
-                                    <select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white form-control-sm d-inline w-auto" onchange="this.form.submit()">
+                                    <select name="role" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm" onchange="this.form.submit()">
                                         @foreach(['owner','admin','manager','manager','member'] as $r)
                                             <option value="{{ $r }}" {{ $member->role === $r ? 'selected' : '' }}>{{ ucfirst($r) }}</option>
                                         @endforeach
                                     </select>
                                 </form>
-                                <form action="{{ route('agency.team.remove', $member) }}" method="POST" class="d-inline">
+                                <form action="{{ route('agency.team.remove', $member) }}" method="POST" class="inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Remove?')"><i class="fas fa-user-minus"></i></button>
+                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded-lg hover:bg-red-700 text-sm font-medium transition-colors" onclick="return confirm('Remove?')"><i class="fas fa-user-minus"></i></button>
                                 </form>
+                                </div>
                             @endif
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-muted">No members</td></tr>
+                    <tr><td colspan="6" class="text-center text-gray-500 dark:text-gray-400">No members</td></tr>
                 @endforelse
             </tbody>
         </table></div>
     </div>
 </div>
 <!-- Invite Modal -->
-<div class="modal fade" id="inviteModal">
-    <div class="modal-dialog">
+<dialog id="inviteModal" class="p-0 rounded-xl shadow-xl dark:bg-gray-800 backdrop:bg-black/50">
+    <div class="w-full max-w-md">
         <form action="{{ route('agency.team.invite') }}" method="POST">
             @csrf
-            <div class="modal-content">
-                <div class="modal-header"><h4 class="modal-title">Invite Team Member</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
-                <div class="modal-body">
-                    <div class="mb-4"><label>Name</label><input type="text" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
-                    <div class="mb-4"><label>Email</label><input type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
-                    <div class="mb-4"><label>Role</label><select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"><option value="admin">Admin</option><option value="manager">Manager</option><option value="member">Member</option></select></div>
-                </div>
-                <div class="modal-footer"><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Send Invite</button></div>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h4 class="font-semibold text-gray-900 dark:text-white">Invite Team Member</h4>
+                <button type="button" onclick="document.getElementById('inviteModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none">&times;</button>
             </div>
+            <div class="p-6 space-y-4">
+                <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label><input type="text" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
+                <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label><input type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
+                <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label><select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"><option value="admin">Admin</option><option value="manager">Manager</option><option value="member">Member</option></select></div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700"><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">Send Invite</button></div>
         </form>
     </div>
-</div>
+</dialog>
 </div>
 @endsection
-

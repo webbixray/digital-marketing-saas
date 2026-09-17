@@ -3,6 +3,7 @@
 @section('title', 'Agency Settings')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Agency Settings</h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1">Manage your agency profile and preferences.</p>
@@ -51,10 +52,10 @@
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Agency Profile</h3>
                     </div>
-                    <div class="card-body space-y-4">
+                    <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Agency Name</label>
-                            <input type="text" name="agency_name" value="{{ old('agency_name', $agency->name ?? '') }}" class="form-input">
+                            <input type="text" name="agency_name" value="{{ old('agency_name', $agency->name ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             @error('agency_name')
                                 <div class="form-error">{{ $message }}</div>
                             @enderror
@@ -62,12 +63,12 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Website</label>
-                            <input type="url" name="website" value="{{ old('website', $agency->website ?? '') }}" class="form-input" placeholder="https://example.com">
+                            <input type="url" name="website" value="{{ old('website', $agency->website ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                            <textarea name="description" rows="3" class="form-input">{{ old('description', $agency->description ?? '') }}</textarea>
+                            <textarea name="description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ old('description', $agency->description ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -76,14 +77,14 @@
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Branding</h3>
                     </div>
-                    <div class="card-body space-y-4">
+                    <div class="p-6 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary Color</label>
-                            <input type="color" name="primary_color" value="{{ old('primary_color', $agency->primary_color ?? '#4f46e5') }}" class="form-input h-10 w-20">
+                            <input type="color" name="primary_color" value="{{ old('primary_color', $agency->primary_color ?? '#4f46e5') }}" class="h-10 w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo URL</label>
-                            <input type="url" name="logo_url" value="{{ old('logo_url', $agency->logo_url ?? '') }}" class="form-input">
+                            <input type="url" name="logo_url" value="{{ old('logo_url', $agency->logo_url ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                     </div>
                 </div>

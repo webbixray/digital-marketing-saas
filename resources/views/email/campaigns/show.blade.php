@@ -1,6 +1,7 @@
 @extends('layouts.unified')
 @section('title', "{$campaign->name}")
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
 <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">

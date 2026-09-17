@@ -4,6 +4,7 @@
 @section('content')
 
     
+        <x-flash-messages />
         <div class="grid grid-cols-12 gap-4 mb-2>
             <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Create Support Ticket</h1>
@@ -31,14 +32,14 @@
                         @csrf
                         <div class="p-6">
                             <div class="mb-4">
-                                <label for="subject">Subject <span class="text-danger">*</span></label>
+                                <label for="subject">Subject <span class="text-red-600 dark:text-red-400">*</span></label>
                                 <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('subject') is-invalid @enderror" id="subject" name="subject" value="{{ old('subject') }}" required>
                                 @error('subject')<span class="text-red-500 text-sm mt-1">{{ $message }}</span>@enderror
                             </div>
-                            <div class="grid grid-cols-12 gap-4>
+                            <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-12 md:col-span-6">
                                     <div class="mb-4">
-                                        <label for="category">Category <span class="text-danger">*</span></label>
+                                        <label for="category">Category <span class="text-red-600 dark:text-red-400">*</span></label>
                                         <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('category') is-invalid @enderror" id="category" name="category" required>
                                             <option value="billing">Billing Question</option>
                                             <option value="technical">Technical Issue</option>
@@ -50,7 +51,7 @@
                                 </div>
                                 <div class="col-span-12 md:col-span-6">
                                     <div class="mb-4">
-                                        <label for="priority">Priority <span class="text-danger">*</span></label>
+                                        <label for="priority">Priority <span class="text-red-600 dark:text-red-400">*</span></label>
                                         <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('priority') is-invalid @enderror" id="priority" name="priority" required>
                                             <option value="low">Low - General inquiry</option>
                                             <option value="medium" selected>Medium - Need help soon</option>
@@ -62,12 +63,12 @@
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <label for="description">Description <span class="text-danger">*</span></label>
+                                <label for="description">Description <span class="text-red-600 dark:text-red-400">*</span></label>
                                 <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('description') is-invalid @enderror" id="description" name="description" rows="6" required placeholder="Please describe your issue in detail...">{{ old('description') }}</textarea>
                                 @error('description')<span class="text-red-500 text-sm mt-1">{{ $message }}</span>@enderror
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                             <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                                 <i class="fas fa-paper-plane mr-2"></i>Submit Ticket
                             </button>

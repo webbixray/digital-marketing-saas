@@ -3,6 +3,7 @@
 @section('title', 'Verify Email')
 
 @section('content')
+<x-flash-messages />
 <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
     <div class="w-full max-w-md">
         <div class="bg-white rounded-xl shadow-xl p-8 text-center">

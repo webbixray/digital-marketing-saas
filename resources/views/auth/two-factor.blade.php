@@ -3,6 +3,7 @@
 @section('title', 'Two-Factor Authentication')
 
 @section('content')
+<x-flash-messages />
 <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
     <div class="w-full max-w-md">
         <div class="bg-white rounded-xl shadow-xl p-8 text-center">
@@ -27,7 +28,13 @@
                     <i class="fas fa-qrcode mr-1"></i> Enable 2FA
                 </button>
                 <div id="setupForm" class="mt-4 hidden">
-                    <div class="mb-3"><img loading="lazy" id="qrCode" class="mx-auto" style="max-width: 200px;" alt="Two-factor authentication QR code"></div>
+                    <!-- TODO: Replace with a proper QR code generator (e.g., endroid/qr-code or bacon/bacon-qr-code) -->
+                    <!-- The deprecated Google Charts API has been removed. Implement local QR generation. -->
+                    <div class="mb-3">
+                        <div class="mx-auto w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center" style="max-width: 200px;">
+                            <span class="text-gray-400 text-sm text-center px-2">QR Code Placeholder<br><small>Generate locally</small></span>
+                        </div>
+                    </div>
                     <p class="text-gray-500">Scan the QR code with your authenticator app, then enter the code:</p>
                     <form action="{{ route('two-factor.verify') }}" method="POST" class="mt-4">
                         @csrf
@@ -58,7 +65,8 @@
                     });
                     const data = await response.json();
                     if (data.qr_code) {
-                        document.getElementById('qrCode').src = 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' + encodeURIComponent(data.qr_code);
+                        // TODO: Use a local QR code generator instead of Google Charts
+                        // Example: render QR using a JS library like qrcode.js
                         document.getElementById('setupForm').classList.remove('hidden');
                         if (window.dmsaas) dmsaas.toast('2FA enabled! Please scan the QR code.');
                     }

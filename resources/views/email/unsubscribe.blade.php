@@ -3,6 +3,7 @@
 @section('title', 'Unsubscribe')
 
 @section('content')
+<x-flash-messages />
 <div class="max-w-md mx-auto mt-16 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
     <div class="text-center">
         @if($status === 'success')

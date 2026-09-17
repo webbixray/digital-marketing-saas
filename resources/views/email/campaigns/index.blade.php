@@ -1,6 +1,7 @@
 @extends('layouts.unified')
 @section('title', 'Email Campaigns')
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
 <div class="flex items-center justify-between mb-4">
     <a href="{{ route('email.campaigns.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">

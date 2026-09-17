@@ -1,14 +1,17 @@
 @extends('layouts.unified')
 @section('title', 'Too Many Requests')
 @section('content')
-<div class="space-y-6">
-<div class="error-page">
-    <h2 class="headline text-warning">429</h2>
-    <div class="error-content">
-        <h3><i class="fas fa-tachometer-alt text-warning"></i> Too many requests.</h3>
-        <p>You've exceeded your quota. Please upgrade your plan or wait. <a href="{{ route('agency.billing') }}">Upgrade plan</a></p>
+<x-flash-messages />
+<div class="flex items-center justify-center min-h-[60vh] px-4">
+    <div class="max-w-lg mx-auto w-full">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+            <p class="text-6xl font-bold text-yellow-500 dark:text-yellow-400 mb-4">429</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Too Many Requests</h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">You've exceeded your quota. Please upgrade your plan or wait.</p>
+            <a href="{{ route('agency.billing') }}" class="btn btn-primary inline-flex items-center gap-2">
+                <i class="fas fa-arrow-up"></i> Upgrade Plan
+            </a>
+        </div>
     </div>
 </div>
-</div>
 @endsection
-

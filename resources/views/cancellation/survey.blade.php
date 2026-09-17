@@ -4,7 +4,8 @@
 @section('content')
 
     
-        <div class="grid grid-cols-12 gap-4 mb-2>
+        <x-flash-messages />
+        <div class="grid grid-cols-12 gap-4 mb-2">
             <div class="col-span-12 sm:col-span-6">
                 <h1 class="m-0">Cancel Subscription</h1>
             </div>
@@ -21,7 +22,7 @@
 
 
     
-        <div class="grid grid-cols-12 gap-4 justify-center>
+        <div class="grid grid-cols-12 gap-4 justify-center">
             <div class="col-span-12 lg:col-span-8">
                 <!-- Retention Offer -->
                 @if($offer['urgency'] !== 'low')
@@ -33,7 +34,7 @@
                 @endif
 
                 <!-- Cancellation Survey -->
-                <div class="card card-warning">
+                <div class="bg-white rounded-xl shadow-md border border-yellow-200 dark:bg-gray-800 dark:border-yellow-800">
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">We're sorry to see you go</h3>
                     </div>
@@ -42,27 +43,27 @@
 
                         <form action="{{ route('cancellation.submit') }}" method="POST">
                             @csrf
-                            <div class="mb-4">
-                                <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="reason1" name="reason" value="too_expensive" class="custom-control-input" required>
-                                    <label class="custom-control-label" for="reason1">Too expensive</label>
-                                </div>
-                                <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="reason2" name="reason" value="missing_features" class="custom-control-input">
-                                    <label class="custom-control-label" for="reason2">Missing features I need</label>
-                                </div>
-                                <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="reason3" name="reason" value="not_using" class="custom-control-input">
-                                    <label class="custom-control-label" for="reason3">Not using it enough</label>
-                                </div>
-                                <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="reason4" name="reason" value="switching" class="custom-control-input">
-                                    <label class="custom-control-label" for="reason4">Switching to another tool</label>
-                                </div>
-                                <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="reason5" name="reason" value="other" class="custom-control-input">
-                                    <label class="custom-control-label" for="reason5">Other</label>
-                                </div>
+                            <div class="mb-4 space-y-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" id="reason1" name="reason" value="too_expensive" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" required>
+                                    <span>Too expensive</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" id="reason2" name="reason" value="missing_features" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span>Missing features I need</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" id="reason3" name="reason" value="not_using" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span>Not using it enough</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" id="reason4" name="reason" value="switching" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span>Switching to another tool</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" id="reason5" name="reason" value="other" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <span>Other</span>
+                                </label>
                             </div>
 
                             <div class="mb-4">

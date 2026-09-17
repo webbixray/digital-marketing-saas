@@ -895,6 +895,7 @@
 @endsection
 
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
 <div class="workflow-builder" id="workflowBuilder">
     <!-- Node Palette -->

@@ -3,6 +3,7 @@
 @section('title', 'Forgot Password')
 
 @section('content')
+<x-flash-messages />
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 px-4">
     <div class="w-full max-w-md">
         <div class="text-center mb-8">

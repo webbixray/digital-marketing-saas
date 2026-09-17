@@ -16,6 +16,21 @@
     
     <!-- Tailwind CSS -->
     @vite(['resources/css/unified.css', 'resources/js/unified.js'])
+
+    <!-- Focus-visible styles -->
+    <style>
+        *:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+    </style>
     
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
@@ -23,7 +38,7 @@
 
     @stack('styles')
 </head>
-<body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100" style="font-family: 'Inter', sans-serif;">
+<body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter">
 
     <!-- Service Worker -->
     <script>
@@ -177,11 +192,20 @@
                 </button>
                 <button class="relative text-gray-500 hover:text-gray-700 dark:text-gray-400" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
-                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white font-bold flex items-center justify-center" aria-label="Unread notifications">3</span>
                 </button>
                 <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full cursor-pointer" alt="{{ auth()->user()?->name ?? 'User' }} avatar">
             </div>
         </header>
+
+        <!-- Breadcrumb -->
+        @hasSection('breadcrumb')
+            <nav class="px-6 py-2 text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800" aria-label="Breadcrumb">
+                <ol class="flex gap-2">
+                    @yield('breadcrumb')
+                </ol>
+            </nav>
+        @endif
 
         <!-- Page content -->
         <main class="flex-1 overflow-auto p-6" id="main-content">

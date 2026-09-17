@@ -2,6 +2,7 @@
 @section('title', 'Quick Start')
 
 @section('content')
+<x-flash-messages />
 <div class="max-w-3xl mx-auto">
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">

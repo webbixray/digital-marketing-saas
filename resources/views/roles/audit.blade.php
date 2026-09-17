@@ -3,6 +3,7 @@
 @section('title', 'Role Audit Log')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Role Audit Trail</h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1">History of role and permission changes.</p>
@@ -24,7 +25,7 @@
                     @forelse($auditLogs ?? [] as $log)
                         <tr>
                             <td>
-                                <span class="badge {{ str_contains($log->action ?? '', 'create') ? 'badge-success' : (str_contains($log->action ?? '', 'delete') ? 'badge-danger' : 'badge-info') }}">
+                                <span class="{{ str_contains($log->action ?? '', 'create') ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : (str_contains($log->action ?? '', 'delete') ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300') }} text-xs font-medium px-2.5 py-0.5 rounded-full">
                                     {{ $log->action ?? 'update' }}
                                 </span>
                             </td>

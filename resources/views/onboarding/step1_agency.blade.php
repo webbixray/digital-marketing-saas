@@ -2,6 +2,7 @@
 @section('title', 'Step 1: Agency Profile')
 
 @section('content')
+<x-flash-messages />
 <div class="max-w-3xl mx-auto">
     <!-- Progress -->
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-6 mb-6">

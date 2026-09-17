@@ -2,6 +2,7 @@
 @section('title', 'Welcome')
 
 @section('content')
+<x-flash-messages />
 <div class="max-w-4xl mx-auto">
     <div class="text-center mb-12">
         <i class="fas fa-rocket fa-4x text-indigo-600 mb-4"></i>

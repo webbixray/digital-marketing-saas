@@ -1,14 +1,17 @@
 @extends('layouts.unified')
 @section('title', 'Access Denied')
 @section('content')
-<div class="space-y-6">
-<div class="error-page">
-    <h2 class="headline text-danger">403</h2>
-    <div class="error-content">
-        <h3><i class="fas fa-ban text-danger"></i> Access denied.</h3>
-        <p>You don't have permission to access this page. <a href="{{ route('dashboard') }}">Return to dashboard</a></p>
+<x-flash-messages />
+<div class="flex items-center justify-center min-h-[60vh] px-4">
+    <div class="max-w-lg mx-auto w-full">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+            <p class="text-6xl font-bold text-red-500 dark:text-red-400 mb-4">403</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Access Denied</h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">You don't have permission to access this page.</p>
+            <a href="{{ route('dashboard') }}" class="btn btn-primary inline-flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Return to Dashboard
+            </a>
+        </div>
     </div>
 </div>
-</div>
 @endsection
-

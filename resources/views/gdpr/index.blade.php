@@ -2,12 +2,11 @@
 @section('title', 'Privacy & Data')
 
 @section('content')
+<x-flash-messages />
 <div class="space-y-6">
 <div class="content-wrapper">
     
-            </div>
-
-            <div class="grid grid-cols-12 gap-4>
+            <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12">
                     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Consent Management</h3></div>
@@ -24,7 +23,7 @@
                                     @foreach($consents as $consent)
                                     <tr>
                                         <td>{{ ucfirst($consent->consent_type) }}</td>
-                                        <td><span class="badge badge-{{ $consent->granted ? 'success' : 'danger' }}">{{ $consent->granted ? 'Granted' : 'Denied' }}</span></td>
+                                        <td><span class="px-2 py-1 text-xs font-medium rounded-full {{ $consent->granted ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }}">{{ $consent->granted ? 'Granted' : 'Denied' }}</span></td>
                                         <td>{{ $consent->created_at->format('M d, Y') }}</td>
                                     </tr>
                                     @endforeach
@@ -35,12 +34,12 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-4>
+            <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12">
-                    <div class="card card-danger">
+                    <div class="bg-white rounded-xl shadow-md border border-red-200 dark:bg-gray-800 dark:border-red-800">
                         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Delete My Data</h3></div>
                         <div class="p-6">
-                            <p class="text-danger"><strong>Warning:</strong> This action is irreversible. Your account will be permanently deleted after a 30-day cooling period.</p>
+                            <p class="text-red-600 dark:text-red-400"><strong>Warning:</strong> This action is irreversible. Your account will be permanently deleted after a 30-day cooling period.</p>
                             <form action="{{ route('gdpr.delete') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.')">
                                 @csrf
                                 <div class="mb-4">
@@ -58,4 +57,3 @@
 </div>
 </div>
 @endsection
-

@@ -3,6 +3,7 @@
 @section('title', 'Agency Details')
 
 @section('content')
+    <x-flash-messages />
     <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Agency Profile</h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1">Your agency information.</p>
@@ -10,17 +11,17 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <div class="card-body text-center">
+            <div class="p-6 text-center">
                 <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($agency->name) }}&background=6366f1&color=fff&size=80" class="w-20 h-20 rounded-full mx-auto mb-4" alt="">
                 <h3 class="font-bold text-gray-900 dark:text-white">{{ $agency->name }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ $agency->website ?? 'No website' }}</p>
             </div>
         </div>
 
-        <div class="lg:col-span-2 card">
-            <div class="card-header flex items-center justify-between">
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <h3 class="font-semibold text-gray-900 dark:text-white">Details</h3>
-                <a href="{{ route('agency.edit') }}" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('agency.edit') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium transition-colors"><i class="fas fa-edit"></i> Edit</a>
             </div>
             <div class="p-6">
                 <dl class="space-y-3">

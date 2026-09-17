@@ -3,6 +3,7 @@
 @section('title', 'Welcome to DigitalMarketingSaaS')
 
 @section('content')
+<x-flash-messages />
 <section class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 class="text-4xl font-bold mb-4">Welcome to DigitalMarketingSaaS!</h1>

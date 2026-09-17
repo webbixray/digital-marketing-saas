@@ -4,6 +4,7 @@
 
 @section('content')
 <!-- Hero Section -->
+<x-flash-messages />
 <section class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold mb-6">All the Marketing Tools Your Agency Needs</h1>

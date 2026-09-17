@@ -7,18 +7,6 @@
     "background_color": "#f9fafb",
     "theme_color": "#6366f1",
     "orientation": "portrait-primary",
-    "icons": [
-        {
-            "src": "/images/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/images/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
     "categories": ["business", "productivity", "marketing"],
     "screenshots": [],
     "shortcuts": [

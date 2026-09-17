@@ -3,6 +3,7 @@
 @section('title', 'Sign In')
 
 @section('content')
+<x-flash-messages />
 <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
@@ -30,10 +31,13 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email Address</label>
                     <div class="relative">
                         <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-500 @enderror"
+                            aria-describedby="email-error"
+                            @error('email') aria-invalid="true" @enderror>
                     </div>
                     @error('email')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        <div class="text-red-500 text-sm mt-1" id="email-error">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -41,14 +45,22 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Password</label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input id="password" type="password" name="password" placeholder="••••••••" required class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <input id="password" type="password" name="password" placeholder="••••••••" required
+                            class="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-500 @enderror"
+                            aria-describedby="password-error"
+                            @error('password') aria-invalid="true" @enderror>
+                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+                            aria-label="Toggle password visibility"
+                            onclick="togglePassword('password', 'passwordToggleIcon')">
+                            <i id="passwordToggleIcon" class="fas fa-eye"></i>
+                        </button>
                     </div>
                     @error('password')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        <div class="text-red-500 text-sm mt-1" id="password-error">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-4" style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="mb-4 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                         <label for="remember" class="text-sm text-gray-600">Remember me</label>
@@ -69,4 +81,20 @@
         </div>
     </div>
 </div>
+
+<script>
+function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 @endsection
