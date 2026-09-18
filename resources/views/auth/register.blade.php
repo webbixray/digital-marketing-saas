@@ -77,7 +77,7 @@
                         <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
                             aria-label="Toggle password visibility"
                             onclick="togglePassword('password', 'passwordToggleIcon')">
-                            <i id="passwordToggleIcon" class="fas fa-eye"></i>
+                            <i id="passwordToggleIconRegister" class="fas fa-eye"></i>
                         </button>
                     </div>
                     @error('password')
