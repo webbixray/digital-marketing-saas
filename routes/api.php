@@ -28,8 +28,6 @@ use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 'cache.etag:300'])->as('api.')->group(function () {
-    Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1']);
-
     // Dashboard
     Route::get('/dashboard', [ApiDashboardController::class, 'index']);
 
@@ -140,6 +138,9 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
     // Dashboard insights
     Route::get('/dashboard/insights', [DashboardInsightsController::class, 'index']);
 });
+
+// Public endpoints (no auth)
+Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1']);
 
 // Public webhook endpoint (no auth)
 Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');

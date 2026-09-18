@@ -53,7 +53,7 @@ class AnalyticsService
                 'pending_invoices' => Invoice::where('agency_id', $agency->id)
                     ->where('status', 'pending')->count(),
                 'active_social_accounts' => SocialAccount::where('agency_id', $agency->id)
-                    ->where('is_connected', true)->count(),
+                    ->where('is_active', true)->count(),
             ];
         });
     }
@@ -530,7 +530,6 @@ class AnalyticsService
             $engagement = $platformPosts->sum(function ($post) {
                 return ($post->likes_count ?? 0) + ($post->comments_count ?? 0) + ($post->shares_count ?? 0);
             });
-            $impressions = $platformPosts->sum('views_count');
 
             return [
                 'posts_count' => $platformPosts->count(),
