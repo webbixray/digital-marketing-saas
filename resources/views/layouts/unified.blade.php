@@ -670,7 +670,7 @@
         </header>
 
         <!-- Page content -->
-        <main class="flex-1 overflow-auto p-4 sm:p-6" id="main-content">
+        <main class="flex-1 overflow-auto overflow-x-hidden p-4 sm:p-6 min-w-0" id="main-content">
             @yield('content')
         </main>
 
