@@ -107,7 +107,7 @@
 
     @stack('styles')
 </head>
-<body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter" 
+<body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter overflow-x-hidden flex flex-row" 
       x-data="{
           srAnnouncement: '',
           sidebarOpen: false,
