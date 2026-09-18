@@ -3,7 +3,7 @@
 @section('content')
 <x-flash-messages />
 <div class="space-y-6">
-<div class="grid grid-cols-12 gap-4><div class="col-span-12 md:col-span-8">
+<div class="grid grid-cols-12 gap-4"><div class="col-span-12 md:col-span-8 min-w-0">
  <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
   <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
   <h3 class="font-semibold text-gray-900 dark:text-white">Post #{{ $post->id }}</h3>
@@ -13,7 +13,7 @@
   </div>
   </div>
   <div class="p-6">
-  <div class="mb-3"><strong>Content:</strong><div class="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">{{ $post->content }}
+   <div class="mb-3 w-full"><strong>Content:</strong><div class="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg break-words">{{ $post->content }}
   @if($post->hashtags)<div class="mb-3"><strong>Hashtags:</strong> @foreach($post->hashtags as $tag)<span class="badge bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-indigo-900 dark:text-indigo-300 mr-1">{{ $tag }}</span>@endforeach</div>@endif
   @if($post->media)<div class="mb-3"><strong>Media:</strong><pre class="text-sm">{{ json_encode($post->media, JSON_PRETTY_PRINT) }}</pre></div>@endif
   @if($post->quality_score)<div class="mb-3"><strong>Quality Score:</strong><span class="badge badge-{{ $post->quality_score >= 60 ? 'success' : 'warning' }}">{{ $post->quality_score }}/100</span></div>@endif
@@ -40,7 +40,7 @@
  <div class="col-span-12 md:col-span-4">
  <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700"><div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Stats</h3></div>
   <div class="p-6">
-  <ul class="divide-y divide-gray-200 dark:divide-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
+  <ul class="divide-y divide-gray-200 dark:divide-gray-700">
    <li class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"><span>Views</span><strong>{{ $post->views_count }}</strong></li>
    <li class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"><span>Likes</span><strong>{{ $post->likes_count }}</strong></li>
    <li class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"><span>Comments</span><strong>{{ $post->comments_count }}</strong></li>
