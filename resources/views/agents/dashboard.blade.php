@@ -35,7 +35,8 @@
 </div>
 
 <!-- System Health Score -->
-<div class="grid grid-cols-12 gap-4><div class="col-span-12">
+<div class="grid grid-cols-12 gap-4">
+ <div class="col-span-12">
  <div class="bg-white rounded-xl shadow-sm border-2 border-indigo-300 dark:bg-gray-800 dark:border-indigo-700">
   <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
   <h3 class="font-semibold text-gray-900 dark:text-white"><i class="fas fa-heartbeat mr-2"></i>System Health</h3>
@@ -88,7 +89,7 @@
 </div>
 
 <!-- Agent Cards Row -->
-<div class="grid grid-cols-12 gap-4>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  @forelse($agents ?? [] as $name => $agent)
   @include('agents._agent-card', ['name' => $name, 'agent' => $agent])
  @empty
@@ -101,7 +102,7 @@
 </div>
 
 <!-- Cost Summary Row -->
-<div class="grid grid-cols-12 gap-4 id="costSummary">
+<div class="grid grid-cols-12 gap-4" id="costSummary">
  <div class="col-span-12 md:col-span-6">
   <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 ">
    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">

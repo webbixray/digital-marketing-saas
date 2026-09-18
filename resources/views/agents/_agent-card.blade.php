@@ -5,8 +5,8 @@
   $statusIcon = $status === 'active' ? 'fa-check-circle' : ($status === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle');
 @endphp
 
-<div class="lg:col-span-4 md:col-span-6 mb-3">
- <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 agent-card">
+<div class="mb-3">
+ <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 agent-card w-full">
   <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
    <h3 class="font-semibold text-gray-900 dark:text-white">
     <i class="fas fa-robot mr-2"></i>{{ ucwords(str_replace('_', ' ', $name)) }}
@@ -18,34 +18,26 @@
    </div>
   </div>
   <div class="p-6">
-   <div class="grid grid-cols-12 gap-4>
-    <div class="col-span-6">
-     <div class="text-center border-r border-gray-200 dark:border-gray-700">
-      <h5 class="text-lg font-semibold text-gray-900 dark:text-white text-{{ ($agent['success_rate'] ?? 0) >= 0.8 ? 'success' : (($agent['success_rate'] ?? 0) >= 0.5 ? 'warning' : 'danger') }}">
-       {{ number_format(($agent['success_rate'] ?? 0) * 100, 1) }}%
-      </h5>
-      <span class="text-sm text-gray-500 dark:text-gray-400">Success Rate</span>
-     </div>
+   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+    <div class="sm:border-r border-gray-200 dark:border-gray-700">
+     <h5 class="text-lg font-semibold text-gray-900 dark:text-white {{ ($agent['success_rate'] ?? 0) >= 0.8 ? 'text-green-600 dark:text-green-400' : (($agent['success_rate'] ?? 0) >= 0.5 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400') }}">
+      {{ number_format(($agent['success_rate'] ?? 0) * 100, 1) }}%
+     </h5>
+     <span class="text-sm text-gray-500 dark:text-gray-400">Success Rate</span>
     </div>
-    <div class="col-span-6">
-     <div class="text-center">
-      <h5 class="text-lg font-semibold text-gray-900 dark:text-white">{{ number_format($agent['total_executed'] ?? 0) }}</h5>
-      <span class="text-sm text-gray-500 dark:text-gray-400">Total Executions</span>
-     </div>
+    <div>
+     <h5 class="text-lg font-semibold text-gray-900 dark:text-white">{{ number_format($agent['total_executed'] ?? 0) }}</h5>
+     <span class="text-sm text-gray-500 dark:text-gray-400">Total Executions</span>
     </div>
    </div>
-   <div class="mt-3">
-    <div class="col-span-6">
-     <div class="text-center border-r border-gray-200 dark:border-gray-700">
-      <h5 class="text-lg font-semibold text-gray-900 dark:text-white text-blue-600 dark:text-blue-400">{{ number_format($agent['total_successes'] ?? 0) }}</h5>
-      <span class="text-sm text-gray-500 dark:text-gray-400">Successful</span>
-     </div>
+   <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+    <div class="sm:border-r border-gray-200 dark:border-gray-700">
+     <h5 class="text-lg font-semibold text-blue-600 dark:text-blue-400">{{ number_format($agent['total_successes'] ?? 0) }}</h5>
+     <span class="text-sm text-gray-500 dark:text-gray-400">Successful</span>
     </div>
-    <div class="col-span-6">
-     <div class="text-center">
-      <h5 class="text-lg font-semibold text-gray-900 dark:text-white text-indigo-600 dark:text-indigo-400">${{ number_format($agent['avg_cost_per_task'] ?? 0, 4) }}</h5>
-      <span class="text-sm text-gray-500 dark:text-gray-400">Avg Cost/Task</span>
-     </div>
+    <div>
+     <h5 class="text-lg font-semibold text-indigo-600 dark:text-indigo-400">${{ number_format($agent['avg_cost_per_task'] ?? 0, 4) }}</h5>
+     <span class="text-sm text-gray-500 dark:text-gray-400">Avg Cost/Task</span>
     </div>
    </div>
    <div class="mt-3">
@@ -81,11 +73,11 @@
     </div>
    </div>
   </div>
-  <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-   <a href="{{ route('agents.show', $name) }}" class="btn px-3 py-1.5 text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
+  <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2">
+   <a href="{{ route('agents.show', $name) }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
     <i class="fas fa-eye mr-1"></i> View Details
    </a>
-   <button class="btn px-3 py-1.5 text-sm bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 inline-flex items-center gap-2 font-medium transition-colors" onclick="dispatchTask('{{ $name }}')">
+   <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center gap-2 font-medium transition-colors" onclick="dispatchTask('{{ $name }}')">
     <i class="fas fa-paper-plane mr-1"></i> Dispatch
    </button>
   </div>
