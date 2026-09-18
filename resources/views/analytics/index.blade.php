@@ -109,14 +109,14 @@
      @forelse($bestPosts as $post)
       <div class="flex items-start gap-3">
        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-        <i class="fab fa-{{ $post->platform }} text-gray-600 dark:text-gray-300 text-xs"></i>
+        <i class="fab fa-{{ $post['platform'] }} text-gray-600 dark:text-gray-300 text-xs"></i>
        </div>
        <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ Str::limit($post->content, 80) }}</p>
+        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ Str::limit($post['content'], 80) }}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-         <i class="fas fa-heart mr-1"></i>{{ $post->likes_count ?? 0 }}
-         <i class="fas fa-share ml-2 mr-1"></i>{{ $post->shares_count ?? 0 }}
-         <i class="fas fa-eye ml-2 mr-1"></i>{{ $post->views_count ?? 0 }}
+         <i class="fas fa-heart mr-1"></i>{{ $post['likes_count'] ?? 0 }}
+         <i class="fas fa-share ml-2 mr-1"></i>{{ $post['shares_count'] ?? 0 }}
+         <i class="fas fa-eye ml-2 mr-1"></i>{{ $post['views_count'] ?? 0 }}
         </p>
        </div>
       </div>

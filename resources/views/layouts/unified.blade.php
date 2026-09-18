@@ -119,7 +119,7 @@
           userDropdownOpen: false,
           createDropdownOpen: false,
           loading: true,
-          expandedSections: JSON.parse(localStorage.getItem('sidebarSections') || '{\"social\":true,\"marketing\":true,\"ai\":true,\"business\":true}'),
+          expandedSections: JSON.parse(localStorage.getItem('sidebarSections') || '{{ json_encode(["social"=>true,"marketing"=>true,"ai"=>true,"business"=>true]) }}'),
           toggleSection(section) {
               this.expandedSections[section] = !this.expandedSections[section];
               localStorage.setItem('sidebarSections', JSON.stringify(this.expandedSections));

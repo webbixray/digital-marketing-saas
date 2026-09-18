@@ -143,7 +143,18 @@ class AnalyticsController extends Controller
                 ->where('status', 'published')
                 ->orderBy('likes_count', 'desc')
                 ->limit(5)
-                ->get();
+                ->get()
+                ->map(fn ($post) => [
+                    'id' => $post->id,
+                    'platform' => $post->platform,
+                    'content' => $post->content,
+                    'likes_count' => $post->likes_count,
+                    'comments_count' => $post->comments_count,
+                    'shares_count' => $post->shares_count,
+                    'views_count' => $post->views_count,
+                    'published_at' => $post->published_at?->toDateTimeString(),
+                ])
+                ->toArray();
 
             return compact('postStats', 'engagement', 'platformStats', 'campaignStats', 'clientStats', 'aiStats', 'revenueStats', 'dailyEngagement', 'bestPosts');
         });
