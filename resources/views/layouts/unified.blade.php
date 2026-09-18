@@ -482,8 +482,7 @@
     </aside>
 
     <!-- Main content -->
-    <div class="flex flex-1 flex-col min-h-screen transition-all duration-300" 
-         :class="sidebarMini ? 'lg:pl-16' : 'lg:pl-64'">
+    <div class="flex flex-1 flex-col min-h-screen transition-all duration-300">
         <!-- Top bar -->
         <header class="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 bg-white/80 dark:bg-gray-900/80 dark:border-gray-800 px-4 sm:px-6 backdrop-blur-sm">
             <!-- Mobile menu button -->

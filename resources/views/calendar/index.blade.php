@@ -129,7 +129,7 @@
  .fc-event { cursor: pointer; }
  .platform-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: white; }
  [x-cloak] { display: none !important; }
- </style>
+</style>
 @endpush
 
 @push('scripts')

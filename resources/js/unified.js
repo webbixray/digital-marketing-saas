@@ -8,6 +8,9 @@ Alpine.plugin(focus);
 // Auto-initialize Alpine
 Alpine.start();
 
+// Auto-initialize Alpine
+Alpine.start();
+
 // Initialize components when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize component system
