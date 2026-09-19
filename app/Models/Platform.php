@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Platform extends Model
 {
@@ -30,9 +31,11 @@ class Platform extends Model
 
     public static function getAllActive(): array
     {
-        return self::where('is_active', true)
-            ->orderBy('display_name')
-            ->get()
-            ->keyBy('name');
+        return Cache::remember('platforms:active', 3600, function () {
+            return self::where('is_active', true)
+                ->orderBy('display_name')
+                ->get()
+                ->keyBy('name');
+        });
     }
 }
