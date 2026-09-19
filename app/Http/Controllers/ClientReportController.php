@@ -13,7 +13,9 @@ class ClientReportController extends Controller
 {
     public function __construct(
         private readonly AnalyticsService $analytics,
-    ) {}
+    ) {
+        $this->middleware(['auth', 'agency']);
+    }
 
     /**
      * Generate a new client report

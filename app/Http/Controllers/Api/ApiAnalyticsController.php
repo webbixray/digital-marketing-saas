@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Analytics\AnalyticsService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ApiAnalyticsController extends Controller
 {
@@ -15,37 +16,57 @@ class ApiAnalyticsController extends Controller
 
     public function crossPlatform(): JsonResponse
     {
-        $stats = $this->analytics->getCrossPlatformStats(request()->user()->agency);
-
-        return response()->json(['success' => true, 'data' => $stats]);
+        try {
+            $stats = $this->analytics->getCrossPlatformStats(request()->user()->agency);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics crossPlatform failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch cross-platform analytics'], 500);
+        }
     }
 
     public function platform(string $platform): JsonResponse
     {
-        $stats = $this->analytics->getPlatformStats(request()->user()->agency, $platform);
-
-        return response()->json(['success' => true, 'data' => $stats]);
+        try {
+            $stats = $this->analytics->getPlatformStats(request()->user()->agency, $platform);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics platform failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch platform analytics'], 500);
+        }
     }
 
     public function growth(): JsonResponse
     {
-        $days = (int) request()->query('days', 30);
-        $stats = $this->analytics->getSocialGrowth(request()->user()->agency, $days);
-
-        return response()->json(['success' => true, 'data' => $stats]);
+        try {
+            $days = (int) request()->query('days', 30);
+            $stats = $this->analytics->getSocialGrowth(request()->user()->agency, $days);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics growth failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch growth analytics'], 500);
+        }
     }
 
     public function optimalTimes(): JsonResponse
     {
-        $stats = $this->analytics->getOptimalPostingTimes(request()->user()->agency);
-
-        return response()->json(['success' => true, 'data' => $stats]);
+        try {
+            $stats = $this->analytics->getOptimalPostingTimes(request()->user()->agency);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics optimalTimes failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch optimal posting times'], 500);
+        }
     }
 
     public function bestPlatform(): JsonResponse
     {
-        $stats = $this->analytics->getBestPerformingPlatform(request()->user()->agency);
-
-        return response()->json(['success' => true, 'data' => $stats]);
+        try {
+            $stats = $this->analytics->getBestPerformingPlatform(request()->user()->agency);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics bestPlatform failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch best platform'], 500);
+        }
     }
 }
