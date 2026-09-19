@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             FeatureFlagSeeder::class,
             WorkflowTemplateSeeder::class,
+            PlatformSeeder::class,
+            RolePermissionSeeder::class,
             DemoSeeder::class,
             TestUserSeeder::class,
         ]);

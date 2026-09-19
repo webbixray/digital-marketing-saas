@@ -232,12 +232,6 @@ class DemoSeeder extends Seeder
     {
         $users = [];
 
-        // Create roles using Spatie
-        $roles = ['owner', 'admin', 'manager', 'staff'];
-        foreach ($roles as $roleName) {
-            Role::firstOrCreate(['name' => $roleName]);
-        }
-
         // Owner
         $users['owner'] = User::create([
             'name' => 'Sarah Johnson',
