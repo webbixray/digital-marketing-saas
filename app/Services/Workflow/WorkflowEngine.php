@@ -185,7 +185,25 @@ class WorkflowEngine
             return ['status' => 'failed', 'reason' => 'Missing prompt'];
         }
 
-        return ['status' => 'success', 'action' => 'ai_generate', 'type' => $type, 'prompt' => $prompt];
+        try {
+            $agency = $triggerData['agency'] ?? (auth()->check() ? auth()->user()->agency : null);
+            $result = $this->aiContent->generate(
+                $agency,
+                $prompt,
+                $type
+            );
+
+            return [
+                'status' => 'success',
+                'action' => 'ai_generate',
+                'type' => $type,
+                'content' => $result->content ?? null,
+                'cost' => $result->costUsd ?? 0,
+            ];
+        } catch (\Exception $e) {
+            Log::error('Workflow AI generate failed', ['error' => $e->getMessage()]);
+            return ['status' => 'failed', 'reason' => $e->getMessage()];
+        }
     }
 
     protected function actionWebhook(array $config, array $triggerData): array
