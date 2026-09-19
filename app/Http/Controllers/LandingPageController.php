@@ -107,9 +107,9 @@ class LandingPageController extends Controller
             'content' => 'nullable|string',
             'cta_text' => 'nullable|string|max:100',
             'cta_url' => 'nullable|url',
-            'background_color' => 'nullable|string|max-7',
-            'text_color' => 'nullable|string|max-7',
-            'button_color' => 'nullable|string|max-7',
+            'background_color' => 'nullable|string|max:7',
+            'text_color' => 'nullable|string|max:7',
+            'button_color' => 'nullable|string|max:7',
         ]);
 
         $landingPage->update($validated);

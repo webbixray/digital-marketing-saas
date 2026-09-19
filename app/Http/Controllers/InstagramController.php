@@ -275,4 +275,72 @@ class InstagramController extends Controller
         return redirect()->route('instagram.index')
             ->with('success', 'Token refreshed successfully!');
     }
+
+    /**
+     * Publish content to Instagram via API.
+     */
+    public function apiPublish(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'account_id' => 'required|integer|exists:social_accounts,id',
+                'caption' => 'required|string|max:2200',
+                'media_url' => 'required|url',
+                'media_type' => 'required|in:image,video,carousel',
+            ]);
+
+            $agencyId = $request->user()->agency_id;
+            $account = SocialAccount::where('agency_id', $agencyId)
+                ->where('platform', 'instagram')
+                ->findOrFail($request->account_id);
+
+            $result = $this->instagram->publishMedia(
+                $account->platform_account_id,
+                $account->access_token,
+                $request->media_url,
+                $request->caption,
+                $request->media_type
+            );
+
+            return response()->json($result);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            Log::error('Instagram API publish failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to publish content'], 500);
+        }
+    }
+
+    /**
+     * Get Instagram insights via API.
+     */
+    public function apiInsights(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'account_id' => 'required|integer|exists:social_accounts,id',
+                'metrics' => 'nullable|array',
+                'period' => 'nullable|in:day,lifetime',
+            ]);
+
+            $agencyId = $request->user()->agency_id;
+            $account = SocialAccount::where('agency_id', $agencyId)
+                ->where('platform', 'instagram')
+                ->findOrFail($request->account_id);
+
+            $insights = $this->instagram->getAccountInsights(
+                $account->platform_account_id,
+                $account->access_token,
+                $request->metrics,
+                $request->period
+            );
+
+            return response()->json($insights);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            Log::error('Instagram API insights failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch insights'], 500);
+        }
+    }
 }
