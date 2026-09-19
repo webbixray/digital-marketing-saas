@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ApplyWhiteLabel;
 use App\Http\Middleware\AgentRateLimit;
 use App\Http\Middleware\CacheWithEtag;
 use App\Http\Middleware\Enforce2FA;
@@ -56,6 +57,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
             HstsMiddleware::class,
             RequestId::class,
+            ApplyWhiteLabel::class,
         ]);
 
         $middleware->api(append: [

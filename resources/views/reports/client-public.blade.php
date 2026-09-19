@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $report->title }} - {{ $whiteLabel?->brand_name ?? $agency->name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         tailwind.config = {
             theme: {
                 extend: {

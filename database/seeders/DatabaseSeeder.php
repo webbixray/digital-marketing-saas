@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             FeatureFlagSeeder::class,
             WorkflowTemplateSeeder::class,
             DemoSeeder::class,
+            TestUserSeeder::class,
         ]);
     }
 }

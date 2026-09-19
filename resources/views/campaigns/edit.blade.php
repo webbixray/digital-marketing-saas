@@ -3,8 +3,7 @@
 @section('content')
 <x-flash-messages />
 <div class="space-y-6">
-    <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 md:col-span-8">
+    <div class="max-w-3xl mx-auto">
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">Edit Campaign</h3></div>
                 <form action="{{ route('campaigns.update', $campaign) }}" method="POST">
@@ -16,9 +15,9 @@
                         <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Objective</label><input type="text" name="objective" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->objective }}"></div>
                         <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Audience</label><input type="text" name="target_audience" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->target_audience }}"></div>
                         <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label><select name="client_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"><option value="">None</option>@foreach($clients as $client)<option value="{{ $client->id }}" {{ $campaign->client_id === $client->id ? 'selected' : '' }}>{{ $client->name }}</option>@endforeach</select></div>
-                        <div class="grid grid-cols-12 gap-4">
-                            <div class="col-span-12 md:col-span-6"><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label><input type="date" name="start_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->start_date?->format('Y-m-d') }}"></div>
-                            <div class="col-span-12 md:col-span-6"><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label><input type="date" name="end_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->end_date?->format('Y-m-d') }}"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label><input type="date" name="start_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->start_date?->format('Y-m-d') }}"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label><input type="date" name="end_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ $campaign->end_date?->format('Y-m-d') }}"></div>
                         </div>
                     </div>
                     <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-3">

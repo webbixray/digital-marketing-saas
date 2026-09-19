@@ -1204,7 +1204,7 @@
 
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 class WorkflowBuilder {
     constructor() {
         this.nodes = [];

@@ -26,7 +26,7 @@ class WhiteLabelController extends Controller
     {
         $request->validate([
             'brand_name' => 'nullable|string|max:255',
-            'brand_color' => 'nullable|string|max:7',
+            'brand_color' => 'nullable|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/',
             'logo_url' => 'nullable|url|max:2048',
             'favicon_url' => 'nullable|url|max:2048',
             'from_name' => 'nullable|string|max:255',

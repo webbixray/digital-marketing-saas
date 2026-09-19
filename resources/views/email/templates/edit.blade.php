@@ -4,14 +4,11 @@
 @section('content')
 <x-flash-messages />
 <div class="space-y-6">
-<div class="content-wrapper">
-    </div>
 </div>
 @endsection
 
-
 @push("scripts")
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     async function previewTemplate() {
         try {
             const response = await dmsaas.request('{{ route("email.templates.preview", $template) }}', {

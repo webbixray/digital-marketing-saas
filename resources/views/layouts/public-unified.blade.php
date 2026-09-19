@@ -4,16 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name'))</title>
-    
+    <title>@yield('title', $whiteLabel->display_name ?? config('app.name'))</title>
+    @if(isset($whiteLabel) && $whiteLabel->favicon_url)
+        <link rel="icon" href="{{ $whiteLabel->favicon_url }}">
+    @endif
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <!-- Tailwind CSS -->
     @vite(['resources/css/unified.css', 'resources/js/unified.js'])
 
@@ -25,17 +28,21 @@
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
         Skip to main content
     </a>
-    
+
     <!-- Navigation -->
     <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="/" class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-bolt text-white text-sm"></i>
-                        </div>
-                        <span class="font-bold text-gray-900 dark:text-white">{{ config('app.name') }}</span>
+                        @if(isset($whiteLabel) && $whiteLabel->logo_url)
+                            <img src="{{ $whiteLabel->logo_url }}" alt="{{ $whiteLabel->display_name }}" class="h-8 max-w-[120px] object-contain">
+                        @else
+                            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-sm"></i>
+                            </div>
+                        @endif
+                        <span class="font-bold text-gray-900 dark:text-white">{{ $whiteLabel->display_name ?? config('app.name') }}</span>
                     </a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -97,7 +104,10 @@
             </div>
             <hr class="border-gray-800 my-8">
             <div class="text-center">
-                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ $whiteLabel->display_name ?? config('app.name') }}. All rights reserved.</p>
+                @if(isset($whiteLabel) && ! $whiteLabel->hide_powered_by)
+                    <p class="text-xs mt-1">Powered by <a href="/" class="text-indigo-400 hover:text-indigo-300">DigitalMarketingSaaS</a></p>
+                @endif
             </div>
         </div>
     </footer>

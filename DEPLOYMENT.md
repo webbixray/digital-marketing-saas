@@ -1,17 +1,125 @@
 # Digital Marketing SaaS - Production Deployment Guide
 
+## CI/CD Pipeline
+
+GitHub Actions (`.github/workflows/ci.yml`) provides:
+
+1. **Test Job** — Runs Pint, PHPUnit, PHPStan with coverage
+2. **Security Job** — Runs `composer audit`, PHPStan, secret detection
+3. **Deploy Staging** — Auto-deploys from `staging` branch
+4. **Deploy Production** — Auto-deploys from `main` branch
+
+### Required Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `SERVER_HOST` | Production server IP/hostname |
+| `SERVER_USER` | SSH username |
+| `SSH_PRIVATE_KEY` | SSH private key for deployment |
+| `CODECOV_TOKEN` | Codecov coverage token (optional) |
+
 ## Overview
 
 Multi-tenant SaaS platform for digital marketing agencies. AI-powered social media management across Facebook, Instagram, X (Twitter), LinkedIn, TikTok, Pinterest, and YouTube.
 
 ## Prerequisites
 
-- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
-- Docker Compose v2+
-- Git
-- Domain name (for production)
+- PHP 8.3+
+- MySQL 8.0+
+- Redis 7+
+- Node.js 20+ (for building assets)
+- Composer 2.x
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux) — optional
 
-## Quick Start (Production)
+## Environment Variables Reference
+
+### Required Variables
+
+```env
+APP_NAME="Digital Marketing SaaS"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+APP_KEY=base64:          # Generate with: php artisan key:generate
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=digitalmarketingsaas
+DB_USERNAME=dmsaas
+DB_PASSWORD=<REDACTED>
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=<strong-password>
+REDIS_PORT=6379
+
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailgun.org
+MAIL_PORT=587
+MAIL_USERNAME=postmaster@your-domain.com
+MAIL_PASSWORD=<REDACTED>
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="hello@your-domain.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+STRIPE_KEY=pk_live_xxx
+STRIPE_SECRET=sk_live_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_CURRENCY=usd
+
+SENTRY_LARAVEL_DSN=https://xxxx@sentry.io/xxxx
+SENTRY_TRACES_SAMPLE_RATE=0.1
+```
+
+### Optional Variables
+
+```env
+# AI Providers (at least one required for AI features)
+AI_DEFAULT_PROVIDER=nous_portal
+AI_API_KEY=
+AI_NOUS_API_KEY=
+
+# Telescope (disable in production)
+TELESCOPE_ENABLED=false
+
+# CORS
+CORS_ALLOWED_ORIGINS=https://your-domain.com
+```
+
+## Local Development (Without Docker)
+
+```bash
+# Clone repository
+git clone https://github.com/webbixray/digital-marketing-saas.git
+cd digitalmarketingsaas
+
+# Install dependencies
+composer install
+npm install
+
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# Database (SQLite for quick start)
+touch database/database.sqlite
+php artisan migrate --force
+php artisan db:seed --force
+
+# Build assets
+npm run build
+
+# Start development server
+php artisan serve
+```
+
+## Quick Start (Production — Docker)
 
 ### 1. Clone and configure
 

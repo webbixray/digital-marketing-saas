@@ -6,11 +6,11 @@
         <!-- Comment Form -->
         <form id="commentForm" class="mb-4" onsubmit="submitComment(event)">
             @csrf
-            <div class="d-flex gap-2">
-                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=random&size=40" class="rounded-circle" width="40" height="40" alt="">
-                <div class="flex-grow-1">
+            <div class="flex gap-2">
+                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=random&size=40" class="rounded-full" width="40" height="40" alt="">
+                <div class="flex-1">
                     <textarea id="commentBody" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="2" placeholder="Write a comment..." required></textarea>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">Post Comment</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-indigo-700 font-medium transition-colors mt-2">Post Comment</button>
                 </div>
             </div>
         </form>
@@ -18,12 +18,12 @@
         <!-- Comments List -->
         <div id="commentsList">
             @foreach($comments ?? [] as $comment)
-            <div class="d-flex gap-2 mb-3">
-                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random&size=32" class="rounded-circle" width="32" height="32" alt="">
+            <div class="flex gap-2 mb-3">
+                <img loading="lazy" src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random&size=32" class="rounded-full" width="32" height="32" alt="">
                 <div>
-                    <strong>{{ $comment->user->name ?? 'Unknown' }}</strong>
-                    <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
-                    <p class="mb-0">{{ $comment->body }}</p>
+                    <strong class="text-gray-900 dark:text-white">{{ $comment->user->name ?? 'Unknown' }}</strong>
+                    <small class="text-gray-500 dark:text-gray-400">{{ $comment->created_at->diffForHumans() }}</small>
+                    <p class="mb-0 text-gray-900 dark:text-white">{{ $comment->body }}</p>
                 </div>
             </div>
             @endforeach
@@ -32,7 +32,7 @@
 </div>
 
 @push("scripts")
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     const commentableType = @json($commentable_type ?? null);
     const commentableId = @json($commentable_id ?? null);
 

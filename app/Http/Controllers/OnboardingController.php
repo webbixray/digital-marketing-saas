@@ -94,7 +94,7 @@ class OnboardingController extends Controller
                         'platform' => $platform,
                         'platform_username' => '@'.Str::slug($agency->name).'_'.$platform,
                         'is_active' => true,
-                        'access_token' => 'pending_'.Str::random(32),
+                        'access_token' => encrypt('pending_'.Str::random(32)),
                     ]);
                 }
             }

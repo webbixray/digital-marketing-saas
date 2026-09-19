@@ -6,6 +6,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\DashboardInsightsServiceProvider;
 use App\Providers\SentryServiceProvider;
 use App\Providers\TelescopeServiceProvider;
+use App\Providers\WhiteLabelServiceProvider;
 
 return [
     AgentServiceProvider::class,
@@ -14,4 +15,5 @@ return [
     DashboardInsightsServiceProvider::class,
     SentryServiceProvider::class,
     TelescopeServiceProvider::class,
+    WhiteLabelServiceProvider::class,
 ];

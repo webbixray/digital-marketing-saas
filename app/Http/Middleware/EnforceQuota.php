@@ -13,15 +13,22 @@ class EnforceQuota
     {
         $user = $request->user();
 
-        if (! $user || ! $user->agency) {
+        if (! $user || ! $user->agency_id) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Unauthorized.'], 401);
             }
             abort(403);
         }
 
-        $quotaService = app(QuotaService::class);
         $agency = $user->agency;
+        if (! $agency) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Agency not found.'], 404);
+            }
+            abort(404);
+        }
+
+        $quotaService = app(QuotaService::class);
 
         if ($quotaService->isOverQuota($agency, $feature)) {
             if ($request->expectsJson()) {

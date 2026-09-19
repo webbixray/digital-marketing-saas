@@ -7,10 +7,19 @@
     <x-flash-messages />
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()?->name ?? 'User' }}</h2>
-            <p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your social media today.</p>
+            <div class="flex items-center gap-3">
+                @if(($whiteLabel ?? null)?->logo_url)
+                    <img src="{{ $whiteLabel->logo_url }}" alt="{{ $whiteLabel->brand_name }}" class="h-8 w-8 object-contain rounded-lg">
+                @else
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bolt text-white text-sm"></i>
+                    </div>
+                @endif
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()?->name ?? 'User' }}</h2>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">{{ ($whiteLabel ?? null)?->brand_name ?? config('app.name') }} — Here's what's happening with your social media today.</p>
         </div>
-        <a href="{{ route('social.posts.create') }}" class="btn btn-primary inline-flex items-center gap-2 self-start sm:self-auto">
+        <a href="{{ route('social.posts.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors self-start sm:self-auto">
             <i class="fas fa-plus"></i> Create Post
         </a>
     </div>

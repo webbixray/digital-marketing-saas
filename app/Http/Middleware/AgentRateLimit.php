@@ -34,7 +34,7 @@ class AgentRateLimit
     {
         $user = $request->user();
 
-        if (! $user || ! $user->agency) {
+        if (! $user || ! $user->agency_id) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Unauthorized.'], 401);
             }
@@ -42,6 +42,13 @@ class AgentRateLimit
         }
 
         $agency = $user->agency;
+        if (! $agency) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Agency not found.'], 404);
+            }
+            abort(404);
+        }
+
         $plan = $agency->subscription_plan ?? 'free';
         $limit = self::PLAN_LIMITS[$plan] ?? self::PLAN_LIMITS['free'];
 

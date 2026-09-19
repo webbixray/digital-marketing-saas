@@ -13,7 +13,7 @@
             <div>
                 <h3 class="font-semibold text-gray-900 dark:text-white text-lg">{{ $report->name }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    <span class="badge badge-{{ $report->type === 'engagement' ? 'blue' : ($report->type === 'performance' ? 'green' : 'purple') }}">{{ ucfirst($report->type) }}</span>
+                    <span class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ $report->type === 'engagement' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : ($report->type === 'performance' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300') }}">{{ ucfirst($report->type) }}</span>
                     <span class="ml-2">{{ $report->start_date }} &mdash; {{ $report->end_date }}</span>
                 </p>
             </div>
@@ -49,7 +49,7 @@
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Platforms</h4>
                 <div class="flex flex-wrap gap-2">
                     @foreach((array) $report->platform as $platform)
-                        <span class="badge badge-blue">{{ ucfirst($platform) }}</span>
+                        <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">{{ ucfirst($platform) }}</span>
                     @endforeach
                 </div>
             </div>

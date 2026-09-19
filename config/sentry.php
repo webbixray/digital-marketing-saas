@@ -1,11 +1,5 @@
 <?php
 
-use Sentry\Breadcrumb;
-use Sentry\Event;
-use Sentry\Integration\FrameStacktraceIntegration;
-use Sentry\Integration\RequestIntegration;
-use Sentry\Integration\TransactionIntegration;
-
 return [
     'dsn' => env('SENTRY_LARAVEL_DSN', env('SENTRY_DSN')),
 
@@ -44,7 +38,6 @@ return [
 
         // Capture HTTP client requests as spans
         'http_client_requests' => true,
-
     ],
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#send-default-pii
@@ -54,18 +47,4 @@ return [
     'traces_sample_rate' => env('SENTRY_TRACES_SAMPLE_RATE') === null ? null : (float) env('SENTRY_TRACES_SAMPLE_RATE'),
 
     'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE') === null ? null : (float) env('SENTRY_PROFILES_SAMPLE_RATE'),
-
-    'integrations' => [
-        RequestIntegration::class,
-        TransactionIntegration::class,
-        FrameStacktraceIntegration::class,
-    ],
-
-    'before_breadcrumb' => function (Breadcrumb $breadcrumb): ?Breadcrumb {
-        return $breadcrumb;
-    },
-
-    'before_send' => function (Event $event): ?Event {
-        return $event;
-    },
 ];

@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__.'/health.php';
+
 use App\Http\Controllers\AbTestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
@@ -277,12 +279,12 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
     Route::get('/ref/{code}', [ReferralController::class, 'track'])->name('referrals.track');
 
-    // Reports
-    Route::resource('reports', ReportController::class);
-    Route::get('reports/{report}/download', [ReportController::class, 'download'])->name('reports.download');
-    Route::post('reports/{report}/generate', [ReportController::class, 'generate'])->name('reports.generate');
+// Reports
+    Route::resource('reports', ReportController::class, ['where' => ['report' => '[0-9]+']]);
+    Route::get('reports/{report}/download', [ReportController::class, 'download'])->whereNumber('report')->name('reports.download');
+    Route::post('reports/{report}/generate', [ReportController::class, 'generate'])->whereNumber('report')->name('reports.generate');
     Route::post('reports/agent-generate', [ReportController::class, 'generateWithAgent'])->name('reports.agent-generate');
-    Route::get('reports/{report}/agent-recommendations', [ReportController::class, 'getAgentRecommendations'])->name('reports.agent-recommendations');
+    Route::get('reports/{report}/agent-recommendations', [ReportController::class, 'getAgentRecommendations'])->whereNumber('report')->name('reports.agent-recommendations');
     Route::post('reports/agent-schedule', [ReportController::class, 'scheduleAgentReport'])->name('reports.agent-schedule');
 
     // Email Campaigns
@@ -339,8 +341,8 @@ Route::middleware(['auth', 'agency'])->group(function () {
 // Billing webhook (public - Stripe can't authenticate)
 Route::post('billing/webhook', [BillingController::class, 'webhook'])->name('billing.webhook');
 
-// Public client report (no auth required)
-Route::get('reports/{slug}/{token}', [PublicClientReportController::class, 'show'])
+// Public client report (no auth required) - MUST be outside auth middleware
+Route::get('r/{slug}/{token}', [PublicClientReportController::class, 'show'])
     ->name('public.client-report');
 
 Route::middleware(['auth', 'agency'])->group(function () {
@@ -351,23 +353,25 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
     Route::post('/two-factor/disable', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
 
-    Route::get('/onboarding', function () {
-        return view('onboarding');
-    })->name('onboarding');
+    // Onboarding (auth only — no agency required yet)
+    Route::prefix('onboarding')->name('onboarding.')->group(function () {
+        Route::get('/', function () {
+            return view('onboarding');
+        });
 
-    // Onboarding Step Routes
-    Route::get('/onboarding/step1', [OnboardingController::class, 'step1_createAgency'])->name('onboarding.step1');
-    Route::post('/onboarding/step1', [OnboardingController::class, 'step1_createAgency']);
-    Route::get('/onboarding/step2', [OnboardingController::class, 'step2_connectSocial'])->name('onboarding.step2');
-    Route::post('/onboarding/step2', [OnboardingController::class, 'step2_connectSocial']);
-    Route::get('/onboarding/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('onboarding.step3');
-    Route::post('/onboarding/step3', [OnboardingController::class, 'step3_inviteTeam']);
-    Route::get('/onboarding/step4', [OnboardingController::class, 'step4_createCampaign'])->name('onboarding.step4');
-    Route::post('/onboarding/step4', [OnboardingController::class, 'step4_createCampaign']);
-    Route::get('/onboarding/step5', [OnboardingController::class, 'step5_activateAI'])->name('onboarding.step5');
-    Route::post('/onboarding/step5', [OnboardingController::class, 'step5_activateAI']);
-    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
-    Route::post('/onboarding/quick-start', [OnboardingController::class, 'quickStart'])->name('onboarding.quickStart');
+        Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
+        Route::post('/step1', [OnboardingController::class, 'step1_createAgency']);
+        Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
+        Route::post('/step2', [OnboardingController::class, 'step2_connectSocial']);
+        Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
+        Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam']);
+        Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
+        Route::post('/step4', [OnboardingController::class, 'step4_createCampaign']);
+        Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
+        Route::post('/step5', [OnboardingController::class, 'step5_activateAI']);
+        Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete');
+        Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart');
+    });
 
     Route::prefix('agency')->name('agency.')->group(function () {
         Route::get('settings', [AgencyController::class, 'settings'])->name('settings');
@@ -385,10 +389,6 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('roles/remove', [RoleController::class, 'remove'])->name('roles.remove');
     Route::get('roles/audit', [RoleController::class, 'auditTrail'])->name('roles.audit');
 
-});
-
-Route::get('/health', function () {
-    return response()->json(['status' => 'ok', 'timestamp' => now()->toISOString()]);
 });
 
 // Version/Changelog (PUBLIC - no auth required)

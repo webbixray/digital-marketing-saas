@@ -113,6 +113,11 @@ class BillingController extends Controller
 
     public function webhook(Request $request)
     {
+        // Ensure content type is JSON
+        if (! $request->isJson()) {
+            return response()->json(['error' => 'Invalid content type.'], 415);
+        }
+
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
 

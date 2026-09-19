@@ -57,7 +57,7 @@
                                     </div>
                                 </td>
                                 <td class="py-3 px-4">
-                                    <span class="badge badge-{{ str_contains($activity->action, 'delete') ? 'red' : (str_contains($activity->action, 'create') ? 'green' : 'blue') }}">{{ $activity->action }}</span>
+                                    <span class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ str_contains($activity->action, 'delete') ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : (str_contains($activity->action, 'create') ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300') }}">{{ $activity->action }}</span>
                                 </td>
                                 <td class="py-3 px-4 text-gray-600 dark:text-gray-300">{{ $activity->details ?? '—' }}</td>
                             </tr>

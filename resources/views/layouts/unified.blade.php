@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') | {{ config('app.name') }}</title>
+    <title>@yield('title', 'Dashboard') | {{ ($whiteLabel ?? null)?->brand_name ?? config('app.name') }}</title>
+    @if(($whiteLabel ?? null)?->favicon_url)
+    <link rel="icon" href="{{ $whiteLabel->favicon_url }}">
+    @endif
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,11 +34,9 @@
             outline-offset: 2px;
         }
         [x-cloak] { display: none !important; }
-        /* Smooth dark mode transition */
         html {
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-        /* Loading bar */
         #loading-bar {
             position: fixed;
             top: 0;
@@ -47,15 +48,8 @@
             width: 0;
             opacity: 0;
         }
-        #loading-bar.loading {
-            width: 80%;
-            opacity: 1;
-        }
-        #loading-bar.complete {
-            width: 100%;
-            opacity: 0;
-        }
-        /* Tooltip for mini sidebar */
+        #loading-bar.loading { width: 80%; opacity: 1; }
+        #loading-bar.complete { width: 100%; opacity: 0; }
         .sidebar-tooltip {
             position: absolute;
             left: 100%;
@@ -82,23 +76,11 @@
             border: 4px solid transparent;
             border-right-color: #1f2937;
         }
-        .group:hover .sidebar-tooltip {
-            opacity: 1;
-        }
-        /* Scrollbar styling */
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 2px;
-        }
-        .dark .sidebar-nav::-webkit-scrollbar-thumb {
-            background: #374151;
-        }
+        .group:hover .sidebar-tooltip { opacity: 1; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+        .dark .sidebar-nav::-webkit-scrollbar-thumb { background: #374151; }
     </style>
     
     <!-- PWA -->
@@ -130,11 +112,8 @@
                   document.documentElement.classList.toggle('dark', val);
               });
               this.$watch('sidebarMini', val => localStorage.setItem('sidebarMini', val));
-              // Apply dark mode on init
               document.documentElement.classList.toggle('dark', this.darkMode);
-              // Loading simulation
               setTimeout(() => { this.loading = false; }, 500);
-              // Keyboard shortcuts
               document.addEventListener('keydown', (e) => {
                   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                       e.preventDefault();
@@ -151,7 +130,6 @@
                       this.createDropdownOpen = false;
                   }
               });
-              // Scroll active nav into view
               this.$nextTick(() => {
                   const activeNav = document.querySelector('.nav-link.active');
                   if (activeNav) {
@@ -481,7 +459,7 @@
         </div>
     </aside>
 
-    <!-- Main content -->
+    <!-- Main content wrapper -->
     <div class="flex flex-1 flex-col min-h-screen transition-all duration-300">
         <!-- Top bar -->
         <header class="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 bg-white/80 dark:bg-gray-900/80 dark:border-gray-800 px-4 sm:px-6 backdrop-blur-sm">
@@ -490,7 +468,7 @@
                 <i class="fas fa-bars text-xl"></i>
             </button>
 
-            <!-- Breadcrumb (integrated) -->
+            <!-- Breadcrumb -->
             <nav class="hidden md:flex items-center text-sm text-gray-500 dark:text-gray-400" aria-label="Breadcrumb">
                 <ol class="flex items-center gap-2">
                     <li><a href="{{ route('dashboard') }}" class="hover:text-gray-700 dark:hover:text-gray-200">Home</a></li>
@@ -513,7 +491,6 @@
                         <span x-text="navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'"></span>K
                     </kbd>
                 </button>
-                <!-- Mobile search icon -->
                 <button @click="searchOpen = true" class="sm:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Open search">
                     <i class="fas fa-search text-lg"></i>
                 </button>
@@ -671,13 +648,18 @@
 
         <!-- Page content -->
         <main class="flex-1 overflow-auto overflow-x-hidden p-4 sm:p-6 min-w-0" id="main-content">
+            <div>
             @yield('content')
+            </div>
         </main>
 
         <!-- Footer -->
-        <footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 sm:px-6 py-4">
+        <footer class="flex-shrink-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <p>&copy; {{ date('Y') }} DMSaaS. All rights reserved. <span class="hidden sm:inline">v2.1.0</span></p>
+                <p>&copy; 2026 {{ ($whiteLabel ?? null)?->brand_name ?? config('app.name') }}. All rights reserved. <span class="hidden sm:inline">v2.1.0</span></p>
+                @if(($whiteLabel ?? null)?->hide_powered_by !== true)
+                <p class="text-xs text-gray-400">Powered by {{ config('app.name') }}</p>
+                @endif
                 <div class="flex items-center gap-4">
                     <a href="#" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Docs</a>
                     <a href="#" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Support</a>
@@ -711,7 +693,7 @@
                 <input type="text" 
                        x-model="searchQuery"
                        x-ref="searchInput"
-                       x-init="$watch('searchOpen', val => { if(val) $nextTick(() => $refs.searchInput.focus()) })"
+                       x-init="$watch('searchOpen', val => { if(val) $nextTick(() => $refs.searchInput.focus()) }"
                        class="flex-1 bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0 text-sm"
                        placeholder="Search posts, campaigns, clients..."
                        aria-label="Search input">
@@ -754,7 +736,7 @@
     </div>
 
     <!-- Toast helper script -->
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         document.addEventListener('alpine:init', () => {
             Alpine.store('toasts', {
                 items: [],
@@ -772,7 +754,6 @@
                 }
             });
         });
-        // Global toast function - uses Alpine.store for reliable global access
         window.showToast = function(message, type = 'info') {
             if (typeof Alpine !== 'undefined' && Alpine.store('toasts')) {
                 Alpine.store('toasts').show(message, type);

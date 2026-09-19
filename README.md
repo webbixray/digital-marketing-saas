@@ -29,7 +29,7 @@ Enterprise-grade multi-tenant digital marketing platform built with Laravel 13. 
 | Layer | Technology |
 |-------|------------|
 | **Backend** | PHP 8.4, Laravel 13 |
-| **Frontend** | AdminLTE 3.2, Bootstrap 4, Chart.js, Vite |
+| **Frontend** | Tailwind CSS 4, Alpine.js 3, Vite 8 |
 | **Database** | SQLite (dev), MySQL (production) |
 | **Queue** | Redis (recommended) / Database |
 | **Cache** | Redis / File |

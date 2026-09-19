@@ -8,7 +8,7 @@
             <p class="text-6xl font-bold text-yellow-500 dark:text-yellow-400 mb-4">404</p>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Page Not Found</h1>
             <p class="text-gray-600 dark:text-gray-400 mb-6">The page you requested could not be found.</p>
-            <a href="{{ route('dashboard') }}" class="btn btn-primary inline-flex items-center gap-2">
+            <a href="{{ route('dashboard') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
                 <i class="fas fa-arrow-left"></i> Return to Dashboard
             </a>
         </div>

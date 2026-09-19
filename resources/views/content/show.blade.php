@@ -3,8 +3,7 @@
 @section('content')
 <x-flash-messages />
 <div class="space-y-6">
-    <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 md:col-span-8">
+    <div class="max-w-3xl mx-auto">
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700"><h3 class="font-semibold text-gray-900 dark:text-white">{{ $asset->name }}</h3></div>
                 <div class="p-6 space-y-4">

@@ -18,12 +18,15 @@ class EnforceAiCredits
     {
         $user = $request->user();
 
-        if (! $user || ! $user->agency) {
+        if (! $user || ! $user->agency_id) {
             return response()->json(['error' => 'Unauthorized.'], 401);
         }
 
         /** @var Agency $agency */
         $agency = $user->agency;
+        if (! $agency) {
+            return response()->json(['error' => 'Agency not found.'], 404);
+        }
 
         // Check if agency has a plan that includes AI
         $plan = config("platform.plans.{$agency->subscription_plan}");

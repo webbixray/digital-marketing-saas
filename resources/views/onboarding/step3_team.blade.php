@@ -74,7 +74,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     let rowCount = 1;
     function addInviteRow() {
         const container = document.getElementById('inviteRows');
