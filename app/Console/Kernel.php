@@ -59,9 +59,9 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground();
 
-        // Run system cleanup daily at 3:00 AM
-        $schedule->command('system:cleanup --all')
-            ->dailyAt('03:00')
+        // Sync platform metrics hourly
+        $schedule->command('metrics:sync --all')
+            ->hourly()
             ->withoutOverlapping()
             ->runInBackground();
     }
