@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ApiAnalyticsController;
 use App\Http\Controllers\Api\ApiCampaignController;
 use App\Http\Controllers\Api\ApiClientController;
 use App\Http\Controllers\Api\ApiDashboardController;
+use App\Http\Controllers\Api\ApiDocsController;
 use App\Http\Controllers\Api\ApiInvoiceController;
 use App\Http\Controllers\Api\ApiReportController;
 use App\Http\Controllers\Api\ApiRoleController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\QuotaController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
+use App\Http\Controllers\Integrations\ZapierController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -139,9 +141,26 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
     Route::get('/dashboard/insights', [DashboardInsightsController::class, 'index']);
 });
 
+// Zapier Integration routes
+Route::prefix('v1/integrations/zapier')->middleware(['auth:sanctum', 'agency'])->as('api.integrations.zapier.')->group(function () {
+    Route::get('/triggers', [ZapierController::class, 'triggers'])->name('triggers');
+    Route::get('/actions', [ZapierController::class, 'actions'])->name('actions');
+    Route::post('/actions/execute', [ZapierController::class, 'executeAction'])->name('actions.execute');
+    Route::get('/triggers/{trigger}/data', [ZapierController::class, 'getTriggerData'])->name('triggers.data');
+    Route::post('/subscribe', [ZapierController::class, 'subscribe'])->name('subscribe');
+    Route::post('/unsubscribe', [ZapierController::class, 'unsubscribe'])->name('unsubscribe');
+});
+
 // Public endpoints (no auth)
 Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1']);
 
 // Public webhook endpoint (no auth)
 Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');
 Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health');
+
+// API Documentation (public)
+Route::prefix('v1/docs')->name('api.')->group(function () {
+    Route::get('/', [ApiDocsController::class, 'index'])->name('docs');
+    Route::get('/openapi.json', [ApiDocsController::class, 'openapi'])->name('docs.openapi');
+    Route::get('/postman', [ApiDocsController::class, 'postman'])->name('docs.postman');
+});
