@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBulkScheduleRequest;
 use App\Jobs\CreateBulkPostsJob;
 use App\Models\BulkSchedule;
 use App\Models\SocialAccount;
 use App\Services\Schedule\BulkScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BulkScheduleController extends Controller
 {
@@ -15,6 +17,7 @@ class BulkScheduleController extends Controller
         private readonly BulkScheduleService $bulkService
     ) {
         $this->middleware(['auth', 'agency']);
+        $this->middleware('can:view,bulkSchedule')->only('show');
     }
 
     /**
@@ -36,17 +39,14 @@ class BulkScheduleController extends Controller
     /**
      * Handle CSV upload and preview.
      */
-    public function upload(Request $request)
+    public function upload(StoreBulkScheduleRequest $request)
     {
-        $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
-        ]);
-
-        $agencyId = $request->user()->agency_id;
         $file = $request->file('csv_file');
+        $agencyId = $request->user()->agency_id;
 
-        // Store file
-        $path = $file->store('bulk-uploads', 'local');
+        // Store file with random name to prevent path traversal
+        $storedName = Str::random(40) . '.csv';
+        $path = $file->storeAs('bulk-uploads', $storedName, 'local');
 
         // Parse CSV
         $parseResult = $this->bulkService->parseCSV($path);
@@ -155,11 +155,10 @@ class BulkScheduleController extends Controller
      */
     public function show(Request $request, BulkSchedule $bulkSchedule)
     {
-        $agencyId = $request->user()->agency_id;
+        // Policy handles authorization: agency membership + (own record OR editor)
+        $this->authorize('view', $bulkSchedule);
 
-        if ($bulkSchedule->agency_id !== $agencyId) {
-            abort(403);
-        }
+        $agencyId = $request->user()->agency_id;
 
         return view('social.bulk.show', [
             'agencyId' => $agencyId,
@@ -182,17 +181,15 @@ class BulkScheduleController extends Controller
     /**
      * Process bulk upload synchronously (for small files).
      */
-    public function processSync(Request $request)
+    public function processSync(StoreBulkScheduleRequest $request)
     {
-        $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:2048', // 2MB max for sync
-        ]);
-
+        $file = $request->file('csv_file');
         $agencyId = $request->user()->agency_id;
         $userId = $request->user()->id;
-        $file = $request->file('csv_file');
 
-        $path = $file->store('bulk-uploads', 'local');
+        // Store file with random name to prevent path traversal
+        $storedName = Str::random(40) . '.csv';
+        $path = $file->storeAs('bulk-uploads', $storedName, 'local');
 
         // Parse CSV
         $parseResult = $this->bulkService->parseCSV($path);

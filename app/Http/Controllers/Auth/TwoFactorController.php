@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PragmaRX\Google2FA\Google2FA;
@@ -36,9 +38,19 @@ class TwoFactorController extends Controller
             $secret
         );
 
+        $qrCode = new QrCode(
+            data: $qrCodeUrl,
+            size: 300,
+            margin: 10
+        );
+
+        $writer = new SvgWriter();
+        $result = $writer->write($qrCode);
+
         return response()->json([
             'secret' => $secret,
             'qr_code' => $qrCodeUrl,
+            'qr_svg' => $result->getString(),
         ]);
     }
 

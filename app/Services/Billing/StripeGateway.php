@@ -107,7 +107,25 @@ class StripeGateway
     }
 
     /**
+     * Handle a verified webhook event (signature already validated by controller).
+     */
+    public function handleWebhookEvent(\Stripe\Event $event): void
+    {
+        match ($event->type) {
+            'checkout.session.completed' => $this->handleCheckoutCompleted($event->data->object),
+            'customer.subscription.created' => $this->handleSubscriptionCreated($event->data->object),
+            'customer.subscription.updated' => $this->handleSubscriptionUpdated($event->data->object),
+            'customer.subscription.deleted' => $this->handleSubscriptionDeleted($event->data->object),
+            'invoice.paid' => $this->handleInvoicePaid($event->data->object),
+            'invoice.payment_failed' => $this->handleInvoicePaymentFailed($event->data->object),
+            default => null,
+        };
+    }
+
+    /**
      * Handle webhook event.
+     * 
+     * @deprecated Use handleWebhookEvent() after verifying signature in controller
      */
     public function handleWebhook(string $payload, string $sigHeader): void
     {

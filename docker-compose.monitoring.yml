@@ -29,7 +29,7 @@ services:
       - grafanadata:/var/lib/grafana
       - ./docker/grafana/provisioning:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD environment variable is required}
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - dmsaas-network

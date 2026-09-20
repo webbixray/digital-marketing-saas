@@ -28,11 +28,9 @@
                     <i class="fas fa-qrcode mr-1"></i> Enable 2FA
                 </button>
                 <div id="setupForm" class="mt-4 hidden">
-                    <!-- TODO: Replace with a proper QR code generator (e.g., endroid/qr-code or bacon/bacon-qr-code) -->
-                    <!-- The deprecated Google Charts API has been removed. Implement local QR generation. -->
                     <div class="mb-3">
-                        <div class="mx-auto w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center" style="max-width: 200px;">
-                            <span class="text-gray-400 text-sm text-center px-2">QR Code Placeholder<br><small>Generate locally</small></span>
+                        <div id="qrCodeContainer" class="mx-auto w-48 h-48 bg-white border border-gray-200 rounded-lg flex items-center justify-center p-2" style="max-width: 200px;">
+                            <span class="text-gray-400 text-sm text-center px-2">QR Code loading...</span>
                         </div>
                     </div>
                     <p class="text-gray-500">Scan the QR code with your authenticator app, then enter the code:</p>
@@ -64,11 +62,10 @@
                         },
                     });
                     const data = await response.json();
-                    if (data.qr_code) {
-                        // TODO: Use a local QR code generator instead of Google Charts
-                        // Example: render QR using a JS library like qrcode.js
+                    if (data.qr_svg) {
+                        document.getElementById('qrCodeContainer').innerHTML = data.qr_svg;
                         document.getElementById('setupForm').classList.remove('hidden');
-                        if (window.dmsaas) dmsaas.toast('2FA enabled! Please scan the QR code.');
+                        if (window.dmsaas) dmsaas.toast('QR code generated! Please scan it with your authenticator app.');
                     }
                 } catch (err) {
                     if (window.dmsaas) dmsaas.toast('Failed to enable 2FA.', 'error');

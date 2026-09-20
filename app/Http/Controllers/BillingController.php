@@ -8,6 +8,8 @@ use App\Services\Billing\StripeGateway;
 use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
 
 class BillingController extends Controller
 {
@@ -15,7 +17,10 @@ class BillingController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth', 'agency']);
+        // Exclude webhook from auth middleware — Stripe can't authenticate
+        $this->middleware(['auth', 'agency'])->except('webhook');
+        // Rate limit webhook to prevent abuse
+        $this->middleware('throttle:60,1')->only('webhook');
     }
 
     public function index(Request $request)
@@ -121,14 +126,48 @@ class BillingController extends Controller
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
 
-        return $this->handleApiAction(function () use ($payload, $sigHeader) {
-            $gateway = new StripeGateway;
-            $gateway->handleWebhook($payload, $sigHeader);
+        if (empty($payload)) {
+            return response()->json(['error' => 'Empty payload.'], 400);
+        }
 
-            Log::info('Stripe webhook processed successfully');
+        if (empty($sigHeader)) {
+            Log::warning('Stripe webhook received without signature header.');
+            return response()->json(['error' => 'Missing Stripe-Signature header.'], 400);
+        }
+
+        $endpointSecret = config('services.stripe.webhook_secret');
+
+        if (empty($endpointSecret)) {
+            Log::error('Stripe webhook secret is not configured.');
+            return response()->json(['error' => 'Webhook not configured.'], 500);
+        }
+
+        // Verify Stripe webhook signature BEFORE processing anything
+        try {
+            $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
+        } catch (SignatureVerificationException $e) {
+            Log::warning('Stripe webhook signature verification failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Invalid signature.'], 400);
+        } catch (\Exception $e) {
+            Log::error('Stripe webhook error: ' . $e->getMessage());
+            return response()->json(['error' => 'Webhook processing error.'], 400);
+        }
+
+        // Signature verified - now process the event
+        try {
+            $gateway = new StripeGateway;
+            $gateway->handleWebhookEvent($event);
+
+            Log::info('Stripe webhook processed successfully', ['event_type' => $event->type]);
 
             return response()->json(['status' => 'ok']);
-        }, 'Webhook processing failed.');
+        } catch (\Exception $e) {
+            Log::error('Stripe webhook event processing failed: ' . $e->getMessage(), [
+                'event_type' => $event->type ?? 'unknown',
+            ]);
+
+            return response()->json(['error' => 'Event processing failed.'], 500);
+        }
     }
 
     public function cancelSubscription(Request $request)

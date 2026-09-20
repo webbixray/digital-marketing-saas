@@ -1,7 +1,5 @@
 <?php
 
-require __DIR__.'/health.php';
-
 use App\Http\Controllers\AbTestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
@@ -185,11 +183,9 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('workflows/{workflow}/webhook/regenerate', [WorkflowController::class, 'regenerateWebhook'])->name('workflows.webhook.regenerate');
 
     // Legacy inbox (redirects to unified inbox)
-    Route::middleware(['auth', 'agency'])->group(function () {
-        Route::get('/inbox/legacy', [InboxController::class, 'index'])->name('inbox.index');
-        Route::post('inbox/{message}/triage', [InboxController::class, 'triage'])->name('inbox.triage');
-        Route::post('inbox/{message}/reply', [InboxController::class, 'reply'])->name('inbox.reply');
-    });
+    Route::get('/inbox/legacy', [InboxController::class, 'index'])->name('inbox.index');
+    Route::post('inbox/{message}/triage', [InboxController::class, 'triage'])->name('inbox.triage');
+    Route::post('inbox/{message}/reply', [InboxController::class, 'reply'])->name('inbox.reply');
 
     Route::resource('content', ContentLibraryController::class);
 
@@ -361,15 +357,15 @@ Route::middleware(['auth', 'agency'])->group(function () {
         });
 
         Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
-        Route::post('/step1', [OnboardingController::class, 'step1_createAgency']);
+        Route::post('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1.post');
         Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
-        Route::post('/step2', [OnboardingController::class, 'step2_connectSocial']);
+        Route::post('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2.post');
         Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
-        Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam']);
+        Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3.post');
         Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
-        Route::post('/step4', [OnboardingController::class, 'step4_createCampaign']);
+        Route::post('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4.post');
         Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
-        Route::post('/step5', [OnboardingController::class, 'step5_activateAI']);
+        Route::post('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5.post');
         Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete');
         Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart');
     });
