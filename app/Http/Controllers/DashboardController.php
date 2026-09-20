@@ -59,16 +59,17 @@ class DashboardController extends Controller
                 'limit' => $this->quota->getLimit($agency, 'posts'),
                 'percentage' => $this->quota->getPercentage($agency, 'posts', $stats['total_posts']),
             ],
-            'ai' => [
-                'label' => 'AI Generations',
-                'used' => Cache::remember("analytics:{$agency->id}:ai_generations", 300, function () use ($agency) {
+            'ai' => (function () use ($agency) {
+                $aiCount = Cache::remember("analytics:{$agency->id}:ai_generations", 300, function () use ($agency) {
                     return AiContentLog::where('agency_id', $agency->id)->count();
-                }),
-                'limit' => $this->quota->getLimit($agency, 'ai_generations'),
-                'percentage' => $this->quota->getPercentage($agency, 'ai_generations', Cache::remember("analytics:{$agency->id}:ai_generations", 300, function () use ($agency) {
-                    return AiContentLog::where('agency_id', $agency->id)->count();
-                })),
-            ],
+                });
+                return [
+                    'label' => 'AI Generations',
+                    'used' => $aiCount,
+                    'limit' => $this->quota->getLimit($agency, 'ai_generations'),
+                    'percentage' => $this->quota->getPercentage($agency, 'ai_generations', $aiCount),
+                ];
+            })(),
             'campaigns' => [
                 'label' => 'Campaigns',
                 'used' => $stats['total_campaigns'],

@@ -3,6 +3,8 @@
 namespace App\Services\Social;
 
 use App\Enums\PostStatus;
+use App\Events\PostPublished;
+use App\Events\PostFailed;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -67,6 +69,8 @@ class SocialPostService
                 'platform_response' => $result,
             ]);
 
+            event(new PostPublished($post));
+
             return [
                 'success' => true,
                 'message' => 'Post published successfully.',
@@ -79,6 +83,8 @@ class SocialPostService
                 'error_message' => $e->getMessage(),
                 'retry_count' => $post->retry_count + 1,
             ]);
+
+            event(new PostFailed($post, $e->getMessage(), $post->retry_count));
 
             Log::error("Failed to publish post #{$post->id}: {$e->getMessage()}");
 

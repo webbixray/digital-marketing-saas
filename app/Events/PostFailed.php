@@ -12,5 +12,7 @@ class PostFailed
 
     public function __construct(
         public readonly SocialPost $post,
+        public readonly string $errorMessage = '',
+        public readonly int $attemptNumber = 0,
     ) {}
 }
