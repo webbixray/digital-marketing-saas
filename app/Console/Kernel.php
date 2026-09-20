@@ -64,6 +64,12 @@ class Kernel extends ConsoleKernel
             ->hourly()
             ->withoutOverlapping()
             ->runInBackground();
+
+        // Clean up old database logs (webhook_logs, activity_logs) weekly
+        $schedule->command('database:cleanup --force')
+            ->weekly()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

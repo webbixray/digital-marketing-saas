@@ -12,7 +12,7 @@ class SupportTicket extends Model
 {
     use HasAgency, HasFactory;
 
-    protected $with = ['user', 'assignee'];
+
 
     protected $fillable = [
         'agency_id',

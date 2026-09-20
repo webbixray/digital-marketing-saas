@@ -49,7 +49,11 @@ class WebhookTest extends TestCase
             ],
         ];
 
-        $response = $this->postJson('/webhook/facebook', $payload);
+        config(['services.facebook.webhook_secret' => 'test_secret']);
+        $signature = 'sha256=' . hash_hmac('sha256', json_encode($payload), 'test_secret');
+
+        $response = $this->withHeaders(['X-Hub-Signature-256' => $signature])
+            ->postJson('/webhook/facebook', $payload);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('inbox_messages', [

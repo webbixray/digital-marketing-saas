@@ -10,6 +10,7 @@ use App\Events\PostFailed;
 use App\Events\PostPublished;
 use App\Events\PostScheduled;
 use App\Events\SubscriptionUpgraded;
+use App\Events\WebhookReceived;
 use App\Listeners\Agent\CampaignStatusChangedAgentListener;
 use App\Listeners\Agent\ClientCreatedAgentListener;
 use App\Listeners\Agent\PostPublishedAgentListener;
@@ -17,6 +18,7 @@ use App\Listeners\Agent\SubscriptionUpgradedAgentListener;
 use App\Listeners\Billing\LogInvoiceActivity;
 use App\Listeners\Billing\LogSubscriptionUpgrade;
 use App\Listeners\HandlePostFailure;
+use App\Listeners\LogWebhookAttempt;
 use App\Listeners\SendWorkflowNotificationListener;
 use App\Listeners\Social\ClearPostCache;
 use App\Listeners\Social\LogPostActivity;
@@ -75,6 +77,9 @@ class EventServiceProvider extends ServiceProvider
         SubscriptionUpgraded::class => [
             LogSubscriptionUpgrade::class.'@handle',
             SubscriptionUpgradedAgentListener::class,
+        ],
+        WebhookReceived::class => [
+            LogWebhookAttempt::class,
         ],
     ];
 

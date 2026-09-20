@@ -12,7 +12,7 @@ class AbTest extends Model
 {
     use HasAgency, HasFactory;
 
-    protected $with = ['socialAccount'];
+
 
     protected $fillable = [
         'agency_id',

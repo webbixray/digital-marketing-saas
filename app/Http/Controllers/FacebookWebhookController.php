@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessWebhookJob;
 use App\Models\InboxMessage;
 use App\Models\SocialAccount;
+use App\Services\Webhooks\WebhookProcessor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class FacebookWebhookController extends Controller
 {
+    public function __construct(
+        private readonly WebhookProcessor $processor,
+    ) {}
+
     public function verify(Request $request): JsonResponse
     {
         $mode = $request->get('hub_mode');
@@ -28,13 +34,37 @@ class FacebookWebhookController extends Controller
     public function handle(Request $request): JsonResponse
     {
         $payload = $request->all();
+        $signature = $request->header('X-Hub-Signature-256');
 
         Log::info('Facebook webhook received', [
             'object' => $payload['object'] ?? 'unknown',
         ]);
 
+        // Verify signature
+        if (! $this->processor->verifyFacebookSignature($request->getContent(), $signature ?? '')) {
+            Log::warning('Facebook webhook: invalid signature');
+
+            return response()->json(['error' => 'Invalid signature'], 401);
+        }
+
+        // Process through WebhookProcessor
+        $this->processor->process(
+            platform: 'facebook',
+            eventType: $payload['object'] ?? 'unknown',
+            payload: $payload,
+            signature: $signature,
+            handler: function (array $payload) {
+                $this->processPayload($payload);
+            },
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    private function processPayload(array $payload): void
+    {
         if (($payload['object'] ?? '') !== 'page') {
-            return response()->json(['error' => 'Invalid webhook object'], 400);
+            return;
         }
 
         foreach ($payload['entry'] ?? [] as $entry) {
@@ -47,7 +77,6 @@ class FacebookWebhookController extends Controller
 
             if (! $account) {
                 Log::warning('Facebook webhook: account not found', ['page_id' => $pageId]);
-
                 continue;
             }
 
@@ -64,8 +93,6 @@ class FacebookWebhookController extends Controller
                 };
             }
         }
-
-        return response()->json(['success' => true]);
     }
 
     private function handleFeed(SocialAccount $account, array $value): void

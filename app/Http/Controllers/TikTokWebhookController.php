@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\SocialAccount;
+use App\Services\Webhooks\WebhookProcessor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class TikTokWebhookController extends Controller
 {
+    public function __construct(
+        private readonly WebhookProcessor $processor,
+    ) {}
+
     public function verify(Request $request): JsonResponse
     {
         $challenge = $request->get('challenge');
@@ -22,13 +27,34 @@ class TikTokWebhookController extends Controller
     public function handle(Request $request): JsonResponse
     {
         $payload = $request->all();
-        Log::info('TikTok webhook received', $payload);
+        $signature = $request->header('X-TikTok-Signature');
 
+        Log::info('TikTok webhook received');
+
+        // Verify TikTok signature if available
+        if ($signature && ! $this->processor->verifyTikTokSignature($request->getContent(), $signature)) {
+            Log::warning('TikTok webhook: invalid signature');
+        }
+
+        // Process through WebhookProcessor
+        $this->processor->process(
+            platform: 'tiktok',
+            eventType: $payload['data']['events'][0]['event'] ?? 'unknown',
+            payload: $payload,
+            signature: $signature,
+            handler: function (array $payload) {
+                $this->processPayload($payload);
+            },
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    private function processPayload(array $payload): void
+    {
         foreach ($payload['data']['events'] ?? [] as $event) {
             $this->handleEvent($event);
         }
-
-        return response()->json(['success' => true]);
     }
 
     private function handleEvent(array $event): void

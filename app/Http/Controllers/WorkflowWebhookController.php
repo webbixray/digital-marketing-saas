@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Workflow;
 use App\Models\WorkflowWebhookLog;
+use App\Services\Webhooks\WebhookProcessor;
 use App\Services\Workflow\WorkflowEngine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,11 +13,9 @@ class WorkflowWebhookController extends Controller
 {
     public function __construct(
         private readonly WorkflowEngine $engine,
+        private readonly WebhookProcessor $processor,
     ) {}
 
-    /**
-     * Handle incoming webhook for a workflow.
-     */
     public function handle(Request $request, string $workflowId, string $secret)
     {
         $workflow = Workflow::findOrFail($workflowId);
@@ -31,29 +30,40 @@ class WorkflowWebhookController extends Controller
             return response()->json(['error' => 'Workflow is not active'], 400);
         }
 
-        // Log the webhook
-        $log = WorkflowWebhookLog::create([
+        $payload = $request->all();
+
+        // Process through WebhookProcessor
+        $log = $this->processor->process(
+            platform: 'workflow',
+            eventType: $payload['event'] ?? 'unknown',
+            payload: $payload,
+            signature: null,
+            handler: function (array $payload) use ($workflow) {
+                $engine = $this->engine;
+                $execution = $engine->execute($workflow, $payload);
+                return $execution;
+            },
+        );
+
+        // Also log to workflow-specific log for backward compatibility
+        $wfLog = WorkflowWebhookLog::create([
             'workflow_id' => $workflow->id,
-            'event_type' => $request->input('event', 'unknown'),
-            'payload' => $request->all(),
+            'event_type' => $payload['event'] ?? 'unknown',
+            'payload' => $payload,
             'ip_address' => $request->ip(),
             'status' => 'received',
         ]);
 
         try {
-            // Execute the workflow
-            $engine = $this->engine;
-            $execution = $engine->execute($workflow, $request->all());
-
-            $log->markAsProcessed('Workflow executed successfully');
+            $wfLog->markAsProcessed('Workflow executed successfully');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Workflow triggered successfully',
-                'execution_id' => $execution->id,
+                'execution_id' => $log->id,
             ]);
         } catch (\Exception $e) {
-            $log->markAsProcessed('Failed: '.$e->getMessage());
+            $wfLog->markAsProcessed('Failed: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,

@@ -11,7 +11,7 @@ class Report extends Model
 {
     use HasAgency, HasFactory;
 
-    protected $with = ['user', 'agency'];
+
 
     protected $fillable = [
         'agency_id', 'user_id', 'name', 'type', 'filters', 'columns',

@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\SocialAccount;
+use App\Services\Webhooks\WebhookProcessor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class YouTubeWebhookController extends Controller
 {
+    public function __construct(
+        private readonly WebhookProcessor $processor,
+    ) {}
+
     public function verify(Request $request): JsonResponse
     {
         $challenge = $request->get('hub_challenge');
@@ -28,15 +33,26 @@ class YouTubeWebhookController extends Controller
             return response()->json(['error' => 'Invalid payload'], 400);
         }
 
+        // Normalize XML to array for processing
+        $parsedPayload = json_decode(json_encode($xml), true);
+
         Log::info('YouTube webhook received', ['xml' => $payload]);
 
-        // Parse PubSubHubbub notification
-        $videoId = (string) ($xml->entry->id ?? '');
-        $channelId = (string) ($xml->entry->author->uri ?? '');
+        // Process through WebhookProcessor
+        $this->processor->process(
+            platform: 'youtube',
+            eventType: 'video.update',
+            payload: $parsedPayload,
+            signature: null,
+            handler: function (array $parsedPayload) use ($xml) {
+                $videoId = (string) ($xml->entry->id ?? '');
+                $channelId = (string) ($xml->entry->author->uri ?? '');
 
-        if ($videoId) {
-            $this->handleVideoUpdate($channelId, $videoId);
-        }
+                if ($videoId && $channelId) {
+                    $this->handleVideoUpdate($channelId, $videoId);
+                }
+            },
+        );
 
         return response()->json(['success' => true]);
     }
@@ -49,7 +65,6 @@ class YouTubeWebhookController extends Controller
 
         if (! $account) {
             Log::warning('YouTube webhook: account not found', ['channel_id' => $channelId]);
-
             return;
         }
 

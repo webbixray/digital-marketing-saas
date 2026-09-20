@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class FeatureFlagService
 {
     /**
-     * Feature flags with their configurations.
+     * Feature flags with their default configurations.
      */
     private const FEATURES = [
         'ai_content_generation' => [
@@ -65,102 +65,106 @@ class FeatureFlagService
     ];
 
     /**
-     * Check if a feature is enabled for an agency.
+     * Check if a feature flag is enabled.
+     * Uses Redis cache with tagging per agency.
      */
-    public function isEnabled(Agency $agency, string $featureCode): bool
+    public function isEnabled(?Agency $agency, string $featureCode): bool
+    {
+        // Check Redis for agency-specific override
+        if ($agency) {
+            $agencyKey = "feature_flag:{$agency->id}:{$featureCode}";
+            $agencyValue = Cache::tags(["agency:{$agency->id}"])->get($agencyKey);
+            if ($agencyValue !== null) {
+                return (bool) $agencyValue;
+            }
+        }
+
+        // Check Redis for global flag
+        $globalKey = "feature_flag:{$featureCode}";
+        $globalValue = Cache::tags(['global_flags'])->get($globalKey);
+        if ($globalValue !== null) {
+            return (bool) $globalValue;
+        }
+
+        // Fall back to default configuration
+        return $this->getDefaultEnabled($agency, $featureCode);
+    }
+
+    /**
+     * Enable a feature flag for an agency (or globally if agency is null).
+     */
+    public function enable(?Agency $agency, string $featureCode): void
+    {
+        $tag = $agency ? "agency:{$agency->id}" : 'global_flags';
+        $key = $agency
+            ? "feature_flag:{$agency->id}:{$featureCode}"
+            : "feature_flag:{$featureCode}";
+
+        Cache::tags([$tag])->put($key, true, now()->addDays(30));
+
+        Log::info('Feature flag enabled', [
+            'agency_id' => $agency?->id,
+            'feature' => $featureCode,
+        ]);
+    }
+
+    /**
+     * Disable a feature flag for an agency (or globally if agency is null).
+     */
+    public function disable(?Agency $agency, string $featureCode): void
+    {
+        $tag = $agency ? "agency:{$agency->id}" : 'global_flags';
+        $key = $agency
+            ? "feature_flag:{$agency->id}:{$featureCode}"
+            : "feature_flag:{$featureCode}";
+
+        Cache::tags([$tag])->put($key, false, now()->addDays(30));
+
+        Log::info('Feature flag disabled', [
+            'agency_id' => $agency?->id,
+            'feature' => $featureCode,
+        ]);
+    }
+
+    /**
+     * Get all feature flags with their status for an agency.
+     */
+    public function getAll(?Agency $agency): array
+    {
+        $results = [];
+
+        foreach (array_keys(self::FEATURES) as $featureCode) {
+            $results[$featureCode] = $this->isEnabled($agency, $featureCode);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Get default enabled status from configuration.
+     */
+    private function getDefaultEnabled(?Agency $agency, string $featureCode): bool
     {
         $feature = self::FEATURES[$featureCode] ?? null;
 
         if (! $feature) {
             Log::warning("Unknown feature flag: {$featureCode}");
-
             return false;
         }
 
-        // Check if feature is globally enabled
         if (! $feature['enabled']) {
             return false;
         }
 
-        // Check if agency's plan has access
-        if (! in_array($agency->subscription_plan, $feature['plans'])) {
+        if ($agency && ! in_array($agency->subscription_plan, $feature['plans'])) {
             return false;
         }
 
-        // Check rollout percentage
-        if ($feature['rollout_percent'] < 100) {
+        if ($feature['rollout_percent'] < 100 && $agency) {
             return $this->isInRolloutGroup($agency->id, $featureCode, $feature['rollout_percent']);
         }
 
-        // Check for agency-specific override
-        $override = $this->getAgencyOverride($agency->id, $featureCode);
-        if ($override !== null) {
-            return $override;
-        }
-
         return true;
-    }
-
-    /**
-     * Get all features available for an agency.
-     */
-    public function getAvailableFeatures(Agency $agency): array
-    {
-        $available = [];
-
-        foreach (self::FEATURES as $code => $config) {
-            if ($this->isEnabled($agency, $code)) {
-                $available[$code] = [
-                    'enabled' => true,
-                    'rollout_percent' => $config['rollout_percent'],
-                ];
-            }
-        }
-
-        return $available;
-    }
-
-    /**
-     * Get all features with their status for an agency.
-     */
-    public function getAllFeatures(Agency $agency): array
-    {
-        $features = [];
-
-        foreach (self::FEATURES as $code => $config) {
-            $features[$code] = [
-                'enabled' => $this->isEnabled($agency, $code),
-                'plan_access' => in_array($agency->subscription_plan, $config['plans']),
-                'rollout_percent' => $config['rollout_percent'],
-                'required_plans' => $config['plans'],
-            ];
-        }
-
-        return $features;
-    }
-
-    /**
-     * Set agency-specific feature override.
-     */
-    public function setAgencyOverride(int $agencyId, string $featureCode, bool $enabled): void
-    {
-        $key = "feature_override:{$agencyId}:{$featureCode}";
-        Cache::put($key, $enabled, now()->addDays(30));
-
-        Log::info('Feature override set', [
-            'agency_id' => $agencyId,
-            'feature' => $featureCode,
-            'enabled' => $enabled,
-        ]);
-    }
-
-    /**
-     * Remove agency-specific feature override.
-     */
-    public function removeAgencyOverride(int $agencyId, string $featureCode): void
-    {
-        $key = "feature_override:{$agencyId}:{$featureCode}";
-        Cache::forget($key);
     }
 
     /**
@@ -168,7 +172,6 @@ class FeatureFlagService
      */
     private function isInRolloutGroup(int $agencyId, string $featureCode, int $rolloutPercent): bool
     {
-        // Use consistent hashing to determine if agency is in rollout group
         $hash = crc32("{$agencyId}:{$featureCode}");
         $bucket = $hash % 100;
 
@@ -176,24 +179,10 @@ class FeatureFlagService
     }
 
     /**
-     * Get agency-specific override.
-     */
-    private function getAgencyOverride(int $agencyId, string $featureCode): ?bool
-    {
-        $key = "feature_override:{$agencyId}:{$featureCode}";
-        $override = Cache::get($key);
-
-        return $override !== null ? (bool) $override : null;
-    }
-
-    /**
      * Clear feature flag cache for an agency.
      */
     public function clearCache(int $agencyId): void
     {
-        foreach (array_keys(self::FEATURES) as $featureCode) {
-            $key = "feature_override:{$agencyId}:{$featureCode}";
-            Cache::forget($key);
-        }
+        Cache::tags(["agency:{$agencyId}"])->flush();
     }
 }

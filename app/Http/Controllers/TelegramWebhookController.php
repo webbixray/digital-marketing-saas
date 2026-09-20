@@ -3,36 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Services\Telegram\TelegramBotService;
+use App\Services\Webhooks\WebhookProcessor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class TelegramWebhookController extends Controller
 {
-    public function __construct(private TelegramBotService $telegram)
-    {
-        // No auth middleware - Telegram calls this directly
-    }
+    public function __construct(
+        private readonly TelegramBotService $telegram,
+        private readonly WebhookProcessor $processor,
+    ) {}
 
-    /**
-     * Handle incoming webhook from Telegram.
-     */
     public function handle(Request $request): JsonResponse
     {
         $update = $request->all();
 
-        // Log only safe metadata — never log message text or personal data
         Log::debug('Telegram webhook received', self::extractSafeMetadata($update));
 
-        $this->telegram->handleWebhook($update);
+        // Process through WebhookProcessor
+        $this->processor->process(
+            platform: 'telegram',
+            eventType: 'update',
+            payload: $update,
+            signature: null,
+            handler: function (array $update) {
+                $this->telegram->handleWebhook($update);
+            },
+        );
 
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * Extract only non-sensitive metadata from a Telegram update.
-     * Never includes message text, user personal data, or chat content.
-     */
     private static function extractSafeMetadata(array $update): array
     {
         return [
@@ -43,9 +45,6 @@ class TelegramWebhookController extends Controller
         ];
     }
 
-    /**
-     * Set up the webhook URL.
-     */
     public function setupWebhook(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -57,9 +56,6 @@ class TelegramWebhookController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * Get webhook info.
-     */
     public function webhookInfo(): JsonResponse
     {
         return response()->json($this->telegram->getWebhookInfo());

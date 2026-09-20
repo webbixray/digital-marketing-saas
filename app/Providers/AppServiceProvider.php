@@ -7,15 +7,19 @@ use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\SocialAccount;
+use App\Models\SocialComment;
 use App\Models\SocialPost;
 use App\Models\User;
+use App\Models\WebhookLog;
 use App\Observers\AiContentLogObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\ClientObserver;
 use App\Observers\InvoiceObserver;
 use App\Observers\SocialAccountObserver;
+use App\Observers\SocialCommentObserver;
 use App\Observers\SocialPostObserver;
 use App\Observers\UserObserver;
+use App\Observers\WebhookLogObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -46,6 +50,8 @@ class AppServiceProvider extends ServiceProvider
         Invoice::observe(InvoiceObserver::class);
         User::observe(UserObserver::class);
         SocialAccount::observe(SocialAccountObserver::class);
+        SocialComment::observe(SocialCommentObserver::class);
+        WebhookLog::observe(WebhookLogObserver::class);
 
         // -----------------------------------------------------------------------
         // Rate Limiting Configuration
