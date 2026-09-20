@@ -10,28 +10,47 @@ use Illuminate\Support\Str;
 class ContentCalendarService
 {
     /**
-     * Get calendar events for a date range.
+     * Get calendar events for a date range with optional filters.
      */
-    public function getEvents(int $agencyId, string $startDate, string $endDate): Collection
-    {
-        return SocialPost::where('agency_id', $agencyId)
+    public function getEvents(
+        int $agencyId,
+        string $startDate,
+        string $endDate,
+        ?string $platform = null,
+        ?int $accountId = null
+    ): Collection {
+        $query = SocialPost::where('agency_id', $agencyId)
             ->whereBetween('scheduled_at', [$startDate, $endDate])
-            ->with('socialAccount')
-            ->get()
+            ->with('socialAccount');
+
+        if ($platform) {
+            $query->where('platform', $platform);
+        }
+
+        if ($accountId) {
+            $query->where('social_account_id', $accountId);
+        }
+
+        return $query->get()
             ->map(fn (SocialPost $post) => [
                 'id' => $post->id,
                 'title' => Str::limit($post->content, 50),
                 'content' => $post->content,
                 'start' => $post->scheduled_at?->toISOString(),
-                'end' => $post->scheduled_at?->addHour()->toISOString(),
+                'end' => $post->scheduled_at?->copy()->addHour()->toISOString(),
                 'platform' => $post->platform,
                 'status' => $post->status,
-                'color' => $this->getPlatformColor($post->platform),
+                'color' => $this->getStatusColor($post->status),
                 'textColor' => '#ffffff',
+                'editable' => in_array($post->status, ['draft', 'scheduled']),
                 'extendedProps' => [
                     'platform' => $post->platform,
                     'status' => $post->status,
                     'account' => $post->socialAccount?->platform_username,
+                    'account_name' => $post->socialAccount?->platform_display_name,
+                    'social_account_id' => $post->social_account_id,
+                    'scheduled_at' => $post->scheduled_at?->toDateTimeString(),
+                    'edit_url' => route('social.posts.edit', $post->id),
                 ],
             ]);
     }
@@ -94,9 +113,27 @@ class ContentCalendarService
     }
 
     /**
-     * Get platform color for calendar display.
+     * Get status-based color for calendar display.
+     * draft=gray, scheduled=blue, published=green, failed=red
      */
-    private function getPlatformColor(string $platform): string
+    private function getStatusColor(string $status): string
+    {
+        return match ($status) {
+            'draft' => '#6b7280',      // gray-500
+            'scheduled' => '#3b82f6',  // blue-500
+            'published' => '#10b981',  // emerald-500
+            'failed' => '#ef4444',     // red-500
+            'in_queue' => '#8b5cf6',   // violet-500
+            'publishing' => '#f59e0b', // amber-500
+            'cancelled' => '#6b7280',  // gray-500
+            default => '#6c757d',
+        };
+    }
+
+    /**
+     * Get platform color for badge display.
+     */
+    public function getPlatformColor(string $platform): string
     {
         return match ($platform) {
             'facebook' => '#1877f2',

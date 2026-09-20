@@ -139,27 +139,42 @@
 <script nonce="{{ $cspNonce ?? '' }}">
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
-        const events = @json($events);
-        
-        const modal = document.getElementById('eventModal');
-        const renderEventModal = function(info) {
-            const props = info.event.extendedProps;
-            document.getElementById('modalPlatform').textContent = props.platform;
-            document.getElementById('modalStatus').textContent = props.status;
-            document.getElementById('modalDate').textContent = info.event.start.toLocaleString();
-            document.getElementById('modalContent').textContent = info.event.title;
-            document.getElementById('modalEdit').href = '/social/posts/' + info.event.id + '/edit';
-            if (modal && modal._x_dataStack) {
-                modal._x_dataStack[0].open = true;
-            }
-        };
-        
+
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             headerToolbar: false,
-            events: events,
-            eventClick: renderEventModal,
+            events: '{{ route('calendar.events') }}',
+            eventClick: function(info) {
+                const props = info.event.extendedProps;
+                document.getElementById('modalPlatform').textContent = props.platform;
+                document.getElementById('modalStatus').textContent = props.status;
+                document.getElementById('modalDate').textContent = info.event.start.toLocaleString();
+                document.getElementById('modalContent').textContent = info.event.title;
+                document.getElementById('modalEdit').href = '/social/posts/' + info.event.id + '/edit';
+                const modal = document.getElementById('eventModal');
+                if (modal && modal._x_dataStack) {
+                    modal._x_dataStack[0].open = true;
+                }
+            },
             height: 'auto',
+            editable: true,
+            eventDrop: function(info) {
+                fetch('{{ route('calendar.update-schedule') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        id: info.event.id,
+                        scheduled_at: info.event.start.toISOString(),
+                    }),
+                }).then(response => response.json()).then(data => {
+                    if (!data.success) {
+                        info.revert();
+                    }
+                }).catch(() => info.revert());
+            },
         });
         calendar.render();
     });

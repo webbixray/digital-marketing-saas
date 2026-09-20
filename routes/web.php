@@ -253,6 +253,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::prefix('calendar')->name('calendar.')->group(function () {
         Route::get('/', [ContentCalendarController::class, 'index'])->name('index');
         Route::get('/events', [ContentCalendarController::class, 'events'])->name('events');
+        Route::post('/update-schedule', [ContentCalendarController::class, 'updateSchedule'])->name('update-schedule');
     });
 
     // Content Templates
