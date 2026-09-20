@@ -149,7 +149,84 @@ Authorization: Bearer {token}
 | PUT | `/api/v1/workflows/{workflow}` | Update workflow |
 | DELETE | `/api/v1/workflows/{workflow}` | Delete workflow |
 
-## Rate Limiting
+## Analytics
+
+### GET /api/v1/analytics/cross-platform
+
+Get aggregated statistics across all platforms.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "followers": {"total": 12500, "breakdown": {"facebook": 5000}},
+    "posts": {"total": 345, "by_platform": {"facebook": 120}},
+    "engagement": {"total_likes": 25000, "total_comments": 3500}
+  }
+}
+```
+
+### GET /api/v1/analytics/platform/{platform}
+
+Get statistics for a specific platform (facebook, instagram, twitter, linkedin, tiktok, pinterest, youtube).
+
+### GET /api/v1/analytics/growth?days=30
+
+Get growth metrics over time.
+
+### GET /api/v1/analytics/optimal-times
+
+Get optimal posting times based on engagement data.
+
+### GET /api/v1/analytics/best-platform
+
+Get the best performing platform by engagement rate.
+
+## AI Content
+
+### POST /api/v1/ai/generate
+
+Generate AI content.
+
+**Request:**
+```json
+{"prompt": "Write a tweet", "type": "social_post", "platform": "twitter"}
+```
+
+**Response:**
+```json
+{"success": true, "content": "Generated text...", "tokens_used": 45, "cost": 0.002}
+```
+
+## Agents
+
+### GET /api/v1/agents
+
+List all AI agents.
+
+### POST /api/v1/agents/{name}/dispatch
+
+Dispatch an AI agent task.
+
+**Request:**
+```json
+{"task_type": "content_analysis", "prompt": "Analyze top posts"}
+```
+
+## Client Reports
+
+### GET /api/v1/client-reports
+
+List all client reports.
+
+### POST /api/v1/client-reports
+
+Generate a new client report.
+
+### POST /api/v1/client-reports/{id}/publish
+
+Publish a client report (makes it publicly accessible).
 
 API endpoints are rate-limited to **60 requests per minute** per authenticated user. When exceeded, a `429 Too Many Requests` response is returned with a `Retry-After` header.
 
