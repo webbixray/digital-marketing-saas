@@ -75,7 +75,7 @@ class ClientController extends Controller
             abort(403);
         }
 
-        $campaigns = $client->campaigns()->orderBy('created_at', 'desc')->paginate(10);
+        $campaigns = $client->campaigns()->with('client')->orderBy('created_at', 'desc')->paginate(10);
 
         return view('clients.show', compact('agency', 'client', 'campaigns'));
     }

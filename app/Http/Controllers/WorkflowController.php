@@ -35,7 +35,7 @@ class WorkflowController extends Controller
     public function builder(Request $request, ?Workflow $workflow = null)
     {
         $agencyId = $request->user()->agency_id;
-        $templates = WorkflowTemplate::active()->public()->orderBy('category')->get();
+        $templates = WorkflowTemplate::active()->public()->orderBy('category')->paginate(15);
 
         $existingWorkflow = null;
         if ($workflow) {

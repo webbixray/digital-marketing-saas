@@ -26,12 +26,13 @@ class InvoiceController extends Controller
             $query->where('status', $request->status);
         }
 
-        $invoices = $query->orderBy('created_at', 'desc')->paginate(15);
+        $invoices = $query->with('client')->orderBy('created_at', 'desc')->paginate(15);
 
+        $agencyInvoices = Invoice::where('agency_id', $agency->id);
         $stats = [
-            'total' => Invoice::where('agency_id', $agency->id)->sum('total'),
-            'pending' => Invoice::where('agency_id', $agency->id)->pending()->sum('total'),
-            'overdue' => Invoice::where('agency_id', $agency->id)->overdue()->sum('total'),
+            'total' => (clone $agencyInvoices)->sum('total'),
+            'pending' => (clone $agencyInvoices)->pending()->sum('total'),
+            'overdue' => (clone $agencyInvoices)->overdue()->sum('total'),
         ];
 
         return view('invoices.index', compact('agency', 'invoices', 'stats'));

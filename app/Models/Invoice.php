@@ -13,6 +13,8 @@ class Invoice extends Model
 {
     use HasAgency, HasFactory;
 
+    protected $with = ['client', 'agency'];
+
     protected $fillable = [
         'agency_id',
         'client_id',

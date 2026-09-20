@@ -14,6 +14,8 @@ class InboxMessage extends Model
 {
     use HasAgency, HasFactory, SoftDeletes;
 
+    protected $with = ['socialAccount', 'triage'];
+
     protected $fillable = [
         'agency_id',
         'social_account_id',

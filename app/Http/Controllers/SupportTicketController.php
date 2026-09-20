@@ -23,7 +23,7 @@ class SupportTicketController extends Controller
         $status = $request->query('status', 'all');
 
         $query = SupportTicket::where('agency_id', $agencyId)
-            ->with('assignee')
+            ->with(['user', 'assignee'])
             ->orderBy('created_at', 'desc');
 
         if ($status !== 'all') {

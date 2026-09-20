@@ -20,7 +20,7 @@ class ReportController extends Controller
         $request->validate(['type' => 'nullable|in:social,email,campaign,analytics,custom']);
         $agency = $request->user()->agency;
         $type = $request->input('type');
-        $query = Report::where('agency_id', $agency->id)->with('user');
+        $query = Report::where('agency_id', $agency->id)->with(['user', 'agency']);
         if ($type) {
             $query->where('type', $type);
         }

@@ -9,6 +9,8 @@ class InboxTriage extends Model
 {
     public $timestamps = false;
 
+    protected $table = 'inbox_triage';
+
     protected $primaryKey = 'id';
 
     public $incrementing = true;

@@ -55,6 +55,7 @@ class AdminDashboardController extends Controller
         });
 
         $failedPosts = SocialPost::where('status', 'failed')
+            ->with('agency')
             ->orderBy('failed_at', 'desc')
             ->limit(10)
             ->get();

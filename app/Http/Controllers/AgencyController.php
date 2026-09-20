@@ -171,13 +171,14 @@ class AgencyController extends Controller
 
         $agencyId = $request->user()->agency_id;
 
-        User::create([
+        $member = new User([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make(Str::random(16)),
-            'agency_id' => $agencyId,
-            'role' => $validated['role'],
         ]);
+        $member->agency_id = $agencyId;
+        $member->role = $validated['role'];
+        $member->save();
 
         return redirect()->route('agency.team')->with('success', 'Member invited.');
     }
@@ -201,7 +202,8 @@ class AgencyController extends Controller
             return redirect()->route('agency.team')->with('error', 'Only the owner or admin can change roles.');
         }
 
-        $member->update(['role' => $validated['role']]);
+        $member->role = $validated['role'];
+        $member->save();
 
         return redirect()->route('agency.team')->with('success', 'Member role updated.');
     }

@@ -14,7 +14,7 @@ class GdprController extends Controller
 
     public function __construct(GDPRComplianceService $gdprService)
     {
-        $this->middleware(['auth']);
+        $this->middleware(['auth', 'agency']);
         $this->gdprService = $gdprService;
     }
 

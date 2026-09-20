@@ -52,6 +52,8 @@ class DashboardController extends Controller
         $platformStats = $socialStats['by_platform'] ?? [];
 
         // Quotas
+        $userCount = $agency->users_count ?? $agency->users()->count();
+
         $quotas = [
             'posts' => [
                 'label' => 'Social Posts',
@@ -84,9 +86,9 @@ class DashboardController extends Controller
             ],
             'users' => [
                 'label' => 'Team Members',
-                'used' => $agency->users_count ?? $agency->users()->count(),
+                'used' => $userCount,
                 'limit' => $this->quota->getLimit($agency, 'users'),
-                'percentage' => $this->quota->getPercentage($agency, 'users', $agency->users_count ?? $agency->users()->count()),
+                'percentage' => $this->quota->getPercentage($agency, 'users', $userCount),
             ],
             'accounts' => [
                 'label' => 'Social Accounts',

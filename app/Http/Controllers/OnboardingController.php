@@ -135,15 +135,16 @@ class OnboardingController extends Controller
                     continue;
                 }
 
-                User::create([
+                $invite = new User([
                     'name' => $invite['name'],
                     'email' => $invite['email'],
                     'password' => Hash::make(Str::random(16)),
-                    'agency_id' => $agency->id,
-                    'role' => $invite['role'],
-                    'is_active' => true,
-                    'is_approved' => true,
                 ]);
+                $invite->agency_id = $agency->id;
+                $invite->role = $invite['role'];
+                $invite->is_active = true;
+                $invite->is_approved = true;
+                $invite->save();
             }
 
             $this->setStep(4);

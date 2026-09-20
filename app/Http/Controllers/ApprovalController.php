@@ -74,6 +74,10 @@ class ApprovalController extends Controller
 
     public function clientPosts(Client $client): JsonResponse
     {
+        if ((int) $client->agency_id !== (int) auth()->user()->agency_id) {
+            abort(403);
+        }
+
         $posts = SocialPost::where('client_id', $client->id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);

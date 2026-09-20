@@ -38,25 +38,26 @@ class RegisterController extends Controller
             $referralCode = $request->query('ref') ?? session('referral_code');
 
             $user = DB::transaction(function () use ($validated, $referralService, $referralCode) {
-                $agency = Agency::create([
+                $agency = new Agency([
                     'name' => $validated['agency_name'],
                     'slug' => Str::slug($validated['agency_name']).'-'.uniqid(),
                     'email' => $validated['email'],
                     'status' => 'active',
-                    'subscription_plan' => 'free',
-                    'subscription_status' => 'active',
-                    'is_active' => true,
                 ]);
+                $agency->subscription_plan = 'free';
+                $agency->subscription_status = 'active';
+                $agency->save();
 
-                $user = User::create([
+                $user = new User([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'password' => Hash::make($validated['password']),
-                    'agency_id' => $agency->id,
-                    'role' => 'owner',
-                    'is_active' => true,
-                    'is_approved' => true,
                 ]);
+                $user->agency_id = $agency->id;
+                $user->role = 'owner';
+                $user->is_active = true;
+                $user->is_approved = true;
+                $user->save();
 
                 $referralService->assignCode($user);
                 $referralService->assignCodeToAgency($agency);

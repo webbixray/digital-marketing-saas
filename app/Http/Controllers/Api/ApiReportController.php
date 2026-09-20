@@ -65,6 +65,10 @@ class ApiReportController extends Controller
     public function show(Report $report): JsonResponse
     {
         try {
+            if ((int) $report->agency_id !== (int) auth()->user()->agency_id) {
+                return response()->json(['error' => 'Report not found'], 404);
+            }
+
             return response()->json([
                 'data' => $report->load(['agency', 'user']),
             ]);

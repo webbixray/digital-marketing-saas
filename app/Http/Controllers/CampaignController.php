@@ -97,7 +97,7 @@ class CampaignController extends Controller
             abort(403);
         }
 
-        $posts = $campaign->posts()->orderBy('created_at', 'desc')->paginate(10);
+        $posts = $campaign->posts()->with('socialAccount')->orderBy('created_at', 'desc')->paginate(10);
 
         return view('campaigns.show', compact('agency', 'campaign', 'posts'));
     }

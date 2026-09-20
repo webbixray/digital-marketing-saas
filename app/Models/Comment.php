@@ -12,6 +12,8 @@ class Comment extends Model
 {
     use HasAgency, HasFactory;
 
+    protected $with = ['user'];
+
     protected $fillable = [
         'agency_id',
         'user_id',

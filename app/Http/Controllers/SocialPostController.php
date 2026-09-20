@@ -42,7 +42,7 @@ class SocialPostController extends Controller
             $query->where('content', 'like', '%'.$request->search.'%');
         }
 
-        $posts = $query->orderBy('created_at', 'desc')->paginate(15);
+        $posts = $query->with('socialAccount')->orderBy('created_at', 'desc')->paginate(15);
 
         $platforms = SocialAccount::SUPPORTED_PLATFORMS;
         $statuses = [

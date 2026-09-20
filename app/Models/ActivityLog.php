@@ -11,6 +11,8 @@ class ActivityLog extends Model
 {
     use HasAgency, HasFactory;
 
+    protected $with = ['user'];
+
     public $timestamps = false;
 
     protected $primaryKey = 'id';
