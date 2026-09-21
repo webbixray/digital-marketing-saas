@@ -175,44 +175,54 @@ class EnterpriseReportingService
 
     private function collectExportData(int $agencyId, array $filters): array
     {
-        return match($filters['report_type'] ?? 'summary') {
-            'social' => SocialPost::where('agency_id', $agencyId)
-                ->where('status', 'published')
-                ->orderByDesc('published_at')
-                ->limit(1000)
-                ->get()
-                ->toArray(),
-            'campaign' => Campaign::where('agency_id', $agencyId)
-                ->withCount('socialPosts')
-                ->orderByDesc('created_at')
-                ->limit(500)
-                ->get()
-                ->toArray(),
-            'client' => Client::where('agency_id', $agencyId)
-                ->orderByDesc('created_at')
-                ->limit(500)
-                ->get()
-                ->toArray(),
-            'account' => SocialAccount::where('agency_id', $agencyId)
-                ->orderBy('platform')
-                ->get()
-                ->toArray(),
+        $type = $filters['report_type'] ?? 'summary';
+
+        $socialData = SocialPost::where('agency_id', $agencyId)
+            ->where('status', 'published')
+            ->orderByDesc('published_at')
+            ->limit(1000)
+            ->get()
+            ->toArray();
+
+        $campaignData = Campaign::where('agency_id', $agencyId)
+            ->withCount('socialPosts')
+            ->orderByDesc('created_at')
+            ->limit(500)
+            ->get()
+            ->toArray();
+
+        $clientData = Client::where('agency_id', $agencyId)
+            ->orderByDesc('created_at')
+            ->limit(500)
+            ->get()
+            ->toArray();
+
+        $accountData = SocialAccount::where('agency_id', $agencyId)
+            ->orderBy('platform')
+            ->get()
+            ->toArray();
+
+        return match($type) {
+            'social' => $socialData,
+            'campaign' => $campaignData,
+            'client' => $clientData,
+            'account' => $accountData,
             default => $this->getSummaryReport($agencyId),
         };
     }
 
     private function getSummaryReport(int $agencyId): array
     {
-        $posts = SocialPost::where('agency_id', $agencyId)->where('status', 'published');
-        $campaigns = Campaign::where('agency_id' => $agencyId);
-        $clients = Client::where('agency_id' => $agencyId);
+        $postsQuery = SocialPost::where('agency_id', $agencyId)->where('status', 'published');
+        $campaignsQuery = Campaign::where('agency_id', $agencyId);
+        $clientsQuery = Client::where('agency_id', $agencyId);
 
         return [
-            ['metric' => 'Total Posts', 'value' => $posts->count()],
-            ['metric' => 'Total Campaigns', 'value' => $campaigns->count()],
-            ['metric' => 'Total Clients', 'value' => $clients->count()],
-            ['metric' => 'Avg Engagement Rate', 'value' => round($posts->avg('engagement_rate') ?? 0, 2)],
-            ['metric' => 'Total Reach', 'value' => $posts->sum('reach')],
+            ['metric' => 'Total Posts', 'value' => $postsQuery->count()],
+            ['metric' => 'Total Campaigns', 'value' => $campaignsQuery->count()],
+            ['metric' => 'Total Clients', 'value' => $clientsQuery->count()],
+            ['metric' => 'Avg Engagement Rate', 'value' => round($postsQuery->avg('engagement_rate') ?? 0, 2)],
+            ['metric' => 'Total Reach', 'value' => $postsQuery->sum('reach')],
         ];
     }
 
@@ -263,13 +273,19 @@ class EnterpriseReportingService
 
     private function getMetricValue(int $agencyId, string $metric): float|int
     {
+        $posts = SocialPost::where('agency_id', $agencyId)->where('status', 'published');
+        $postsAll = SocialPost::where('agency_id', $agencyId);
+        $campaigns = Campaign::where('agency_id', $agencyId);
+        $clients = Client::where('agency_id', $agencyId);
+        $accounts = SocialAccount::where('agency_id', $agencyId);
+
         return match($metric) {
-            'total_posts', 'published_posts' => (int) SocialPost::where('agency_id', $agencyId)->where('status', 'published')->count(),
-            'total_reach' => (int) SocialPost::where('agency_id', $agencyId)->sum('reach'),
-            'engagement_rate' => round((float) (SocialPost::where('agency_id', $agencyId)->avg('engagement_rate') ?? 0), 2),
-            'total_campaigns' => (int) Campaign::where('agency_id' => $agencyId)->count(),
-            'total_clients' => (int) Client::where('agency_id' => $agencyId)->count(),
-            'follower_growth' => round((float) (SocialAccount::where('agency_id' => $agencyId)->avg('follower_growth_rate') ?? 0), 2),
+            'total_posts', 'published_posts' => (int) $posts->count(),
+            'total_reach' => (int) $postsAll->sum('reach'),
+            'engagement_rate' => round((float) ($posts->avg('engagement_rate') ?? 0), 2),
+            'total_campaigns' => (int) $campaigns->count(),
+            'total_clients' => (int) $clients->count(),
+            'follower_growth' => round((float) ($accounts->avg('follower_growth_rate') ?? 0), 2),
             default => 0,
         };
     }

@@ -468,3 +468,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::post('/{token}/posts/{post}/approve', [\App\Http\Controllers\ClientPortalController::class, 'approvePost'])->name('approve-post');
     Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post');
 });
+
+// Team Chat
+Route::middleware(['auth', 'agency'])->prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('index');
+    Route::get('/{channel}', [\App\Http\Controllers\ChatController::class, 'show'])->name('show');
+});
