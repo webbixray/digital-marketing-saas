@@ -82,7 +82,7 @@ class OnboardingController extends Controller
 
             $platforms = $validated['platforms'] ?? [];
 
-            // Create placeholder social accounts for selected platforms
+            // Create pending social accounts for selected platforms
             foreach ($platforms as $platform) {
                 $exists = SocialAccount::where('agency_id', $agency->id)
                     ->where('platform', $platform)
