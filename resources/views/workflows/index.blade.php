@@ -6,7 +6,7 @@
     <x-flash-messages />
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workflows</h2>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Workflows</h1>
             <p class="text-gray-500 dark:text-gray-400 mt-1">Automate your marketing tasks.</p>
         </div>
         <a href="{{ route('workflows.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors">
