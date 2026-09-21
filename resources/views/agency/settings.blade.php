@@ -11,25 +11,25 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Settings Navigation -->
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1" x-data="{ activeTab: 'profile' }">
             <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6">
                     <nav class="space-y-1">
-                        <a href="#profile" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400">
+                        <button @click="activeTab = 'profile'" :class="activeTab === 'profile' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'" class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
                             <i class="fas fa-building"></i> Agency Profile
-                        </a>
-                        <a href="#billing" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                        </button>
+                        <button @click="activeTab = 'billing'" :class="activeTab === 'billing' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'" class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
                             <i class="fas fa-credit-card"></i> Billing
-                        </a>
-                        <a href="#team" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                        </button>
+                        <button @click="activeTab = 'team'" :class="activeTab === 'team' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'" class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
                             <i class="fas fa-users"></i> Team Members
-                        </a>
-                        <a href="#integrations" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                        </button>
+                        <button @click="activeTab = 'integrations'" :class="activeTab === 'integrations' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'" class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
                             <i class="fas fa-plug"></i> Integrations
-                        </a>
-                        <a href="#api" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                        </button>
+                        <button @click="activeTab = 'api'" :class="activeTab === 'api' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'" class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
                             <i class="fas fa-code"></i> API Keys
-                        </a>
+                        </button>
                     </nav>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             <form method="POST" action="{{ route('agency.settings.update') }}">
                 @csrf @method('PUT')
 
-                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+                <div x-show="activeTab === 'profile'" class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Agency Profile</h3>
                     </div>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
+                <div x-show="activeTab === 'profile'" class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 mb-6">
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="font-semibold text-gray-900 dark:text-white">Branding</h3>
                     </div>

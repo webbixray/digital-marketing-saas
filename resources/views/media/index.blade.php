@@ -210,7 +210,8 @@
           <div class="flex items-center gap-2">
             <form action="{{ route('media.index') }}" method="GET" class="inline-flex">
               <div class="flex gap-2" style="width: 250px;">
-                <input type="text" name="search" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Search files..." value="{{ request('search') }}">
+                <label for="media-search" class="sr-only">Search files</label>
+                <input type="text" id="media-search" name="search" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Search files..." value="{{ request('search') }}">
                 <div class="">
                   <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2 font-medium transition-colors"><i class="fas fa-search"></i></button>
                 </div>

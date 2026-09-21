@@ -19,7 +19,8 @@
   <div class="p-6">
    <form method="GET" class="flex flex-wrap gap-4">
     <div class="flex-1 min-w-[200px]">
-     <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+     <label for="post-status-filter" class="sr-only">Filter by Status</label>
+     <select id="post-status-filter" name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
       <option value="">All Status</option>
       @foreach($statuses as $key => $label)
        <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -27,7 +28,8 @@
      </select>
     </div>
     <div class="flex-1 min-w-[200px]">
-     <select name="platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+     <label for="post-platform-filter" class="sr-only">Filter by Platform</label>
+     <select id="post-platform-filter" name="platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
       <option value="">All Platforms</option>
       @foreach($platforms as $key => $label)
        <option value="{{ $key }}" {{ request('platform') === $key ? 'selected' : '' }}>{{ $label }}</option>

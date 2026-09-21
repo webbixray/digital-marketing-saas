@@ -90,55 +90,8 @@
     @stack('styles')
 </head>
 <body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter overflow-x-hidden flex flex-row" 
-      x-data="{
-          srAnnouncement: '',
-          sidebarOpen: false,
-          sidebarMini: localStorage.getItem('sidebarMini') === 'true',
-          darkMode: localStorage.getItem('darkMode') === 'true',
-          searchOpen: false,
-          searchQuery: '',
-          notificationsOpen: false,
-          userDropdownOpen: false,
-          createDropdownOpen: false,
-          loading: true,
-          expandedSections: JSON.parse(localStorage.getItem('sidebarSections') || '{{ json_encode(["social"=>true,"marketing"=>true,"ai"=>true,"business"=>true]) }}'),
-          toggleSection(section) {
-              this.expandedSections[section] = !this.expandedSections[section];
-              localStorage.setItem('sidebarSections', JSON.stringify(this.expandedSections));
-          },
-          init() {
-              this.$watch('darkMode', val => {
-                  localStorage.setItem('darkMode', val);
-                  document.documentElement.classList.toggle('dark', val);
-              });
-              this.$watch('sidebarMini', val => localStorage.setItem('sidebarMini', val));
-              document.documentElement.classList.toggle('dark', this.darkMode);
-              setTimeout(() => { this.loading = false; }, 500);
-              document.addEventListener('keydown', (e) => {
-                  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                      e.preventDefault();
-                      this.searchOpen = true;
-                  }
-                  if (e.ctrlKey && e.key === 'b') {
-                      e.preventDefault();
-                      this.sidebarMini = !this.sidebarMini;
-                  }
-                  if (e.key === 'Escape') {
-                      this.searchOpen = false;
-                      this.notificationsOpen = false;
-                      this.userDropdownOpen = false;
-                      this.createDropdownOpen = false;
-                  }
-              });
-              this.$nextTick(() => {
-                  const activeNav = document.querySelector('.nav-link.active');
-                  if (activeNav) {
-                      activeNav.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                  }
-              });
-          }
-      }"
-      x-init="init()">
+      data-default-sections='{"social":true,"marketing":true,"ai":true,"business":true}'
+      x-data="layoutState">
 
     <!-- Loading bar -->
     <div id="loading-bar" :class="{ 'loading': loading }" aria-hidden="true"></div>
@@ -693,7 +646,7 @@
                 <input type="text" 
                        x-model="searchQuery"
                        x-ref="searchInput"
-                       x-init="$watch('searchOpen', val => { if(val) $nextTick(() => $refs.searchInput.focus()) }"
+                       x-init="$watch('searchOpen', function(val) { if(val) $nextTick(function() { $refs.searchInput.focus(); }); })"
                        class="flex-1 bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0 text-sm"
                        placeholder="Search posts, campaigns, clients..."
                        aria-label="Search input">

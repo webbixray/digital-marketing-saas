@@ -37,8 +37,8 @@
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Content Type</label>
-                        <select name="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <label for="ai-content-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Content Type</label>
+                        <select name="type" id="ai-content-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="caption">Social Media Caption</option>
                             <option value="hashtags">Hashtags</option>
                             <option value="blog">Blog Post</option>
@@ -50,8 +50,8 @@
                         <textarea name="prompt" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe what you want to generate..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
-                        <select name="tone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <label for="ai-tone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
+                        <select name="tone" id="ai-tone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="professional">Professional</option>
                             <option value="casual">Casual</option>
                             <option value="friendly">Friendly</option>

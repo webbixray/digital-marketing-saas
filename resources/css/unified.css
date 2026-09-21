@@ -385,3 +385,104 @@
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-500;
 }
+
+/* Prevent horizontal scroll */
+html, body {
+    overflow-x: hidden;
+}
+
+/* Form overflow protection */
+form, .form-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Grid overflow protection */
+.grid, .flex {
+    min-width: 0;
+}
+
+/* Break long words */
+.break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Form input protection */
+input, select, textarea {
+    max-width: 100%;
+}
+
+/* Button overflow protection */
+button, .btn {
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* Card overflow protection */
+.card, [class*="card"] {
+    overflow-x: hidden;
+}
+
+/* Content area overflow protection */
+#main-content {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Mobile-specific overflow fixes */
+@media (max-width: 640px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Prevent overflow on mobile forms */
+    .space-y-4, .space-y-6 {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Fix form inputs overflow */
+    input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="datetime-local"], select, textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Flex containers should wrap, not overflow */
+    .flex.flex-wrap {
+        flex-wrap: wrap;
+    }
+    
+    /* Ensure cards don't overflow */
+    [class*="rounded-xl"] {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Fix for forms with flex layout */
+    form.flex, form .flex {
+        flex-wrap: wrap;
+    }
+    
+    /* Grid children should shrink */
+    [class*="col-span"] {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+}

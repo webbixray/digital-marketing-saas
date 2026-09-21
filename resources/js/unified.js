@@ -5,8 +5,60 @@ import focus from '@alpinejs/focus';
 window.Alpine = Alpine;
 Alpine.plugin(focus);
 
-// Auto-initialize Alpine
-Alpine.start();
+// Register layout component with Alpine
+Alpine.data('layoutState', () => ({
+    srAnnouncement: '',
+    sidebarOpen: false,
+    sidebarMini: localStorage.getItem('sidebarMini') === 'true',
+    darkMode: localStorage.getItem('darkMode') === 'true',
+    searchOpen: false,
+    searchQuery: '',
+    notificationsOpen: false,
+    userDropdownOpen: false,
+    createDropdownOpen: false,
+    loading: true,
+    expandedSections: {},
+    toggleSection(section) {
+        this.expandedSections[section] = !this.expandedSections[section];
+        localStorage.setItem('sidebarSections', JSON.stringify(this.expandedSections));
+    },
+    init() {
+        const raw = localStorage.getItem('sidebarSections');
+        if (raw) { try { this.expandedSections = JSON.parse(raw); } catch(e) {} }
+        if (!this.expandedSections.social) {
+            this.expandedSections = JSON.parse(document.body.dataset.defaultSections);
+        }
+        this.$watch('darkMode', val => {
+            localStorage.setItem('darkMode', val);
+            document.documentElement.classList.toggle('dark', val);
+        });
+        this.$watch('sidebarMini', val => localStorage.setItem('sidebarMini', val));
+        document.documentElement.classList.toggle('dark', this.darkMode);
+        setTimeout(() => { this.loading = false; }, 500);
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                this.searchOpen = true;
+            }
+            if (e.ctrlKey && e.key === 'b') {
+                e.preventDefault();
+                this.sidebarMini = !this.sidebarMini;
+            }
+            if (e.key === 'Escape') {
+                this.searchOpen = false;
+                this.notificationsOpen = false;
+                this.userDropdownOpen = false;
+                this.createDropdownOpen = false;
+            }
+        });
+        this.$nextTick(() => {
+            const activeNav = document.querySelector('.nav-link.active');
+            if (activeNav) {
+                activeNav.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        });
+    }
+}));
 
 // Auto-initialize Alpine
 Alpine.start();

@@ -11,31 +11,31 @@
                     @csrf
                     <div class="p-6 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Platform</label>
-                            <select name="platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <label for="account-platform" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Platform</label>
+                            <select name="platform" id="account-platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                                 <option value="">Select platform...</option>
                                 @foreach($platforms as $key => $label)<option value="{{ $key }}">{{ $label }}</option>@endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Access Token</label>
-                            <input type="text" name="access_token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required placeholder="Enter platform access token">
+                            <label for="account-access-token" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Access Token</label>
+                            <input type="text" name="access_token" id="account-access-token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required placeholder="Enter platform access token">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Refresh Token (optional)</label>
-                            <input type="text" name="refresh_token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <label for="account-refresh-token" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Refresh Token (optional)</label>
+                            <input type="text" name="refresh_token" id="account-refresh-token" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account ID (optional)</label>
-                            <input type="text" name="platform_account_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <label for="account-platform-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account ID (optional)</label>
+                            <input type="text" name="platform_account_id" id="account-platform-id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username (optional)</label>
-                            <input type="text" name="platform_username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <label for="account-username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username (optional)</label>
+                            <input type="text" name="platform_username" id="account-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Name (optional)</label>
-                            <input type="text" name="platform_display_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <label for="account-display-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Name (optional)</label>
+                            <input type="text" name="platform_display_name" id="account-display-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                     </div>
                     <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">

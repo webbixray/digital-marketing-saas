@@ -9,17 +9,17 @@
                 <form action="{{ route('campaigns.store') }}" method="POST">
                     @csrf
                     <div class="p-6 space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label><input type="text" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
-                            <select name="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <div><label for="campaign-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label><input type="text" name="name" id="campaign-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></div>
+                        <div><label for="campaign-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+                            <select name="type" id="campaign-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 @foreach($types as $key => $label)<option value="{{ $key }}">{{ $label }}</option>@endforeach
                             </select>
                         </div>
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label><textarea name="description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3"></textarea></div>
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Objective</label><input type="text" name="objective" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Audience</label><input type="text" name="target_audience" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
-                            <select name="client_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"><option value="">None</option>
+                        <div><label for="campaign-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label><textarea name="description" id="campaign-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" rows="3"></textarea></div>
+                        <div><label for="campaign-objective" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Objective</label><input type="text" name="objective" id="campaign-objective" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                        <div><label for="campaign-target-audience" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Audience</label><input type="text" name="target_audience" id="campaign-target-audience" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                        <div><label for="campaign-client" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
+                            <select name="client_id" id="campaign-client" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"><option value="">None</option>
                                 @foreach($clients as $client)<option value="{{ $client->id }}">{{ $client->name }}</option>@endforeach
                             </select>
                         </div>

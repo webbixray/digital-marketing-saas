@@ -158,9 +158,49 @@ Route::get('/status', fn () => ['status' => 'ok', 'version' => 'v1'])->name('api
 Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController::class, 'handle'])->name('api.workflows.webhook');
 Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health');
 
+// Webhook management routes
+Route::prefix('v1/webhooks')->middleware(['auth:sanctum', 'agency'])->as('api.webhooks.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\ApiWebhookController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\Api\ApiWebhookController::class, 'store'])->name('store');
+    Route::get('/events', [\App\Http\Controllers\Api\ApiWebhookController::class, 'availableEvents'])->name('events');
+    Route::get('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'show'])->name('show');
+    Route::put('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'update'])->name('update');
+    Route::delete('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'destroy'])->name('destroy');
+    Route::post('/{webhook}/regenerate-secret', [\App\Http\Controllers\Api\ApiWebhookController::class, 'regenerateSecret'])->name('regenerate-secret');
+    Route::post('/{webhook}/test', [\App\Http\Controllers\Api\ApiWebhookController::class, 'test'])->name('test');
+    Route::get('/{webhook}/deliveries', [\App\Http\Controllers\Api\ApiWebhookController::class, 'deliveries'])->name('deliveries');
+});
+
 // API Documentation (public)
 Route::prefix('v1/docs')->name('api.docs.')->group(function () {
     Route::get('/', [ApiDocsController::class, 'index'])->name('index');
     Route::get('/openapi.json', [ApiDocsController::class, 'openapi'])->name('openapi');
     Route::get('/postman', [ApiDocsController::class, 'postman'])->name('postman');
+});
+
+// Onboarding routes (outside cache middleware for real-time updates)
+Route::prefix('v1/onboarding')->middleware(['auth:sanctum', 'agency'])->as('api.onboarding.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\OnboardingController::class, 'index'])->name('index');
+    Route::post('/{step}/complete', [\App\Http\Controllers\Api\OnboardingController::class, 'complete'])->name('complete');
+    Route::post('/auto-detect', [\App\Http\Controllers\Api\OnboardingController::class, 'autoDetect'])->name('auto-detect');
+});
+
+// Team Chat routes
+Route::prefix('v1/chat')->middleware(['auth:sanctum', 'agency'])->as('api.chat.')->group(function () {
+    Route::get('/channels', [\App\Http\Controllers\Api\ApiChatController::class, 'channels'])->name('channels');
+    Route::post('/channels', [\App\Http\Controllers\Api\ApiChatController::class, 'createChannel'])->name('channels.store');
+    Route::get('/channels/{channel}/messages', [\App\Http\Controllers\Api\ApiChatController::class, 'messages'])->name('messages');
+    Route::post('/channels/{channel}/messages', [\App\Http\Controllers\Api\ApiChatController::class, 'sendMessage'])->name('messages.store');
+    Route::post('/channels/{channel}/read', [\App\Http\Controllers\Api\ApiChatController::class, 'markAsRead'])->name('mark-read');
+    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Api\ApiChatController::class, 'addReaction'])->name('reactions.add');
+    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Api\ApiChatController::class, 'removeReaction'])->name('reactions.remove');
+    Route::put('/messages/{message}', [\App\Http\Controllers\Api\ApiChatController::class, 'editMessage'])->name('messages.update');
+    Route::delete('/messages/{message}', [\App\Http\Controllers\Api\ApiChatController::class, 'deleteMessage'])->name('messages.destroy');
+});
+
+// Analytics routes (dedicated analytics controller)
+Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency'])->as('api.analytics.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'dashboard'])->name('dashboard');
+    Route::get('/daily', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'daily'])->name('daily');
+    Route::get('/top-events', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'topEvents'])->name('top-events');
 });

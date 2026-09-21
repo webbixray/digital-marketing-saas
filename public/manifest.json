@@ -1,24 +1,66 @@
 {
     "name": "DigitalMarketingSaaS",
     "short_name": "DMSaaS",
-    "description": "Enterprise-grade multi-tenant digital marketing platform",
-    "start_url": "/",
+    "description": "AI-powered social media management for agencies",
+    "start_url": "/dashboard",
     "display": "standalone",
     "background_color": "#f9fafb",
     "theme_color": "#6366f1",
     "orientation": "portrait-primary",
-    "categories": ["business", "productivity", "marketing"],
-    "screenshots": [],
-    "shortcuts": [
+    "categories": ["business", "social", "productivity", "marketing"],
+    "screenshots": [
         {
-            "name": "Dashboard",
-            "url": "/dashboard",
-            "description": "View your dashboard"
+            "src": "/screenshots/dashboard.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Dashboard view"
         },
         {
-            "name": "Campaigns",
-            "url": "/campaigns",
-            "description": "Manage campaigns"
+            "src": "/screenshots/mobile.png",
+            "sizes": "375x812",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Mobile view"
         }
-    ]
+    ],
+    "shortcuts": [
+        {
+            "name": "Create Post",
+            "short_name": "Post",
+            "description": "Create a new social post",
+            "url": "/social/posts/create",
+            "icons": [{ "src": "/icons/shortcut-post.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "View Calendar",
+            "short_name": "Calendar",
+            "description": "View content calendar",
+            "url": "/calendar",
+            "icons": [{ "src": "/icons/shortcut-calendar.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Analytics",
+            "short_name": "Stats",
+            "description": "View analytics",
+            "url": "/analytics",
+            "icons": [{ "src": "/icons/shortcut-analytics.png", "sizes": "96x96" }]
+        }
+    ],
+    "share_target": {
+        "action": "/social/posts/create",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url",
+            "files": [
+                {
+                    "name": "media",
+                    "accept": ["image/*", "video/*"]
+                }
+            ]
+        }
+    }
 }

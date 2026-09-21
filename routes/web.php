@@ -453,3 +453,18 @@ Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->
     Route::get('/pending', [ApprovalController::class, 'pending'])->name('pending');
     Route::get('/client/{client}/posts', [ApprovalController::class, 'clientPosts'])->name('client.posts');
 });
+
+// Client Portal (agency admin settings)
+Route::middleware(['auth', 'agency'])->prefix('client-portal')->name('client-portal.')->group(function () {
+    Route::get('/settings', [\App\Http\Controllers\ClientPortalController::class, 'settings'])->name('settings');
+    Route::put('/settings', [\App\Http\Controllers\ClientPortalController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/clients/{client}/generate-token', [\App\Http\Controllers\ClientPortalController::class, 'generateToken'])->name('generate-token');
+    Route::delete('/clients/{client}/tokens/{accessToken}', [\App\Http\Controllers\ClientPortalController::class, 'revokeToken'])->name('revoke-token');
+});
+
+// Public client portal (token-based access, no auth required)
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::get('/{token}', [\App\Http\Controllers\ClientPortalController::class, 'show'])->name('show');
+    Route::post('/{token}/posts/{post}/approve', [\App\Http\Controllers\ClientPortalController::class, 'approvePost'])->name('approve-post');
+    Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post');
+});

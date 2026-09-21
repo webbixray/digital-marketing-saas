@@ -14,8 +14,8 @@
   @csrf
   <div class="p-6">
    <div class="mb-4">
-   <label>Social Account</label>
-   <select name="social_account_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('social_account_id') is-invalid @enderror" required>
+   <label for="social_account_id">Social Account</label>
+   <select name="social_account_id" id="social_account_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('social_account_id') is-invalid @enderror" required>
     <option value="">Select an account...</option>
     @foreach($accounts as $account)
     <option value="{{ $account->id }}" {{ old('social_account_id') == $account->id ? 'selected' : '' }}>
@@ -31,12 +31,12 @@
    @error('content') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
    </div>
    <div class="mb-4">
-   <label>Hashtags (comma-separated)</label>
-   <input type="text" name="hashtags[]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="#marketing,#socialmedia" value="{{ old('hashtags') }}">
+   <label for="hashtags">Hashtags (comma-separated)</label>
+   <input type="text" name="hashtags[]" id="hashtags" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="#marketing,#socialmedia" value="{{ old('hashtags') }}">
    </div>
    <div class="mb-4">
-   <label>Schedule (optional)</label>
-   <input type="datetime-local" name="scheduled_at" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('scheduled_at') }}">
+   <label for="scheduled_at">Schedule (optional)</label>
+   <input type="datetime-local" name="scheduled_at" id="scheduled_at" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('scheduled_at') }}">
    <small class="text-gray-500 dark:text-gray-400">Leave empty to save as draft</small>
    </div>
    @if($campaigns->count() > 0)

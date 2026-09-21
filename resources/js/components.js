@@ -343,4 +343,4 @@ window.DMSaaS_Components = {
     FormValidator,
     ToggleSwitch,
     SearchSelect,
-};
+    };

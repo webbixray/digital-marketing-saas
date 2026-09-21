@@ -62,11 +62,56 @@ class ApiAnalyticsController extends Controller
     public function bestPlatform(): JsonResponse
     {
         try {
-            $stats = $this->analytics->getBestPerformingPlatform(request()->user()->agency);
+            $stats = $this->analytics->getBestPlatform(request()->user()->agency);
             return response()->json(['success' => true, 'data' => $stats]);
         } catch (\Exception $e) {
             Log::error('API analytics bestPlatform failed', ['error' => $e->getMessage()]);
-            return response()->json(['success' => false, 'error' => 'Failed to fetch best platform'], 500);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch best platform analytics'], 500);
+        }
+    }
+
+    /**
+     * Get dashboard analytics stats
+     */
+    public function dashboard(): JsonResponse
+    {
+        try {
+            $stats = $this->analytics->getDashboardStats(request()->user()->agency);
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            Log::error('API analytics dashboard failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch dashboard analytics'], 500);
+        }
+    }
+
+    /**
+     * Get daily event counts for charting
+     */
+    public function daily(): JsonResponse
+    {
+        try {
+            $eventType = request('event_type', 'post_published');
+            $days = request('days', 30);
+            $data = $this->analytics->getDailyCounts(request()->user()->agency, $eventType, $days);
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (\Exception $e) {
+            Log::error('API analytics daily failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch daily analytics'], 500);
+        }
+    }
+
+    /**
+     * Get top events by count
+     */
+    public function topEvents(): JsonResponse
+    {
+        try {
+            $limit = request('limit', 10);
+            $events = $this->analytics->getTopEvents(request()->user()->agency, $limit);
+            return response()->json(['success' => true, 'data' => $events]);
+        } catch (\Exception $e) {
+            Log::error('API analytics topEvents failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => 'Failed to fetch top events'], 500);
         }
     }
 }

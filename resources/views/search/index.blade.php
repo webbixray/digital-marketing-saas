@@ -16,7 +16,8 @@
                             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    <select name="type" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <label for="search-type" class="sr-only">Filter by type</label>
+                    <select id="search-type" name="type" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <option value="all" {{ $type === 'all' ? 'selected' : '' }}>All</option>
                         <option value="posts" {{ $type === 'posts' ? 'selected' : '' }}>Posts</option>
                         <option value="campaigns" {{ $type === 'campaigns' ? 'selected' : '' }}>Campaigns</option>
