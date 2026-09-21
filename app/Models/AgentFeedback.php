@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasAgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AgentFeedback extends Model
 {
-    use HasFactory;
+    use HasAgency, HasFactory;
 
     protected $fillable = [
         'agent_name',
