@@ -81,6 +81,11 @@ class ApiChatController extends Controller
      */
     public function messages(ChatChannel $channel): JsonResponse
     {
+        // Verify channel belongs to user's agency
+        if ($channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $messages = ChatMessage::where('channel_id', $channel->id)
             ->with(['user', 'replyTo', 'reactions'])
             ->recent()
@@ -94,6 +99,11 @@ class ApiChatController extends Controller
      */
     public function sendMessage(Request $request, ChatChannel $channel): JsonResponse
     {
+        // Verify channel belongs to user's agency
+        if ($channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $validated = $request->validate([
             'content' => 'required|string|max:5000',
             'reply_to_id' => 'nullable|exists:chat_messages,id',
