@@ -72,14 +72,20 @@ class GenerateReportJob implements ShouldQueue
         $agency = $this->report->agency;
         $reportType = $this->report->type;
 
-        return match($reportType) {
-            'social_media' => $this->generateSocialMediaReport($agency),
-            'campaign' => $this->generateCampaignReport($agency),
-            'engagement' => $this->generateEngagementReport($agency),
-            'audience' => $this->generateAudienceReport($agency),
-            'competitor' => $this->generateCompetitorReport($agency),
-            default => $this->generateSummaryReport($agency),
-        };
+        switch ($reportType) {
+            case 'social_media':
+                return $this->generateSocialMediaReport($agency);
+            case 'campaign':
+                return $this->generateCampaignReport($agency);
+            case 'engagement':
+                return $this->generateEngagementReport($agency);
+            case 'audience':
+                return $this->generateAudienceReport($agency);
+            case 'competitor':
+                return $this->generateCompetitorReport($agency);
+            default:
+                return $this->generateSummaryReport($agency);
+        }
     }
 
     private function generateSocialMediaReport(Agency $agency): array
@@ -194,17 +200,17 @@ class GenerateReportJob implements ShouldQueue
 
     private function generateSummaryReport(Agency $agency): array
     {
-        $posts = SocialPost::where('agency_id', $agency->id)->where('status', 'published');
-        $campaigns = Campaign::where('agency_id' => $agency->id);
-        $clients = Client::where('agency_id' => $agency->id);
+        $postsQuery = SocialPost::where('agency_id', $agency->id)->where('status', 'published');
+        $campaignsQuery = Campaign::where('agency_id', $agency->id);
+        $clientsQuery = Client::where('agency_id', $agency->id);
 
         return [
             'summary' => [
-                'total_posts' => $posts->count(),
-                'total_campaigns' => $campaigns->count(),
-                'total_clients' => $clients->count(),
-                'avg_engagement_rate' => $posts->avg('engagement_rate') ?? 0,
-                'total_reach' => $posts->sum('reach'),
+                'total_posts' => $postsQuery->count(),
+                'total_campaigns' => $campaignsQuery->count(),
+                'total_clients' => $clientsQuery->count(),
+                'avg_engagement_rate' => $postsQuery->avg('engagement_rate') ?? 0,
+                'total_reach' => $postsQuery->sum('reach'),
             ],
             'platform_breakdown' => [],
             'top_posts' => [],
