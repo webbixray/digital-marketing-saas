@@ -28,6 +28,6 @@
     },
     "dependencies": {
         "@alpinejs/focus": "^3.17.3",
-        "alpinejs": "^3.17.2"
+        "alpinejs": "^3.17.3"
     }
 }
