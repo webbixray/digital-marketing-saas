@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use RuntimeException;
+use App\Models\SocialPost;
+use App\Models\Campaign;
+use App\Models\Client;
+use App\Models\SocialAccount;
+use Illuminate\Support\Facades\DB;
 
 class EnterpriseReportingService
 {
@@ -78,18 +83,21 @@ class EnterpriseReportingService
         }
 
         $data = $this->collectExportData($agencyId, $filters);
-        $filename = "exports/agency_{$agencyId}_{$type}_".time().".{$type}";
+        $filename = "exports/agency_{$agencyId}_{$type}_".time();
 
         switch ($type) {
             case 'csv':
                 $content = $this->generateCsv($data);
+                $filename .= '.csv';
                 break;
             case 'xlsx':
                 $content = $this->generateCsv($data);
-                $filename = str_replace('.xlsx', '.csv', $filename);
+                $filename .= '.xlsx';
                 break;
-            default:
-                throw new RuntimeException("Export format {$type} not yet implemented");
+            case 'pdf':
+                $content = $this->generatePdf($data);
+                $filename .= '.pdf';
+                break;
         }
 
         Storage::put($filename, $content);
@@ -167,9 +175,103 @@ class EnterpriseReportingService
 
     private function collectExportData(int $agencyId, array $filters): array
     {
-        return Report::forAgency($agencyId)
-            ->get()
-            ->toArray();
+        return match($filters['report_type'] ?? 'summary') {
+            'social' => SocialPost::where('agency_id', $agencyId)
+                ->where('status', 'published')
+                ->orderByDesc('published_at')
+                ->limit(1000)
+                ->get()
+                ->toArray(),
+            'campaign' => Campaign::where('agency_id', $agencyId)
+                ->withCount('socialPosts')
+                ->orderByDesc('created_at')
+                ->limit(500)
+                ->get()
+                ->toArray(),
+            'client' => Client::where('agency_id', $agencyId)
+                ->orderByDesc('created_at')
+                ->limit(500)
+                ->get()
+                ->toArray(),
+            'account' => SocialAccount::where('agency_id', $agencyId)
+                ->orderBy('platform')
+                ->get()
+                ->toArray(),
+            default => $this->getSummaryReport($agencyId),
+        };
+    }
+
+    private function getSummaryReport(int $agencyId): array
+    {
+        $posts = SocialPost::where('agency_id', $agencyId)->where('status', 'published');
+        $campaigns = Campaign::where('agency_id' => $agencyId);
+        $clients = Client::where('agency_id' => $agencyId);
+
+        return [
+            ['metric' => 'Total Posts', 'value' => $posts->count()],
+            ['metric' => 'Total Campaigns', 'value' => $campaigns->count()],
+            ['metric' => 'Total Clients', 'value' => $clients->count()],
+            ['metric' => 'Avg Engagement Rate', 'value' => round($posts->avg('engagement_rate') ?? 0, 2)],
+            ['metric' => 'Total Reach', 'value' => $posts->sum('reach')],
+        ];
+    }
+
+    private function generatePdf(array $data): string
+    {
+        if (empty($data)) {
+            return '';
+        }
+
+        $headers = array_keys($data[0]);
+        
+        $html = '<html><head><meta charset="utf-8"><style>
+            body { font-family: DejaVu Sans, sans-serif; margin: 20px; color: #1a1a1a; }
+            h1 { color: #4f46e5; font-size: 24px; margin-bottom: 20px; }
+            h2 { color: #374151; font-size: 16px; margin-bottom: 10px; }
+            table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 10px; }
+            th { background: #4f46e5; color: white; padding: 8px; text-align: left; }
+            td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; }
+            tr:nth-child(even) { background: #f9fafb; }
+            .header { margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #4f46e5; }
+            .footer { margin-top: 30px; padding-top: 15px; border-top: 2px solid #e5e7eb; font-size: 10px; color: #6b7280; }
+            .generated { color: #6b7280; font-size: 11px; }
+        </style></head><body>';
+        $html .= '<div class="header">';
+        $html .= '<h1>📊 DigitalMarketingSaaS Report</h1>';
+        $html .= '<div class="generated">Generated: ' . now()->format('F j, Y \a\t g:i A') . '</div>';
+        $html .= '</div>';
+        $html .= '<table><thead><tr>';
+        foreach ($headers as $header) {
+            $html .= '<th>' . htmlspecialchars(ucwords(str_replace('_', ' ', $header))) . '</th>';
+        }
+        $html .= '</tr></head><tbody>';
+        foreach ($data as $row) {
+            $html .= '<tr>';
+            foreach ($row as $value) {
+                $html .= '<td>' . htmlspecialchars((string) $value) . '</td>';
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</tbody></table>';
+        $html .= '<div class="footer">';
+        $html .= '<p>Report generated by DigitalMarketingSaaS</p>';
+        $html .= '</div>';
+        $html .= '</body></html>';
+
+        return $html;
+    }
+
+    private function getMetricValue(int $agencyId, string $metric): float|int
+    {
+        return match($metric) {
+            'total_posts', 'published_posts' => (int) SocialPost::where('agency_id', $agencyId)->where('status', 'published')->count(),
+            'total_reach' => (int) SocialPost::where('agency_id', $agencyId)->sum('reach'),
+            'engagement_rate' => round((float) (SocialPost::where('agency_id', $agencyId)->avg('engagement_rate') ?? 0), 2),
+            'total_campaigns' => (int) Campaign::where('agency_id' => $agencyId)->count(),
+            'total_clients' => (int) Client::where('agency_id' => $agencyId)->count(),
+            'follower_growth' => round((float) (SocialAccount::where('agency_id' => $agencyId)->avg('follower_growth_rate') ?? 0), 2),
+            default => 0,
+        };
     }
 
     private function generateCsv(array $data): string

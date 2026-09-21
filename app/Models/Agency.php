@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Models\Permission;
 
@@ -207,6 +208,19 @@ class Agency extends Model
     {
         return $this->hasMany(FeatureFlag::class);
     }
+
+    // New relationships for v3.0+ features
+    public function campaigns(): HasMany { return $this->hasMany(Campaign::class); }
+    public function clients(): HasMany { return $this->hasMany(Client::class); }
+    public function reports(): HasMany { return $this->hasMany(Report::class); }
+    public function scheduledReports(): HasMany { return $this->hasMany(ScheduledReport::class); }
+    public function webhooks(): HasMany { return $this->hasMany(Webhook::class); }
+    public function onboardingProgress(): HasMany { return $this->hasMany(OnboardingProgress::class); }
+    public function agentFeedback(): HasMany { return $this->hasMany(AgentFeedback::class); }
+    public function chatChannels(): HasMany { return $this->hasMany(ChatChannel::class); }
+    public function clientPortalSettings(): HasOne { return $this->hasOne(ClientPortalSetting::class); }
+    public function bulkUploads(): HasMany { return $this->hasMany(BulkUpload::class); }
+    public function contentGenomes(): HasMany { return $this->hasMany(ContentGenome::class); }
 
     public function incrementCount(string $count): void
     {
