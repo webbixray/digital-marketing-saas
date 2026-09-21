@@ -182,7 +182,7 @@ class ApiChatController extends Controller
             'last_read_at' => now(),
         ]);
 
-        return response()->json(['success' => true });
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -190,6 +190,11 @@ class ApiChatController extends Controller
      */
     public function deleteMessage(ChatMessage $message): JsonResponse
     {
+        // Verify message's channel belongs to user's agency
+        if ($message->channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         if ($message->user_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -204,6 +209,11 @@ class ApiChatController extends Controller
      */
     public function editMessage(Request $request, ChatMessage $message): JsonResponse
     {
+        // Verify message's channel belongs to user's agency
+        if ($message->channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         if ($message->user_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }

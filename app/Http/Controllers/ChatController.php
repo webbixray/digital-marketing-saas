@@ -31,6 +31,11 @@ class ChatController extends Controller
      */
     public function show(ChatChannel $channel)
     {
+        // Verify channel belongs to user's agency
+        if ($channel->agency_id !== auth()->user()->agency_id) {
+            abort(403);
+        }
+
         $channels = ChatChannel::forCurrentAgency()
             ->active()
             ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
