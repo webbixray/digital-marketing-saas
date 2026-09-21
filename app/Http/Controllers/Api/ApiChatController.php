@@ -129,6 +129,11 @@ class ApiChatController extends Controller
      */
     public function addReaction(Request $request, ChatMessage $message): JsonResponse
     {
+        // Verify message's channel belongs to user's agency
+        if ($message->channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $validated = $request->validate([
             'emoji' => 'required|string|max:10',
         ]);
@@ -150,6 +155,11 @@ class ApiChatController extends Controller
      */
     public function removeReaction(ChatMessage $message, string $emoji): JsonResponse
     {
+        // Verify message's channel belongs to user's agency
+        if ($message->channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         ChatReaction::where('message_id', $message->id)
             ->where('user_id', auth()->id())
             ->where('emoji', $emoji)
@@ -163,11 +173,16 @@ class ApiChatController extends Controller
      */
     public function markAsRead(ChatChannel $channel): JsonResponse
     {
+        // Verify channel belongs to user's agency
+        if ($channel->agency_id !== auth()->user()->agency_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $channel->users()->updateExistingPivot(auth()->id(), [
             'last_read_at' => now(),
         ]);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true });
     }
 
     /**
