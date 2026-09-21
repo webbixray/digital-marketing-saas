@@ -124,10 +124,10 @@ class PlatformSeeder extends Seeder
             ],
         ];
 
-        foreach ($platforms as $slug => $data) {
+        foreach ($platforms as $name => $data) {
             Platform::updateOrCreate(
-                ['slug' => $slug],
-                array_merge($data, ['slug' => $slug])
+                ['name' => $name],
+                array_merge($data, ['name' => $name])
             );
         }
     }

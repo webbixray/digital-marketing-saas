@@ -283,14 +283,14 @@ class DemoSeeder extends Seeder
             'email' => 'member@agency.com',
             'password' => Hash::make(env('DEMO_PASSWORD', Str::random(16))),
             'agency_id' => $agency->id,
-            'role' => 'staff',
+            'role' => 'member',
             'title' => 'Content Creator',
             'phone' => '+1 (555) 444-5555',
             'is_active' => true,
             'is_approved' => true,
             'last_active_at' => Carbon::now()->subDays(1),
         ]);
-        $users['member']->assignRole('staff');
+        $users['member']->assignRole('member');
 
         return $users;
     }
