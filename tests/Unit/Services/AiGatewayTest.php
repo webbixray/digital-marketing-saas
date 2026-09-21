@@ -235,6 +235,7 @@ class AiGatewayTest extends TestCase
             promptTokens: 100,
             completionTokens: 200,
             totalTokens: 300,
+            costUsd: 0.0045,
         ));
         $provider->shouldReceive('calculateCost')->andReturn(0.0045);
 

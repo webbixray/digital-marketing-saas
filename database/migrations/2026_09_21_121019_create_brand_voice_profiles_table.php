@@ -29,7 +29,7 @@ return new class extends Migration
         // Add brand_voice_id to ai_content_logs
         if (! Schema::hasColumn('ai_content_logs', 'brand_voice_id')) {
             Schema::table('ai_content_logs', function (Blueprint $table) {
-                $table->foreignId('brand_voice_id')->nullable()->after('agency_id')->constrained()->onDelete('set null');
+                $table->foreignId('brand_voice_id')->nullable()->after('agency_id')->constrained('brand_voice_profiles')->onDelete('set null');
             });
         }
     }
