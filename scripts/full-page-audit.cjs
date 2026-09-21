@@ -7,7 +7,7 @@
 const { chromium } = require('@playwright/test');
 const fs = require('fs');
 
-const BASE = 'http://localhost:8080';
+const BASE = 'http://127.0.0.1:8000';
 const LOGIN_EMAIL = 'test@agency.com';
 const LOGIN_PASSWORD = 'password';
 
