@@ -343,25 +343,180 @@ class AutonomousMarketingEngine
     }
 
     // Helper methods
-    private function calculateConversionRate($posts): float { return 0.0; }
+    private function calculateConversionRate($posts): float
+    {
+        if ($posts->isEmpty()) return 0.0;
+        $converted = $posts->where('converted', true)->count();
+        return ($converted / $posts->count()) * 100;
+    }
+
     private function getTopPosts($posts, int $limit) { return $posts->sortByDesc('engagement_rate')->take($limit); }
     private function getWorstPosts($posts, int $limit) { return $posts->sortBy('engagement_rate')->take($limit); }
-    private function getEngagementByPlatform($posts): array { return []; }
-    private function getEngagementByDay($posts): array { return []; }
-    private function getEngagementByHour($posts): array { return []; }
-    private function analyzeContentThemes($posts): array { return []; }
-    private function calculateAudienceGrowth(Campaign $campaign): float { return 0.0; }
-    private function calculateROI(Campaign $campaign, $posts): float { return 0.0; }
+
+    private function getEngagementByPlatform($posts): array
+    {
+        return $posts->groupBy('platform')
+            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+            ->toArray();
+    }
+
+    private function getEngagementByDay($posts): array
+    {
+        $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return $posts->groupBy(fn($p) => $p->published_at?->dayOfWeek ?? 0)
+            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+            ->sortKeys()
+            ->map(fn($v, $k) => ['day' => $days[$k], 'rate' => $v])
+            ->toArray();
+    }
+
+    private function getEngagementByHour($posts): array
+    {
+        return $posts->groupBy(fn($p) => $p->published_at?->hour ?? 0)
+            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+            ->sortKeys()
+            ->toArray();
+    }
+
+    private function analyzeContentThemes($posts): array
+    {
+        if ($posts->isEmpty()) return [];
+        $themes = [];
+        foreach ($posts as $post) {
+            $content = strtolower($post->content ?? '');
+            if (str_contains($content, 'sale') || str_contains($content, 'discount')) $themes[] = 'promotional';
+            if (str_contains($content, 'tip') || str_contains($content, 'how to')) $themes[] = 'educational';
+            if (str_contains($content, 'new') || str_contains($content, 'launch')) $themes[] = 'announcement';
+            if (str_contains($content, 'behind') || str_contains($content, 'team')) $themes[] = 'behind-the-scenes';
+            if (str_contains($content, 'testimonial') || str_contains($content, 'review')) $themes[] = 'social-proof';
+        }
+        $counts = array_count_values($themes);
+        arsort($counts);
+        return array_slice(array_keys($counts), 0, 5);
+    }
+
+    private function calculateAudienceGrowth(Campaign $campaign): float
+    {
+        $accounts = $campaign->socialAccounts;
+        if ($accounts->isEmpty()) return 0.0;
+        $totalGrowth = $accounts->sum('follower_growth_rate') ?? 0;
+        return round($totalGrowth / $accounts->count(), 2);
+    }
+
+    private function calculateROI(Campaign $campaign, $posts): float
+    {
+        $revenue = $campaign->revenue_attributed ?? 0;
+        $cost = $campaign->budget_spent ?? 1;
+        return round((($revenue - $cost) / $cost) * 100, 2);
+    }
+
     private function parseRecommendations(string $content): array { return json_decode($content, true) ?? []; }
-    private function predictEngagementChange(Campaign $campaign, array $recommendation): float { return 0.15; }
-    private function predictReachChange(Campaign $campaign, array $recommendation): float { return 0.10; }
-    private function calculateConfidence(array $recommendation): float { return 0.8; }
-    private function assessRisk(array $recommendation): string { return 'low'; }
-    private function applyChange(Campaign $campaign, Simulation $simulation): array { return []; }
-    private function calculateTotalImprovement(array $simulations): float { return 0.20; }
-    private function getRecentMentions(Agency $agency) { return collect(); }
-    private function calculateCrisisSeverity(array $anomalies): string { return 'medium'; }
-    private function describeCrisis(array $anomalies): string { return 'Potential PR crisis detected'; }
-    private function recommendCrisisActions(array $anomalies): array { return []; }
-    private function extractTheme(string $content): string { return 'general'; }
+
+    private function predictEngagementChange(Campaign $campaign, array $recommendation): float
+    {
+        $priority = $recommendation['priority'] ?? 'medium';
+        return match($priority) {
+            'high' => 0.25,
+            'medium' => 0.15,
+            'low' => 0.05,
+            default => 0.10,
+        };
+    }
+
+    private function predictReachChange(Campaign $campaign, array $recommendation): float
+    {
+        $type = $recommendation['type'] ?? '';
+        return str_contains($type, 'hashtag') ? 0.15 : 0.08;
+    }
+
+    private function calculateConfidence(array $recommendation): float
+    {
+        $type = $recommendation['type'] ?? '';
+        return in_array($type, ['timing', 'hashtag', 'content']) ? 0.85 : 0.65;
+    }
+
+    private function assessRisk(array $recommendation): string
+    {
+        $type = $recommendation['type'] ?? '';
+        return in_array($type, ['delete', 'remove', 'pause']) ? 'high' : 'low';
+    }
+
+    private function applyChange(Campaign $campaign, Simulation $simulation): array
+    {
+        return [
+            'type' => $simulation->category,
+            'description' => $simulation->recommendation['description'] ?? 'Optimization applied',
+            'applied_at' => now()->toISOString(),
+            'predicted_improvement' => $simulation->predictedEngagementChange,
+        ];
+    }
+
+    private function calculateTotalImprovement(array $simulations): float
+    {
+        if (empty($simulations)) return 0.0;
+        $total = array_sum(array_map(fn($s) => $s->predictedEngagementChange * $s->confidence, $simulations));
+        return round($total / count($simulations), 4);
+    }
+
+    private function getRecentMentions(Agency $agency)
+    {
+        return $agency->socialMentions()
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    private function calculateCrisisSeverity(array $anomalies): string
+    {
+        $score = count($anomalies);
+        return match(true) {
+            $score >= 10 => 'critical',
+            $score >= 5 => 'high',
+            $score >= 2 => 'medium',
+            default => 'low',
+        };
+    }
+
+    private function describeCrisis(array $anomalies): string
+    {
+        return sprintf(
+            'Potential PR crisis detected: %d negative mentions across %s platforms in the last 24 hours.',
+            count($anomalies),
+            collect($anomalies)->pluck('platform')->unique()->count()
+        );
+    }
+
+    private function recommendCrisisActions(array $anomalies): array
+    {
+        $actions = ['Pause all scheduled posts immediately'];
+        
+        $platforms = collect($anomalies)->pluck('platform')->unique();
+        if ($platforms->contains('twitter')) {
+            $actions[] = 'Prepare official statement for Twitter/X';
+        }
+        if ($platforms->contains('facebook')) {
+            $actions[] = 'Review and respond to Facebook comments';
+        }
+        if ($platforms->contains('instagram')) {
+            $actions[] = 'Consider Instagram Story addressing concerns';
+        }
+        
+        $actions[] = 'Monitor mentions closely for next 24-48 hours';
+        $actions[] = 'Escalate to senior management if severity increases';
+        
+        return $actions;
+    }
+
+    private function extractTheme(string $content): string
+    {
+        $content = strtolower($content);
+        return match(true) {
+            str_contains($content, 'sale') || str_contains($content, 'discount') => 'promotional',
+            str_contains($content, 'tip') || str_contains($content, 'how to') => 'educational',
+            str_contains($content, 'new') || str_contains($content, 'launch') => 'announcement',
+            str_contains($content, 'behind') || str_contains($content, 'team') => 'behind-the-scenes',
+            str_contains($content, 'testimonial') || str_contains($content, 'review') => 'social-proof',
+            default => 'general',
+        };
+    }
 }
