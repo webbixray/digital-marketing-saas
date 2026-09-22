@@ -4,13 +4,13 @@
 @section('styles')
 <style>
     * { box-sizing: border-box; }
-    body { margin: 0; overflow: hidden; font-family: 'Inter', 'Source Sans Pro', sans-serif; }
+    body { margin: 0; font-family: 'Inter', 'Source Sans Pro', sans-serif; }
     
     .workflow-builder {
         display: flex;
-        height: calc(100vh - 56px);
-        overflow: hidden;
+        flex: 1;
         background: #1a1a2e;
+        min-height: 0;
     }
     
     /* Node Palette */
