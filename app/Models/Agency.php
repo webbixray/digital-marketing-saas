@@ -42,6 +42,8 @@ class Agency extends Model
         'forms_count',
         'custom_settings',
         'branding',
+        'data_retention_days',
+        'last_retention_cleanup_at',
         'free_posts_limit',
         'free_ai_limit',
         'free_accounts_limit',

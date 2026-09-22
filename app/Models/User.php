@@ -25,6 +25,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'last_active_at',
         'notes',
+        'ccpa_opt_out',
+        'ccpa_opt_out_at',
         'referral_code',
         'referred_by',
         'credits',
@@ -43,6 +45,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_active_at' => 'datetime',
+        'ccpa_opt_out' => 'boolean',
+        'ccpa_opt_out_at' => 'datetime',
         'is_active' => 'boolean',
         'is_approved' => 'boolean',
         'two_factor_enabled' => 'boolean',

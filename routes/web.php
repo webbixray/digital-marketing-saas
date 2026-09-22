@@ -32,6 +32,7 @@ use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\FeatureFlagController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\GdprController;
+use App\Http\Controllers\GDPRAdminController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\InvoiceController;
@@ -327,6 +328,17 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::post('/export', [GdprController::class, 'requestExport'])->name('export');
         Route::post('/delete', [GdprController::class, 'requestDeletion'])->name('delete');
         Route::post('/consent', [GdprController::class, 'updateConsent'])->name('consent');
+        Route::post('/ccpa-opt-out', [GdprController::class, 'ccpaOptOut'])->name('ccpa-opt-out');
+    });
+
+    // GDPR Admin (Compliance Automation Suite)
+    Route::middleware(['auth', 'agency', 'role:owner|admin'])->prefix('admin/gdpr')->name('admin.gdpr.')->group(function () {
+        Route::get('/', [GDPRAdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/audit-log', [GDPRAdminController::class, 'auditLog'])->name('audit-log');
+        Route::post('/process-export/{id}', [GDPRAdminController::class, 'processExport'])->name('process-export');
+        Route::post('/process-deletion/{id}', [GDPRAdminController::class, 'processDeletion'])->name('process-deletion');
+        Route::post('/retention-cleanup', [GDPRAdminController::class, 'runRetentionCleanup'])->name('retention-cleanup');
+        Route::post('/consent-expiry', [GDPRAdminController::class, 'runConsentExpiry'])->name('consent-expiry');
     });
 
     // Billing & Subscription

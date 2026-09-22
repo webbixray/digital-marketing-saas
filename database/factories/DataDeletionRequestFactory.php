@@ -20,4 +20,27 @@ class DataDeletionRequestFactory extends Factory
             'completed_at' => null,
         ];
     }
+
+    public function completed(): static
+    {
+        return $this->state([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(['status' => 'cancelled']);
+    }
+
+    public function scheduledForSoon(): static
+    {
+        return $this->state(['scheduled_at' => now()->addDays(1)]);
+    }
+
+    public function scheduledForLater(): static
+    {
+        return $this->state(['scheduled_at' => now()->addDays(30)]);
+    }
 }

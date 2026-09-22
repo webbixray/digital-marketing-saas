@@ -20,4 +20,23 @@ class DataExportRequestFactory extends Factory
             'completed_at' => null,
         ];
     }
+
+    public function completed(): static
+    {
+        return $this->state([
+            'status' => 'completed',
+            'file_path' => 'gdpr-exports/test/export-'.uniqid().'.json',
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(['status' => 'cancelled']);
+    }
+
+    public function forExports(array $types): static
+    {
+        return $this->state(['export_types' => $types]);
+    }
 }

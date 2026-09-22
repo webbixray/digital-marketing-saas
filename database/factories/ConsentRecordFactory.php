@@ -20,4 +20,50 @@ class ConsentRecordFactory extends Factory
             'user_agent' => fake()->userAgent(),
         ];
     }
+
+    public function granted(): static
+    {
+        return $this->state(['granted' => true]);
+    }
+
+    public function denied(): static
+    {
+        return $this->state(['granted' => false]);
+    }
+
+    public function withExpiry(int $days = 365): static
+    {
+        return $this->state([
+            'granted' => true,
+            'expires_at' => now()->addDays($days),
+        ]);
+    }
+
+    public function expired(): static
+    {
+        return $this->state([
+            'granted' => true,
+            'expires_at' => now()->subDays(1),
+        ]);
+    }
+
+    public function marketing(): static
+    {
+        return $this->state(['consent_type' => 'marketing']);
+    }
+
+    public function analytics(): static
+    {
+        return $this->state(['consent_type' => 'analytics']);
+    }
+
+    public function thirdParty(): static
+    {
+        return $this->state(['consent_type' => 'third_party']);
+    }
+
+    public function dataSale(): static
+    {
+        return $this->state(['consent_type' => 'data_sale']);
+    }
 }

@@ -27,7 +27,17 @@ class UserFactory extends Factory
             'is_active' => true,
             'is_approved' => true,
             'notes' => null,
+            'ccpa_opt_out' => false,
+            'ccpa_opt_out_at' => null,
         ];
+    }
+
+    public function ccpaOptedOut(): static
+    {
+        return $this->state([
+            'ccpa_opt_out' => true,
+            'ccpa_opt_out_at' => now(),
+        ]);
     }
 
     public function withAgency(): static

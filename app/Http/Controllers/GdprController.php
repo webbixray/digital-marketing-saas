@@ -7,6 +7,7 @@ use App\Models\DataDeletionRequest;
 use App\Models\DataExportRequest;
 use App\Services\GDPR\GDPRComplianceService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class GdprController extends Controller
 {
@@ -43,6 +44,15 @@ class GdprController extends Controller
             'status' => 'pending',
         ]);
 
+        // Audit log
+        app(GDPRComplianceService::class)->auditLog(
+            action: 'export_requested',
+            category: 'gdpr',
+            agencyId: $user->agency_id,
+            userId: $user->id,
+            subjectType: DataExportRequest::class,
+        );
+
         return redirect()->route('gdpr.index')->with('success', 'Data export requested. You will be notified when ready.');
     }
 
@@ -61,13 +71,22 @@ class GdprController extends Controller
             'scheduled_at' => now()->addDays(30),
         ]);
 
+        // Audit log
+        app(GDPRComplianceService::class)->auditLog(
+            action: 'deletion_requested',
+            category: 'gdpr',
+            agencyId: $user->agency_id,
+            userId: $user->id,
+            subjectType: DataDeletionRequest::class,
+        );
+
         return redirect()->route('gdpr.index')->with('success', 'Deletion request submitted. Your account will be deleted in 30 days.');
     }
 
-    public function updateConsent(Request $request)
+    public function updateConsent(Request $request): JsonResponse
     {
         $request->validate([
-            'consent_type' => 'required|in:marketing,analytics,third_party',
+            'consent_type' => 'required|in:marketing,analytics,third_party,data_sale',
             'granted' => 'required|boolean',
         ]);
 
@@ -80,5 +99,25 @@ class GdprController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * CCPA: Opt-out of data sale (right to opt-out).
+     */
+    public function ccpaOptOut(Request $request): JsonResponse
+    {
+        $request->validate([
+            'opt_out' => 'required|boolean',
+        ]);
+
+        $user = $request->user();
+
+        if ($request->opt_out) {
+            $this->gdprService->ccpaOptOut($user->id);
+        } else {
+            $this->gdprService->ccpaOptIn($user->id);
+        }
+
+        return response()->json(['success' => true, 'ccpa_opt_out' => (bool) $request->opt_out]);
     }
 }

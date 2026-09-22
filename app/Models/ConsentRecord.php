@@ -10,7 +10,7 @@ class ConsentRecord extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'consent_type', 'granted', 'ip_address', 'user_agent'];
+    protected $fillable = ['user_id', 'consent_type', 'granted', 'ip_address', 'user_agent', 'expires_at'];
 
     protected $casts = [
         'granted' => 'boolean',
