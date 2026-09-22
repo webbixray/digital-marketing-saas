@@ -14,52 +14,21 @@ class WebhookDelivery extends Model
         'webhook_id',
         'event_type',
         'payload',
-        'response_code',
+        'response_status',
         'response_body',
-        'status',
-        'attempts',
+        'attempt',
         'delivered_at',
-        'next_retry_at',
+        'failed_at',
     ];
 
     protected $casts = [
         'payload' => 'array',
         'delivered_at' => 'datetime',
-        'next_retry_at' => 'datetime',
+        'failed_at' => 'datetime',
     ];
 
     public function webhook(): BelongsTo
     {
         return $this->belongsTo(Webhook::class);
-    }
-
-    public function scopeRecent($query)
-    {
-        return $query->orderByDesc('created_at');
-    }
-
-    public function scopeFailed($query)
-    {
-        return $query->where('status', 'failed');
-    }
-
-    public function scopeSuccess($query)
-    {
-        return $query->where('status', 'success');
-    }
-
-    public function isSuccess(): bool
-    {
-        return $this->status === 'success';
-    }
-
-    public function isFailed(): bool
-    {
-        return $this->status === 'failed';
-    }
-
-    public function isPending(): bool
-    {
-        return $this->status === 'pending';
     }
 }
