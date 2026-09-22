@@ -49,6 +49,7 @@ class SocialPost extends Model
         'approved_at',
         'approval_notes',
         'client_id',
+        'calendar_slot',
     ];
 
     protected $casts = [
@@ -71,6 +72,7 @@ class SocialPost extends Model
         'engagement_rate' => 'float',
         'quality_score' => 'integer',
         'is_pinned' => 'boolean',
+        'calendar_slot' => 'array',
     ];
 
     public function agency(): BelongsTo

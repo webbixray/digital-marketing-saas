@@ -352,6 +352,28 @@ class AnalyticsService
     /**
      * Get posts grouped by platform.
      */
+    public function getBestPlatform(Agency $agency): array
+    {
+        return Cache::remember("analytics:{$agency->id}:best_platform", self::CACHE_TTL, function () use ($agency) {
+            $platforms = SocialPost::where('agency_id', $agency->id)
+                ->selectRaw('platform, SUM(engagement_rate) as total_engagement, COUNT(*) as post_count')
+                ->groupBy('platform')
+                ->orderByDesc('total_engagement')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'platform' => $item->platform,
+                        'total_engagement' => round((float) $item->total_engagement, 2),
+                        'post_count' => (int) $item->post_count,
+                    ];
+                })
+                ->toArray();
+            
+            // Return the top platform
+            return $platforms[0] ?? ['platform' => null, 'total_engagement' => 0, 'post_count' => 0];
+        });
+    }
+
     private function groupByPlatform(Agency $agency): array
     {
         return SocialPost::where('agency_id', $agency->id)

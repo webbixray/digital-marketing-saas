@@ -9,7 +9,7 @@ class AgentLearningReport extends Model
 {
     use HasFactory;
 
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'agent_name',
@@ -18,6 +18,7 @@ class AgentLearningReport extends Model
         'changes',
         'status',
         'applied_at',
+        'created_at',
     ];
 
     protected $casts = [

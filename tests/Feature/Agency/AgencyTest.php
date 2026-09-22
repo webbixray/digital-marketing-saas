@@ -36,7 +36,7 @@ class AgencyTest extends TestCase
     public function test_it_updates_settings(): void
     {
         $response = $this->actingAs($this->owner)->put(route('agency.settings.update'), [
-            'name' => 'Updated Agency',
+            'agency_name' => 'Updated Agency',
             'email' => 'updated@agency.com',
             'timezone' => 'America/New_York',
             'currency' => 'EUR',

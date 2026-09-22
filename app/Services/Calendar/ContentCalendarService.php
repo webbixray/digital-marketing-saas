@@ -3,6 +3,7 @@
 namespace App\Services\Calendar;
 
 use App\Models\SocialPost;
+use App\Models\OptimalPostingTime;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -86,10 +87,27 @@ class ContentCalendarService
     }
 
     /**
-     * Get best posting times based on historical data.
+     * Get best posting times from the OptimalPostingTime model.
+     * Falls back to historical post analysis when no OptimalPostingTime records exist.
      */
     public function getBestPostingTimes(int $agencyId): array
     {
+        $optimalTimes = OptimalPostingTime::where('agency_id', $agencyId)
+            ->best()
+            ->take(3)
+            ->get();
+
+        if ($optimalTimes->isNotEmpty()) {
+            return $optimalTimes->map(fn (OptimalPostingTime $slot) => [
+                'hour' => $slot->hour,
+                'label' => $slot->time_slot,
+                'day' => $slot->day_name,
+                'score' => $slot->engagement_score,
+                'platform' => $slot->platform,
+            ])->toArray();
+        }
+
+        // Fallback: compute from historical published posts
         $posts = SocialPost::where('agency_id', $agencyId)
             ->where('status', 'published')
             ->whereNotNull('published_at')
@@ -108,7 +126,9 @@ class ContentCalendarService
         return array_map(fn ($hour) => [
             'hour' => $hour,
             'label' => sprintf('%02d:00', $hour),
+            'day' => null,
             'score' => $hourlyPerformance[$hour] ?? 0,
+            'platform' => null,
         ], $bestHours);
     }
 
@@ -144,5 +164,29 @@ class ContentCalendarService
             'pinterest' => '#bd081c',
             default => '#6c757d',
         };
+    }
+
+    /**
+     * Suggest optimal posting slots for a given platform using OptimalPostingTime model.
+     * Returns top 3 slots for the next 7 days.
+     */
+    public function suggestOptimalSlots(int $agencyId, ?string $platform = null): array
+    {
+        $query = OptimalPostingTime::where('agency_id', $agencyId)->best();
+
+        if ($platform) {
+            $query->forPlatform($platform);
+        }
+
+        $slots = $query->take(5)->get();
+
+        return $slots->map(fn (OptimalPostingTime $slot) => [
+            'day_of_week' => $slot->day_of_week,
+            'day_name' => $slot->day_name,
+            'hour' => $slot->hour,
+            'time_slot' => $slot->time_slot,
+            'engagement_score' => $slot->engagement_score,
+            'platform' => $slot->platform,
+        ])->toArray();
     }
 }

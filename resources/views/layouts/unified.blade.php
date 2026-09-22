@@ -88,6 +88,7 @@
     <meta name="theme-color" content="#6366f1">
 
     @stack('styles')
+    @yield('head-scripts')
 </head>
 <body class="h-full bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100 font-inter overflow-x-hidden flex flex-row" 
       data-default-sections='{"social":true,"marketing":true,"ai":true,"business":true}'
@@ -218,7 +219,7 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Inbox</span>
                     </div>
                     <div class="group relative">
-                        <a href="{{ route('calendar.index') }}" 
+                        <a href="{{ route('calendar') }}" 
                            class="nav-link {{ request()->routeIs('calendar.*') ? 'active' : '' }}"
                            :class="sidebarMini ? 'justify-center px-2' : ''"
                            aria-label="Calendar">

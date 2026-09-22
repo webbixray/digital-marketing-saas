@@ -4,6 +4,7 @@ use App\Http\Controllers\AbTestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AiContentController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApprovalController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CancellationController;
 use App\Http\Controllers\ClientController;
@@ -163,7 +165,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
         Route::get('/stats', [AgentController::class, 'stats'])->name('stats');
         Route::post('/dispatch', [AgentController::class, 'dispatch'])->name('dispatch');
-        Route::get('/dashboard', [AgentController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard', [AgentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/workflows', [AgentController::class, 'workflows'])->name('workflows');
         Route::post('/run-workflow', [AgentController::class, 'runWorkflow'])->name('run-workflow');
         Route::get('/{agentName}', [AgentController::class, 'agentDetail'])->name('show');
@@ -246,9 +248,11 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::resource('webhooks', WebhookController::class);
 
     // Content Calendar
-    Route::prefix('calendar')->name('calendar.')->group(function () {
-        Route::get('/', [ContentCalendarController::class, 'index'])->name('index');
-        Route::get('/events', [ContentCalendarController::class, 'events'])->name('events');
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar');
+    Route::get('/calendar/events', [CalendarController::class, 'events'])->name('calendar.events');
+
+    // Legacy calendar routes (ContentCalendarController for drag-drop updates)
+    Route::prefix('calendar')->name('content-calendar.')->group(function () {
         Route::post('/update-schedule', [ContentCalendarController::class, 'updateSchedule'])->name('update-schedule');
     });
 

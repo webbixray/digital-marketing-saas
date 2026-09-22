@@ -26,19 +26,19 @@ class ContentCalendarTest extends TestCase
 
     public function test_calendar_index_requires_auth(): void
     {
-        $response = $this->get(route('calendar.index'));
+        $response = $this->get(route('calendar'));
         $response->assertStatus(302);
     }
 
     public function test_calendar_index_returns_200_for_authenticated_user(): void
     {
-        $response = $this->actingAs($this->user)->get(route('calendar.index'));
+        $response = $this->actingAs($this->user)->get(route('calendar'));
         $response->assertStatus(200);
     }
 
     public function test_scheduled_posts_display_on_calendar(): void
     {
-        $response = $this->actingAs($this->user)->get(route('calendar.index'));
+        $response = $this->actingAs($this->user)->get(route('calendar'));
         $response->assertStatus(200);
     }
 }

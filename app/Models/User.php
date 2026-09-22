@@ -30,6 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'credits',
         'referral_count',
         'first_paid_at',
+        'agency_id',
+        'role',
     ];
 
     protected $hidden = [
