@@ -225,6 +225,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::get('/create', [AbTestController::class, 'create'])->name('create');
         Route::post('/', [AbTestController::class, 'store'])->name('store');
         Route::get('/{test}', [AbTestController::class, 'show'])->name('show');
+        Route::get('/{test}/analyze', [AbTestController::class, 'analyze'])->name('analyze');
         Route::post('/{test}/start', [AbTestController::class, 'start'])->name('start');
         Route::post('/{test}/pause', [AbTestController::class, 'pause'])->name('pause');
         Route::post('/{test}/complete', [AbTestController::class, 'complete'])->name('complete');
@@ -337,6 +338,11 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::post('agency/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription');
     Route::get('agency/invoices', [BillingController::class, 'invoices'])->name('agency.invoices');
     Route::get('agency/invoices/{invoice}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoice.download');
+
+    // Billing Health Monitor
+    Route::get('/billing/health', [App\Http\Controllers\BillingHealthController::class, 'index'])->name('billing.health');
+    Route::get('/billing/health/metrics', [App\Http\Controllers\BillingHealthController::class, 'metrics'])->name('billing.health.metrics');
+    Route::get('/billing/health/forecast', [App\Http\Controllers\BillingHealthController::class, 'forecast'])->name('billing.health.forecast');
 });
 
 // Billing webhook (public - Stripe can't authenticate)
@@ -482,7 +488,20 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post');
 });
 
-// Team Chat
+// Chat 2.0 (Real-Time Messaging) - MUST be before legacy chat routes
+Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Chat2Controller::class, 'index'])->name('index');
+    Route::get('/{channel}', [\App\Http\Controllers\Chat2Controller::class, 'channel'])->name('channel');
+    Route::post('/{channel}/send', [\App\Http\Controllers\Chat2Controller::class, 'sendMessage'])->name('send');
+    Route::post('/{channel}/typing', [\App\Http\Controllers\Chat2Controller::class, 'typing'])->name('typing');
+    Route::post('/{channel}/read', [\App\Http\Controllers\Chat2Controller::class, 'read'])->name('read');
+    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Chat2Controller::class, 'addReaction'])->name('reactions.add');
+    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Chat2Controller::class, 'removeReaction'])->name('reactions.remove');
+    Route::put('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'editMessage'])->name('messages.edit');
+    Route::delete('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'deleteMessage'])->name('messages.delete');
+});
+
+// Team Chat (Legacy - uses slug-based channels)
 Route::middleware(['auth', 'agency'])->prefix('chat')->name('chat.')->group(function () {
     Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('index');
     Route::get('/{channel}', [\App\Http\Controllers\ChatController::class, 'show'])->name('show');

@@ -358,6 +358,16 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Billing</span>
                     </div>
                     <div class="group relative">
+                        <a href="{{ route('billing.health') }}" 
+                           class="nav-link {{ request()->routeIs('billing.health*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="Billing Health">
+                            <i class="fas fa-heartbeat w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Health Monitor</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">Health Monitor</span>
+                    </div>
+                    <div class="group relative">
                         <a href="{{ route('agency.team') }}" 
                            class="nav-link {{ request()->routeIs('agency.team*') ? 'active' : '' }}"
                            :class="sidebarMini ? 'justify-center px-2' : ''"

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AbTest;
 use App\Models\SocialAccount;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class AbTestController extends Controller
 {
@@ -20,6 +21,7 @@ class AbTestController extends Controller
     {
         $agencyId = $request->user()->agency_id;
         $status = $request->query('status', 'all');
+        $type = $request->query('type', 'all');
 
         $query = AbTest::where('agency_id', $agencyId)
             ->with('socialAccount')
@@ -29,9 +31,21 @@ class AbTestController extends Controller
             $query->where('status', $status);
         }
 
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
         $tests = $query->paginate(15);
 
-        return view('ab-testing.index', compact('tests', 'status'));
+        // Aggregate stats
+        $stats = [
+            'total' => AbTest::where('agency_id', $agencyId)->count(),
+            'draft' => AbTest::where('agency_id', $agencyId)->where('status', 'draft')->count(),
+            'running' => AbTest::where('agency_id', $agencyId)->where('status', 'running')->count(),
+            'completed' => AbTest::where('agency_id', $agencyId)->where('status', 'completed')->count(),
+        ];
+
+        return view('ab-testing.index', compact('tests', 'status', 'type', 'stats'));
     }
 
     /**
@@ -80,16 +94,28 @@ class AbTestController extends Controller
     }
 
     /**
-     * Show single test.
+     * Show single test with results.
      */
     public function show(Request $request, AbTest $test)
     {
-        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
-            abort(403);
-        }
+        $this->authorizeAgency($test);
         $test->load('socialAccount');
+        
+        $analysis = $test->analyze();
 
-        return view('ab-testing.show', compact('test'));
+        return view('ab-testing.show', compact('test', 'analysis'));
+    }
+
+    /**
+     * Analyze endpoint for AJAX requests.
+     */
+    public function analyze(Request $request, AbTest $test): JsonResponse
+    {
+        $this->authorizeAgency($test);
+        
+        $analysis = $test->analyze();
+        
+        return response()->json($analysis);
     }
 
     /**
@@ -97,9 +123,8 @@ class AbTestController extends Controller
      */
     public function start(Request $request, AbTest $test)
     {
-        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
-            abort(403);
-        }
+        $this->authorizeAgency($test);
+        
         if ($test->status !== 'draft') {
             return back()->with('error', 'Test can only be started from draft status.');
         }
@@ -117,9 +142,8 @@ class AbTestController extends Controller
      */
     public function pause(Request $request, AbTest $test)
     {
-        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
-            abort(403);
-        }
+        $this->authorizeAgency($test);
+        
         if ($test->status !== 'running') {
             return back()->with('error', 'Only running tests can be paused.');
         }
@@ -134,9 +158,8 @@ class AbTestController extends Controller
      */
     public function complete(Request $request, AbTest $test)
     {
-        if ((int) $test->agency_id !== (int) $request->user()->agency_id) {
-            abort(403);
-        }
+        $this->authorizeAgency($test);
+        
         if ($test->status !== 'running') {
             return back()->with('error', 'Only running tests can be completed.');
         }
@@ -151,7 +174,8 @@ class AbTestController extends Controller
             'ended_at' => now(),
         ]);
 
-        return back()->with('success', 'Test completed! Winner: '.ucfirst($winner)." ({$confidence}% confidence)");
+        $winnerLabel = $winner === 'inconclusive' ? 'Inconclusive' : ucfirst($winner);
+        return back()->with('success', "Test completed! Winner: {$winnerLabel} ({$confidence}% confidence)");
     }
 
     /**
@@ -163,6 +187,14 @@ class AbTestController extends Controller
             return response()->json(['error' => 'Test not running'], 400);
         }
 
+        if (!in_array($variant, ['a', 'b'])) {
+            return response()->json(['error' => 'Invalid variant'], 400);
+        }
+
+        if (!in_array($event, ['impression', 'engagement', 'click'])) {
+            return response()->json(['error' => 'Invalid event type'], 400);
+        }
+
         // Record the event
         $test->logs()->create([
             'ab_test_id' => $test->id,
@@ -172,10 +204,30 @@ class AbTestController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        // Update counters
-        $column = "variant_{$variant}_{$event}s";
+        // Update counters - map event to column
+        $columnMap = [
+            'impression' => 'variant_' . $variant . '_impressions',
+            'engagement' => 'variant_' . $variant . '_engagement',
+            'click' => 'variant_' . $variant . '_clicks',
+        ];
+        $column = $columnMap[$event];
         $test->increment($column);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'variant' => $variant,
+            'event' => $event,
+            'total' => $test->fresh()->{$column},
+        ]);
+    }
+
+    /**
+     * Verify the user belongs to the same agency as the test.
+     */
+    private function authorizeAgency(AbTest $test): void
+    {
+        if ((int) $test->agency_id !== (int) request()->user()->agency_id) {
+            abort(403);
+        }
     }
 }
