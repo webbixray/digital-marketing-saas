@@ -81,13 +81,13 @@ class AgencySettingsTest extends TestCase
     {
         $response = $this->actingAs($this->owner)->put(route('agency.settings.update'), []);
 
-        $response->assertSessionHasErrors(['name', 'email', 'timezone', 'currency']);
+        $response->assertSessionHasErrors(['agency_name', 'email', 'timezone', 'currency']);
     }
 
     public function test_update_settings_validates_email_format(): void
     {
         $response = $this->actingAs($this->owner)->put(route('agency.settings.update'), [
-            'name' => 'Test Agency',
+            'agency_name' => 'Test Agency',
             'email' => 'invalid-email',
             'timezone' => 'UTC',
             'currency' => 'USD',
@@ -99,7 +99,7 @@ class AgencySettingsTest extends TestCase
     public function test_update_settings_validates_currency_length(): void
     {
         $response = $this->actingAs($this->owner)->put(route('agency.settings.update'), [
-            'name' => 'Test Agency',
+            'agency_name' => 'Test Agency',
             'email' => 'test@test.com',
             'timezone' => 'UTC',
             'currency' => 'US',
@@ -111,7 +111,7 @@ class AgencySettingsTest extends TestCase
     public function test_update_settings_succeeds_with_valid_data(): void
     {
         $response = $this->actingAs($this->owner)->put(route('agency.settings.update'), [
-            'name' => 'Updated Agency Name',
+            'agency_name' => 'Updated Agency Name',
             'email' => 'updated@agency.com',
             'timezone' => 'America/New_York',
             'currency' => 'EUR',
@@ -396,7 +396,7 @@ class AgencySettingsTest extends TestCase
         $response = $this->actingAs($this->owner)->get('/agency/billing');
 
         $response->assertOk();
-        $response->assertViewIs('agency.billing');
+        $response->assertViewIs('billing.index');
         $response->assertViewHas(['agency', 'plans', 'currentPlan']);
     }
 

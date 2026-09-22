@@ -71,7 +71,11 @@ class AgencyController extends Controller
     public function updateSettings(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'agency_name' => 'required|string|max:255',
+            'website' => 'nullable|url|max:255',
+            'description' => 'nullable|string|max:1000',
+            'primary_color' => 'nullable|string|size:7',
+            'logo_url' => 'nullable|url|max:255',
             'email' => 'required|email|max:255',
             'timezone' => 'required|string|max:100',
             'currency' => 'required|string|size:3',
@@ -80,7 +84,16 @@ class AgencyController extends Controller
         $agencyId = $request->user()->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
-        $agency->update($request->only(['name', 'email', 'timezone', 'currency']));
+        $agency->update([
+            'name' => $request->agency_name,
+            'website' => $request->website,
+            'description' => $request->description,
+            'primary_color' => $request->primary_color ?? '#4f46e5',
+            'logo_url' => $request->logo_url,
+            'email' => $request->email,
+            'timezone' => $request->timezone,
+            'currency' => $request->currency,
+        ]);
 
         return redirect()->route('agency.settings')->with('success', 'Settings updated.');
     }

@@ -47,6 +47,8 @@ class Agency extends Model
         'free_accounts_limit',
         'free_team_limit',
         'free_clients_limit',
+        'primary_color',
+        'logo_url',
     ];
 
     protected $casts = [
