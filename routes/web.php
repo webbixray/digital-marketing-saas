@@ -348,6 +348,7 @@ Route::get('r/{slug}/{token}', [PublicClientReportController::class, 'show'])
 
 Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/v2', [AnalyticsController::class, 'crossPlatform'])->name('analytics.cross-platform');
 
     Route::get('/two-factor', [TwoFactorController::class, 'show'])->name('two-factor.show');
     Route::post('/two-factor/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
@@ -464,6 +465,14 @@ Route::middleware(['auth', 'agency'])->prefix('client-portal')->name('client-por
     Route::put('/settings', [\App\Http\Controllers\ClientPortalController::class, 'updateSettings'])->name('settings.update');
     Route::post('/clients/{client}/generate-token', [\App\Http\Controllers\ClientPortalController::class, 'generateToken'])->name('generate-token');
     Route::delete('/clients/{client}/tokens/{accessToken}', [\App\Http\Controllers\ClientPortalController::class, 'revokeToken'])->name('revoke-token');
+});
+
+// Client Portal 2.0 (self-service portal for agency clients)
+Route::middleware(['auth', 'agency'])->prefix('client-portal-v2')->name('client-portal.v2.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ClientPortal2Controller::class, 'dashboard'])->name('dashboard');
+    Route::get('/campaigns', [\App\Http\Controllers\ClientPortal2Controller::class, 'campaigns'])->name('campaigns');
+    Route::get('/analytics', [\App\Http\Controllers\ClientPortal2Controller::class, 'analytics'])->name('analytics');
+    Route::get('/invoices', [\App\Http\Controllers\ClientPortal2Controller::class, 'invoices'])->name('invoices');
 });
 
 // Public client portal (token-based access, no auth required)
