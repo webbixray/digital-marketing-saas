@@ -27,7 +27,7 @@ class AgentAccessToken extends Model
         'expires_at' => 'datetime',
     ];
 
-    public function agency(): BelongsTo
+    public function agency(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }

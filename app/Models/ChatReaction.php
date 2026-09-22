@@ -19,7 +19,7 @@ class ChatReaction extends Model
 
     public function message(): BelongsTo
     {
-        return $this->belongsTo(ChatMessage::class);
+        return $this->belongsTo(ChatMessage::class, 'message_id');
     }
 
     public function user(): BelongsTo

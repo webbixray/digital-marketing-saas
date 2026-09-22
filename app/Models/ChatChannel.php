@@ -36,14 +36,14 @@ class ChatChannel extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'chat_channel_user')
+        return $this->belongsToMany(User::class, 'chat_channel_user', 'channel_id', 'user_id')
             ->withPivot('last_read_at', 'is_moderator')
             ->withTimestamps();
     }
 
     public function messages()
     {
-        return $this->hasMany(ChatMessage::class);
+        return $this->hasMany(ChatMessage::class, 'channel_id');
     }
 
     public function scopeActive($query)

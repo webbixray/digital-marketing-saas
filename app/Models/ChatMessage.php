@@ -46,7 +46,7 @@ class ChatMessage extends Model
 
     public function reactions()
     {
-        return $this->hasMany(ChatReaction::class);
+        return $this->hasMany(ChatReaction::class, 'message_id');
     }
 
     public function scopeRecent($query)
