@@ -325,7 +325,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function billingHealth() {
     return {
         mrrRotation: -90,

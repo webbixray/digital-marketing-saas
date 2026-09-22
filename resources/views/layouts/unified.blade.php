@@ -238,6 +238,16 @@
                         </a>
                         <span x-show="sidebarMini" class="sidebar-tooltip">Analytics</span>
                     </div>
+                    <div class="group relative">
+                        <a href="{{ route('analytics.cross-platform') }}" 
+                           class="nav-link {{ request()->routeIs('analytics.cross-platform*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="Cross-Platform">
+                            <i class="fas fa-globe w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Cross-Platform</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">Cross-Platform</span>
+                    </div>
                 </div>
             </div>
 
@@ -281,6 +291,27 @@
                         </a>
                         <span x-show="sidebarMini" class="sidebar-tooltip">Content</span>
                     </div>
+                    <div class="group relative">
+                        <a href="{{ route('client-portal.v2.dashboard') }}" 
+                           class="nav-link {{ request()->routeIs('client-portal.*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="Client Portal">
+                            <i class="fas fa-building w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Client Portal</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">Client Portal</span>
+                    </div>
+                    </div>
+                    <div class="group relative">
+                        <a href="{{ route('ab-testing.index') }}" 
+                           class="nav-link {{ request()->routeIs('ab-testing.*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="A/B Testing">
+                            <i class="fas fa-flask w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">A/B Testing</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">A/B Testing</span>
+                    </div>
                 </div>
             </div>
 
@@ -323,6 +354,16 @@
                             <span x-show="!sidebarMini" class="transition-opacity duration-300">Workflows</span>
                         </a>
                         <span x-show="sidebarMini" class="sidebar-tooltip">Workflows</span>
+                    </div>
+                    <div class="group relative">
+                        <a href="{{ route('chat.v2.index') }}" 
+                           class="nav-link {{ request()->routeIs('chat.v2*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="Chat">
+                            <i class="fas fa-comments w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Chat</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">Chat</span>
                     </div>
                 </div>
             </div>

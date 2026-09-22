@@ -230,7 +230,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     let currentInvoiceId = null;
 
     function openPayModal(invoiceId, invoiceNumber, amount) {

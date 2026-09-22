@@ -199,9 +199,9 @@
 </div>
 
 @push('scripts')
-<script>
-function variantBuilder() {
-    return {
+<script nonce="{{ $cspNonce ?? '' }}">
+document.addEventListener('alpine:init', () => {
+    Alpine.data('variantBuilder', () => ({
         testType: 'content',
         variantA: '',
         variantB: '',
@@ -221,8 +221,8 @@ function variantBuilder() {
         updatePreview() {
             // Preview is reactive via Alpine
         }
-    }
-}
+    }));
+});
 </script>
 @endpush
 @endsection

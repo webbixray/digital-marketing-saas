@@ -229,7 +229,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', function() {
     // Traffic Pie Chart
     const trafficCtx = document.getElementById('trafficPieChart').getContext('2d');

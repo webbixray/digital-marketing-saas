@@ -34,7 +34,7 @@
 
     <script src="https://unpkg.com/swagger-ui-dist@5.11.8/swagger-ui-bundle.js" crossorigin></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.11.8/swagger-ui-standalone-preset.js" crossorigin></script>
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         window.onload = function() {
             const ui = SwaggerUIBundle({
                 url: "{{ url('/api/v1/docs/openapi.json') }}",

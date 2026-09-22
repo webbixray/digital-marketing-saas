@@ -216,7 +216,7 @@
         </footer>
     </div>
 
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         function approvePost(postId) {
             fetch('{{ route("portal.show", ["token" => $token]) }}/posts/' + postId + '/approve', {
                 method: 'POST',
