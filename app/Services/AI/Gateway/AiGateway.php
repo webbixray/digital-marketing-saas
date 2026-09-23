@@ -97,6 +97,11 @@ class AiGateway
      */
     protected function resolveProviderChain(AiRequest $request, Agency $agency): Collection
     {
+        // If request specifies a provider, use it directly
+        if ($request->provider) {
+            return collect([$request->provider]);
+        }
+
         $task = $request->task;
 
         // Task-based routing config

@@ -14,7 +14,72 @@ class AiRequest
         public readonly ?string $contentType = null,
         public readonly ?string $action = null,
         public readonly array $messages = [],
+        public readonly ?string $provider = null,
     ) {}
+
+    public function withProvider(string $provider): self
+    {
+        return new self(
+            prompt: $this->prompt,
+            systemPrompt: $this->systemPrompt,
+            model: $this->model,
+            temperature: $this->temperature,
+            maxTokens: $this->maxTokens,
+            task: $this->task,
+            contentType: $this->contentType,
+            action: $this->action,
+            messages: $this->messages,
+            provider: $provider,
+        );
+    }
+
+    public function withModel(string $model): self
+    {
+        return new self(
+            prompt: $this->prompt,
+            systemPrompt: $this->systemPrompt,
+            model: $model,
+            temperature: $this->temperature,
+            maxTokens: $this->maxTokens,
+            task: $this->task,
+            contentType: $this->contentType,
+            action: $this->action,
+            messages: $this->messages,
+            provider: $this->provider,
+        );
+    }
+
+    public function withPrompt(string $prompt): self
+    {
+        return new self(
+            prompt: $prompt,
+            systemPrompt: $this->systemPrompt,
+            model: $this->model,
+            temperature: $this->temperature,
+            maxTokens: $this->maxTokens,
+            task: $this->task,
+            contentType: $this->contentType,
+            action: $this->action,
+            messages: $this->messages,
+            provider: $this->provider,
+        );
+    }
+
+    public function withSystemPrompt(?string $systemPrompt): self
+    {
+        return new self(
+            prompt: $this->prompt,
+            systemPrompt: $systemPrompt,
+            model: $this->model,
+            temperature: $this->temperature,
+            maxTokens: $this->maxTokens,
+            task: $this->task,
+            contentType: $this->contentType,
+            action: $this->action,
+            messages: $this->messages,
+            provider: $this->provider,
+        );
+    }
 
     public static function text(string $prompt, ?string $systemPrompt = null, string $model = 'gpt-4o', string $task = 'fast'): self
     {
@@ -68,6 +133,7 @@ class AiRequest
             'content_type' => $this->contentType,
             'action' => $this->action,
             'messages' => $this->messages,
+            'provider' => $this->provider,
         ];
     }
 }
