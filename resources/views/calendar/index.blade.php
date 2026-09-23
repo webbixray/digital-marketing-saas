@@ -288,14 +288,20 @@
     }
 
     function showToast(message, type) {
-        const toast = document.querySelector('[x-data*="show: false"]');
-        if (toast && toast._x_dataStack) {
-            const data = toast._x_dataStack[0];
-            data.message = message;
-            data.type = type;
-            data.show = true;
-            setTimeout(() => { data.show = false; }, 3000);
+        // Use new global toast system if available
+        if (typeof window.toast === 'function') {
+            window.toast(message, type);
+            return;
         }
+        // Fallback
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white bg-blue-500';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
     function ucfirst(str) {

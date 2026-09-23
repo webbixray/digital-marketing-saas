@@ -97,6 +97,9 @@
     <!-- Loading bar -->
     <div id="loading-bar" :class="{ 'loading': loading }" aria-hidden="true"></div>
 
+    <!-- Toast notifications -->
+    <x-toast />
+
     <!-- Screen reader announcements -->
     <div aria-live="polite" aria-atomic="true" class="sr-only" id="sr-announcements"></div>
 
@@ -356,7 +359,7 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Workflows</span>
                     </div>
                     <div class="group relative">
-                        <a href="{{ route('chat.v2.index') }}" 
+                        <a href="{{ route('chat.v2.index') }}"
                            class="nav-link {{ request()->routeIs('chat.v2*') ? 'active' : '' }}"
                            :class="sidebarMini ? 'justify-center px-2' : ''"
                            aria-label="Chat">
@@ -364,6 +367,16 @@
                             <span x-show="!sidebarMini" class="transition-opacity duration-300">Chat</span>
                         </a>
                         <span x-show="sidebarMini" class="sidebar-tooltip">Chat</span>
+                    </div>
+                    <div class="group relative">
+                        <a href="{{ route('ai-providers.index') }}"
+                           class="nav-link {{ request()->routeIs('ai-providers.*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="AI Providers">
+                            <i class="fas fa-microchip w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">AI Providers</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">AI Providers</span>
                     </div>
                 </div>
             </div>
@@ -721,50 +734,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Toast Container -->
-    <div x-data class="fixed bottom-4 right-4 z-[70] space-y-2" aria-live="polite" aria-atomic="true">
-        <template x-for="toast in $store.toasts.items" :key="toast.id">
-            <div x-show="toast.visible"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-x-8"
-                 x-transition:enter-end="opacity-100 translate-x-0"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 translate-x-0"
-                 x-transition:leave-end="opacity-0 translate-x-8"
-                 class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[300px] max-w-md"
-                 role="alert">
-                <i :class="toast.type === 'success' ? 'fas fa-check-circle text-green-500' : toast.type === 'error' ? 'fas fa-exclamation-circle text-red-500' : 'fas fa-info-circle text-blue-500'"></i>
-                <p class="text-sm text-gray-900 dark:text-white" x-text="toast.message"></p>
-            </div>
-        </template>
-    </div>
-
-    <!-- Toast helper script -->
-    <script nonce="{{ $cspNonce ?? '' }}">
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('toasts', {
-                items: [],
-                toastId: 0,
-                show(message, type = 'info') {
-                    const id = ++this.toastId;
-                    this.items.push({ id, message, type, visible: true });
-                    setTimeout(() => {
-                        const toast = this.items.find(t => t.id === id);
-                        if (toast) toast.visible = false;
-                        setTimeout(() => {
-                            this.items = this.items.filter(t => t.id !== id);
-                        }, 300);
-                    }, 4000);
-                }
-            });
-        });
-        window.showToast = function(message, type = 'info') {
-            if (typeof Alpine !== 'undefined' && Alpine.store('toasts')) {
-                Alpine.store('toasts').show(message, type);
-            }
-        };
-    </script>
 
     @stack('scripts')
 </body>

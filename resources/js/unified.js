@@ -121,6 +121,11 @@ window.dmsaas = {
      * Show a toast notification
      */
     toast(message, type = 'success') {
+        // Use new toast system if available, fallback to legacy
+        if (typeof window.toast === 'function') {
+            window.toast(message, type);
+            return;
+        }
         const toast = document.createElement('div');
         toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white ${this.toastClass(type)}`;
         toast.textContent = message;

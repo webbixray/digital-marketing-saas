@@ -6,6 +6,7 @@ use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\AiContentController;
+use App\Http\Controllers\AiProviderController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\Auth\LoginController;
@@ -159,6 +160,16 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::post('/rewrite', [AiContentController::class, 'rewrite'])->name('rewrite');
         Route::post('/hashtags', [AiContentController::class, 'hashtags'])->name('hashtags');
         Route::post('/ideas', [AiContentController::class, 'ideas'])->name('ideas');
+    });
+
+    // AI Provider Management (BYOK)
+    Route::prefix('ai-providers')->name('ai-providers.')->group(function () {
+        Route::get('/', [AiProviderController::class, 'index'])->name('index');
+        Route::post('/', [AiProviderController::class, 'store'])->name('store');
+        Route::put('/{provider}', [AiProviderController::class, 'update'])->name('update');
+        Route::delete('/{provider}', [AiProviderController::class, 'destroy'])->name('destroy');
+        Route::post('/{provider}/toggle', [AiProviderController::class, 'toggle'])->name('toggle');
+        Route::post('/{provider}/test', [AiProviderController::class, 'test'])->name('test');
     });
 
     // Agent Management
