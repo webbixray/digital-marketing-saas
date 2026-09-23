@@ -2,327 +2,229 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaign;
+use App\ClientPortal\ClientPortalService;
 use App\Models\Client;
-use App\Models\ClientPortalSetting;
-use App\Models\Invoice;
-use App\Models\SocialPost;
+use App\Models\ClientApproval;
+use App\Models\ClientNotification;
+use App\Models\ClientReport;
+use App\Models\SocialAccount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ClientPortal2Controller extends Controller
 {
-    /**
-     * Get the agency ID for the current authenticated user
-     */
+    private ClientPortalService $service;
+
+    public function __construct(ClientPortalService $service)
+    {
+        $this->service = $service;
+    }
+
     private function getAgencyId(): int
     {
         return auth()->user()->agency_id;
     }
 
-    /**
-     * Format a date column as YYYY-MM in a database-agnostic way
-     */
-    private function getMonthExpression(string $column): string
+    private function getClient(Request $request): Client
     {
-        $driver = DB::connection()->getDriverName();
-        if ($driver === 'sqlite') {
-            return "strftime('%Y-%m', {$column})";
-        }
-        return "DATE_FORMAT({$column}, '%Y-%m')";
+        $client = Client::where('agency_id', $this->getAgencyId())
+            ->findOrFail($request->route('client'));
+        return $client;
     }
 
-    /**
-     * Show the client portal 2.0 dashboard with summary cards
-     */
     public function dashboard(Request $request)
     {
-        $agencyId = $this->getAgencyId();
-
-        // Get agency's clients count
-        $totalClients = Client::where('agency_id', $agencyId)->count();
-        $activeClients = Client::where('agency_id', $agencyId)->where('status', 'active')->count();
-
-        // Campaign summary - scoped to agency
-        $activeCampaigns = Campaign::where('agency_id', $agencyId)
-            ->where('status', 'active')
-            ->count();
-        $totalCampaigns = Campaign::where('agency_id', $agencyId)->count();
-
-        // Total spend from invoices - scoped to agency
-        $totalSpend = Invoice::where('agency_id', $agencyId)
-            ->where('status', 'paid')
-            ->sum('total');
-        $pendingSpend = Invoice::where('agency_id', $agencyId)
-            ->whereIn('status', ['pending', 'overdue'])
-            ->sum('total');
-
-        // Performance score - aggregate engagement across all agency campaigns
-        $performanceData = SocialPost::where('agency_id', $agencyId)
-            ->select(
-                DB::raw('AVG(engagement_rate) as avg_engagement'),
-                DB::raw('SUM(views_count) as total_views'),
-                DB::raw('SUM(likes_count) as total_likes'),
-                DB::raw('SUM(clicks_count) as total_clicks'),
-                DB::raw('COUNT(*) as total_posts')
-            )
-            ->first();
-
-        $performanceScore = $this->calculatePerformanceScore($performanceData);
-
-        // Invoice summary
-        $paidInvoices = Invoice::where('agency_id', $agencyId)->where('status', 'paid')->count();
-        $overdueInvoices = Invoice::where('agency_id', $agencyId)->where('status', 'overdue')->count();
-
-        // Recent campaigns for quick view
-        $recentCampaigns = Campaign::where('agency_id', $agencyId)
-            ->orderByDesc('created_at')
-            ->take(5)
-            ->get();
-
-        // Monthly spend trend for chart
-        $monthExpr = $this->getMonthExpression('paid_date');
-        $monthlySpend = Invoice::where('agency_id', $agencyId)
-            ->where('status', 'paid')
-            ->where('paid_date', '>=', now()->subMonths(6))
-            ->select(
-                DB::raw("{$monthExpr} as month"),
-                DB::raw('SUM(total) as total')
-            )
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month')
-            ->toArray();
-
-        // Client portal settings
-        $portalSettings = ClientPortalSetting::where('agency_id', $agencyId)->first();
-
-        return view('client-portal.dashboard', compact(
-            'totalClients', 'activeClients',
-            'activeCampaigns', 'totalCampaigns',
-            'totalSpend', 'pendingSpend',
-            'performanceScore', 'performanceData',
-            'paidInvoices', 'overdueInvoices',
-            'recentCampaigns', 'monthlySpend',
-            'portalSettings'
-        ));
+        $client = $this->getClient($request);
+        $data = $this->service->getDashboardData($client->id);
+        return view('client-portal.dashboard', $data);
     }
 
-    /**
-     * Show campaigns list with status
-     */
     public function campaigns(Request $request)
     {
-        $agencyId = $this->getAgencyId();
-
-        $query = Campaign::where('agency_id', $agencyId)
-            ->with(['client', 'posts'])
-            ->withCount('posts');
-
-        // Filter by status
-        if ($request->filled('status') && in_array($request->status, ['draft', 'active', 'paused', 'completed'])) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by client
-        if ($request->filled('client_id')) {
-            $clientId = (int) $request->client_id;
-            // Verify client belongs to this agency
-            $client = Client::where('agency_id', $agencyId)->find($clientId);
-            if ($client) {
-                $query->where('client_id', $clientId);
-            }
-        }
-
-        // Search
-        if ($request->filled('search')) {
-            $search = '%' . $request->search . '%';
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', $search)
-                    ->orWhere('description', 'like', $search);
-            });
-        }
-
-        $campaigns = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
-
-        // Get clients for filter dropdown
-        $clients = Client::where('agency_id', $agencyId)->orderBy('name')->get(['id', 'name']);
-
-        // Status counts for filter tabs
-        $statusCounts = Campaign::where('agency_id', $agencyId)
-            ->select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
-
-        return view('client-portal.campaigns', compact(
-            'campaigns', 'clients', 'statusCounts'
-        ));
+        $client = $this->getClient($request);
+        $data = $this->service->getCampaigns($client->id, $request->only(['status', 'client_id', 'search']));
+        return view('client-portal.campaigns', $data);
     }
 
-    /**
-     * Show analytics with embedded charts
-     */
     public function analytics(Request $request)
     {
-        $agencyId = $this->getAgencyId();
-
-        // Get campaign performance data for chart
-        $campaignPerformance = Campaign::where('agency_id', $agencyId)
-            ->select(
-                'name',
-                'status',
-                'views_count',
-                'likes_count',
-                'comments_count',
-                'shares_count',
-                'clicks_count',
-                'engagement_rate',
-                'posts_count'
-            )
-            ->whereIn('status', ['active', 'completed'])
-            ->orderByDesc('views_count')
-            ->take(10)
-            ->get();
-
-        // Aggregate metrics by platform
-        $platformMetrics = SocialPost::where('agency_id', $agencyId)
-            ->select(
-                'platform',
-                DB::raw('COUNT(*) as post_count'),
-                DB::raw('SUM(views_count) as total_views'),
-                DB::raw('SUM(likes_count) as total_likes'),
-                DB::raw('SUM(comments_count) as total_comments'),
-                DB::raw('SUM(shares_count) as total_shares'),
-                DB::raw('SUM(clicks_count) as total_clicks'),
-                DB::raw('AVG(engagement_rate) as avg_engagement')
-            )
-            ->groupBy('platform')
-            ->orderByDesc('total_views')
-            ->get();
-
-        // Monthly performance trend
-        $monthExpr = $this->getMonthExpression('created_at');
-        $monthlyTrend = SocialPost::where('agency_id', $agencyId)
-            ->where('created_at', '>=', now()->subMonths(6))
-            ->select(
-                DB::raw("{$monthExpr} as month"),
-                DB::raw('COUNT(*) as post_count'),
-                DB::raw('SUM(views_count) as total_views'),
-                DB::raw('SUM(likes_count) as total_likes'),
-                DB::raw('SUM(clicks_count) as total_clicks'),
-                DB::raw('AVG(engagement_rate) as avg_engagement')
-            )
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        // Top performing posts
-        $topPosts = SocialPost::where('agency_id', $agencyId)
-            ->where('status', 'published')
-            ->orderByDesc('engagement_rate')
-            ->take(5)
-            ->get();
-
-        // Overall metrics
-        $overallMetrics = [
-            'total_impressions' => SocialPost::where('agency_id', $agencyId)->sum('views_count'),
-            'total_engagements' => SocialPost::where('agency_id', $agencyId)->sum('likes_count')
-                + SocialPost::where('agency_id', $agencyId)->sum('comments_count')
-                + SocialPost::where('agency_id', $agencyId)->sum('shares_count'),
-            'avg_engagement_rate' => SocialPost::where('agency_id', $agencyId)->avg('engagement_rate') ?? 0,
-            'total_clicks' => SocialPost::where('agency_id', $agencyId)->sum('clicks_count'),
-            'total_posts' => SocialPost::where('agency_id', $agencyId)->count(),
-            'published_posts' => SocialPost::where('agency_id', $agencyId)->where('status', 'published')->count(),
-        ];
-
-        return view('client-portal.analytics', compact(
-            'campaignPerformance', 'platformMetrics', 'monthlyTrend',
-            'topPosts', 'overallMetrics'
-        ));
+        $client = $this->getClient($request);
+        $data = $this->service->getAnalytics($client->id);
+        return view('client-portal.analytics', $data);
     }
 
-    /**
-     * Show invoices list with pay button
-     */
     public function invoices(Request $request)
     {
-        $agencyId = $this->getAgencyId();
-
-        $query = Invoice::where('agency_id', $agencyId)
-            ->with('client');
-
-        // Filter by status
-        if ($request->filled('status') && in_array($request->status, ['draft', 'pending', 'paid', 'overdue', 'cancelled'])) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by client
-        if ($request->filled('client_id')) {
-            $clientId = (int) $request->client_id;
-            $client = Client::where('agency_id', $agencyId)->find($clientId);
-            if ($client) {
-                $query->where('client_id', $clientId);
-            }
-        }
-
-        // Date range filter
-        if ($request->filled('date_from')) {
-            $query->where('issue_date', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->where('issue_date', '<=', $request->date_to);
-        }
-
-        $invoices = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
-
-        // Summary stats
-        $totalOutstanding = Invoice::where('agency_id', $agencyId)
-            ->whereIn('status', ['pending', 'overdue'])
-            ->sum('total');
-        $totalPaid = Invoice::where('agency_id', $agencyId)
-            ->where('status', 'paid')
-            ->sum('total');
-        $overdueCount = Invoice::where('agency_id', $agencyId)
-            ->where('status', 'overdue')
-            ->count();
-
-        // Status counts for filter tabs
-        $statusCounts = Invoice::where('agency_id', $agencyId)
-            ->select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
-
-        // Get clients for filter dropdown
-        $clients = Client::where('agency_id', $agencyId)->orderBy('name')->get(['id', 'name']);
-
-        return view('client-portal.invoices', compact(
-            'invoices', 'clients', 'statusCounts',
-            'totalOutstanding', 'totalPaid', 'overdueCount'
-        ));
+        $client = $this->getClient($request);
+        $data = $this->service->getInvoices($client->id, $request->only(['status', 'client_id', 'date_from', 'date_to']));
+        return view('client-portal.invoices', $data);
     }
 
-    /**
-     * Calculate a performance score from aggregate metrics
-     */
-    private function calculatePerformanceScore($data): int
+    public function settings(Request $request)
     {
-        if (!$data || $data->total_posts == 0) {
-            return 0;
+        $client = $this->getClient($request);
+        $data = $this->service->getSettings($client->id);
+        return view('client-portal.settings', $data);
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $client = $this->getClient($request);
+        $validated = $request->validate([
+            'brand_name' => 'required|string|max:255',
+            'brand_color' => 'required|string|max:7',
+            'logo_url' => 'nullable|url',
+            'custom_domain' => 'nullable|string|unique:client_portal_settings',
+            'is_enabled' => 'boolean',
+            'show_analytics' => 'boolean',
+            'show_invoices' => 'boolean',
+            'allow_approvals' => 'boolean',
+            'show_team_activity' => 'boolean',
+            'welcome_message' => 'nullable|string|max:1000',
+        ]);
+
+        $this->service->updateSettings($client->id, $validated);
+
+        return redirect()->route('client-portal.v2.settings', ['client' => $client->id])
+            ->with('success', 'Settings updated successfully!');
+    }
+
+    public function activity(Request $request)
+    {
+        $client = $this->getClient($request);
+        $data = $this->service->getActivityFeed($client->id);
+        return view('client-portal.activity', $data);
+    }
+
+    public function notifications(Request $request)
+    {
+        $client = $this->getClient($request);
+        $notifications = ClientNotification::forClient($client->id)
+            ->recent()
+            ->paginate(20);
+
+        $typeCounts = ClientNotification::forClient($client->id)
+            ->select('type', \DB::raw('COUNT(*) as count'))
+            ->groupBy('type')
+            ->pluck('count', 'type')
+            ->toArray();
+
+        return view('client-portal.notifications', compact('notifications', 'typeCounts', 'client'));
+    }
+
+    public function markNotificationRead(Request $request, ClientNotification $notification)
+    {
+        $client = $this->getClient($request);
+        if ($notification->client_id !== $client->id) {
+            abort(403);
         }
 
-        // Simple scoring algorithm based on engagement
-        $score = min(100, (int) (($data->avg_engagement ?? 0) * 10));
-        
-        // Boost based on view volume
-        if ($data->total_views > 10000) {
-            $score = min(100, $score + 10);
-        }
-        if ($data->total_likes > 1000) {
-            $score = min(100, $score + 5);
+        $notification->markAsRead();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function downloadReport($reportId)
+    {
+        $client = $this->getClient(request());
+        $report = ClientReport::where('client_id', $client->id)->findOrFail($reportId);
+
+        return response()->json([
+            'report' => $report,
+            'download_url' => $report->public_url,
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $client = $this->getClient($request);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'company' => 'nullable|string|max:255',
+            'industry' => 'nullable|string|max:100',
+        ]);
+
+        $client->update($validated);
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $client = $this->getClient($request);
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = auth()->user();
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
 
-        return max(0, $score);
+        $user->update(['password' => Hash::make($validated['password'])]);
+
+        return redirect()->back()->with('success', 'Password updated successfully!');
+    }
+
+    public function connectSocial(Request $request)
+    {
+        $client = $this->getClient($request);
+        $validated = $request->validate([
+            'platform' => 'required|string|in:facebook,twitter,linkedin,instagram',
+            'account_name' => 'required|string|max:255',
+        ]);
+
+        SocialAccount::create([
+            'client_id' => $client->id,
+            'agency_id' => $this->getAgencyId(),
+            'platform' => $validated['platform'],
+            'platform_display_name' => $validated['account_name'],
+            'is_active' => true,
+        ]);
+
+        return redirect()->back()->with('success', 'Social account connected successfully!');
+    }
+
+    public function disconnectSocial(Request $request, SocialAccount $account)
+    {
+        $client = $this->getClient($request);
+        if ($account->client_id !== $client->id) {
+            abort(403);
+        }
+
+        $account->delete();
+
+        return redirect()->back()->with('success', 'Social account disconnected successfully!');
+    }
+
+    public function approve(Request $request, ClientApproval $approval)
+    {
+        $client = $this->getClient($request);
+        if ($approval->client_id !== $client->id) {
+            abort(403);
+        }
+
+        $this->service->approveContent($client->id, $approval->id);
+
+        return response()->json(['success' => true, 'message' => 'Content approved']);
+    }
+
+    public function reject(Request $request, ClientApproval $approval)
+    {
+        $client = $this->getClient($request);
+        if ($approval->client_id !== $client->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        $this->service->rejectContent($client->id, $approval->id, $validated['reason'] ?? '');
+
+        return response()->json(['success' => true, 'message' => 'Content rejected']);
     }
 }
