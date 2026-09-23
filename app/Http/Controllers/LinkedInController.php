@@ -10,9 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class LinkedInController extends Controller
 {
+    use SocialOAuthConnectTrait;
+
+    protected string $oauthPlatform = 'linkedin';
+    protected string $oauthPlatformName = 'LinkedIn';
+    protected string $oauthRoutePrefix = 'linkedin';
     public function __construct(
         private readonly LinkedInApiService $linkedin,
     ) {
@@ -39,18 +45,7 @@ class LinkedInController extends Controller
      */
     public function connect(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $state = Str::random(32);
-        $request->session()->put('linkedin_state', $state);
-        $request->session()->put('linkedin_connect_agency_id', $agencyId);
-
-        $authUrl = $this->linkedin->getAuthUrl(
-            route('linkedin.callback'),
-            $state
-        );
-
-        return redirect($authUrl);
+        return $this->oauthConnect($request, fn ($redirectUri, $state) => $this->linkedin->getAuthUrl($redirectUri, $state));
     }
 
     /**
@@ -145,23 +140,7 @@ class LinkedInController extends Controller
      */
     public function disconnect(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('platform', 'linkedin')
-            ->find($accountId);
-
-        if (! $account) {
-            abort(404, 'LinkedIn account not found.');
-        }
-
-        if ((int) $account->agency_id !== (int) $agencyId) {
-            abort(403, 'You do not have permission to disconnect this account.');
-        }
-
-        $account->delete();
-
-        return redirect()->route('linkedin.index')
-            ->with('success', 'LinkedIn account disconnected.');
+        return $this->oauthDisconnect($request, $accountId);
     }
 
     /**
@@ -169,16 +148,7 @@ class LinkedInController extends Controller
      */
     public function toggle(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('agency_id', $agencyId)
-            ->where('platform', 'linkedin')
-            ->findOrFail($accountId);
-
-        $account->update(['is_active' => ! $account->is_active]);
-
-        return redirect()->route('linkedin.index')
-            ->with('success', 'LinkedIn account status updated.');
+        return $this->oauthToggle($request, $accountId);
     }
 
     /**

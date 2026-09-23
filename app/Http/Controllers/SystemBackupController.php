@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\BackupService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SystemBackupController extends Controller
 {
@@ -31,6 +32,8 @@ class SystemBackupController extends Controller
         $result = $this->backupService->createBackup();
 
         if ($result['success']) {
+            Log::info('Backup created', ['filename' => $result['filename'], 'agency_id' => $request->user()->agency_id]);
+
             return back()->with('success', "Backup created: {$result['filename']}");
         }
 
@@ -45,6 +48,8 @@ class SystemBackupController extends Controller
         $result = $this->backupService->restoreBackup($filename);
 
         if ($result['success']) {
+            Log::info('Backup restored', ['backup_id' => $backup->id, 'agency_id' => $request->user()->agency_id]);
+
             return back()->with('success', 'Backup restored successfully');
         }
 

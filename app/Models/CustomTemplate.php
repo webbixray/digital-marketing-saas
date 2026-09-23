@@ -22,6 +22,7 @@ class CustomTemplate extends Model
     ];
 
     protected $casts = [
+        'content' => 'array',
         'variables' => 'array',
         'is_active' => 'boolean',
     ];

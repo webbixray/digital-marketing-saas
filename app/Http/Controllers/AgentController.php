@@ -6,6 +6,7 @@ use App\Concerns\StructuredLogger;
 use App\Jobs\RunAgentWorkflowJob;
 use App\Models\AgentCostLog;
 use App\Models\AgentWorkflowExecution;
+use App\Services\AgentRegistry;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentCostTracker;
 use App\Services\AI\Agent\AgentHealthMonitor;
@@ -50,8 +51,8 @@ class AgentController extends Controller
                 $agents[$name] = array_merge($stat, [
                     'status' => $health['status'] ?? 'active',
                     'last_run' => $health['last_execution'] ?? 'Never',
-                    'description' => $this->getAgentDescription($name),
-                    'category' => $this->getAgentCategory($name),
+                    'description' => AgentRegistry::getDescription($name),
+                    'category' => AgentRegistry::getCategory($name),
                 ]);
             }
 
@@ -113,8 +114,8 @@ class AgentController extends Controller
             // Health check for status
             $health = $agentObj ? $this->healthMonitor->checkAgentHealth($agentObj) : null;
             $agent['status'] = $health['status'] ?? 'active';
-            $agent['description'] = $this->getAgentDescription($agentName);
-            $agent['category'] = $this->getAgentCategory($agentName);
+            $agent['description'] = AgentRegistry::getDescription($agentName);
+            $agent['category'] = AgentRegistry::getCategory($agentName);
 
             // Learned patterns from storage
             $learnedPatterns = [];
@@ -182,36 +183,6 @@ class AgentController extends Controller
 
             return back()->with('error', 'Failed to load workflows. Please try again.');
         }
-    }
-
-    /**
-     * Get a human-readable description for an agent.
-     */
-    private function getAgentDescription(string $name): string
-    {
-        return match ($name) {
-            'content_agent' => 'Creates and optimizes content for social media, blogs, and marketing campaigns.',
-            'analytics_agent' => 'Analyzes performance data, detects trends, and provides strategic recommendations.',
-            'security_agent' => 'Performs security audits and vulnerability scans to protect agency assets.',
-            'campaign_agent' => 'Optimizes marketing campaigns, allocates budgets, and designs A/B tests.',
-            'social_media_agent' => 'Manages post scheduling, engagement analysis, and reply suggestions.',
-            'support_agent' => 'Classifies support tickets, suggests responses, and detects escalations.',
-            default => 'An intelligent AI agent handling specialized tasks.',
-        };
-    }
-
-    /**
-     * Get the category for an agent.
-     */
-    private function getAgentCategory(string $name): string
-    {
-        return match ($name) {
-            'content_agent', 'campaign_agent', 'social_media_agent' => 'Marketing',
-            'analytics_agent' => 'Analytics',
-            'security_agent' => 'Security',
-            'support_agent' => 'Support',
-            default => 'General',
-        };
     }
 
     /**
@@ -461,39 +432,6 @@ class AgentController extends Controller
                 ], 202);
             }
 
-            // Synchronous execution
-            $context = AgentContext::fromUser($request->user());
-            $tasks = $this->buildWorkflowTasks($workflowName, $input, $executionId);
-
-            $results = $this->orchestrator->dispatchWorkflow($tasks, $context);
-
-            $allSuccess = collect($results)->every(fn ($r) => $r->success);
-            $execution->update([
-                'status' => $allSuccess ? 'success' : 'failed',
-                'steps_completed' => count($results),
-                'output_data' => [
-                    'results' => array_map(fn ($r) => $r->toArray(), $results),
-                ],
-                'completed_at' => now(),
-            ]);
-
-            $this->logAgentExecution('workflow_completed', [
-                'agency_id' => $agencyId,
-                'workflow_name' => $workflowName,
-                'execution_id' => $executionId,
-                'success' => $allSuccess,
-                'steps_completed' => count($results),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'execution_id' => $executionId,
-                    'workflow_name' => $workflowName,
-                    'status' => $allSuccess ? 'success' : 'failed',
-                    'results' => array_map(fn ($r) => $r->toArray(), $results),
-                ],
-            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -617,58 +555,4 @@ class AgentController extends Controller
         }
     }
 
-    /**
-     * Build AgentTask objects for a workflow.
-     *
-     * @return array<AgentTask>
-     */
-    private function buildWorkflowTasks(string $workflowName, array $input, string $executionId): array
-    {
-        $workflows = [
-            'content_campaign' => [
-                ['type' => 'content_generate', 'prompt' => 'Generate campaign content based on input'],
-                ['type' => 'hashtag_generate', 'prompt' => 'Generate relevant hashtags for the content'],
-                ['type' => 'performance_analysis', 'prompt' => 'Analyze predicted performance'],
-            ],
-            'competitor_analysis' => [
-                ['type' => 'competitor_analysis', 'prompt' => 'Analyze competitor data'],
-                ['type' => 'trend_detection', 'prompt' => 'Detect market trends'],
-                ['type' => 'recommendation', 'prompt' => 'Generate strategic recommendations'],
-            ],
-            'security_audit' => [
-                ['type' => 'security_audit', 'prompt' => 'Perform security audit'],
-                ['type' => 'vulnerability_scan', 'prompt' => 'Scan for vulnerabilities'],
-                ['type' => 'recommendation', 'prompt' => 'Generate security recommendations'],
-            ],
-            'content_optimization' => [
-                ['type' => 'content_optimize', 'prompt' => 'Optimize content for engagement'],
-                ['type' => 'content_rewrite', 'prompt' => 'Rewrite weak sections'],
-                ['type' => 'hashtag_generate', 'prompt' => 'Generate optimized hashtags'],
-            ],
-            'trend_report' => [
-                ['type' => 'trend_detection', 'prompt' => 'Detect current trends'],
-                ['type' => 'performance_analysis', 'prompt' => 'Analyze trend performance'],
-                ['type' => 'recommendation', 'prompt' => 'Generate trend-based recommendations'],
-            ],
-        ];
-
-        $steps = $workflows[$workflowName] ?? [];
-        $tasks = [];
-
-        foreach ($steps as $index => $step) {
-            $tasks[] = new AgentTask(
-                id: "{$executionId}_step_{$index}",
-                type: $step['type'],
-                prompt: $step['prompt'],
-                data: $input,
-                metadata: [
-                    'execution_id' => $executionId,
-                    'step_index' => $index,
-                    'workflow_name' => $workflowName,
-                ],
-            );
-        }
-
-        return $tasks;
-    }
 }

@@ -38,7 +38,7 @@ class ApiAgentController extends Controller
 
             foreach ($stats as $name => $stat) {
                 $health = $this->healthMonitor->checkAgentHealth(
-                    $this->getAgentByName($name)
+                    $this->orchestrator->getAgent($name)
                 );
 
                 $agents[] = [
@@ -84,7 +84,7 @@ class ApiAgentController extends Controller
     public function show(string $name): JsonResponse
     {
         try {
-            $agent = $this->getAgentByName($name);
+            $agent = $this->orchestrator->getAgent($name);
 
             if ($agent === null) {
                 return response()->json([
@@ -158,7 +158,7 @@ class ApiAgentController extends Controller
                 ], 422);
             }
 
-            $agent = $this->getAgentByName($name);
+            $agent = $this->orchestrator->getAgent($name);
 
             if ($agent === null) {
                 return response()->json([
@@ -264,7 +264,7 @@ class ApiAgentController extends Controller
     public function history(Request $request, string $name): JsonResponse
     {
         try {
-            $agent = $this->getAgentByName($name);
+            $agent = $this->orchestrator->getAgent($name);
 
             if ($agent === null) {
                 return response()->json([
@@ -364,14 +364,6 @@ class ApiAgentController extends Controller
                 'message' => 'Failed to check system health.',
             ], 500);
         }
-    }
-
-    /**
-     * Get agent instance by name from orchestrator.
-     */
-    private function getAgentByName(string $name): ?AgentInterface
-    {
-        return $this->orchestrator->getAgent($name);
     }
 
     /**

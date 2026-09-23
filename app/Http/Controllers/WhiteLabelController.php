@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WhiteLabelSetting;
 use App\Services\WhiteLabel\WhiteLabelService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class WhiteLabelController extends Controller
 {
@@ -54,6 +55,8 @@ class WhiteLabelController extends Controller
                 'enabled',
             ])
         );
+
+        Log::info('White-label settings updated', ['agency_id' => $request->user()->agency_id]);
 
         return back()->with('success', 'White-label settings updated.');
     }

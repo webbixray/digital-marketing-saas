@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FeatureFlag;
 use App\Services\FeatureFlagService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FeatureFlagController extends Controller
 {
@@ -53,12 +54,13 @@ class FeatureFlagController extends Controller
 
         $agency->featureFlags()->create($data + ['enabled' => $data['enabled'] ?? true]);
 
-        // Sync to Redis cache
         if ($data['enabled'] ?? true) {
             $this->featureFlagService->enable($agency, $data['feature_key']);
         } else {
             $this->featureFlagService->disable($agency, $data['feature_key']);
         }
+
+        Log::info('Feature flag created', ['key' => $request->input('feature_key'), 'agency_id' => $request->user()->agency_id]);
 
         return redirect()->route('feature-flags.index')->with('success', 'Feature flag created.');
     }
@@ -100,12 +102,13 @@ class FeatureFlagController extends Controller
 
         $flag->update($data + ['enabled' => $data['enabled'] ?? true]);
 
-        // Sync to Redis cache
         if ($data['enabled'] ?? true) {
             $this->featureFlagService->enable($agency, $flag->feature_key);
         } else {
             $this->featureFlagService->disable($agency, $flag->feature_key);
         }
+
+        Log::info('Feature flag updated', ['flag_id' => $flag->id, 'agency_id' => $request->user()->agency_id]);
 
         return redirect()->route('feature-flags.index')->with('success', 'Feature flag updated.');
     }
@@ -119,15 +122,13 @@ class FeatureFlagController extends Controller
 
         $flag->delete();
 
-        // Clear from Redis cache
         $this->featureFlagService->clearCache($agency->id);
+
+        Log::warning('Feature flag deleted', ['flag_id' => $flag->id, 'agency_id' => $request->user()->agency_id]);
 
         return redirect()->route('feature-flags.index')->with('success', 'Feature flag deleted.');
     }
 
-    /**
-     * Check if a feature is enabled for the current agency.
-     */
     public function check(Request $request, string $featureCode)
     {
         $agency = $request->user()->agency;
@@ -139,9 +140,6 @@ class FeatureFlagController extends Controller
         ]);
     }
 
-    /**
-     * Get all feature flags for the current agency.
-     */
     public function all(Request $request)
     {
         $agency = $request->user()->agency;

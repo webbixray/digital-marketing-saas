@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SupportTicketController extends Controller
@@ -14,9 +15,6 @@ class SupportTicketController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    /**
-     * List all tickets for the agency.
-     */
     public function index(Request $request)
     {
         $agencyId = $request->user()->agency_id;
@@ -35,17 +33,11 @@ class SupportTicketController extends Controller
         return view('support.index', compact('tickets', 'status'));
     }
 
-    /**
-     * Show create ticket form.
-     */
     public function create()
     {
         return view('support.create');
     }
 
-    /**
-     * Store a new ticket.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -66,13 +58,16 @@ class SupportTicketController extends Controller
             'status' => 'open',
         ]);
 
+        Log::info('Support ticket created', [
+            'ticket_id' => $ticket->id,
+            'user_id' => $request->user()->id,
+            'subject' => $validated['subject'],
+        ]);
+
         return redirect('/support')
             ->with('success', 'Ticket created successfully. We\'ll get back to you soon!');
     }
 
-    /**
-     * Show a single ticket.
-     */
     public function show(Request $request, SupportTicket $ticket)
     {
         if ((int) $ticket->agency_id !== (int) $request->user()->agency_id) {
@@ -83,9 +78,6 @@ class SupportTicketController extends Controller
         return view('support.show', compact('ticket'));
     }
 
-    /**
-     * Add reply to ticket.
-     */
     public function reply(Request $request, SupportTicket $ticket)
     {
         $validated = $request->validate([
@@ -98,17 +90,18 @@ class SupportTicketController extends Controller
             'message' => $validated['message'],
         ]);
 
-        // Update ticket status if it was waiting
         if ($ticket->status === 'waiting') {
             $ticket->update(['status' => 'in_progress']);
         }
 
+        Log::info('Support ticket reply added', [
+            'ticket_id' => $ticket->id,
+            'user_id' => $request->user()->id,
+        ]);
+
         return back()->with('success', 'Reply added successfully.');
     }
 
-    /**
-     * Delete a ticket.
-     */
     public function destroy(Request $request, SupportTicket $support)
     {
         if ((int) $support->agency_id !== (int) $request->user()->agency_id) {
@@ -116,6 +109,11 @@ class SupportTicketController extends Controller
         }
 
         $support->delete();
+
+        Log::warning('Support ticket deleted', [
+            'ticket_id' => $support->id,
+            'user_id' => $request->user()->id,
+        ]);
 
         return redirect('/support')->with('success', 'Ticket deleted.');
     }

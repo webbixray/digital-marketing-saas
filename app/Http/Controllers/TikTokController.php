@@ -10,9 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class TikTokController extends Controller
 {
+    use SocialOAuthConnectTrait;
+
+    protected string $oauthPlatform = 'tiktok';
+    protected string $oauthPlatformName = 'TikTok';
+    protected string $oauthRoutePrefix = 'tiktok';
     public function __construct(
         private readonly TikTokApiService $tiktok,
     ) {
@@ -39,18 +45,7 @@ class TikTokController extends Controller
      */
     public function connect(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $state = Str::random(32);
-        $request->session()->put('tiktok_state', $state);
-        $request->session()->put('tiktok_connect_agency_id', $agencyId);
-
-        $authUrl = $this->tiktok->getAuthUrl(
-            route('tiktok.callback'),
-            $state
-        );
-
-        return redirect($authUrl);
+        return $this->oauthConnect($request, fn ($redirectUri, $state) => $this->tiktok->getAuthUrl($redirectUri, $state));
     }
 
     /**
@@ -150,23 +145,7 @@ class TikTokController extends Controller
      */
     public function disconnect(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('platform', 'tiktok')
-            ->find($accountId);
-
-        if (! $account) {
-            abort(404, 'TikTok account not found.');
-        }
-
-        if ((int) $account->agency_id !== (int) $agencyId) {
-            abort(403, 'You do not have permission to disconnect this account.');
-        }
-
-        $account->delete();
-
-        return redirect()->route('tiktok.index')
-            ->with('success', 'TikTok account disconnected.');
+        return $this->oauthDisconnect($request, $accountId);
     }
 
     /**
@@ -174,16 +153,7 @@ class TikTokController extends Controller
      */
     public function toggle(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('agency_id', $agencyId)
-            ->where('platform', 'tiktok')
-            ->findOrFail($accountId);
-
-        $account->update(['is_active' => ! $account->is_active]);
-
-        return redirect()->route('tiktok.index')
-            ->with('success', 'TikTok account status updated.');
+        return $this->oauthToggle($request, $accountId);
     }
 
     /**

@@ -10,8 +10,35 @@ use Illuminate\Support\Str;
 
 class MediaUploadService
 {
+    /**
+     * Allowed MIME types for upload validation.
+     */
+    private const ALLOWED_MIME_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+        'video/mp4', 'video/quicktime', 'video/x-msvideo',
+        'application/pdf',
+        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/zip', 'application/x-zip-compressed',
+    ];
+
     public function upload(UploadedFile $file, Agency $agency, int $userId, array $data = []): MediaAsset
     {
+        // Validate MIME type using finfo on the actual file content
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $realMimeType = $finfo->file($file->getRealPath());
+
+        if (!in_array($realMimeType, self::ALLOWED_MIME_TYPES, true)) {
+            throw new \InvalidArgumentException("File type '{$realMimeType}' is not allowed. Allowed types: images, videos, PDF, Office documents, and ZIP archives.");
+        }
+
+        // Also verify the reported MIME matches the detected MIME
+        $reportedMime = $file->getMimeType();
+        if ($reportedMime !== $realMimeType) {
+            throw new \InvalidArgumentException("MIME type mismatch: reported '{$reportedMime}' but detected '{$realMimeType}'. Possible spoofed file.");
+        }
+
         $folder = $data['folder'] ?? 'uncategorized';
         $directory = "media/{$agency->id}/{$folder}";
 
@@ -19,8 +46,7 @@ class MediaUploadService
         $path = $file->store($directory, 'public');
 
         // Detect file type
-        $mimeType = $file->getMimeType();
-        $fileType = $this->detectFileType($mimeType);
+        $fileType = $this->detectFileType($realMimeType);
 
         // Get image dimensions
         $width = null;
@@ -39,7 +65,7 @@ class MediaUploadService
             'name' => $data['name'] ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'file_path' => $path,
             'file_type' => $fileType,
-            'mime_type' => $mimeType,
+            'mime_type' => $realMimeType,
             'file_size' => $file->getSize(),
             'width' => $width,
             'height' => $height,

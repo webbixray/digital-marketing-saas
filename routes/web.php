@@ -112,8 +112,10 @@ Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEm
 Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-Route::get('/auth/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
-Route::get('/auth/{provider}/callback', [OAuthController::class, 'callback'])->name('oauth.callback');
+Route::middleware('throttle:10,1')->group(function () {
+    Route::get('/auth/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
+    Route::get('/auth/{provider}/callback', [OAuthController::class, 'callback'])->name('oauth.callback');
+});
 
 Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

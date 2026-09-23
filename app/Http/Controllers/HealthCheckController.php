@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\Billing\StripeDunningService;
 use App\Services\Email\MailDeliverabilityService;
 use App\Services\Queue\QueueHealthService;
+use App\Services\SystemHealthCheckService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,8 @@ class HealthCheckController extends Controller
     public function __construct(
         private readonly MailDeliverabilityService $mailService,
         private readonly QueueHealthService $queueService,
-        private readonly StripeDunningService $stripeService
+        private readonly StripeDunningService $stripeService,
+        private readonly SystemHealthCheckService $systemHealth,
     ) {}
 
     public function index(): JsonResponse
@@ -25,11 +27,11 @@ class HealthCheckController extends Controller
     public function check(): JsonResponse
     {
         $checks = [
-            'database' => $this->checkDatabase(),
-            'cache' => $this->checkCache(),
+            'database' => $this->systemHealth->checkDatabase(),
+            'cache' => $this->systemHealth->checkCache(),
             'mail' => $this->mailService->getHealthCheck(),
             'queue' => $this->queueService->getHealthCheck(),
-            'storage' => $this->checkStorage(),
+            'storage' => $this->systemHealth->checkStorage(),
         ];
 
         $healthy = collect($checks)->every(fn ($check) => $check['healthy'] ?? false);
@@ -46,8 +48,8 @@ class HealthCheckController extends Controller
     public function readiness(): JsonResponse
     {
         $checks = [
-            'database' => $this->checkDatabase(),
-            'cache' => $this->checkCache(),
+            'database' => $this->systemHealth->checkDatabase(),
+            'cache' => $this->systemHealth->checkCache(),
         ];
 
         $healthy = collect($checks)->every(fn ($check) => $check['healthy'] ?? false);
@@ -87,46 +89,4 @@ class HealthCheckController extends Controller
         ]);
     }
 
-    private function checkDatabase(): array
-    {
-        try {
-            DB::connection()->getPdo();
-
-            return ['healthy' => true, 'message' => 'Database connected'];
-        } catch (\Exception $e) {
-            return ['healthy' => false, 'message' => $e->getMessage()];
-        }
-    }
-
-    private function checkCache(): array
-    {
-        try {
-            Cache::put('health_check', true, 10);
-            $value = Cache::get('health_check');
-            Cache::forget('health_check');
-
-            return ['healthy' => $value === true, 'message' => 'Cache operational'];
-        } catch (\Exception $e) {
-            return ['healthy' => false, 'message' => $e->getMessage()];
-        }
-    }
-
-    private function checkStorage(): array
-    {
-        try {
-            $path = storage_path('framework/health');
-            if (! is_dir($path)) {
-                mkdir($path, 0755, true);
-            }
-            $file = $path.'/check.txt';
-            file_put_contents($file, 'ok');
-            $value = file_get_contents($file);
-            unlink($file);
-            rmdir($path);
-
-            return ['healthy' => $value === 'ok', 'message' => 'Storage writable'];
-        } catch (\Exception $e) {
-            return ['healthy' => false, 'message' => $e->getMessage()];
-        }
-    }
 }

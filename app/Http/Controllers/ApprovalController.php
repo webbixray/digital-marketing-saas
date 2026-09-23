@@ -7,6 +7,7 @@ use App\Models\SocialPost;
 use App\Services\Approval\ClientApprovalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApprovalController extends Controller
 {
@@ -38,6 +39,12 @@ class ApprovalController extends Controller
 
         $this->approvalService->approve($post, auth()->id(), $validated['notes'] ?? null);
 
+        Log::info('Post approved', [
+            'post_id' => $post->id,
+            'user_id' => auth()->id(),
+            'agency_id' => $request->user()->agency_id,
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Post approved.',
@@ -51,6 +58,12 @@ class ApprovalController extends Controller
         ]);
 
         $this->approvalService->reject($post, auth()->id(), $validated['feedback']);
+
+        Log::info('Post rejected', [
+            'post_id' => $post->id,
+            'user_id' => auth()->id(),
+            'agency_id' => $request->user()->agency_id,
+        ]);
 
         return response()->json([
             'success' => true,

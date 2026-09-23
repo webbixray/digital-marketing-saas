@@ -13,6 +13,7 @@ use App\Models\SocialPost;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsService
 {
@@ -368,7 +369,7 @@ class AnalyticsService
                     ];
                 })
                 ->toArray();
-            
+
             // Return the top platform
             return $platforms[0] ?? ['platform' => null, 'total_engagement' => 0, 'post_count' => 0];
         });
@@ -484,26 +485,29 @@ class AnalyticsService
     }
 
     /**
-     * Get stats for a specific platform.
+     * Get stats for a specific platform - OPTIMIZED: single aggregation instead of 9 clone queries.
      */
     public function getPlatformStats(Agency $agency, string $platform): array
     {
-        $posts = SocialPost::where('agency_id', $agency->id)
-            ->where('platform', $platform);
+        $stats = SocialPost::where('agency_id', $agency->id)
+            ->where('platform', $platform)
+            ->selectRaw('
+                COUNT(*) as total_posts,
+                SUM(CASE WHEN status = "published" THEN 1 ELSE 0 END) as published,
+                SUM(CASE WHEN status = "scheduled" THEN 1 ELSE 0 END) as scheduled,
+                SUM(CASE WHEN status = "failed" THEN 1 ELSE 0 END) as failed,
+                SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                SUM(CASE WHEN status = "published" THEN engagement_rate ELSE 0 END) as total_engagement,
+                AVG(CASE WHEN status = "published" THEN engagement_rate ELSE NULL END) as avg_engagement,
+                SUM(CASE WHEN status = "published" THEN views_count ELSE 0 END) as total_views,
+                SUM(CASE WHEN status = "published" THEN likes_count ELSE 0 END) as total_likes,
+                SUM(CASE WHEN status = "published" THEN comments_count ELSE 0 END) as total_comments,
+                SUM(CASE WHEN status = "published" THEN shares_count ELSE 0 END) as total_shares
+            ')
+            ->first();
 
-        $totalPosts = $posts->count();
-        $publishedPosts = (clone $posts)->where('status', 'published')->count();
-        $scheduledPosts = (clone $posts)->where('status', 'scheduled')->count();
-        $failedPosts = (clone $posts)->where('status', 'failed')->count();
-        $draftPosts = (clone $posts)->where('status', 'draft')->count();
-
-        $totalEngagement = (clone $posts)->where('status', 'published')->sum('engagement_rate');
-        $avgEngagement = $publishedPosts > 0 ? round($totalEngagement / $publishedPosts, 2) : 0;
-
-        $totalViews = (clone $posts)->where('status', 'published')->sum('views_count');
-        $totalLikes = (clone $posts)->where('status', 'published')->sum('likes_count');
-        $totalComments = (clone $posts)->where('status', 'published')->sum('comments_count');
-        $totalShares = (clone $posts)->where('status', 'published')->sum('shares_count');
+        $published = (int) $stats->published;
+        $totalEngagement = (float) ($stats->total_engagement ?? 0);
 
         $connectedAccounts = SocialAccount::where('agency_id', $agency->id)
             ->where('platform', $platform)
@@ -512,18 +516,18 @@ class AnalyticsService
 
         return [
             'platform' => $platform,
-            'total_posts' => $totalPosts,
-            'published' => $publishedPosts,
-            'scheduled' => $scheduledPosts,
-            'failed' => $failedPosts,
-            'draft' => $draftPosts,
+            'total_posts' => (int) $stats->total_posts,
+            'published' => $published,
+            'scheduled' => (int) $stats->scheduled,
+            'failed' => (int) $stats->failed,
+            'draft' => (int) $stats->draft,
             'connected_accounts' => $connectedAccounts,
             'total_engagement' => round($totalEngagement, 2),
-            'average_engagement' => $avgEngagement,
-            'total_views' => $totalViews,
-            'total_likes' => $totalLikes,
-            'total_comments' => $totalComments,
-            'total_shares' => $totalShares,
+            'average_engagement' => $published > 0 ? round($totalEngagement / $published, 2) : 0,
+            'total_views' => (int) ($stats->total_views ?? 0),
+            'total_likes' => (int) ($stats->total_likes ?? 0),
+            'total_comments' => (int) ($stats->total_comments ?? 0),
+            'total_shares' => (int) ($stats->total_shares ?? 0),
         ];
     }
 

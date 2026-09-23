@@ -25,6 +25,7 @@ class AiProviderController extends Controller
         SmartRoutingEngine $routing,
         CostOptimizationEngine $costEngine
     ) {
+        $this->middleware(['auth', 'agency']);
         $this->manager = $manager;
         $this->cache = $cache;
         $this->routing = $routing;

@@ -20,6 +20,7 @@ class Campaign extends Model
         'name',
         'slug',
         'type',
+        'status',
         'description',
         'objective',
         'target_audience',

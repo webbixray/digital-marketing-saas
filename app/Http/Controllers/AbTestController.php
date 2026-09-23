@@ -6,6 +6,7 @@ use App\Models\AbTest;
 use App\Models\SocialAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class AbTestController extends Controller
 {
@@ -134,6 +135,8 @@ class AbTestController extends Controller
             'started_at' => now(),
         ]);
 
+        Log::info('A/B test started', ['test_id' => $test->id, 'agency_id' => $request->user()->agency_id]);
+
         return back()->with('success', 'Test started! Results will be tracked automatically.');
     }
 
@@ -149,6 +152,8 @@ class AbTestController extends Controller
         }
 
         $test->update(['status' => 'paused']);
+
+        Log::info('A/B test paused', ['test_id' => $test->id, 'agency_id' => $request->user()->agency_id]);
 
         return back()->with('success', 'Test paused.');
     }

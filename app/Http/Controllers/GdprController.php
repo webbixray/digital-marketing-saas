@@ -8,6 +8,7 @@ use App\Models\DataExportRequest;
 use App\Services\GDPR\GDPRComplianceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class GdprController extends Controller
 {
@@ -44,7 +45,6 @@ class GdprController extends Controller
             'status' => 'pending',
         ]);
 
-        // Audit log
         app(GDPRComplianceService::class)->auditLog(
             action: 'export_requested',
             category: 'gdpr',
@@ -52,6 +52,12 @@ class GdprController extends Controller
             userId: $user->id,
             subjectType: DataExportRequest::class,
         );
+
+        Log::info('GDPR data export requested', [
+            'user_id' => $user->id,
+            'agency_id' => $user->agency_id,
+            'types' => $request->export_types,
+        ]);
 
         return redirect()->route('gdpr.index')->with('success', 'Data export requested. You will be notified when ready.');
     }
@@ -71,7 +77,6 @@ class GdprController extends Controller
             'scheduled_at' => now()->addDays(30),
         ]);
 
-        // Audit log
         app(GDPRComplianceService::class)->auditLog(
             action: 'deletion_requested',
             category: 'gdpr',
@@ -79,6 +84,12 @@ class GdprController extends Controller
             userId: $user->id,
             subjectType: DataDeletionRequest::class,
         );
+
+        Log::warning('GDPR data deletion requested', [
+            'user_id' => $user->id,
+            'agency_id' => $user->agency_id,
+            'reason' => $request->reason,
+        ]);
 
         return redirect()->route('gdpr.index')->with('success', 'Deletion request submitted. Your account will be deleted in 30 days.');
     }
@@ -98,12 +109,15 @@ class GdprController extends Controller
             $this->gdprService->withdrawConsent($user->agency_id, $user->id, $request->consent_type);
         }
 
+        Log::info('GDPR consent updated', [
+            'user_id' => $user->id,
+            'consent_type' => $request->consent_type,
+            'granted' => $request->granted,
+        ]);
+
         return response()->json(['success' => true]);
     }
 
-    /**
-     * CCPA: Opt-out of data sale (right to opt-out).
-     */
     public function ccpaOptOut(Request $request): JsonResponse
     {
         $request->validate([
@@ -117,6 +131,11 @@ class GdprController extends Controller
         } else {
             $this->gdprService->ccpaOptIn($user->id);
         }
+
+        Log::info('CCPA opt-out updated', [
+            'user_id' => $user->id,
+            'opt_out' => $request->opt_out,
+        ]);
 
         return response()->json(['success' => true, 'ccpa_opt_out' => (bool) $request->opt_out]);
     }

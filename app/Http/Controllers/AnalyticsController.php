@@ -25,13 +25,14 @@ class AnalyticsController extends Controller
         // All dashboard stats consolidated into a single service call
         $stats = $this->analytics->getDashboardStats($agency, $range);
 
-        // Platform grouping still done here since AnalyticsService returns
-        // platform counts via getSocialStats (by_platform key)
-        $platformStats = SocialPost::where('agency_id', $agency->id)
-            ->select('platform', DB::raw('count(*) as total'))
-            ->groupBy('platform')
-            ->get()
-            ->keyBy('platform');
+        // Platform grouping - optimized with single query
+        $platformStats = Cache::remember("analytics:{$agency->id}:platform_stats:{$range}", 300, function () use ($agency) {
+            return SocialPost::where('agency_id', $agency->id)
+                ->select('platform', DB::raw('count(*) as total'))
+                ->groupBy('platform')
+                ->get()
+                ->keyBy('platform');
+        });
 
         return view('analytics.index', [
             'agency' => $agency,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\Calendar\ContentCalendarService;
 use App\Models\SocialPost;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 
 class ContentCalendarController extends Controller
@@ -80,6 +81,8 @@ class ContentCalendarController extends Controller
             'status' => 'scheduled',
         ]);
 
+        Log::info('Post rescheduled', ['post_id' => $post->id, 'agency_id' => $request->user()->agency_id]);
+        
         return response()->json([
             'success' => true,
             'message' => 'Post rescheduled successfully.',

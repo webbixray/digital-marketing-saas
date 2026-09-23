@@ -22,7 +22,7 @@ class Enforce2FA
 
         // Check if agency enforces 2FA
         $agency = $user->agency;
-        if ($agency && ($agency->settings['enforce_2fa'] ?? false)) {
+        if ($agency && ($agency->custom_settings['enforce_2fa'] ?? false)) {
             if (! $user->two_factor_enabled) {
                 if ($request->expectsJson()) {
                     return response()->json([
@@ -31,7 +31,7 @@ class Enforce2FA
                     ], 403);
                 }
 
-                return redirect()->route('auth.two-factor')
+                return redirect()->route('two-factor.show')
                     ->with('warning', 'Two-factor authentication is required for your agency.');
             }
         }

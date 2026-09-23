@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\RBAC\EnterpriseRBACService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -55,6 +56,11 @@ class RoleController extends Controller
             $validated['permissions'] ?? []
         );
 
+        Log::info('Role created', [
+            'role_name' => $validated['name'],
+            'agency_id' => $agencyId,
+        ]);
+
         return redirect()->route('roles.index')
             ->with('success', 'Role created successfully.');
     }
@@ -84,6 +90,11 @@ class RoleController extends Controller
             return redirect()->back()->with('error', 'Role not found or access denied.');
         }
 
+        Log::info('Role updated', [
+            'role_id' => $role->id,
+            'agency_id' => $agencyId,
+        ]);
+
         return redirect()->route('roles.index')
             ->with('success', 'Role updated successfully.');
     }
@@ -97,6 +108,11 @@ class RoleController extends Controller
         if (! $success) {
             return redirect()->back()->with('error', 'Role not found or access denied.');
         }
+
+        Log::warning('Role deleted', [
+            'role_id' => $role->id,
+            'agency_id' => $agencyId,
+        ]);
 
         return redirect()->route('roles.index')
             ->with('success', 'Role deleted successfully.');
@@ -118,6 +134,12 @@ class RoleController extends Controller
             return redirect()->back()->with('error', 'Failed to assign role.');
         }
 
+        Log::info('Role assigned to user', [
+            'user_id' => $validated['user_id'],
+            'role_id' => $validated['role_id'],
+            'agency_id' => $request->user()->agency_id,
+        ]);
+
         return redirect()->back()->with('success', 'Role assigned successfully.');
     }
 
@@ -136,6 +158,12 @@ class RoleController extends Controller
         if (! $success) {
             return redirect()->back()->with('error', 'Failed to remove role.');
         }
+
+        Log::info('Role removed from user', [
+            'user_id' => $validated['user_id'],
+            'role_id' => $validated['role_id'],
+            'agency_id' => $request->user()->agency_id,
+        ]);
 
         return redirect()->back()->with('success', 'Role removed successfully.');
     }

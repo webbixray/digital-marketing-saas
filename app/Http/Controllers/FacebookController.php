@@ -8,11 +8,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class FacebookController extends Controller
 {
+    use SocialOAuthConnectTrait;
+
+    protected string $oauthPlatform = 'facebook';
+    protected string $oauthPlatformName = 'Facebook';
+    protected string $oauthRoutePrefix = 'facebook';
     public function __construct(
         private readonly FacebookApiService $facebook,
     ) {
@@ -39,19 +44,7 @@ class FacebookController extends Controller
      */
     public function connect(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        // Generate state and store in session
-        $state = Str::random(32);
-        $request->session()->put('facebook_state', $state);
-        $request->session()->put('facebook_connect_agency_id', $agencyId);
-
-        $authUrl = $this->facebook->getAuthUrl(
-            route('facebook.callback'),
-            $state
-        );
-
-        return redirect($authUrl);
+        return $this->oauthConnect($request, fn ($redirectUri, $state) => $this->facebook->getAuthUrl($redirectUri, $state));
     }
 
     /**
@@ -158,25 +151,7 @@ class FacebookController extends Controller
      */
     public function disconnect(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        // Check if account exists at all
-        $account = SocialAccount::where('platform', 'facebook')
-            ->find($accountId);
-
-        if (! $account) {
-            abort(404, 'Facebook account not found.');
-        }
-
-        // Check ownership
-        if ((int) $account->agency_id !== (int) $agencyId) {
-            abort(403, 'You do not have permission to disconnect this account.');
-        }
-
-        $account->delete();
-
-        return redirect()->route('facebook.index')
-            ->with('success', 'Facebook account disconnected.');
+        return $this->oauthDisconnect($request, $accountId);
     }
 
     /**
@@ -184,16 +159,7 @@ class FacebookController extends Controller
      */
     public function toggle(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('agency_id', $agencyId)
-            ->where('platform', 'facebook')
-            ->findOrFail($accountId);
-
-        $account->update(['is_active' => ! $account->is_active]);
-
-        return redirect()->route('facebook.index')
-            ->with('success', 'Facebook account status updated.');
+        return $this->oauthToggle($request, $accountId);
     }
 
     /**

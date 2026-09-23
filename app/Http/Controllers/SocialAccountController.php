@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SocialAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SocialAccountController extends Controller
 {
@@ -60,6 +61,12 @@ class SocialAccountController extends Controller
 
         DB::table('agencies')->where('id', $agencyId)->increment('social_accounts_count');
 
+        Log::info('Social account connected', [
+            'account_id' => $account->id,
+            'agency_id' => $agencyId,
+            'platform' => $validated['platform'],
+        ]);
+
         return redirect()->route('social.accounts.index')
             ->with('success', 'Social account connected successfully.');
     }
@@ -77,6 +84,11 @@ class SocialAccountController extends Controller
         $account->delete();
         DB::table('agencies')->where('id', $agencyId)->decrement('social_accounts_count');
 
+        Log::info('Social account removed', [
+            'account_id' => $accountId,
+            'agency_id' => $agencyId,
+        ]);
+
         return redirect()->route('social.accounts.index')
             ->with('success', 'Social account removed.');
     }
@@ -92,6 +104,12 @@ class SocialAccountController extends Controller
         }
 
         $account->update(['is_active' => ! $account->is_active]);
+
+        Log::info('Social account toggled', [
+            'account_id' => $accountId,
+            'agency_id' => $agencyId,
+            'new_status' => $account->is_active ? 'active' : 'inactive',
+        ]);
 
         return redirect()->route('social.accounts.index')->with('success', 'Account status updated.');
     }

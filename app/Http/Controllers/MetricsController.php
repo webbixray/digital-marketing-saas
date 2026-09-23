@@ -20,6 +20,8 @@ class MetricsController extends Controller
     {
         $cacheKey = 'saas_metrics:'.now()->format('Y-m-d');
 
+        Log::info('Metrics dashboard viewed', ['agency_id' => $request->user()->agency_id]);
+
         return response()->json(Cache::remember($cacheKey, 3600, function () {
             return [
                 'users' => $this->getUserMetrics(),

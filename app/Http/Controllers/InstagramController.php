@@ -9,9 +9,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class InstagramController extends Controller
 {
+    use SocialOAuthConnectTrait;
+
+    protected string $oauthPlatform = 'instagram';
+    protected string $oauthPlatformName = 'Instagram';
+    protected string $oauthRoutePrefix = 'instagram';
     public function __construct(
         private readonly InstagramApiService $instagram,
     ) {
@@ -38,19 +44,7 @@ class InstagramController extends Controller
      */
     public function connect(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        // Generate state and store in session
-        $state = Str::random(32);
-        $request->session()->put('instagram_state', $state);
-        $request->session()->put('instagram_connect_agency_id', $agencyId);
-
-        $authUrl = $this->instagram->getAuthUrl(
-            route('instagram.callback'),
-            $state
-        );
-
-        return redirect($authUrl);
+        return $this->oauthConnect($request, fn ($redirectUri, $state) => $this->instagram->getAuthUrl($redirectUri, $state));
     }
 
     /**
@@ -177,25 +171,7 @@ class InstagramController extends Controller
      */
     public function disconnect(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        // Check if account exists at all
-        $account = SocialAccount::where('platform', 'instagram')
-            ->find($accountId);
-
-        if (! $account) {
-            abort(404, 'Instagram account not found.');
-        }
-
-        // Check ownership
-        if ((int) $account->agency_id !== (int) $agencyId) {
-            abort(403, 'You do not have permission to disconnect this account.');
-        }
-
-        $account->delete();
-
-        return redirect()->route('instagram.index')
-            ->with('success', 'Instagram account disconnected.');
+        return $this->oauthDisconnect($request, $accountId);
     }
 
     /**
@@ -203,16 +179,7 @@ class InstagramController extends Controller
      */
     public function toggle(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('agency_id', $agencyId)
-            ->where('platform', 'instagram')
-            ->findOrFail($accountId);
-
-        $account->update(['is_active' => ! $account->is_active]);
-
-        return redirect()->route('instagram.index')
-            ->with('success', 'Instagram account status updated.');
+        return $this->oauthToggle($request, $accountId);
     }
 
     /**

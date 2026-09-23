@@ -11,6 +11,7 @@ use App\Http\Middleware\EnsureAgencyAccess;
 use App\Http\Middleware\HstsMiddleware;
 use App\Http\Middleware\RequestId;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\StandardizeJsonExceptions;
 use App\Http\Middleware\ThrottleApiRequests;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -63,6 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             SubstituteBindings::class,
             RequestId::class,
+            StandardizeJsonExceptions::class,
         ]);
 
         $middleware->api(prepend: [

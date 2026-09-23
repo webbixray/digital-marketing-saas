@@ -10,9 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class PinterestController extends Controller
 {
+    use SocialOAuthConnectTrait;
+
+    protected string $oauthPlatform = 'pinterest';
+    protected string $oauthPlatformName = 'Pinterest';
+    protected string $oauthRoutePrefix = 'pinterest';
     public function __construct(
         private readonly PinterestApiService $pinterest,
     ) {
@@ -39,18 +45,7 @@ class PinterestController extends Controller
      */
     public function connect(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $state = Str::random(32);
-        $request->session()->put('pinterest_state', $state);
-        $request->session()->put('pinterest_connect_agency_id', $agencyId);
-
-        $authUrl = $this->pinterest->getAuthUrl(
-            route('pinterest.callback'),
-            $state
-        );
-
-        return redirect($authUrl);
+        return $this->oauthConnect($request, fn ($redirectUri, $state) => $this->pinterest->getAuthUrl($redirectUri, $state));
     }
 
     /**
@@ -143,23 +138,7 @@ class PinterestController extends Controller
      */
     public function disconnect(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('platform', 'pinterest')
-            ->find($accountId);
-
-        if (! $account) {
-            abort(404, 'Pinterest account not found.');
-        }
-
-        if ((int) $account->agency_id !== (int) $agencyId) {
-            abort(403, 'You do not have permission to disconnect this account.');
-        }
-
-        $account->delete();
-
-        return redirect()->route('pinterest.index')
-            ->with('success', 'Pinterest account disconnected.');
+        return $this->oauthDisconnect($request, $accountId);
     }
 
     /**
@@ -167,16 +146,7 @@ class PinterestController extends Controller
      */
     public function toggle(Request $request, int $accountId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
-        $account = SocialAccount::where('agency_id', $agencyId)
-            ->where('platform', 'pinterest')
-            ->findOrFail($accountId);
-
-        $account->update(['is_active' => ! $account->is_active]);
-
-        return redirect()->route('pinterest.index')
-            ->with('success', 'Pinterest account status updated.');
+        return $this->oauthToggle($request, $accountId);
     }
 
     /**

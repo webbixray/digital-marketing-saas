@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class AgencyController extends Controller
 {
@@ -56,6 +57,8 @@ class AgencyController extends Controller
         $agency = Agency::findOrFail($agencyId);
 
         $agency->update($request->only(['name', 'slug', 'email', 'timezone', 'currency']));
+
+        Log::info('Agency updated', ['agency_id' => $agency->id, 'user_id' => $request->user()->id]);
 
         return redirect()->route('agency.settings')->with('success', 'Agency updated.');
     }
@@ -130,6 +133,8 @@ class AgencyController extends Controller
             'subscription_status' => 'active',
         ]);
 
+        Log::info('Agency subscription upgraded', ['agency_id' => $agency->id, 'plan' => $request->input('plan')]);
+
         return redirect()->route('agency.billing')->with('success', 'Subscription upgraded.');
     }
 
@@ -158,6 +163,8 @@ class AgencyController extends Controller
             'subscription_plan' => 'free',
             'subscription_status' => 'cancelled',
         ]);
+
+        Log::warning('Agency subscription cancelled', ['agency_id' => $agency->id, 'user_id' => $request->user()->id]);
 
         return redirect()->route('agency.billing')->with('success', 'Subscription cancelled.');
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ChurnPreventionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CancellationController extends Controller
 {
@@ -13,9 +14,6 @@ class CancellationController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    /**
-     * Show cancellation survey.
-     */
     public function survey(Request $request)
     {
         $agency = $request->user()->agency;
@@ -24,9 +22,6 @@ class CancellationController extends Controller
         return view('cancellation.survey', compact('offer'));
     }
 
-    /**
-     * Process cancellation survey.
-     */
     public function submitSurvey(Request $request)
     {
         $validated = $request->validate([
@@ -41,13 +36,15 @@ class CancellationController extends Controller
             $validated['feedback'] ?? null
         );
 
+        Log::info('Cancellation survey submitted', [
+            'agency_id' => $agency->id,
+            'reason' => $validated['reason'],
+        ]);
+
         return redirect()->route('cancellation.confirm')
             ->with('reason', $validated['reason']);
     }
 
-    /**
-     * Show cancellation confirmation.
-     */
     public function confirm()
     {
         return view('cancellation.confirm');

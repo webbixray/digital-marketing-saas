@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Enums\CampaignStatus;
 use App\Models\Campaign;
 use App\Models\Client;
+use App\Models\SocialPost;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class CampaignController extends Controller
 {
@@ -22,32 +25,39 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $agencyId = $request->user()->agency_id;
+        $tags = ['agency_' . $agencyId, 'campaigns'];
 
-        $agency = DB::table('agencies')->where('id', $agencyId)->first();
+        $cacheKey = "campaigns:{$agencyId}:index:" . md5(serialize($request->query()));
 
-        $query = Campaign::where('agency_id', $agencyId);
+        $campaigns = Cache::remember($cacheKey, 300, function () use ($request, $agencyId) {
+            $query = Campaign::where('agency_id', $agencyId)
+                ->with(['client:id,name,email']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
 
-        $campaigns = $query->orderBy('created_at', 'desc')->paginate(15);
+            return $query->orderBy('created_at', 'desc')->paginate(15);
+        });
 
-        return view('campaigns.index', compact('agency', 'campaigns'));
+        return view('campaigns.index', [
+            'agency' => $request->user()->agency,
+            'campaigns' => $campaigns,
+        ]);
     }
 
     public function create(Request $request)
     {
         $agencyId = $request->user()->agency_id;
 
-        $agency = DB::table('agencies')->where('id', $agencyId)->first();
-        $clients = Client::where('agency_id', $agencyId)->active()->get();
-        $types = Campaign::CAMPAIGN_TYPES;
-
-        return view('campaigns.create', compact('agency', 'clients', 'types'));
+        return view('campaigns.create', [
+            'agency' => $request->user()->agency,
+            'clients' => Client::where('agency_id', $agencyId)->active()->get(),
+            'types' => Campaign::CAMPAIGN_TYPES,
+        ]);
     }
 
     public function store(Request $request)
@@ -81,6 +91,10 @@ class CampaignController extends Controller
 
         DB::table('agencies')->where('id', $agencyId)->increment('campaigns_count');
 
+        // Clear campaign cache
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
         return redirect()->route('campaigns.show', $campaign)
             ->with('success', 'Campaign created successfully.');
     }
@@ -89,24 +103,29 @@ class CampaignController extends Controller
     {
         $agencyId = $request->user()->agency_id;
 
-        $agency = DB::table('agencies')->where('id', $agencyId)->first();
-
-        $campaign = Campaign::with('client')->findOrFail($campaignId);
+        $campaign = Cache::remember("campaign:{$campaignId}", 300, function () use ($campaignId) {
+            return Campaign::with(['client:id,name,email,avatar'])->findOrFail($campaignId);
+        });
 
         if ($campaign->agency_id !== $agencyId) {
             abort(403);
         }
 
-        $posts = $campaign->posts()->with('socialAccount')->orderBy('created_at', 'desc')->paginate(10);
+        $posts = $campaign->posts()
+            ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        return view('campaigns.show', compact('agency', 'campaign', 'posts'));
+        return view('campaigns.show', [
+            'agency' => $request->user()->agency,
+            'campaign' => $campaign,
+            'posts' => $posts,
+        ]);
     }
 
     public function edit(Request $request, $campaignId)
     {
         $agencyId = $request->user()->agency_id;
-
-        $agency = DB::table('agencies')->where('id', $agencyId)->first();
 
         $campaign = Campaign::findOrFail($campaignId);
 
@@ -114,10 +133,12 @@ class CampaignController extends Controller
             abort(403);
         }
 
-        $clients = Client::where('agency_id', $agencyId)->active()->get();
-        $types = Campaign::CAMPAIGN_TYPES;
-
-        return view('campaigns.edit', compact('agency', 'campaign', 'clients', 'types'));
+        return view('campaigns.edit', [
+            'agency' => $request->user()->agency,
+            'campaign' => $campaign,
+            'clients' => Client::where('agency_id', $agencyId)->active()->get(),
+            'types' => Campaign::CAMPAIGN_TYPES,
+        ]);
     }
 
     public function update(Request $request, $campaignId)
@@ -143,6 +164,11 @@ class CampaignController extends Controller
 
         $campaign->update($validated);
 
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
         return redirect()->route('campaigns.show', $campaign)
             ->with('success', 'Campaign updated successfully.');
     }
@@ -161,6 +187,12 @@ class CampaignController extends Controller
 
         DB::table('agencies')->where('id', $agencyId)->decrement('campaigns_count');
 
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
+        Log::info('Campaign operation', ['agency_id' => $request->user()->agency_id]);
         return redirect()->route('campaigns.index')
             ->with('success', 'Campaign deleted.');
     }
@@ -180,6 +212,11 @@ class CampaignController extends Controller
         ]);
 
         $campaign->update(['status' => $validated['status']]);
+
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
 
         return back()->with('success', 'Campaign status updated.');
     }
@@ -329,5 +366,81 @@ class CampaignController extends Controller
             'success' => false,
             'error' => $result->error ?? 'Agent failed to provide insights',
         ], 500);
+    }
+
+    /**
+     * Warm campaign cache for an agency.
+     */
+    public function warmCache(int $agencyId): void
+    {
+        // Pre-compute campaign list
+        $campaigns = Campaign::where('agency_id', $agencyId)
+            ->with(['client:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        Cache::put("campaigns:{$agencyId}:index:", $campaigns, 600);
+
+        // Pre-compute individual campaign data
+        Campaign::where('agency_id', $agencyId)
+            ->with(['client:id,name,email,avatar'])
+            ->chunk(100, function ($campaign) {
+                foreach ($campaign as $c) {
+                    Cache::put("campaign:{$c->id}", $c, 600);
+                }
+            });
+
+        // Pre-compute campaign statistics
+        $stats = Campaign::where('agency_id', $agencyId)
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = "paused" THEN 1 ELSE 0 END) as paused,
+                SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
+            ')
+            ->first();
+
+        Cache::put("campaigns:{$agencyId}:stats", [
+            'total' => (int) $stats->total,
+            'active' => (int) $stats->active,
+            'draft' => (int) $stats->draft,
+            'completed' => (int) $stats->completed,
+            'paused' => (int) $stats->paused,
+            'cancelled' => (int) $stats->cancelled,
+        ], 600);
+    }
+
+    /**
+     * Get campaign statistics.
+     */
+    public function getStats(Request $request)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $stats = Cache::remember("campaigns:{$agencyId}:stats", 300, function () use ($agencyId) {
+            $stats = Campaign::where('agency_id', $agencyId)
+                ->selectRaw('
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) as active,
+                    SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                    SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN status = "paused" THEN 1 ELSE 0 END) as paused,
+                    SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
+                ')
+                ->first();
+
+            return [
+                'total' => (int) $stats->total,
+                'active' => (int) $stats->active,
+                'draft' => (int) $stats->draft,
+                'completed' => (int) $stats->completed,
+                'paused' => (int) $stats->paused,
+                'cancelled' => (int) $stats->cancelled,
+            ];
+        });
+
+        return response()->json($stats);
     }
 }

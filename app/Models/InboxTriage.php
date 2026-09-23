@@ -30,10 +30,48 @@ class InboxTriage extends Model
 
     protected $casts = [
         'urgency_score' => 'decimal:2',
-        'ai_analysis' => 'array',
-        'suggested_reply' => 'array',
         'triage_at' => 'datetime',
     ];
+
+    /**
+     * Access ai_analysis from text column, auto-decoding JSON.
+     */
+    public function getAiAnalysisAttribute($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Access suggested_reply from text column, auto-decoding JSON.
+     */
+    public function getSuggestedReplyAttribute($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Mutator: store ai_analysis as JSON text.
+     */
+    public function setAiAnalysisAttribute($value)
+    {
+        $this->attributes['ai_analysis'] = is_string($value) ? $value : json_encode($value ?? []);
+    }
+
+    /**
+     * Mutator: store suggested_reply as JSON text.
+     */
+    public function setSuggestedReplyAttribute($value)
+    {
+        $this->attributes['suggested_reply'] = is_string($value) ? $value : json_encode($value ?? []);
+    }
 
     public function message(): BelongsTo
     {

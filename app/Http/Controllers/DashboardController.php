@@ -28,7 +28,7 @@ class DashboardController extends Controller
     {
         $agency = $request->user()->agency;
 
-        // Get all stats
+        // Get all stats - cached at service level
         $overviewStats = $this->analytics->getOverviewStats($agency);
         $socialStats = $this->analytics->getSocialStats($agency);
 
@@ -102,37 +102,49 @@ class DashboardController extends Controller
                 'limit' => $this->quota->getLimit($agency, 'invoices'),
                 'percentage' => $this->quota->getPercentage($agency, 'invoices', $stats['pending_invoices']),
             ],
-            'landing_pages' => [
-                'label' => 'Landing Pages',
-                'used' => Cache::remember("analytics:{$agency->id}:landing_pages", 300, function () use ($agency) {
+            'landing_pages' => (function () use ($agency) {
+                $lpCount = Cache::remember("analytics:{$agency->id}:landing_pages", 300, function () use ($agency) {
                     return LandingPage::where('agency_id', $agency->id)->count();
-                }),
-                'limit' => $this->quota->getLimit($agency, 'landing_pages'),
-                'percentage' => $this->quota->getPercentage($agency, 'landing_pages', Cache::get("analytics:{$agency->id}:landing_pages", 0)),
-            ],
+                });
+                return [
+                    'label' => 'Landing Pages',
+                    'used' => $lpCount,
+                    'limit' => $this->quota->getLimit($agency, 'landing_pages'),
+                    'percentage' => $this->quota->getPercentage($agency, 'landing_pages', $lpCount),
+                ];
+            })(),
         ];
 
-        // Recent activity
-        $recentActivity = ActivityLog::where('agency_id', $agency->id)
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+        // Recent activity - eager loaded user relationship
+        $recentActivity = Cache::remember("dashboard:{$agency->id}:recent_activity", 60, function () use ($agency) {
+            return ActivityLog::where('agency_id', $agency->id)
+                ->with(['user:id,name,email,avatar'])
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get();
+        });
 
-        // Upcoming scheduled posts
-        $upcomingPosts = SocialPost::where('agency_id', $agency->id)
-            ->where('status', 'scheduled')
-            ->where('scheduled_at', '>', now())
-            ->with('socialAccount')
-            ->orderBy('scheduled_at', 'asc')
-            ->take(5)
-            ->get();
+        // Upcoming scheduled posts - eager loaded with socialAccount
+        $upcomingPosts = Cache::remember("dashboard:{$agency->id}:upcoming_posts", 60, function () use ($agency) {
+            return SocialPost::where('agency_id', $agency->id)
+                ->where('status', 'scheduled')
+                ->where('scheduled_at', '>', now())
+                ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
+                ->orderBy('scheduled_at', 'asc')
+                ->take(5)
+                ->get();
+        });
 
         // Agent health summary
         $agentHealthSummary = $this->getAgentHealthSummary($agency->id);
 
-        // Recent agent activity
-        $recentAgentActivity = $this->getRecentAgentActivity($agency->id);
+        // Recent agent activity - cached
+        $recentAgentActivity = Cache::remember("dashboard:{$agency->id}:agent_activity", 120, function () use ($agency) {
+            return AgentCostLog::where('agency_id', $agency->id)
+                ->orderBy('executed_at', 'desc')
+                ->take(5)
+                ->get();
+        });
 
         return view('dashboard.index', compact('stats', 'platformStats', 'quotas', 'recentActivity', 'upcomingPosts', 'agency', 'agentHealthSummary', 'recentAgentActivity'));
     }
@@ -157,18 +169,6 @@ class DashboardController extends Controller
                 'healthy_agents' => 0,
                 'degraded_agents' => 0,
             ];
-        }
-    }
-
-    private function getRecentAgentActivity(int $agencyId): Collection
-    {
-        try {
-            return AgentCostLog::byAgency($agencyId)
-                ->orderBy('executed_at', 'desc')
-                ->take(5)
-                ->get();
-        } catch (\Exception $e) {
-            return collect();
         }
     }
 }

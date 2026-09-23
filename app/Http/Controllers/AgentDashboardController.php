@@ -7,6 +7,7 @@ use App\Models\AgentLearningReport;
 use App\Models\AgentPerformanceLog;
 use App\Models\AgentSharedKnowledge;
 use App\Models\AgentWorkflowExecution;
+use App\Services\AgentRegistry;
 use App\Services\AI\Agent\AgentCostTracker;
 use App\Services\AI\Agent\AgentHealthMonitor;
 use App\Services\AI\Agent\AgentOrchestrator;
@@ -66,8 +67,8 @@ class AgentDashboardController extends Controller
                     'last_run' => $latestExecution?->started_at
                         ? Carbon::parse($latestExecution->started_at)->diffForHumans()
                         : 'Never',
-                    'description' => $this->getAgentDescription($name),
-                    'category' => $this->getAgentCategory($name),
+                    'description' => AgentRegistry::getDescription($name),
+                    'category' => AgentRegistry::getCategory($name),
                 ]);
             }
 
@@ -163,35 +164,5 @@ class AgentDashboardController extends Controller
         }
     }
 
-    /**
-     * Get a human-readable description for an agent.
-     */
-    private function getAgentDescription(string $name): string
-    {
-        return match ($name) {
-            'content_agent' => 'Generates and optimizes marketing content across channels.',
-            'analytics_agent' => 'Analyzes campaign performance and detects trends.',
-            'security_agent' => 'Monitors security posture and runs audits.',
-            'social_agent' => 'Manages social media posting and engagement.',
-            'support_agent' => 'Handles customer inquiries and triage.',
-            'campaign_agent' => 'Optimizes ad campaigns and A/B tests.',
-            default => "AI agent for {$name} tasks.",
-        };
-    }
 
-    /**
-     * Get the category for an agent.
-     */
-    private function getAgentCategory(string $name): string
-    {
-        return match ($name) {
-            'content_agent' => 'Content',
-            'analytics_agent' => 'Analytics',
-            'security_agent' => 'Security',
-            'social_agent' => 'Social',
-            'support_agent' => 'Support',
-            'campaign_agent' => 'Campaigns',
-            default => 'General',
-        };
-    }
 }

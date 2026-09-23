@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\SocialAccount;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -57,6 +58,8 @@ class OnboardingController extends Controller
             ]);
 
             $this->setStep(2);
+
+            Log::info('Onboarding step 1 completed', ['agency_id' => $request->user()->agency_id]);
 
             return redirect()->route('onboarding.step2')
                 ->with('success', 'Agency details saved!');

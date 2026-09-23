@@ -6,6 +6,7 @@ use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -90,6 +91,12 @@ class InvoiceController extends Controller
                 ]);
             }
 
+            Log::info('Invoice created', [
+                'invoice_id' => $invoice->id,
+                'agency_id' => $agency->id,
+                'total' => $total,
+            ]);
+
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice created successfully.');
         }, 'Failed to create invoice. Please try again.', [
@@ -139,6 +146,11 @@ class InvoiceController extends Controller
 
             $invoice->update($validated);
 
+            Log::info('Invoice updated', [
+                'invoice_id' => $invoice->id,
+                'agency_id' => $agency->id,
+            ]);
+
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice updated successfully.');
         }, 'Failed to update invoice.', [
@@ -156,8 +168,13 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        return $this->handleAction(function () use ($invoice) {
+        return $this->handleAction(function () use ($request, $invoice) {
             $invoice->delete();
+
+            Log::warning('Invoice deleted', [
+                'invoice_id' => $invoice->id,
+                'agency_id' => $request->user()->agency_id,
+            ]);
 
             return redirect()->route('invoices.index')
                 ->with('success', 'Invoice deleted.');
@@ -180,6 +197,12 @@ class InvoiceController extends Controller
                 $request->input('payment_method', 'manual'),
                 $request->input('transaction_id', '')
             );
+
+            Log::info('Invoice marked as paid', [
+                'invoice_id' => $invoice->id,
+                'agency_id' => $agencyId,
+                'payment_method' => $request->input('payment_method', 'manual'),
+            ]);
 
             return back()->with('success', 'Invoice marked as paid.');
         }, 'Failed to mark invoice as paid.', [

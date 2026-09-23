@@ -8,6 +8,7 @@ use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
 use App\Services\Analytics\AnalyticsService;
+use App\Services\SystemHealthCheckService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -20,6 +21,7 @@ class AdminDashboardController extends Controller
 {
     public function __construct(
         private readonly AnalyticsService $analytics,
+        private readonly SystemHealthCheckService $healthService,
     ) {
         $this->middleware(['auth', 'agency', 'role:owner|admin']);
     }
@@ -74,10 +76,10 @@ class AdminDashboardController extends Controller
     public function health(Request $request): View
     {
         $health = [
-            'database' => $this->checkDatabase(),
-            'queue' => $this->checkQueue(),
-            'cache' => $this->checkCache(),
-            'storage' => $this->checkStorage(),
+            'database' => $this->healthService->checkDatabase(),
+            'queue' => $this->healthService->checkQueue(),
+            'cache' => $this->healthService->checkCache(),
+            'storage' => $this->healthService->checkStorage(),
         ];
 
         return view('admin.health', compact('health'));
@@ -125,106 +127,4 @@ class AdminDashboardController extends Controller
         return back()->with('success', 'Failed job deleted');
     }
 
-    /**
-     * Check database connection.
-     */
-    private function checkDatabase(): array
-    {
-        try {
-            $start = microtime(true);
-            DB::connection()->getPdo();
-            $time = round((microtime(true) - $start) * 1000, 2);
-
-            return [
-                'status' => 'ok',
-                'message' => 'Database connected',
-                'response_time_ms' => $time,
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Check queue status.
-     */
-    private function checkQueue(): array
-    {
-        try {
-            $pending = DB::table('jobs')->count();
-            $failed = DB::table('failed_jobs')->count();
-
-            return [
-                'status' => 'ok',
-                'message' => 'Queue operational',
-                'pending_jobs' => $pending,
-                'failed_jobs' => $failed,
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Check cache status.
-     */
-    private function checkCache(): array
-    {
-        try {
-            $key = 'health_check_'.time();
-            Cache::put($key, true, 10);
-            $value = Cache::get($key);
-            Cache::forget($key);
-
-            return $value ? [
-                'status' => 'ok',
-                'message' => 'Cache operational',
-            ] : [
-                'status' => 'warning',
-                'message' => 'Cache read/write issue',
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Check storage status.
-     */
-    private function checkStorage(): array
-    {
-        try {
-            $path = storage_path('framework/health');
-            if (! is_dir($path)) {
-                mkdir($path, 0755, true);
-            }
-            $file = $path.'/check.txt';
-            file_put_contents($file, 'ok');
-            $value = file_get_contents($file);
-            unlink($file);
-            rmdir($path);
-
-            return $value === 'ok' ? [
-                'status' => 'ok',
-                'message' => 'Storage writable',
-            ] : [
-                'status' => 'warning',
-                'message' => 'Storage read/write issue',
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
 }

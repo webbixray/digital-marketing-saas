@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
@@ -126,6 +127,7 @@ class ClientController extends Controller
         $client->delete();
         $agency->decrement('clients_count');
 
+        Log::info('Client operation', ['agency_id' => $request->user()->agency_id]);
         return redirect()->route('clients.index')
             ->with('success', 'Client deleted.');
     }

@@ -8,6 +8,7 @@ use App\Models\BulkSchedule;
 use App\Models\SocialAccount;
 use App\Services\Schedule\BulkScheduleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -141,6 +142,7 @@ class BulkScheduleController extends Controller
         ]);
 
         // Dispatch job for processing
+        Log::info('Bulk upload queued', ['bulk_id' => $bulkSchedule->id, 'agency_id' => $agencyId]);
         CreateBulkPostsJob::dispatch($bulkSchedule, $filePath);
 
         // Clear session
@@ -243,6 +245,7 @@ class BulkScheduleController extends Controller
         ]);
 
         // Clean up
+        Log::info('Bulk upload processed', ['bulk_id' => $bulkSchedule->id, 'total' => count($parseResult['rows']), 'success' => count($createResults['success'])]);
         Storage::disk('local')->delete($path);
 
         return redirect()->route('social.bulk.show', $bulkSchedule)

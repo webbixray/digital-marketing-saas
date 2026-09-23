@@ -6,6 +6,7 @@ use App\Models\Agency;
 use App\Services\QuotaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class QuotaController extends Controller
 {
@@ -43,6 +44,15 @@ class QuotaController extends Controller
         $agency = $request->user()->agency;
 
         $isOverQuota = $this->quotaService->isOverQuota($agency, $feature);
+
+        if ($isOverQuota) {
+            Log::warning('Quota exceeded', [
+                'agency_id' => $agency->id,
+                'feature' => $feature,
+                'usage' => $this->quotaService->getUsage($agency, $feature),
+                'limit' => $this->quotaService->getLimit($agency, $feature),
+            ]);
+        }
 
         return response()->json([
             'allowed' => ! $isOverQuota,

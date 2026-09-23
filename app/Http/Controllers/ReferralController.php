@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ReferralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReferralController extends Controller
 {
@@ -14,9 +15,6 @@ class ReferralController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    /**
-     * Display referral dashboard.
-     */
     public function index(Request $request)
     {
         $user = $request->user();
@@ -25,19 +23,18 @@ class ReferralController extends Controller
         return view('referral.index', compact('stats'));
     }
 
-    /**
-     * Track referral link visit.
-     */
     public function track(Request $request, string $code)
     {
         session(['referral_code' => $code]);
 
+        Log::info('Referral link tracked', [
+            'code' => $code,
+            'ip' => $request->ip(),
+        ]);
+
         return redirect()->route('register');
     }
 
-    /**
-     * Get referral stats for API
-     */
     public function stats(Request $request): JsonResponse
     {
         $user = $request->user();
