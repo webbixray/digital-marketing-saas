@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaign;
-use App\Models\Client;
-use App\Models\ContentAsset;
-use App\Models\Invoice;
-use App\Models\SocialPost;
-use App\Models\Workflow;
+use App\Models\SearchHistory;
+use App\Services\Search\GlobalSearchService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SearchController extends Controller
 {
@@ -17,84 +15,107 @@ class SearchController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
         $query = trim($request->get('q', ''));
-        $type = in_array($request->get('type', 'all'), ['all', 'posts', 'campaigns', 'clients', 'content', 'invoices', 'workflows']) ? $request->get('type', 'all') : 'all';
-
+        $type = $this->resolveType($request->get('type', 'all'));
         $results = [];
 
-        if (empty($query) || strlen($query) < 2) {
-            return view('search.index', compact('results', 'query', 'type'));
+        if (strlen($query) >= 2) {
+            $service = app(GlobalSearchService::class);
+            $results = $service->search($query, $user->agency_id, $type, 20);
+
+            $totalCount = collect($results)->flatten(1)->count();
+            $service->saveSearch($query, $type, $totalCount);
         }
 
-        // Escape LIKE wildcards in user input — whereLike handles this natively
-        if (empty($query) || strlen($query) < 2) {
-            return view('search.index', compact('results', 'query', 'type'));
-        }
+        $recent = SearchHistory::byUser($user->id)
+            ->recent()
+            ->limit(10)
+            ->get();
 
-        // Search posts
-        if ($type === 'all' || $type === 'posts') {
-            $results['posts'] = SocialPost::where('agency_id', $agencyId)
-                ->where(function ($q) use ($query) {
-                    $q->where('content', 'LIKE', '%'.$query.'%')
-                        ->orWhere('platform', 'LIKE', '%'.$query.'%');
-                })
+        return view('search.index', compact('results', 'query', 'type', 'recent'));
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate([
+            'query' => 'required|string|min:2|max:255',
+            'type' => 'nullable|string|in:all,posts,campaigns,clients,content,analytics',
+        ]);
+
+        $user = $request->user();
+        $query = trim($request->input('query'));
+        $type = $request->input('type', 'all');
+
+        $service = app(GlobalSearchService::class);
+        $results = $service->search($query, $user->agency_id, $type, 20);
+
+        $totalCount = collect($results)->flatten(1)->count();
+        $service->saveSearch($query, $type, $totalCount);
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+            'total_count' => $totalCount,
+        ]);
+    }
+
+    public function recent(Request $request): JsonResponse
+    {
+        $searches = app(GlobalSearchService::class)->getRecentSearches(
+            $request->user()->id,
+            10
+        );
+
+        return response()->json([
+            'success' => true,
+            'recent' => $searches,
+        ]);
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        $entry = SearchHistory::byUser(auth()->id())->findOrFail($id);
+        $entry->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function stats(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $stats = [
+            'total_searches' => SearchHistory::byUser($user->id)->count(),
+            'total_clicks' => SearchHistory::byUser($user->id)
+                ->whereNotNull('clicked_result')
+                ->count(),
+            'top_queries' => SearchHistory::byUser($user->id)
+                ->selectRaw('query, COUNT(*) as count')
+                ->groupBy('query')
+                ->orderByDesc('count')
                 ->limit(10)
-                ->get();
-        }
+                ->pluck('count', 'query')
+                ->toArray(),
+            'type_distribution' => SearchHistory::byUser($user->id)
+                ->selectRaw('type, COUNT(*) as count')
+                ->groupBy('type')
+                ->pluck('count', 'type')
+                ->toArray(),
+        ];
 
-        // Search campaigns
-        if ($type === 'all' || $type === 'campaigns') {
-            $results['campaigns'] = Campaign::where('agency_id', $agencyId)
-                ->where(function ($q) use ($query) {
-                    $q->where('name', 'LIKE', '%'.$query.'%')
-                        ->orWhere('description', 'LIKE', '%'.$query.'%');
-                })
-                ->limit(10)
-                ->get();
-        }
+        return response()->json([
+            'success' => true,
+            'stats' => $stats,
+        ]);
+    }
 
-        // Search clients
-        if ($type === 'all' || $type === 'clients') {
-            $results['clients'] = Client::where('agency_id', $agencyId)
-                ->where(function ($q) use ($query) {
-                    $q->where('name', 'LIKE', '%'.$query.'%')
-                        ->orWhere('email', 'LIKE', '%'.$query.'%')
-                        ->orWhere('company', 'LIKE', '%'.$query.'%');
-                })
-                ->limit(10)
-                ->get();
-        }
-
-        // Search content
-        if ($type === 'all' || $type === 'content') {
-            $results['content'] = ContentAsset::where('agency_id', $agencyId)
-                ->where(function ($q) use ($query) {
-                    $q->where('name', 'LIKE', '%'.$query.'%')
-                        ->orWhere('content', 'LIKE', '%'.$query.'%');
-                })
-                ->limit(10)
-                ->get();
-        }
-
-        // Search invoices
-        if ($type === 'all' || $type === 'invoices') {
-            $results['invoices'] = Invoice::where('agency_id', $agencyId)
-                ->where('invoice_number', 'LIKE', '%'.$query.'%')
-                ->limit(10)
-                ->get();
-        }
-
-        // Search workflows
-        if ($type === 'all' || $type === 'workflows') {
-            $results['workflows'] = Workflow::where('agency_id', $agencyId)
-                ->where('name', 'LIKE', '%'.$query.'%')
-                ->limit(10)
-                ->get();
-        }
-
-        return view('search.index', compact('results', 'query', 'type'));
+    private function resolveType(?string $type): string
+    {
+        return in_array($type, ['all', 'posts', 'campaigns', 'clients', 'content', 'analytics'])
+            ? $type
+            : 'all';
     }
 }

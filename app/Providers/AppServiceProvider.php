@@ -11,6 +11,7 @@ use App\Models\SocialComment;
 use App\Models\SocialPost;
 use App\Models\User;
 use App\Models\WebhookLog;
+use App\View\Composers\PermissionsComposer;
 use App\Observers\AiContentLogObserver;
 use App\Observers\CampaignObserver;
 use App\Observers\ClientObserver;
@@ -20,6 +21,7 @@ use App\Observers\SocialCommentObserver;
 use App\Observers\SocialPostObserver;
 use App\Observers\UserObserver;
 use App\Observers\WebhookLogObserver;
+use Illuminate\Support\Facades\View;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -52,6 +54,9 @@ class AppServiceProvider extends ServiceProvider
         SocialAccount::observe(SocialAccountObserver::class);
         SocialComment::observe(SocialCommentObserver::class);
         WebhookLog::observe(WebhookLogObserver::class);
+
+        // View Composer — share roles and permission categories with all views
+        View::composer('*', PermissionsComposer::class);
 
         // -----------------------------------------------------------------------
         // Rate Limiting Configuration

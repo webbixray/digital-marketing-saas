@@ -139,6 +139,11 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 
     // Dashboard insights
     Route::get('/dashboard/insights', [DashboardInsightsController::class, 'index'])->name('dashboard.insights');
+
+    // Global Search
+    Route::get('/search', [ApiSearchController::class, 'search'])->name('search');
+    Route::get('/search/recent', [ApiSearchController::class, 'recent'])->name('search.recent');
+    Route::get('/search/stats', [ApiSearchController::class, 'stats'])->name('search.stats');
 });
 
 // Zapier Integration routes

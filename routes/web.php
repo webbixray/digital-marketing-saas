@@ -43,9 +43,11 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PublicClientReportController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\PermissionMatrixController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Api\ApiSearchController;
 use App\Http\Controllers\SocialAccountController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\SupportTicketController;
@@ -119,7 +121,6 @@ Route::middleware('throttle:10,1')->group(function () {
 
 Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
     // Comments (morph type)
     Route::prefix('comments')->name('comments.')->group(function () {
@@ -418,6 +419,10 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::post('billing/upgrade', [AgencyController::class, 'upgrade'])->name('billing.upgrade')->middleware('throttle:5,1');
     });
 
+    // Permission Matrix (v7.0) — must be before roles resource route
+    Route::get('roles/permissions', [PermissionMatrixController::class, 'index'])->name('roles.matrix');
+    Route::put('roles/permissions', [PermissionMatrixController::class, 'update'])->name('roles.matrix.update');
+
     // Enterprise RBAC
     Route::resource('roles', RoleController::class);
     Route::post('roles/assign', [RoleController::class, 'assign'])->name('roles.assign')->middleware('throttle:10,1');
@@ -483,6 +488,15 @@ Route::get('/status', [HealthCheckController::class, 'status'])->name('status');
 Route::get('/disk-space', [HealthCheckController::class, 'diskSpace'])->name('disk-space');
 Route::get('/queue-status', [HealthCheckController::class, 'queueStatus'])->name('queue-status');
 
+// Global Search
+Route::middleware(['auth', 'agency'])->prefix('search')->name('search.')->group(function () {
+    Route::get('/', [SearchController::class, 'index'])->name('index');
+    Route::post('/', [SearchController::class, 'store'])->name('store');
+    Route::get('/recent', [SearchController::class, 'recent'])->name('recent');
+    Route::delete('/{id}', [SearchController::class, 'destroy'])->name('destroy');
+    Route::get('/stats', [SearchController::class, 'stats'])->name('stats');
+});
+
 // Client Approval Workflow
 Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->group(function () {
     Route::post('/posts/{post}/submit', [ApprovalController::class, 'submit'])->name('submit')->middleware('throttle:10,1');
@@ -515,6 +529,20 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post')->middleware('throttle:10,1');
 });
 
+// Team Management (v7.0)
+Route::middleware(['auth', 'agency'])->prefix('teams')->name('teams.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\TeamController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\TeamController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\TeamController::class, 'store'])->name('store');
+    Route::get('/{team}', [\App\Http\Controllers\TeamController::class, 'show'])->name('show');
+    Route::get('/{team}/edit', [\App\Http\Controllers\TeamController::class, 'edit'])->name('edit');
+    Route::put('/{team}', [\App\Http\Controllers\TeamController::class, 'update'])->name('update');
+    Route::delete('/{team}', [\App\Http\Controllers\TeamController::class, 'destroy'])->name('destroy');
+    Route::post('/{team}/invite', [\App\Http\Controllers\TeamController::class, 'invite'])->name('invite')->middleware('throttle:10,1');
+    Route::get('/invite/{token}/accept', [\App\Http\Controllers\TeamController::class, 'acceptInvite'])->name('invite.accept');
+    Route::delete('/invite/{token}', [\App\Http\Controllers\TeamController::class, 'cancelInvite'])->name('invite.cancel');
+});
+
 // Chat 2.0 (Real-Time Messaging) - MUST be before legacy chat routes
 Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Chat2Controller::class, 'index'])->name('index');
@@ -526,6 +554,12 @@ Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->grou
     Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Chat2Controller::class, 'removeReaction'])->name('reactions.remove')->middleware('throttle:30,1');
     Route::put('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'editMessage'])->name('messages.edit')->middleware('throttle:10,1');
     Route::delete('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'deleteMessage'])->name('messages.destroy')->middleware('throttle:10,1');
+});
+
+// RBAC API endpoints
+Route::middleware(['auth', 'agency'])->group(function () {
+    Route::get('/api/my-permissions', [PermissionMatrixController::class, 'myPermissions'])->name('api.my-permissions');
+    Route::post('/api/check-permission', [PermissionMatrixController::class, 'checkPermission'])->name('api.check-permission');
 });
 
 // Team Chat (Legacy - uses slug-based channels)

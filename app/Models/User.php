@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'referral_count',
         'first_paid_at',
         'agency_id',
+        'team_id',
         'role',
     ];
 

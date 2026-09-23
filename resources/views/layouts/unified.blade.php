@@ -242,7 +242,7 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Analytics</span>
                     </div>
                     <div class="group relative">
-                        <a href="{{ route('analytics.cross-platform') }}" 
+                        <a href="{{ route('analytics.cross-platform') }}"
                            class="nav-link {{ request()->routeIs('analytics.cross-platform*') ? 'active' : '' }}"
                            :class="sidebarMini ? 'justify-center px-2' : ''"
                            aria-label="Cross-Platform">
@@ -250,6 +250,16 @@
                             <span x-show="!sidebarMini" class="transition-opacity duration-300">Cross-Platform</span>
                         </a>
                         <span x-show="sidebarMini" class="sidebar-tooltip">Cross-Platform</span>
+                    </div>
+                    <div class="group relative">
+                        <a href="{{ route('search.index') }}"
+                           class="nav-link {{ request()->routeIs('search.*') ? 'active' : '' }}"
+                           :class="sidebarMini ? 'justify-center px-2' : ''"
+                           aria-label="Search">
+                            <i class="fas fa-search w-5 text-center flex-shrink-0"></i>
+                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Search</span>
+                        </a>
+                        <span x-show="sidebarMini" class="sidebar-tooltip">Search</span>
                     </div>
                 </div>
             </div>
@@ -432,15 +442,25 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Team</span>
                     </div>
                     <div class="group relative">
-                        <a href="{{ route('agency.settings') }}" 
-                           class="nav-link {{ request()->routeIs('agency.settings*') ? 'active' : '' }}"
-                           :class="sidebarMini ? 'justify-center px-2' : ''"
-                           aria-label="Settings">
-                            <i class="fas fa-cog w-5 text-center flex-shrink-0"></i>
-                            <span x-show="!sidebarMini" class="transition-opacity duration-300">Settings</span>
-                        </a>
-                        <span x-show="sidebarMini" class="sidebar-tooltip">Settings</span>
-                    </div>
+                        <a href="{{ route('teams.index') }}"
+                                                   class="nav-link {{ request()->routeIs('teams.*') ? 'active' : '' }}"
+                                                   :class="sidebarMini ? 'justify-center px-2' : ''"
+                                                   aria-label="Teams">
+                                                    <i class="fas fa-users w-5 text-center flex-shrink-0"></i>
+                                                    <span x-show="!sidebarMini" class="transition-opacity duration-300">Teams</span>
+                                                </a>
+                                                <span x-show="sidebarMini" class="sidebar-tooltip">Teams</span>
+                                            </div>
+                                            <div class="group relative">
+                                                <a href="{{ route('agency.settings') }}"
+                                                   class="nav-link {{ request()->routeIs('agency.settings*') ? 'active' : '' }}"
+                                                   :class="sidebarMini ? 'justify-center px-2' : ''"
+                                                   aria-label="Settings">
+                                                    <i class="fas fa-cog w-5 text-center flex-shrink-0"></i>
+                                                    <span x-show="!sidebarMini" class="transition-opacity duration-300">Settings</span>
+                                                </a>
+                                                <span x-show="sidebarMini" class="sidebar-tooltip">Settings</span>
+                                            </div>
                 </div>
             </div>
         </nav>
@@ -734,6 +754,8 @@
             </div>
         </div>
     </div>
+
+    @include('partials.command-palette')
 
     @stack('scripts')
 </body>

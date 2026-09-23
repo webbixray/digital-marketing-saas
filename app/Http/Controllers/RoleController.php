@@ -36,8 +36,9 @@ class RoleController extends Controller
     {
         $agencyId = $request->user()->agency_id;
         $permissions = Permission::all();
+        $categories = \App\Models\PermissionCategory::orderBy('sort_order')->get();
 
-        return view('roles.create', compact('permissions', 'agencyId'));
+        return view('roles.create', compact('permissions', 'categories', 'agencyId'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -70,8 +71,9 @@ class RoleController extends Controller
         $agencyId = $request->user()->agency_id;
         $permissions = Permission::all();
         $rolePermissions = $this->rbacService->getRolePermissions($role->id);
+        $categories = \App\Models\PermissionCategory::orderBy('sort_order')->get();
 
-        return view('roles.edit', compact('role', 'permissions', 'rolePermissions', 'agencyId'));
+        return view('roles.edit', compact('role', 'permissions', 'rolePermissions', 'categories', 'agencyId'));
     }
 
     public function update(Request $request, Role $role): RedirectResponse
