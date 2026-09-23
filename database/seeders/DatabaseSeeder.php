@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             WorkflowTemplateSeeder::class,
             PlatformSeeder::class,
             RolePermissionSeeder::class,
+            LanguageSeeder::class,
             DemoSeeder::class,
             TestUserSeeder::class,
         ]);

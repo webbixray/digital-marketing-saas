@@ -1,5 +1,9 @@
+@php
+    $locale = app()->getLocale();
+    $isRTL = app(\App\View\Composers\LanguageComposer::class)->isRTLLocale();
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ $isRTL ? 'rtl' : 'ltr' }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,13 +16,18 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Tailwind CSS -->
     @vite(['resources/css/unified.css', 'resources/js/unified.js'])
+    
+    @if($isRTL)
+    <!-- RTL CSS -->
+    <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
+    @endif
 
     <!-- Focus-visible styles -->
     <style>
@@ -536,6 +545,9 @@
 
             <!-- Right side actions -->
             <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Language Picker -->
+                <x-language-picker />
+
                 <!-- Create Dropdown -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" 

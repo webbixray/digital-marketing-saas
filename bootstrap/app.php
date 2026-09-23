@@ -11,6 +11,7 @@ use App\Http\Middleware\EnsureAgencyAccess;
 use App\Http\Middleware\HstsMiddleware;
 use App\Http\Middleware\RequestId;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\StandardizeJsonExceptions;
 use App\Http\Middleware\ThrottleApiRequests;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -59,6 +60,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HstsMiddleware::class,
             RequestId::class,
             ApplyWhiteLabel::class,
+            SetLocale::class,
         ]);
 
         $middleware->api(append: [

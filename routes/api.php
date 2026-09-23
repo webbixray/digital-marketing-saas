@@ -25,6 +25,7 @@ use App\Http\Controllers\QuotaController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
+use App\Http\Controllers\ContentTranslationController;
 use App\Http\Controllers\Integrations\ZapierController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +72,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 
     // AI
     Route::post('/ai/generate', [ApiAiController::class, 'generate'])->middleware('throttle:10,1')->name('ai.generate');
+
+    // Content Translation
+    Route::post('/translate', [ContentTranslationController::class, 'translate'])->middleware('throttle:10,1')->name('api.translate');
+    Route::post('/translate/detect', [ContentTranslationController::class, 'detectLanguage'])->middleware('throttle:20,1')->name('api.translate.detect');
 
     // Agent Management
     Route::prefix('agents')->name('agents.')->group(function () {

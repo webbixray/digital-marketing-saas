@@ -23,6 +23,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentCalendarController;
 use App\Http\Controllers\ContentLibraryController;
 use App\Http\Controllers\ContentTemplateController;
+use App\Http\Controllers\ContentTranslationController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Email\EmailCampaignController;
@@ -173,6 +174,16 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::delete('/{provider}', [AiProviderController::class, 'destroy'])->name('destroy')->middleware('throttle:10,1');
         Route::post('/{provider}/toggle', [AiProviderController::class, 'toggle'])->name('toggle')->middleware('throttle:20,1');
         Route::post('/{provider}/test', [AiProviderController::class, 'test'])->name('test')->middleware('throttle:10,1');
+    });
+
+    // Content Translation
+    Route::prefix('translate')->name('translate.')->group(function () {
+        Route::get('/', [ContentTranslationController::class, 'index'])->name('index');
+        Route::post('/', [ContentTranslationController::class, 'translate'])->name('translate')->middleware('throttle:10,1');
+        Route::post('/post/{postId}', [ContentTranslationController::class, 'translatePost'])->name('post')->middleware('throttle:10,1');
+        Route::post('/campaign/{campaignId}', [ContentTranslationController::class, 'translateCampaign'])->name('campaign')->middleware('throttle:5,1');
+        Route::get('/translation-languages', [ContentTranslationController::class, 'supportedLanguages'])->name('translation.languages');
+        Route::post('/detect', [ContentTranslationController::class, 'detectLanguage'])->name('detect')->middleware('throttle:20,1');
     });
 
     // Agent Management
@@ -566,4 +577,11 @@ Route::middleware(['auth', 'agency'])->group(function () {
 Route::middleware(['auth', 'agency'])->prefix('chat')->name('chat.')->group(function () {
     Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('index');
     Route::get('/{channel}', [\App\Http\Controllers\ChatController::class, 'show'])->name('show');
+});
+
+// Language routes
+Route::middleware('auth')->group(function () {
+    Route::get('/languages', [\App\Http\Controllers\LanguageController::class, 'index'])->name('languages.index');
+    Route::post('/languages/switch', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('languages.switch');
+    Route::get('/languages/current', [\App\Http\Controllers\LanguageController::class, 'current'])->name('languages.current');
 });
