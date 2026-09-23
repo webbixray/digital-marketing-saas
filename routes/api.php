@@ -4,6 +4,7 @@ use App\Http\Controllers\AI\AICreditController;
 use App\Http\Controllers\Api\ApiAgencyController;
 use App\Http\Controllers\Api\ApiAgentController;
 use App\Http\Controllers\Api\ApiAgentWorkflowController;
+use App\Http\Controllers\Api\ApiAiAuditController;
 use App\Http\Controllers\Api\ApiAiController;
 use App\Http\Controllers\Api\ApiAnalyticsController;
 use App\Http\Controllers\Api\ApiCampaignController;
@@ -128,6 +129,15 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
     Route::get('/ai/credits/balance', [AICreditController::class, 'balance'])->name('ai.credits.balance');
     Route::post('/ai/credits/purchase', [AICreditController::class, 'purchase'])->name('ai.credits.purchase');
     Route::get('/ai/credits/success', [AICreditController::class, 'success'])->name('ai.credits.success');
+
+    // AI Audit & Compliance (v7.0)
+    Route::prefix('ai-audit')->name('ai-audit.')->group(function () {
+        Route::get('/', [ApiAiAuditController::class, 'index'])->name('index');
+        Route::get('/report', [ApiAiAuditController::class, 'report'])->name('report');
+        Route::get('/flagged', [ApiAiAuditController::class, 'flagged'])->name('flagged');
+        Route::get('/{id}', [ApiAiAuditController::class, 'show'])->name('show');
+        Route::get('/{id}/explain', [ApiAiAuditController::class, 'explain'])->name('explain');
+    });
 
     // Client Reports
     Route::get('client-reports', [ClientReportController::class, 'index'])->name('client-reports.index');

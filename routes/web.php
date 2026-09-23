@@ -5,10 +5,11 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
+use App\Http\Controllers\AiAuditController;
 use App\Http\Controllers\AiContentController;
 use App\Http\Controllers\AiProviderController;
+use App\Http\Controllers\AiTrainingController;
 use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -176,6 +177,16 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::delete('/{provider}', [AiProviderController::class, 'destroy'])->name('destroy')->middleware('throttle:10,1');
         Route::post('/{provider}/toggle', [AiProviderController::class, 'toggle'])->name('toggle')->middleware('throttle:20,1');
         Route::post('/{provider}/test', [AiProviderController::class, 'test'])->name('test')->middleware('throttle:10,1');
+    });
+
+    // AI Audit & Compliance (v7.0)
+    Route::prefix('ai-audit')->name('ai-audit.')->group(function () {
+        Route::get('/', [AiAuditController::class, 'index'])->name('index');
+        Route::get('/flagged', [AiAuditController::class, 'flagged'])->name('flagged');
+        Route::get('/report', [AiAuditController::class, 'report'])->name('report');
+        Route::get('/export', [AiAuditController::class, 'export'])->name('export');
+        Route::get('/{id}', [AiAuditController::class, 'show'])->name('show');
+        Route::get('/{id}/explain', [AiAuditController::class, 'explain'])->name('explain');
     });
 
     // Content Translation
@@ -606,3 +617,20 @@ Route::middleware(['auth', 'agency'])->prefix('media/ai')->name('media.ai.')->gr
     Route::get('/styles', [\App\Http\Controllers\Media\MediaAiController::class, 'styles'])->name('styles');
     Route::get('/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('analytics');
 });
+
+
+// AI Model Training & Fine-Tuning (v7.0)
+Route::middleware(['auth', 'agency'])->prefix('ai-training')->name('ai-training.')->group(function () {
+    Route::get('/', [App\Http\Controllers\AiTrainingController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\AiTrainingController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\AiTrainingController::class, 'store'])->name('store');
+    Route::get('/datasets', [App\Http\Controllers\AiTrainingController::class, 'datasets'])->name('datasets');
+    Route::post('/datasets/upload', [App\Http\Controllers\AiTrainingController::class, 'uploadDataset'])->name('datasets.upload')->middleware('throttle:5,1');
+    Route::get('/jobs', [App\Http\Controllers\AiTrainingController::class, 'jobs'])->name('jobs');
+    Route::post('/jobs/{job}/cancel', [App\Http\Controllers\AiTrainingController::class, 'cancelJob'])->name('jobs.cancel');
+    Route::get('/jobs/{job}/status', [App\Http\Controllers\AiTrainingController::class, 'jobStatus'])->name('jobs.status');
+    Route::get('/{version}', [App\Http\Controllers\AiTrainingController::class, 'show'])->name('show');
+    Route::post('/{version}/activate', [App\Http\Controllers\AiTrainingController::class, 'activate'])->name('activate');
+    Route::get('/{version}/evaluate', [App\Http\Controllers\AiTrainingController::class, 'evaluate'])->name('evaluate');
+});
+
