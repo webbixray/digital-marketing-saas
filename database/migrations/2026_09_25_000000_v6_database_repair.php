@@ -180,7 +180,7 @@ return new class extends Migration
         }
         
         // MySQL
-        $indexes = DB::select(DB::raw("SHOW INDEX FROM `{$table}`"));
+        $indexes = DB::select("SHOW INDEX FROM `{$table}`");
         foreach ($indexes as $idx) {
             if ($idx->Key_name === $index) {
                 return true;
