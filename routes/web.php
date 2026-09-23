@@ -69,9 +69,9 @@ Route::get('/welcome', [PublicController::class, 'welcome'])->name('public.welco
 Route::get('/terms', [PublicController::class, 'terms'])->name('public.terms');
 Route::get('/privacy', [PublicController::class, 'privacy'])->name('public.privacy');
 Route::get('/contact', [PublicController::class, 'contact'])->name('public.contact');
-Route::post('/contact', [PublicController::class, 'contactSubmit'])->name('public.contact.submit');
+Route::post('/contact', [PublicController::class, 'contactSubmit'])->name('public.contact.submit')->middleware('throttle:10,1');
 Route::get('landing/{slug}', [LandingPageController::class, 'render'])->name('public.landing-page');
-Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter');
+Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('public.newsletter')->middleware('throttle:5,1');
 
 // Email unsubscribe (public, no auth)
 Route::get('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'show'])->name('email.unsubscribe');
@@ -110,7 +110,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/password/reset', [ResetPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('throttle:5,1');
 Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update')->middleware('throttle:5,1');
 
 Route::middleware('throttle:10,1')->group(function () {
     Route::get('/auth/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
@@ -131,20 +131,20 @@ Route::middleware(['auth', 'agency'])->group(function () {
 
     Route::prefix('social')->name('social.')->group(function () {
         Route::resource('accounts', SocialAccountController::class)->except('show');
-        Route::post('accounts/{account}/toggle', [SocialAccountController::class, 'toggle'])->name('accounts.toggle');
+        Route::post('accounts/{account}/toggle', [SocialAccountController::class, 'toggle'])->name('accounts.toggle')->middleware('throttle:10,1');
         Route::resource('posts', SocialPostController::class);
-        Route::post('posts/{post}/publish', [SocialPostController::class, 'publish'])->name('posts.publish');
-        Route::post('posts/{post}/retry', [SocialPostController::class, 'retry'])->name('posts.retry');
-        Route::post('posts/{post}/score', [SocialPostController::class, 'score'])->name('posts.score');
-        Route::post('posts/{post}/agent-schedule', [SocialPostController::class, 'scheduleWithAgent'])->name('posts.agent-schedule');
+        Route::post('posts/{post}/publish', [SocialPostController::class, 'publish'])->name('posts.publish')->middleware('throttle:10,1');
+        Route::post('posts/{post}/retry', [SocialPostController::class, 'retry'])->name('posts.retry')->middleware('throttle:10,1');
+        Route::post('posts/{post}/score', [SocialPostController::class, 'score'])->name('posts.score')->middleware('throttle:20,1');
+        Route::post('posts/{post}/agent-schedule', [SocialPostController::class, 'scheduleWithAgent'])->name('posts.agent-schedule')->middleware('throttle:5,1');
         Route::get('posts/{post}/agent-analyze', [SocialPostController::class, 'analyzeWithAgent'])->name('posts.agent-analyze');
-        Route::post('posts/{post}/agent-reply-suggestions', [SocialPostController::class, 'replySuggestionsWithAgent'])->name('posts.agent-reply-suggestions');
+        Route::post('posts/{post}/agent-reply-suggestions', [SocialPostController::class, 'replySuggestionsWithAgent'])->name('posts.agent-reply-suggestions')->middleware('throttle:10,1');
     });
 
     Route::resource('campaigns', CampaignController::class);
-    Route::post('campaigns/{campaign}/status', [CampaignController::class, 'changeStatus'])->name('campaigns.status');
-    Route::post('campaigns/{campaign}/agent-optimize', [CampaignController::class, 'optimizeWithAgent'])->name('campaigns.agent-optimize');
-    Route::post('campaigns/{campaign}/agent-ab-test', [CampaignController::class, 'abTestWithAgent'])->name('campaigns.agent-ab-test');
+    Route::post('campaigns/{campaign}/status', [CampaignController::class, 'changeStatus'])->name('campaigns.status')->middleware('throttle:10,1');
+    Route::post('campaigns/{campaign}/agent-optimize', [CampaignController::class, 'optimizeWithAgent'])->name('campaigns.agent-optimize')->middleware('throttle:5,1');
+    Route::post('campaigns/{campaign}/agent-ab-test', [CampaignController::class, 'abTestWithAgent'])->name('campaigns.agent-ab-test')->middleware('throttle:5,1');
     Route::get('campaigns/{campaign}/agent-insights', [CampaignController::class, 'getAgentInsights'])->name('campaigns.agent-insights');
 
     Route::resource('clients', ClientController::class);
@@ -156,32 +156,32 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::get('/confirm', [CancellationController::class, 'confirm'])->name('confirm');
     });
 
-    Route::prefix('ai')->name('ai.')->group(function () {
+    Route::middleware(['auth', 'agency'])->prefix('ai')->name('ai.')->group(function () {
         Route::get('/', [AiContentController::class, 'index'])->name('index');
-        Route::post('/generate', [AiContentController::class, 'generate'])->name('generate');
-        Route::post('/rewrite', [AiContentController::class, 'rewrite'])->name('rewrite');
-        Route::post('/hashtags', [AiContentController::class, 'hashtags'])->name('hashtags');
-        Route::post('/ideas', [AiContentController::class, 'ideas'])->name('ideas');
+        Route::post('/generate', [AiContentController::class, 'generate'])->name('generate')->middleware('throttle:10,1');
+        Route::post('/rewrite', [AiContentController::class, 'rewrite'])->name('rewrite')->middleware('throttle:10,1');
+        Route::post('/hashtags', [AiContentController::class, 'hashtags'])->name('hashtags')->middleware('throttle:20,1');
+        Route::post('/ideas', [AiContentController::class, 'ideas'])->name('ideas')->middleware('throttle:20,1');
     });
 
     // AI Provider Management (BYOK)
     Route::prefix('ai-providers')->name('ai-providers.')->group(function () {
         Route::get('/', [AiProviderController::class, 'index'])->name('index');
-        Route::post('/', [AiProviderController::class, 'store'])->name('store');
-        Route::put('/{provider}', [AiProviderController::class, 'update'])->name('update');
-        Route::delete('/{provider}', [AiProviderController::class, 'destroy'])->name('destroy');
-        Route::post('/{provider}/toggle', [AiProviderController::class, 'toggle'])->name('toggle');
-        Route::post('/{provider}/test', [AiProviderController::class, 'test'])->name('test');
+        Route::post('/', [AiProviderController::class, 'store'])->name('store')->middleware('throttle:10,1');
+        Route::put('/{provider}', [AiProviderController::class, 'update'])->name('update')->middleware('throttle:10,1');
+        Route::delete('/{provider}', [AiProviderController::class, 'destroy'])->name('destroy')->middleware('throttle:10,1');
+        Route::post('/{provider}/toggle', [AiProviderController::class, 'toggle'])->name('toggle')->middleware('throttle:20,1');
+        Route::post('/{provider}/test', [AiProviderController::class, 'test'])->name('test')->middleware('throttle:10,1');
     });
 
     // Agent Management
     Route::prefix('agents')->name('agents.')->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
         Route::get('/stats', [AgentController::class, 'stats'])->name('stats');
-        Route::post('/dispatch', [AgentController::class, 'dispatch'])->name('dispatch');
+        Route::post('/dispatch', [AgentController::class, 'dispatch'])->name('dispatch')->middleware('throttle:5,1');
         Route::get('/dashboard', [AgentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/workflows', [AgentController::class, 'workflows'])->name('workflows');
-        Route::post('/run-workflow', [AgentController::class, 'runWorkflow'])->name('run-workflow');
+        Route::post('/run-workflow', [AgentController::class, 'runWorkflow'])->name('run-workflow')->middleware('throttle:5,1');
         Route::get('/{agentName}', [AgentController::class, 'agentDetail'])->name('show');
     });
 
@@ -230,8 +230,8 @@ Route::middleware(['auth', 'agency'])->group(function () {
 
     // Backup Management
     Route::get('/system-backup', [SystemBackupController::class, 'index'])->name('system.backup.index');
-    Route::post('/system-backup', [SystemBackupController::class, 'store'])->name('system.backup.store');
-    Route::post('/system-backup/{filename}/restore', [SystemBackupController::class, 'restore'])->name('system.backup.restore');
+    Route::post('/system-backup', [SystemBackupController::class, 'store'])->name('system.backup.store')->middleware('throttle:3,1');
+    Route::post('/system-backup/{filename}/restore', [SystemBackupController::class, 'restore'])->name('system.backup.restore')->middleware('throttle:3,1');
 
     // A/B Testing
     Route::prefix('ab-testing')->name('ab-testing.')->group(function () {
@@ -307,13 +307,13 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::prefix('email')->name('email.')->group(function () {
         Route::get('/campaigns', [EmailCampaignController::class, 'index'])->name('campaigns.index');
         Route::get('/campaigns/create', [EmailCampaignController::class, 'create'])->name('campaigns.create');
-        Route::post('/campaigns', [EmailCampaignController::class, 'store'])->name('campaigns.store');
+        Route::post('/campaigns', [EmailCampaignController::class, 'store'])->name('campaigns.store')->middleware('throttle:10,1');
         Route::get('/campaigns/{campaign}', [EmailCampaignController::class, 'show'])->name('campaigns.show');
         Route::get('/campaigns/{campaign}/edit', [EmailCampaignController::class, 'edit'])->name('campaigns.edit');
-        Route::put('/campaigns/{campaign}', [EmailCampaignController::class, 'update'])->name('campaigns.update');
-        Route::delete('/campaigns/{campaign}', [EmailCampaignController::class, 'destroy'])->name('campaigns.destroy');
-        Route::post('/campaigns/{campaign}/send', [EmailCampaignController::class, 'send'])->name('campaigns.send');
-        Route::post('/campaigns/{campaign}/add-clients', [EmailCampaignController::class, 'addClients'])->name('campaigns.add-clients');
+        Route::put('/campaigns/{campaign}', [EmailCampaignController::class, 'update'])->name('campaigns.update')->middleware('throttle:10,1');
+        Route::delete('/campaigns/{campaign}', [EmailCampaignController::class, 'destroy'])->name('campaigns.destroy')->middleware('throttle:10,1');
+        Route::post('/campaigns/{campaign}/send', [EmailCampaignController::class, 'send'])->name('campaigns.send')->middleware('throttle:3,1');
+        Route::post('/campaigns/{campaign}/add-clients', [EmailCampaignController::class, 'addClients'])->name('campaigns.add-clients')->middleware('throttle:10,1');
     });
 
     // Email Templates
@@ -338,10 +338,10 @@ Route::middleware(['auth', 'agency'])->group(function () {
     // GDPR
     Route::prefix('gdpr')->name('gdpr.')->group(function () {
         Route::get('/', [GdprController::class, 'index'])->name('index');
-        Route::post('/export', [GdprController::class, 'requestExport'])->name('export');
-        Route::post('/delete', [GdprController::class, 'requestDeletion'])->name('delete');
-        Route::post('/consent', [GdprController::class, 'updateConsent'])->name('consent');
-        Route::post('/ccpa-opt-out', [GdprController::class, 'ccpaOptOut'])->name('ccpa-opt-out');
+        Route::post('/export', [GdprController::class, 'requestExport'])->name('export')->middleware('throttle:5,1');
+        Route::post('/delete', [GdprController::class, 'requestDeletion'])->name('delete')->middleware('throttle:5,1');
+        Route::post('/consent', [GdprController::class, 'updateConsent'])->name('consent')->middleware('throttle:20,1');
+        Route::post('/ccpa-opt-out', [GdprController::class, 'ccpaOptOut'])->name('ccpa-opt-out')->middleware('throttle:5,1');
     });
 
     // GDPR Admin (Compliance Automation Suite)
@@ -360,7 +360,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('agency/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
     Route::get('agency/billing/success', [BillingController::class, 'success'])->name('billing.success');
     Route::get('agency/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
-    Route::post('agency/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription');
+    Route::post('agency/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription')->middleware('throttle:5,1');
     Route::get('agency/invoices', [BillingController::class, 'invoices'])->name('agency.invoices');
     Route::get('agency/invoices/{invoice}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoice.download');
 
@@ -381,45 +381,47 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/analytics/v2', [AnalyticsController::class, 'crossPlatform'])->name('analytics.cross-platform');
 
-    Route::get('/two-factor', [TwoFactorController::class, 'show'])->name('two-factor.show');
-    Route::post('/two-factor/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
-    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
-    Route::post('/two-factor/disable', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+    Route::middleware(['auth', 'agency'])->prefix('two-factor')->name('two-factor.')->group(function () {
+        Route::get('/show', [TwoFactorController::class, 'show'])->name('show');
+        Route::post('/enable', [TwoFactorController::class, 'enable'])->name('enable')->middleware('throttle:5,1');
+        Route::post('/verify', [TwoFactorController::class, 'verify'])->name('verify')->middleware('throttle:10,1');
+        Route::post('/disable', [TwoFactorController::class, 'disable'])->name('disable')->middleware('throttle:5,1');
+    });
 
     // Onboarding (auth only — no agency required yet)
-    Route::prefix('onboarding')->name('onboarding.')->group(function () {
-        Route::get('/', function () {
-            return view('onboarding');
-        });
+    Route::middleware(['auth', 'agency'])->prefix('onboarding')->name('onboarding.')->group(function () {
+            Route::get('/', function () {
+                return view('onboarding');
+            });
 
-        Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
-        Route::post('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1.post');
-        Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
-        Route::post('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2.post');
-        Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
-        Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3.post');
-        Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
-        Route::post('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4.post');
-        Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
-        Route::post('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5.post');
-        Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete');
-        Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart');
-    });
+            Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
+            Route::post('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1.post')->middleware('throttle:5,1');
+            Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
+            Route::post('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2.post')->middleware('throttle:5,1');
+            Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
+            Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3.post')->middleware('throttle:5,1');
+            Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
+            Route::post('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4.post')->middleware('throttle:5,1');
+            Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
+            Route::post('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5.post')->middleware('throttle:5,1');
+            Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete')->middleware('throttle:5,1');
+            Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart')->middleware('throttle:5,1');
+        });
 
     Route::prefix('agency')->name('agency.')->group(function () {
         Route::get('settings', [AgencyController::class, 'settings'])->name('settings');
-        Route::put('settings', [AgencyController::class, 'updateSettings'])->name('settings.update');
+        Route::put('settings', [AgencyController::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
         Route::get('team', [AgencyController::class, 'team'])->name('team');
-        Route::post('team/invite', [AgencyController::class, 'inviteMember'])->name('team.invite');
-        Route::put('team/{member}/role', [AgencyController::class, 'updateMemberRole'])->name('team.role');
-        Route::delete('team/{member}', [AgencyController::class, 'removeMember'])->name('team.remove');
-        Route::post('billing/upgrade', [AgencyController::class, 'upgrade'])->name('billing.upgrade');
+        Route::post('team/invite', [AgencyController::class, 'inviteMember'])->name('team.invite')->middleware('throttle:10,1');
+        Route::put('team/{member}/role', [AgencyController::class, 'updateMemberRole'])->name('team.role')->middleware('throttle:10,1');
+        Route::delete('team/{member}', [AgencyController::class, 'removeMember'])->name('team.remove')->middleware('throttle:10,1');
+        Route::post('billing/upgrade', [AgencyController::class, 'upgrade'])->name('billing.upgrade')->middleware('throttle:5,1');
     });
 
     // Enterprise RBAC
     Route::resource('roles', RoleController::class);
-    Route::post('roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
-    Route::post('roles/remove', [RoleController::class, 'remove'])->name('roles.remove');
+    Route::post('roles/assign', [RoleController::class, 'assign'])->name('roles.assign')->middleware('throttle:10,1');
+    Route::post('roles/remove', [RoleController::class, 'remove'])->name('roles.remove')->middleware('throttle:10,1');
     Route::get('roles/audit', [RoleController::class, 'auditTrail'])->name('roles.audit');
 
 });
@@ -483,9 +485,9 @@ Route::get('/queue-status', [HealthCheckController::class, 'queueStatus'])->name
 
 // Client Approval Workflow
 Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->group(function () {
-    Route::post('/posts/{post}/submit', [ApprovalController::class, 'submit'])->name('submit');
-    Route::post('/posts/{post}/approve', [ApprovalController::class, 'approve'])->name('approve');
-    Route::post('/posts/{post}/reject', [ApprovalController::class, 'reject'])->name('reject');
+    Route::post('/posts/{post}/submit', [ApprovalController::class, 'submit'])->name('submit')->middleware('throttle:10,1');
+    Route::post('/posts/{post}/approve', [ApprovalController::class, 'approve'])->name('approve')->middleware('throttle:10,1');
+    Route::post('/posts/{post}/reject', [ApprovalController::class, 'reject'])->name('reject')->middleware('throttle:10,1');
     Route::get('/pending', [ApprovalController::class, 'pending'])->name('pending');
     Route::get('/client/{client}/posts', [ApprovalController::class, 'clientPosts'])->name('client.posts');
 });
@@ -493,9 +495,9 @@ Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->
 // Client Portal (agency admin settings)
 Route::middleware(['auth', 'agency'])->prefix('client-portal')->name('client-portal.')->group(function () {
     Route::get('/settings', [\App\Http\Controllers\ClientPortalController::class, 'settings'])->name('settings');
-    Route::put('/settings', [\App\Http\Controllers\ClientPortalController::class, 'updateSettings'])->name('settings.update');
-    Route::post('/clients/{client}/generate-token', [\App\Http\Controllers\ClientPortalController::class, 'generateToken'])->name('generate-token');
-    Route::delete('/clients/{client}/tokens/{accessToken}', [\App\Http\Controllers\ClientPortalController::class, 'revokeToken'])->name('revoke-token');
+    Route::put('/settings', [\App\Http\Controllers\ClientPortalController::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
+    Route::post('/clients/{client}/generate-token', [\App\Http\Controllers\ClientPortalController::class, 'generateToken'])->name('generate-token')->middleware('throttle:5,1');
+    Route::delete('/clients/{client}/tokens/{accessToken}', [\App\Http\Controllers\ClientPortalController::class, 'revokeToken'])->name('revoke-token')->middleware('throttle:10,1');
 });
 
 // Client Portal 2.0 (self-service portal for agency clients)
@@ -509,21 +511,21 @@ Route::middleware(['auth', 'agency'])->prefix('client-portal-v2')->name('client-
 // Public client portal (token-based access, no auth required)
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/{token}', [\App\Http\Controllers\ClientPortalController::class, 'show'])->name('show');
-    Route::post('/{token}/posts/{post}/approve', [\App\Http\Controllers\ClientPortalController::class, 'approvePost'])->name('approve-post');
-    Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post');
+    Route::post('/{token}/posts/{post}/approve', [\App\Http\Controllers\ClientPortalController::class, 'approvePost'])->name('approve-post')->middleware('throttle:10,1');
+    Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post')->middleware('throttle:10,1');
 });
 
 // Chat 2.0 (Real-Time Messaging) - MUST be before legacy chat routes
 Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Chat2Controller::class, 'index'])->name('index');
     Route::get('/{channel}', [\App\Http\Controllers\Chat2Controller::class, 'channel'])->name('channel');
-    Route::post('/{channel}/send', [\App\Http\Controllers\Chat2Controller::class, 'sendMessage'])->name('send');
-    Route::post('/{channel}/typing', [\App\Http\Controllers\Chat2Controller::class, 'typing'])->name('typing');
-    Route::post('/{channel}/read', [\App\Http\Controllers\Chat2Controller::class, 'read'])->name('read');
-    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Chat2Controller::class, 'addReaction'])->name('reactions.add');
-    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Chat2Controller::class, 'removeReaction'])->name('reactions.remove');
-    Route::put('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'editMessage'])->name('messages.edit');
-    Route::delete('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'deleteMessage'])->name('messages.delete');
+    Route::post('/{channel}/send', [\App\Http\Controllers\Chat2Controller::class, 'sendMessage'])->name('send')->middleware('throttle:30,1');
+    Route::post('/{channel}/typing', [\App\Http\Controllers\Chat2Controller::class, 'typing'])->name('typing')->middleware('throttle:60,1');
+    Route::post('/{channel}/read', [\App\Http\Controllers\Chat2Controller::class, 'read'])->name('read')->middleware('throttle:30,1');
+    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Chat2Controller::class, 'addReaction'])->name('reactions.add')->middleware('throttle:30,1');
+    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Chat2Controller::class, 'removeReaction'])->name('reactions.remove')->middleware('throttle:30,1');
+    Route::put('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'editMessage'])->name('messages.edit')->middleware('throttle:10,1');
+    Route::delete('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'deleteMessage'])->name('messages.destroy')->middleware('throttle:10,1');
 });
 
 // Team Chat (Legacy - uses slug-based channels)
