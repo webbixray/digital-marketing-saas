@@ -10,6 +10,7 @@ use App\Http\Controllers\AiContentController;
 use App\Http\Controllers\AiProviderController;
 use App\Http\Controllers\AiTrainingController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\PredictiveAnalyticsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -415,6 +416,16 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/analytics/v2', [AnalyticsController::class, 'crossPlatform'])->name('analytics.cross-platform');
 
+    // Predictive Analytics 2.0 (v7.0)
+    Route::prefix('predictive-analytics')->name('predictive.')->group(function () {
+        Route::get('/', [PredictiveAnalyticsController::class, 'dashboard'])->name('dashboard');
+        Route::get('/churn', [PredictiveAnalyticsController::class, 'churn'])->name('churn');
+        Route::get('/revenue', [PredictiveAnalyticsController::class, 'revenue'])->name('revenue');
+        Route::get('/trends', [PredictiveAnalyticsController::class, 'trends'])->name('trends');
+        Route::get('/optimal-times', [PredictiveAnalyticsController::class, 'optimalTimes'])->name('optimal-times');
+        Route::post('/predict', [PredictiveAnalyticsController::class, 'predict'])->name('predict');
+    });
+
     Route::middleware(['auth', 'agency'])->prefix('two-factor')->name('two-factor.')->group(function () {
         Route::get('/show', [TwoFactorController::class, 'show'])->name('show');
         Route::post('/enable', [TwoFactorController::class, 'enable'])->name('enable')->middleware('throttle:5,1');
@@ -634,3 +645,15 @@ Route::middleware(['auth', 'agency'])->prefix('ai-training')->name('ai-training.
     Route::get('/{version}/evaluate', [App\Http\Controllers\AiTrainingController::class, 'evaluate'])->name('evaluate');
 });
 
+
+// AI Agent Marketplace (v7.0)
+Route::middleware(['auth', 'agency'])->prefix('agent-marketplace')->name('agent-marketplace.')->group(function () {
+    Route::get('/', [App\Http\Controllers\AgentMarketplaceController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\AgentMarketplaceController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\AgentMarketplaceController::class, 'store'])->name('store');
+    Route::get('/my-agents', [App\Http\Controllers\AgentMarketplaceController::class, 'myAgents'])->name('my-agents');
+    Route::post('/install', [App\Http\Controllers\AgentMarketplaceController::class, 'install'])->name('install');
+    Route::post('/uninstall', [App\Http\Controllers\AgentMarketplaceController::class, 'uninstall'])->name('uninstall');
+    Route::post('/configure', [App\Http\Controllers\AgentMarketplaceController::class, 'configure'])->name('configure');
+    Route::get('/{slug}', [App\Http\Controllers\AgentMarketplaceController::class, 'show'])->name('show');
+});

@@ -22,6 +22,7 @@ use App\Http\Controllers\ClientReportController;
 use App\Http\Controllers\DashboardInsightsController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\MetricsController;
+use App\Http\Controllers\PredictiveAnalyticsController;
 use App\Http\Controllers\QuotaController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
@@ -229,4 +230,23 @@ Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency'])->as('api.a
 Route::prefix('v1')->middleware(['auth:sanctum', 'agency'])->group(function () {
     Route::post('/media/ai/generate', [\App\Http\Controllers\Media\MediaAiController::class, 'generate'])->name('api.media.ai.generate')->middleware('throttle:10,1');
     Route::get('/media/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('api.media.analytics');
+});
+
+// Predictive Analytics API (v7.0)
+Route::prefix('v1/predictive')->middleware(['auth:sanctum', 'agency'])->name('api.predictive.')->group(function () {
+    Route::get('/churn', [PredictiveAnalyticsController::class, 'churn'])->name('churn');
+    Route::get('/revenue', [PredictiveAnalyticsController::class, 'revenue'])->name('revenue');
+    Route::get('/trends', [PredictiveAnalyticsController::class, 'trends'])->name('trends');
+    Route::get('/optimal-times', [PredictiveAnalyticsController::class, 'optimalTimes'])->name('optimal-times');
+    Route::post('/predict', [PredictiveAnalyticsController::class, 'predict'])->name('predict');
+});
+
+// AI Agent Marketplace API (v7.0)
+Route::prefix('v1/agent-marketplace')->middleware(['auth:sanctum', 'agency'])->as('api.agent-marketplace.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'index'])->name('index');
+    Route::get('/search', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'search'])->name('search');
+    Route::get('/my-agents', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'myAgents'])->name('my-agents');
+    Route::get('/{slug}', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'show'])->name('show');
+    Route::post('/{item}/install', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'install'])->name('install');
+    Route::post('/{item}/configure', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'configure'])->name('configure');
 });
