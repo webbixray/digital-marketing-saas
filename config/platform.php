@@ -197,6 +197,7 @@ return [
             'ai_generations_per_month' => 10,
             'landing_pages' => 0,
             'forms' => 0,
+            'storage_limit_bytes' => 1073741824, // 1 GB
             'features' => [],
         ],
         'starter' => [
@@ -212,6 +213,7 @@ return [
             'ai_generations_per_month' => 50,
             'landing_pages' => 2,
             'forms' => 2,
+            'storage_limit_bytes' => 5368709120, // 5 GB
             'features' => [
                 'analytics',
                 'scheduling',
@@ -231,6 +233,7 @@ return [
             'ai_generations_per_month' => 200,
             'landing_pages' => 10,
             'forms' => 10,
+            'storage_limit_bytes' => 26843545600, // 25 GB
             'features' => [
                 'analytics',
                 'scheduling',
@@ -254,6 +257,7 @@ return [
             'ai_generations_per_month' => -1,
             'landing_pages' => -1,
             'forms' => -1,
+            'storage_limit_bytes' => null, // unlimited
             'features' => [
                 'analytics',
                 'scheduling',

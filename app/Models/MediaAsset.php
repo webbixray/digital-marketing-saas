@@ -23,6 +23,7 @@ class MediaAsset extends Model
         'height',
         'alt_text',
         'folder',
+        'folder_id',
         'tags',
         'is_public',
         'usage_count',
@@ -45,6 +46,11 @@ class MediaAsset extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(MediaFolder::class);
     }
 
     public function scopeImages($query)

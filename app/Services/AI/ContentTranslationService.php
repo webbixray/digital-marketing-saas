@@ -248,9 +248,9 @@ class ContentTranslationService
         if ($originalLength > 0) {
             $lengthRatio = $translatedLength / $originalLength;
 
-            if ($lengthRatio < 0.3 || $ratio > 3.0) {
+            if ($lengthRatio < 0.3 || $lengthRatio > 3.0) {
                 $score -= 30;
-            } elseif ($lengthRatio < 0.5 || $ratio > 2.0) {
+            } elseif ($lengthRatio < 0.5 || $lengthRatio > 2.0) {
                 $score -= 15;
             }
         }

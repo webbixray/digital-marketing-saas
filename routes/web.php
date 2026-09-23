@@ -40,6 +40,8 @@ use App\Http\Controllers\InboxController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MediaLibraryController;
+use App\Http\Controllers\MediaEditorController;
+use App\Http\Controllers\MediaFolderController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PublicClientReportController;
 use App\Http\Controllers\PublicController;
@@ -48,7 +50,7 @@ use App\Http\Controllers\PermissionMatrixController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\Api\ApiSearchController;
+
 use App\Http\Controllers\SocialAccountController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\SupportTicketController;
@@ -182,7 +184,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
         Route::post('/', [ContentTranslationController::class, 'translate'])->name('translate')->middleware('throttle:10,1');
         Route::post('/post/{postId}', [ContentTranslationController::class, 'translatePost'])->name('post')->middleware('throttle:10,1');
         Route::post('/campaign/{campaignId}', [ContentTranslationController::class, 'translateCampaign'])->name('campaign')->middleware('throttle:5,1');
-        Route::get('/translation-languages', [ContentTranslationController::class, 'supportedLanguages'])->name('translation.languages');
+        Route::get('/languages', [ContentTranslationController::class, 'supportedLanguages'])->name('languages');
         Route::post('/detect', [ContentTranslationController::class, 'detectLanguage'])->name('detect')->middleware('throttle:20,1');
     });
 
@@ -227,11 +229,20 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::resource('activity', ActivityLogController::class)->except('create', 'store', 'edit', 'update');
     Route::resource('forms', FormController::class);
 
+    // Media Editor (must be before media resource to avoid conflicts)
+    Route::get('media/{asset}/edit', [MediaEditorController::class, 'edit'])->name('media.edit');
+    Route::put('media/{asset}/edit', [MediaEditorController::class, 'update'])->name('media.update');
+    Route::get('media/quota', [MediaEditorController::class, 'getQuota'])->name('media.quota');
+    Route::get('media/folders-list', [MediaEditorController::class, 'getFolders'])->name('media.folders.list');
+
     // Media Library
-    Route::resource('media', MediaLibraryController::class);
+    Route::resource('media', MediaLibraryController::class)->except(['edit']);
     Route::get('media/{asset}/download', [MediaLibraryController::class, 'download'])->name('media.download');
     Route::post('media/{asset}/duplicate', [MediaLibraryController::class, 'duplicate'])->name('media.duplicate');
     Route::delete('media/bulk-delete', [MediaLibraryController::class, 'bulkDelete'])->name('media.bulk-delete');
+
+    // Media Folders
+    Route::apiResource('media-folders', MediaFolderController::class);
 
     // Support Tickets
     Route::resource('support', SupportTicketController::class);
@@ -584,4 +595,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/languages', [\App\Http\Controllers\LanguageController::class, 'index'])->name('languages.index');
     Route::post('/languages/switch', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('languages.switch');
     Route::get('/languages/current', [\App\Http\Controllers\LanguageController::class, 'current'])->name('languages.current');
+});
+
+// Media AI (v7.0) — AI image generation & analytics
+Route::middleware(['auth', 'agency'])->prefix('media/ai')->name('media.ai.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Media\MediaAiController::class, 'index'])->name('index');
+    Route::post('/generate', [\App\Http\Controllers\Media\MediaAiController::class, 'generate'])->name('generate')->middleware('throttle:10,1');
+    Route::post('/{asset}/edit', [\App\Http\Controllers\Media\MediaAiController::class, 'edit'])->name('edit')->middleware('throttle:10,1');
+    Route::post('/{asset}/variations', [\App\Http\Controllers\Media\MediaAiController::class, 'variations'])->name('variations')->middleware('throttle:10,1');
+    Route::get('/styles', [\App\Http\Controllers\Media\MediaAiController::class, 'styles'])->name('styles');
+    Route::get('/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('analytics');
 });

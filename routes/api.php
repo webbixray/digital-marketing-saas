@@ -214,3 +214,9 @@ Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency'])->as('api.a
     Route::get('/daily', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'daily'])->name('daily');
     Route::get('/top-events', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'topEvents'])->name('top-events');
 });
+
+// Media AI API routes (v7.0)
+Route::prefix('v1')->middleware(['auth:sanctum', 'agency'])->group(function () {
+    Route::post('/media/ai/generate', [\App\Http\Controllers\Media\MediaAiController::class, 'generate'])->name('api.media.ai.generate')->middleware('throttle:10,1');
+    Route::get('/media/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('api.media.analytics');
+});
