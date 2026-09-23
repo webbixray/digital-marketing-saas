@@ -70,6 +70,7 @@
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-4">
         <form action="{{ route('ab-testing.index') }}" method="GET" class="flex flex-wrap gap-4 items-center">
+            @csrf
             <div class="flex items-center gap-2">
                 <label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
                 <select name="status" id="status" class="px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm" onchange="this.form.submit()">

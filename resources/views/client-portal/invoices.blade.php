@@ -81,6 +81,7 @@
         <!-- Filters -->
         <div class="px-6 py-4 bg-gray-50">
             <form method="GET" action="{{ route('client-portal.v2.invoices') }}" class="flex flex-col sm:flex-row gap-4">
+                @csrf
                 @if(request('status'))
                     <input type="hidden" name="status" value="{{ request('status') }}">
                 @endif

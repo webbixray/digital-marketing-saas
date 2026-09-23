@@ -10,6 +10,7 @@
         </div>
         <div class="p-6">
             <form action="{{ route('search.index') }}" method="GET" class="mb-6">
+                @csrf
                 <div class="flex gap-2">
                     <div class="flex-1 relative">
                         <input type="text" name="q" value="{{ $query }}" placeholder="Search posts, campaigns, clients, content..."

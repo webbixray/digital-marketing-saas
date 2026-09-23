@@ -12,6 +12,7 @@
         </div>
         <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
             <form method="GET" action="{{ route('activity.index') }}" class="flex flex-wrap items-end gap-4">
+                @csrf
                 <div>
                     <label for="user_id" class="form-label">User</label>
                     <select name="user_id" id="user_id" class="form-input">
