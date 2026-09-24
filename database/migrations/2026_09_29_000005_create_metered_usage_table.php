@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasTable('metered_usage')) {
-            Schema::create('metered_usage', function (Blueprint $table) {
+        if (! Schema::hasTable('metered_usages')) {
+            Schema::create('metered_usages', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('agency_id')->constrained('agencies')->cascadeOnDelete();
                 $table->string('metric', 50); // ai_tokens, api_calls, storage_gb, etc.
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('metered_usage');
+        Schema::dropIfExists('metered_usages');
     }
 };

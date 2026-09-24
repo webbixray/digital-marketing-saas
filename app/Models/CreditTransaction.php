@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 
 class CreditTransaction extends Model
 {
-    public $timestamps = true;
+    use HasFactory;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'agency_id',
@@ -24,6 +27,7 @@ class CreditTransaction extends Model
         'amount' => 'integer',
         'balance_after' => 'integer',
         'metadata' => 'array',
+        'created_at' => 'datetime',
     ];
 
     public function agency(): BelongsTo

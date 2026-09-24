@@ -124,10 +124,35 @@ class ClientPortal2Controller extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function downloadReport($reportId)
+    public function markAllNotificationsRead(Request $request)
     {
-        $client = $this->getClient(request());
-        $report = ClientReport::where('client_id', $client->id)->findOrFail($reportId);
+        $client = $this->getClient($request);
+        ClientNotification::forClient($client->id)->unread()->update(['is_read' => true, 'read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function profile(Request $request)
+    {
+        $client = $this->getClient($request);
+        $socialAccounts = SocialAccount::where('client_id', $client->id)->get();
+
+        return view('client-portal.profile', compact('client', 'socialAccounts'));
+    }
+
+    public function approvals(Request $request)
+    {
+        $client = $this->getClient($request);
+        $data = $this->service->getApprovalQueue($client->id);
+        return view('client-portal.approvals', $data);
+    }
+
+    public function downloadReport(Request $request, ClientReport $report)
+    {
+        $client = $this->getClient($request);
+        if ($report->client_id !== $client->id) {
+            abort(403);
+        }
 
         return response()->json([
             'report' => $report,

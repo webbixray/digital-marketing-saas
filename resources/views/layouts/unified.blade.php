@@ -314,7 +314,7 @@
                         <span x-show="sidebarMini" class="sidebar-tooltip">Content</span>
                     </div>
                     <div class="group relative">
-                        <a href="{{ route('client-portal.v2.dashboard') }}" 
+                        <a href="{{ url('/client-portal-v2') }}" 
                            class="nav-link {{ request()->routeIs('client-portal.*') ? 'active' : '' }}"
                            :class="sidebarMini ? 'justify-center px-2' : ''"
                            aria-label="Client Portal">

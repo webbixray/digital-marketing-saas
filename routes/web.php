@@ -10,6 +10,7 @@ use App\Http\Controllers\AiContentController;
 use App\Http\Controllers\AiProviderController;
 use App\Http\Controllers\AiTrainingController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\PredictiveAnalyticsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\OAuthController;
@@ -559,11 +560,75 @@ Route::middleware(['auth', 'agency'])->prefix('client-portal')->name('client-por
 });
 
 // Client Portal 2.0 (self-service portal for agency clients)
-Route::middleware(['auth', 'agency'])->prefix('client-portal-v2')->name('client-portal.v2.')->group(function () {
+Route::middleware(['auth', 'agency'])->prefix('client-portal-v2/{client}')->name('client-portal.v2.')->group(function () {
     Route::get('/', [\App\Http\Controllers\ClientPortal2Controller::class, 'dashboard'])->name('dashboard');
     Route::get('/campaigns', [\App\Http\Controllers\ClientPortal2Controller::class, 'campaigns'])->name('campaigns');
     Route::get('/analytics', [\App\Http\Controllers\ClientPortal2Controller::class, 'analytics'])->name('analytics');
     Route::get('/invoices', [\App\Http\Controllers\ClientPortal2Controller::class, 'invoices'])->name('invoices');
+    Route::get('/settings', [\App\Http\Controllers\ClientPortal2Controller::class, 'settings'])->name('settings');
+    Route::put('/settings', [\App\Http\Controllers\ClientPortal2Controller::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
+    Route::get('/activity', [\App\Http\Controllers\ClientPortal2Controller::class, 'activity'])->name('activity');
+    Route::get('/notifications', [\App\Http\Controllers\ClientPortal2Controller::class, 'notifications'])->name('notifications');
+    Route::post('/notifications/{notification}/mark-read', [\App\Http\Controllers\ClientPortal2Controller::class, 'markNotificationRead'])->name('notifications.mark-read')->middleware('throttle:20,1');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\ClientPortal2Controller::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read')->middleware('throttle:10,1');
+    Route::get('/reports/{report}/download', [\App\Http\Controllers\ClientPortal2Controller::class, 'downloadReport'])->name('reports.download');
+    Route::get('/profile', [\App\Http\Controllers\ClientPortal2Controller::class, 'profile'])->name('profile');
+    Route::put('/profile', [\App\Http\Controllers\ClientPortal2Controller::class, 'updateProfile'])->name('profile.update')->middleware('throttle:10,1');
+    Route::put('/password', [\App\Http\Controllers\ClientPortal2Controller::class, 'updatePassword'])->name('password.update')->middleware('throttle:5,1');
+    Route::post('/social/connect', [\App\Http\Controllers\ClientPortal2Controller::class, 'connectSocial'])->name('social.connect')->middleware('throttle:5,1');
+    Route::delete('/social/{account}', [\App\Http\Controllers\ClientPortal2Controller::class, 'disconnectSocial'])->name('social.disconnect')->middleware('throttle:10,1');
+    Route::get('/approvals', [\App\Http\Controllers\ClientPortal2Controller::class, 'approvals'])->name('approvals');
+    Route::post('/approvals/{approval}/approve', [\App\Http\Controllers\ClientPortal2Controller::class, 'approve'])->name('approve')->middleware('throttle:20,1');
+    Route::post('/approvals/{approval}/reject', [\App\Http\Controllers\ClientPortal2Controller::class, 'reject'])->name('reject')->middleware('throttle:20,1');
+});
+
+// Products Resource Routes
+Route::resource('products', \App\Http\Controllers\ProductController::class);
+
+// Social Commerce Routes
+Route::middleware(['auth', 'agency'])->prefix('social-commerce')->name('social-commerce.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SocialCommerceController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\SocialCommerceController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\SocialCommerceController::class, 'store'])->name('store');
+    Route::get('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'show'])->name('show');
+    Route::get('/{post}/edit', [\App\Http\Controllers\SocialCommerceController::class, 'edit'])->name('edit');
+    Route::put('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'update'])->name('update');
+    Route::delete('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'destroy'])->name('destroy');
+    Route::get('/{post}/analytics', [\App\Http\Controllers\SocialCommerceController::class, 'analytics'])->name('analytics');
+    Route::post('/shopify/connect', [\App\Http\Controllers\SocialCommerceController::class, 'shopifyConnect'])->name('shopify-connect');
+    Route::delete('/shopify/disconnect', [\App\Http\Controllers\SocialCommerceController::class, 'shopifyDisconnect'])->name('shopify-disconnect');
+    Route::post('/woo/connect', [\App\Http\Controllers\SocialCommerceController::class, 'wooConnect'])->name('woo-connect');
+    Route::delete('/woo/disconnect', [\App\Http\Controllers\SocialCommerceController::class, 'wooDisconnect'])->name('woo-disconnect');
+});
+
+// Reseller Routes
+Route::middleware(['auth', 'agency'])->prefix('resellers')->name('resellers.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ResellerController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\ResellerController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\ResellerController::class, 'store'])->name('store');
+    Route::get('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'show'])->name('show');
+    Route::get('/{reseller}/edit', [\App\Http\Controllers\ResellerController::class, 'edit'])->name('edit');
+    Route::put('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'update'])->name('update');
+    Route::delete('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'destroy'])->name('destroy');
+    Route::get('/{reseller}/commissions', [\App\Http\Controllers\ResellerController::class, 'commissions'])->name('commissions');
+    Route::post('/{reseller}/commissions/{commission}/pay', [\App\Http\Controllers\ResellerController::class, 'payCommission'])->name('commissions.pay');
+    Route::get('/{reseller}/settings', [\App\Http\Controllers\ResellerController::class, 'settings'])->name('settings');
+    Route::put('/{reseller}/settings', [\App\Http\Controllers\ResellerController::class, 'updateSettings'])->name('settings.update');
+});
+
+// Billing Credits Routes
+Route::prefix('billing/credits')->name('billing.credits.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\CreditController::class, 'index'])->name('index');
+    Route::post('/purchase', [\App\Http\Controllers\CreditController::class, 'purchase'])->name('purchase');
+    Route::get('/usage', [\App\Http\Controllers\CreditController::class, 'usage'])->name('usage');
+    Route::get('/summary', [\App\Http\Controllers\CreditController::class, 'summary'])->name('summary');
+});
+
+// Billing Usage Routes
+Route::prefix('billing/usage')->name('billing.usage.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\UsageController::class, 'index'])->name('index');
+    Route::get('/quota', [\App\Http\Controllers\UsageController::class, 'quota'])->name('quota');
+    Route::get('/metered', [\App\Http\Controllers\UsageController::class, 'metered'])->name('metered');
 });
 
 // Public client portal (token-based access, no auth required)

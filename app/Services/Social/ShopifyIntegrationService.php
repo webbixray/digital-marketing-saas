@@ -33,7 +33,7 @@ class ShopifyIntegrationService
                 'success' => false,
                 'message' => 'Agency not found.',
             ];
-        ]
+        }
 
         // Store credentials encrypted in metadata
         $metadata = $agency->metadata ?? [];
