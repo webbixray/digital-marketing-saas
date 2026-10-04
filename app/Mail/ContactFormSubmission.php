@@ -18,7 +18,7 @@ class ContactFormSubmission extends Mailable implements ShouldQueue
         public readonly string $firstName,
         public readonly string $lastName,
         public readonly string $email,
-        public readonly string $subject,
+        public readonly string $contactSubject,
         public readonly string $message,
     ) {}
 
@@ -27,7 +27,7 @@ class ContactFormSubmission extends Mailable implements ShouldQueue
         return new Envelope(
             from: new Address(config('mail.from.address', 'hello@digitalmarketsaas.com'), config('mail.from.name', 'DigitalMarketingSaaS')),
             replyTo: [$this->email => "{$this->firstName} {$this->lastName}"],
-            subject: "Contact: {$this->subject}",
+            subject: "Contact: {$this->contactSubject}",
         );
     }
 
@@ -39,7 +39,7 @@ class ContactFormSubmission extends Mailable implements ShouldQueue
                 'firstName' => $this->firstName,
                 'lastName' => $this->lastName,
                 'email' => $this->email,
-                'subject' => $this->subject,
+                'subject' => $this->contactSubject,
                 'message' => $this->message,
             ],
         );

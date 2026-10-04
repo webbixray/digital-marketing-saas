@@ -108,6 +108,6 @@ class PinterestDriver extends AbstractPlatformDriver
 
         $meta = $account->metadata ?? [];
 
-        return is_array($meta) && ! empty($meta['board_id']) ? (string) $meta['board_id'] : null;
+        return ! empty($meta['board_id']) ? (string) $meta['board_id'] : null;
     }
 }

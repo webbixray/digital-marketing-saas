@@ -33,7 +33,7 @@ abstract class AbstractPlatformDriver implements SocialPlatformContract
     {
         $media = $post->media ?? [];
 
-        return is_array($media) && ! empty($media[$key]) ? (string) $media[$key] : null;
+        return ! empty($media[$key]) ? (string) $media[$key] : null;
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class AbstractPlatformDriver implements SocialPlatformContract
     private function firstMediaUrl(SocialPost $post, string $key): ?string
     {
         $media = $post->media ?? [];
-        if (! is_array($media) || empty($media[$key]) || ! is_array($media[$key])) {
+        if (empty($media[$key]) || ! is_array($media[$key])) {
             return null;
         }
 

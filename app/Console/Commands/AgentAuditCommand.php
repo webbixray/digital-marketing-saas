@@ -5,11 +5,13 @@ namespace App\Console\Commands;
 use App\Models\SocialPost;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentInterface;
+use App\Services\AI\Agent\AgentMemory;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentResult;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\AI\Agent\SecurityAuditAgent;
 use App\Services\AI\Agent\SelfImprovementEngine;
+use App\Services\AI\Gateway\AiGateway;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +42,10 @@ class AgentAuditCommand extends Command
 
         // Register the security audit agent if not already registered
         if (! $orchestrator->hasAgent('security_auditor')) {
-            $orchestrator->registerAgent('security_auditor', new SecurityAuditAgent);
+            $orchestrator->registerAgent('security_auditor', new SecurityAuditAgent(
+                app(AgentMemory::class),
+                app(AiGateway::class),
+            ));
         }
 
         // Get agents to run

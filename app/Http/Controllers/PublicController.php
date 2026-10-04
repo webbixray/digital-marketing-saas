@@ -116,7 +116,7 @@ class PublicController extends Controller
                     firstName: $data['first_name'],
                     lastName: $data['last_name'],
                     email: $data['email'],
-                    subject: $data['subject'],
+                    contactSubject: $data['subject'],
                     message: $data['message'],
                 ));
         } catch (\Exception $e) {

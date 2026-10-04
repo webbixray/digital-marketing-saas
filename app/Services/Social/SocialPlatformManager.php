@@ -66,7 +66,8 @@ class SocialPlatformManager
         $drivers = [];
 
         foreach (array_keys(config('platform.social_drivers', [])) as $platform) {
-            $drivers[$platform] = $this->for($platform);
+            $name = (string) $platform;
+            $drivers[$name] = $this->for($name);
         }
 
         return $drivers;
@@ -79,9 +80,15 @@ class SocialPlatformManager
      */
     public function configured(): array
     {
-        return array_values(array_filter(
-            array_keys(config('platform.social_drivers', [])),
-            fn (string $platform) => $this->for($platform)->isConfigured(),
-        ));
+        $configured = [];
+
+        foreach (array_keys(config('platform.social_drivers', [])) as $platform) {
+            $name = (string) $platform;
+            if ($this->for($name)->isConfigured()) {
+                $configured[] = $name;
+            }
+        }
+
+        return $configured;
     }
 }

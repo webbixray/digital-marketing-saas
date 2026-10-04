@@ -10,12 +10,18 @@ use Illuminate\Support\Facades\Log;
 /**
  * Security audit agent that checks for common security issues.
  */
-class SecurityAuditAgent implements AgentInterface
+class SecurityAuditAgent extends AbstractAgent
 {
-    public function getName(): string
-    {
-        return 'security_auditor';
-    }
+    protected string $name = 'security_auditor';
+
+    /**
+     * @var array<string>
+     */
+    protected array $supportedTaskTypes = [
+        'security_audit',
+        'vulnerability_scan',
+        'config_review',
+    ];
 
     public function getCategory(): string
     {

@@ -17,6 +17,8 @@ class UnifiedCommentsService
 
     /**
      * Fetch comments for a specific post from its platform.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function fetchComments(SocialAccount $account, string $postId): array
     {
