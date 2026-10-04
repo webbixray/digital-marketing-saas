@@ -3,6 +3,7 @@
 namespace App\Services\AI;
 
 use App\Models\Agency;
+use App\Models\AgentCostLog;
 use App\Services\AI\Gateway\AiGateway;
 use App\Services\AI\Gateway\AiRequest;
 use App\Services\AI\Gateway\AiResponse;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 class CostOptimizationEngine
 {
     protected AiGateway $gateway;
+
     protected AiCacheService $cache;
 
     /**
@@ -140,6 +142,7 @@ class CostOptimizationEngine
 
             if ($cheapest && $cheapest !== $request->provider) {
                 Log::info("Budget pressure ({$pressure}): switching to cheaper provider {$cheapest}");
+
                 return $request->withProvider($cheapest);
             }
         }
@@ -163,6 +166,7 @@ class CostOptimizationEngine
 
         if ($downgraded && $downgraded !== $request->model) {
             Log::debug("Model downgrade: {$request->model} → {$downgraded} (success rate: {$successRate})");
+
             return $request->withModel($downgraded);
         }
 
@@ -178,7 +182,7 @@ class CostOptimizationEngine
         if ($request->systemPrompt && strlen($request->systemPrompt) > 4000) {
             // In production, this would call a fast model to summarize
             // For now, we truncate with a note
-            $truncated = substr($request->systemPrompt, 0, 3500) . '\n[...truncated for efficiency]';
+            $truncated = substr($request->systemPrompt, 0, 3500).'\n[...truncated for efficiency]';
             $request = $request->withSystemPrompt($truncated);
         }
 
@@ -240,7 +244,7 @@ class CostOptimizationEngine
     private function getMonthlyCost(int $agencyId): float
     {
         return (float) Cache::remember("ai_monthly_cost:{$agencyId}", 3600, function () use ($agencyId) {
-            return \App\Models\AgentCostLog::byAgency($agencyId)->currentMonth()->sum('cost_usd');
+            return AgentCostLog::byAgency($agencyId)->currentMonth()->sum('cost_usd');
         });
     }
 
@@ -248,6 +252,7 @@ class CostOptimizationEngine
     {
         $agency = Agency::find($agencyId);
         $plan = $agency->subscription_plan ?? 'free';
+
         return match ($plan) {
             'free' => 5.0,
             'starter' => 50.0,
@@ -261,6 +266,7 @@ class CostOptimizationEngine
     {
         $limit = $this->getBudgetLimit($agencyId);
         $cost = $this->getMonthlyCost($agencyId);
+
         return max(0, $limit - $cost);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Agency;
+use App\Models\AiContentLog;
 use App\Models\OnboardingProgress;
 
 class OnboardingEngine
@@ -60,6 +61,7 @@ class OnboardingEngine
     {
         $progress = $this->getOrCreate($agency, $step);
         $progress->complete($data);
+
         return $progress;
     }
 
@@ -115,7 +117,7 @@ class OnboardingEngine
             ->toArray();
 
         foreach (array_keys(self::STEPS) as $step) {
-            if (!in_array($step, $completedSteps)) {
+            if (! in_array($step, $completedSteps)) {
                 return $step;
             }
         }
@@ -154,7 +156,7 @@ class OnboardingEngine
         }
 
         // AI activated (check AI content logs)
-        if (\App\Models\AiContentLog::where('agency_id', $agency->id)->exists()) {
+        if (AiContentLog::where('agency_id', $agency->id)->exists()) {
             $this->completeStep($agency, 'ai_activated');
         }
     }

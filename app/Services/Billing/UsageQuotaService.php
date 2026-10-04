@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\UsageQuota;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class UsageQuotaService
@@ -89,7 +90,7 @@ class UsageQuotaService
         return true;
     }
 
-    public function getExceededQuotas(int $agencyId): \Illuminate\Database\Eloquent\Collection
+    public function getExceededQuotas(int $agencyId): Collection
     {
         return UsageQuota::byAgency($agencyId)
             ->whereColumn('used', '>', 'limit')

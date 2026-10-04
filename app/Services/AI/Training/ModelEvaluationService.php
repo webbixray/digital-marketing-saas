@@ -4,8 +4,6 @@ namespace App\Services\AI\Training;
 
 use App\Models\AiModelVersion;
 use App\Models\AiTrainingDataset;
-use App\Models\AiTrainingJob;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class ModelEvaluationService
@@ -48,8 +46,8 @@ class ModelEvaluationService
     /**
      * Calculate metrics from predictions and ground truth.
      *
-     * @param array<int, string> $predictions
-     * @param array<int, string> $groundTruth
+     * @param  array<int, string>  $predictions
+     * @param  array<int, string>  $groundTruth
      * @return array<string, float>
      */
     public function calculateMetrics(array $predictions, array $groundTruth): array

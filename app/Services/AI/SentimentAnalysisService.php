@@ -41,7 +41,7 @@ PROMPT;
             );
 
             $agency = auth()->user()->agency ?? null;
-            if (!$agency) {
+            if (! $agency) {
                 return 'neutral';
             }
 
@@ -63,6 +63,7 @@ PROMPT;
             return 'neutral';
         } catch (\Exception $e) {
             Log::warning("AI sentiment analysis failed: {$e->getMessage()}");
+
             return 'neutral';
         }
     }
