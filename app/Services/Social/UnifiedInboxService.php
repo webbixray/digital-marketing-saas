@@ -16,6 +16,10 @@ class UnifiedInboxService
     /**
      * Get unified inbox for an agency.
      */
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
     public function getInbox(Agency $agency, array $filters = []): array
     {
         $cacheKey = "inbox:{$agency->id}:".md5(serialize($filters));
@@ -79,6 +83,9 @@ class UnifiedInboxService
     /**
      * Get message count by platform.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getByPlatform(Agency $agency): array
     {
         return Cache::remember("inbox:{$agency->id}:by_platform", self::CACHE_TTL, function () use ($agency) {
@@ -92,6 +99,9 @@ class UnifiedInboxService
 
     /**
      * Get message count by type.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getByType(Agency $agency): array
     {
@@ -181,6 +191,9 @@ class UnifiedInboxService
 
     /**
      * Get connected platforms for the agency.
+     */
+    /**
+     * @return array<int, string>
      */
     public function getConnectedPlatforms(Agency $agency): array
     {

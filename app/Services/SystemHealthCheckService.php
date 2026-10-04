@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Centralized system health check service.
@@ -12,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class SystemHealthCheckService
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function checkDatabase(): array
     {
         try {
@@ -34,6 +36,9 @@ class SystemHealthCheckService
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkQueue(): array
     {
         try {
@@ -56,10 +61,13 @@ class SystemHealthCheckService
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkCache(): array
     {
         try {
-            $key = 'health_check_' . time();
+            $key = 'health_check_'.time();
             Cache::put($key, true, 10);
             $value = Cache::get($key);
             Cache::forget($key);
@@ -80,6 +88,9 @@ class SystemHealthCheckService
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkStorage(): array
     {
         try {
@@ -87,7 +98,7 @@ class SystemHealthCheckService
             if (! is_dir($path)) {
                 mkdir($path, 0755, true);
             }
-            $file = $path . '/check.txt';
+            $file = $path.'/check.txt';
             file_put_contents($file, 'ok');
             $value = file_get_contents($file);
             unlink($file);
@@ -113,6 +124,9 @@ class SystemHealthCheckService
      * Run all core health checks.
      *
      * @return array{status: string, checks: array, healthy: bool}
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function runAll(): array
     {

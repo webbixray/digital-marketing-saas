@@ -11,6 +11,9 @@ class PerformanceService
     /**
      * Get database performance metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getDatabaseMetrics(): array
     {
         $connection = config('database.default');
@@ -45,6 +48,9 @@ class PerformanceService
     /**
      * Get cache performance metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getCacheMetrics(): array
     {
         return [
@@ -55,6 +61,9 @@ class PerformanceService
 
     /**
      * Get storage metrics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getStorageMetrics(): array
     {
@@ -73,6 +82,9 @@ class PerformanceService
     /**
      * Get queue metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getQueueMetrics(): array
     {
         return [
@@ -84,6 +96,9 @@ class PerformanceService
 
     /**
      * Get all performance metrics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getAllMetrics(): array
     {

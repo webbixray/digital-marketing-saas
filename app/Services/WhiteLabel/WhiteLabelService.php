@@ -65,6 +65,9 @@ class WhiteLabelService
     /**
      * Get all branded assets for an agency.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getBrandedAssets(int $agencyId): array
     {
         $settings = WhiteLabelSetting::where('agency_id', $agencyId)->first();
@@ -89,6 +92,9 @@ class WhiteLabelService
 
     /**
      * Send a branded email for an agency.
+     */
+    /**
+     * @param  array<string, mixed>  $data
      */
     public function sendBrandedEmail(int $agencyId, string $template, array $data): void
     {
@@ -185,6 +191,9 @@ class WhiteLabelService
     /**
      * Get default brand assets when no settings exist.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getDefaultAssets(): array
     {
         return [
@@ -204,6 +213,9 @@ class WhiteLabelService
     /**
      * Render an email template with data.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     private function renderTemplate(string $template, array $data): string
     {
         // Try agency-specific template first, then fall back to default
@@ -221,6 +233,9 @@ class WhiteLabelService
 
     /**
      * Build a simple fallback HTML email.
+     */
+    /**
+     * @param  array<string, mixed>  $data
      */
     private function buildFallbackEmail(array $data): string
     {

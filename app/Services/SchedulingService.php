@@ -9,7 +9,9 @@ use App\Models\SocialPost;
 class SchedulingService
 {
     /**
-     * Calculate optimal posting times based on agency's historical data
+     * * Calculate optimal posting times based on agency's historical data
+     *
+     * * @return list<array<string, float|int>>
      */
     public function calculateOptimalTimes(Agency $agency, string $platform = 'all'): array
     {
@@ -17,7 +19,7 @@ class SchedulingService
         $posts = SocialPost::where('agency_id', $agency->id)
             ->where('status', 'published')
             ->whereNotNull('published_at')
-            ->when($platform !== 'all', fn($q) => $q->where('platform', $platform))
+            ->when($platform !== 'all', fn ($q) => $q->where('platform', $platform))
             ->get();
 
         if ($posts->isEmpty()) {
@@ -32,7 +34,7 @@ class SchedulingService
             $engagement = $post->engagement_score ?? $this->estimateEngagement($post);
 
             $key = "{$day}_{$hour}";
-            if (!isset($scores[$key])) {
+            if (! isset($scores[$key])) {
                 $scores[$key] = ['total' => 0, 'count' => 0, 'day' => $day, 'hour' => $hour];
             }
             $scores[$key]['total'] += $engagement;
@@ -51,13 +53,15 @@ class SchedulingService
         }
 
         // Sort by engagement score descending
-        usort($optimalTimes, fn($a, $b) => $b['engagement_score'] <=> $a['engagement_score']);
+        usort($optimalTimes, fn ($a, $b) => $b['engagement_score'] <=> $a['engagement_score']);
 
         return array_slice($optimalTimes, 0, 20);
     }
 
     /**
-     * Get best posting times for a specific platform
+     * * Get best posting times for a specific platform
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getBestTimes(Agency $agency, string $platform, int $limit = 5): array
     {
@@ -70,7 +74,9 @@ class SchedulingService
     }
 
     /**
-     * Store calculated optimal times
+     * * Store calculated optimal times
+     *
+     * * @param  array<string, mixed>  $times
      */
     public function storeOptimalTimes(Agency $agency, array $times): void
     {
@@ -91,7 +97,9 @@ class SchedulingService
     }
 
     /**
-     * Get recommended time slots for the next 7 days
+     * * Get recommended time slots for the next 7 days
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getRecommendedSlots(Agency $agency, string $platform = 'all', int $slots = 7): array
     {
@@ -113,7 +121,7 @@ class SchedulingService
                 $recommendations[] = [
                     'date' => $date->toDateString(),
                     'day_name' => $date->format('l'),
-                    'slots' => $bestHours->map(fn($t) => [
+                    'slots' => $bestHours->map(fn ($t) => [
                         'hour' => $t->hour,
                         'score' => $t->engagement_score,
                         'time' => sprintf('%02d:00', $t->hour),
@@ -126,7 +134,9 @@ class SchedulingService
     }
 
     /**
-     * Get default optimal times when no historical data exists
+     * * Get default optimal times when no historical data exists
+     *
+     * * @return array<int, array<string, float|int>>
      */
     private function getDefaultOptimalTimes(): array
     {

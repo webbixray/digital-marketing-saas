@@ -4,9 +4,7 @@ namespace App\Services\Media;
 
 use App\Models\MediaAsset;
 use App\Models\SocialPost;
-use App\Models\User;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class MediaAnalyticsService
 {
@@ -23,7 +21,9 @@ class MediaAnalyticsService
     }
 
     /**
-     * Get storage usage trends over time.
+     * * Get storage usage trends over time.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getStorageTrends(int $agencyId, int $days = 30): array
     {
@@ -54,7 +54,9 @@ class MediaAnalyticsService
     }
 
     /**
-     * Get file type breakdown by agency.
+     * * Get file type breakdown by agency.
+     *
+     * * @return list<array<string, mixed>>
      */
     public function getFileTypeBreakdown(int $agencyId): array
     {
@@ -80,7 +82,9 @@ class MediaAnalyticsService
     }
 
     /**
-     * Get upload activity over time.
+     * * Get upload activity over time.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getUploadActivity(int $agencyId, int $days = 30): array
     {
@@ -108,7 +112,9 @@ class MediaAnalyticsService
     }
 
     /**
-     * Get usage statistics for a specific asset.
+     * * Get usage statistics for a specific asset.
+     *
+     * * @return array<string, mixed>
      */
     public function getAssetUsageStats(int $assetId): array
     {
@@ -141,7 +147,9 @@ class MediaAnalyticsService
     }
 
     /**
-     * Get summary analytics for dashboard.
+     * * Get summary analytics for dashboard.
+     *
+     * * @return array<string, mixed>
      */
     public function getSummaryAnalytics(int $agencyId): array
     {

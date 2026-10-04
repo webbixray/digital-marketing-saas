@@ -17353,36 +17353,6 @@ parameters:
 			path: app/Services/Billing/WhiteLabelService.php
 
 		-
-			message: '#^Method App\\Services\\BulkOperationService\:\:bulkCampaignStatus\(\) has parameter \$campaignIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Method App\\Services\\BulkOperationService\:\:bulkCreateClients\(\) has parameter \$clients with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Method App\\Services\\BulkOperationService\:\:bulkDelete\(\) has parameter \$postIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Method App\\Services\\BulkOperationService\:\:bulkSchedule\(\) has parameter \$postIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Method App\\Services\\BulkOperationService\:\:getStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$platform_display_name\.$#'
 			identifier: property.notFound
 			count: 1
@@ -18193,36 +18163,6 @@ parameters:
 			path: app/Services/OnboardingEngine.php
 
 		-
-			message: '#^Method App\\Services\\PerformanceService\:\:getAllMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PerformanceService.php
-
-		-
-			message: '#^Method App\\Services\\PerformanceService\:\:getCacheMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PerformanceService.php
-
-		-
-			message: '#^Method App\\Services\\PerformanceService\:\:getDatabaseMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PerformanceService.php
-
-		-
-			message: '#^Method App\\Services\\PerformanceService\:\:getQueueMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PerformanceService.php
-
-		-
-			message: '#^Method App\\Services\\PerformanceService\:\:getStorageMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PerformanceService.php
-
-		-
 			message: '#^Method App\\Services\\Queue\\QueueHealthService\:\:getHealthCheck\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -18919,36 +18859,6 @@ parameters:
 			path: app/Services/Social/TwitterApiService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\UnifiedInboxService\:\:getByPlatform\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/UnifiedInboxService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\UnifiedInboxService\:\:getByType\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/UnifiedInboxService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\UnifiedInboxService\:\:getConnectedPlatforms\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/UnifiedInboxService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\UnifiedInboxService\:\:getInbox\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/UnifiedInboxService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\UnifiedInboxService\:\:getInbox\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/UnifiedInboxService.php
-
-		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
 			count: 3
@@ -18965,36 +18875,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\SystemHealthCheckService\:\:checkCache\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SystemHealthCheckService.php
-
-		-
-			message: '#^Method App\\Services\\SystemHealthCheckService\:\:checkDatabase\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SystemHealthCheckService.php
-
-		-
-			message: '#^Method App\\Services\\SystemHealthCheckService\:\:checkQueue\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SystemHealthCheckService.php
-
-		-
-			message: '#^Method App\\Services\\SystemHealthCheckService\:\:checkStorage\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SystemHealthCheckService.php
-
-		-
-			message: '#^Method App\\Services\\SystemHealthCheckService\:\:runAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/SystemHealthCheckService.php
 
 		-
 			message: '#^Method App\\Services\\Telegram\\TelegramBotService\:\:handleCallback\(\) has parameter \$callback with no value type specified in iterable type array\.$#'
@@ -19095,36 +18975,6 @@ parameters:
 		-
 			message: '#^Argument of an invalid type list\<array\>\|false supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 1
-			path: app/Services/WhiteLabel/WhiteLabelService.php
-
-		-
-			message: '#^Method App\\Services\\WhiteLabel\\WhiteLabelService\:\:buildFallbackEmail\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/WhiteLabel/WhiteLabelService.php
-
-		-
-			message: '#^Method App\\Services\\WhiteLabel\\WhiteLabelService\:\:getBrandedAssets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/WhiteLabel/WhiteLabelService.php
-
-		-
-			message: '#^Method App\\Services\\WhiteLabel\\WhiteLabelService\:\:getDefaultAssets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/WhiteLabel/WhiteLabelService.php
-
-		-
-			message: '#^Method App\\Services\\WhiteLabel\\WhiteLabelService\:\:renderTemplate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/WhiteLabel/WhiteLabelService.php
-
-		-
-			message: '#^Method App\\Services\\WhiteLabel\\WhiteLabelService\:\:sendBrandedEmail\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/WhiteLabel/WhiteLabelService.php
 

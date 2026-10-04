@@ -14,6 +14,9 @@ class BulkOperationService
     /**
      * Bulk schedule posts.
      */
+    /**
+     * @param  array<int, int>  $postIds
+     */
     public function bulkSchedule(Agency $agency, array $postIds, string $scheduledAt): int
     {
         return SocialPost::where('agency_id', $agency->id)
@@ -28,6 +31,9 @@ class BulkOperationService
     /**
      * Bulk delete posts.
      */
+    /**
+     * @param  array<int, int>  $postIds
+     */
     public function bulkDelete(Agency $agency, array $postIds): int
     {
         return SocialPost::where('agency_id', $agency->id)
@@ -38,6 +44,9 @@ class BulkOperationService
     /**
      * Bulk change campaign status.
      */
+    /**
+     * @param  array<int, int>  $campaignIds
+     */
     public function bulkCampaignStatus(Agency $agency, array $campaignIds, string $status): int
     {
         return Campaign::where('agency_id', $agency->id)
@@ -47,6 +56,9 @@ class BulkOperationService
 
     /**
      * Bulk create clients from array.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $clients
      */
     public function bulkCreateClients(Agency $agency, array $clients): int
     {
@@ -73,6 +85,9 @@ class BulkOperationService
 
     /**
      * Get bulk operation stats.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getStats(Agency $agency): array
     {
