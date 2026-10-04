@@ -3,7 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\CreditTransaction;
-use App\Models\MeteredUsage;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -23,6 +23,9 @@ class CreditService
         return 0;
     }
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function addCredits(int $agencyId, int $amount, string $description, ?int $userId = null, array $metadata = []): CreditTransaction
     {
         return DB::transaction(function () use ($agencyId, $amount, $description, $userId, $metadata) {
@@ -50,6 +53,9 @@ class CreditService
         });
     }
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function useCredits(int $agencyId, int $amount, string $description, ?int $userId = null, array $metadata = []): ?CreditTransaction
     {
         return DB::transaction(function () use ($agencyId, $amount, $description, $userId, $metadata) {
@@ -61,6 +67,7 @@ class CreditService
                     'requested' => $amount,
                     'available' => $currentBalance,
                 ]);
+
                 return null;
             }
 
@@ -87,6 +94,9 @@ class CreditService
         });
     }
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function refundCredits(int $agencyId, int $amount, string $description, ?int $userId = null, array $metadata = []): CreditTransaction
     {
         return DB::transaction(function () use ($agencyId, $amount, $description, $userId, $metadata) {
@@ -114,7 +124,7 @@ class CreditService
         });
     }
 
-    public function getTransactionHistory(int $agencyId, int $limit = 50): \Illuminate\Database\Eloquent\Collection
+    public function getTransactionHistory(int $agencyId, int $limit = 50): Collection
     {
         return CreditTransaction::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
@@ -122,6 +132,9 @@ class CreditService
             ->get();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCreditSummary(int $agencyId): array
     {
         $transactions = CreditTransaction::where('agency_id', $agencyId);

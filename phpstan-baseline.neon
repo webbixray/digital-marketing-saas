@@ -16939,32 +16939,8 @@ parameters:
 			path: app/Services/Billing/CommissionService.php
 
 		-
-			message: '#^Method App\\Services\\Billing\\CreditService\:\:addCredits\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/CreditService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\CreditService\:\:getCreditSummary\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/CreditService.php
-
-		-
 			message: '#^Method App\\Services\\Billing\\CreditService\:\:getTransactionHistory\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Billing/CreditService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\CreditService\:\:refundCredits\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/CreditService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\CreditService\:\:useCredits\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Billing/CreditService.php
 
@@ -16993,26 +16969,8 @@ parameters:
 			path: app/Services/Billing/MeteredBillingService.php
 
 		-
-			message: '#^Method App\\Services\\Billing\\MeteredBillingService\:\:getBillItems\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/MeteredBillingService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\MeteredBillingService\:\:getQuotaStatus\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/MeteredBillingService.php
-
-		-
 			message: '#^Method App\\Services\\Billing\\MeteredBillingService\:\:getUsage\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Billing/MeteredBillingService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\MeteredBillingService\:\:getUsageSummary\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Billing/MeteredBillingService.php
 

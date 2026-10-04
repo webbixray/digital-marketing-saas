@@ -53,6 +53,9 @@ class MeteredBillingService
         return $query->get();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getUsageSummary(int $agencyId, ?Carbon $start = null, ?Carbon $end = null): array
     {
         $start = $start ?? now()->startOfMonth();
@@ -64,7 +67,7 @@ class MeteredBillingService
         $byMetric = [];
 
         foreach ($records->get() as $record) {
-            if (!isset($byMetric[$record->metric])) {
+            if (! isset($byMetric[$record->metric])) {
                 $byMetric[$record->metric] = [
                     'total_quantity' => 0,
                     'total_price' => 0,
@@ -98,6 +101,9 @@ class MeteredBillingService
         return round($query->sum('total_price'), 4);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getBillItems(int $agencyId, ?Carbon $start = null, ?Carbon $end = null): array
     {
         $start = $start ?? now()->startOfMonth();
@@ -139,6 +145,9 @@ class MeteredBillingService
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQuotaStatus(int $agencyId): array
     {
         $quotas = UsageQuota::byAgency($agencyId)->get();
