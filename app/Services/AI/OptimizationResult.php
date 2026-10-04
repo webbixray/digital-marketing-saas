@@ -19,7 +19,7 @@ class OptimizationResult
         return [
             'campaign_id' => $this->campaignId,
             'applied_changes' => $this->appliedChanges,
-            'pending_approval' => array_map(fn($s) => $s->toArray(), $this->pendingApproval),
+            'pending_approval' => array_map(fn ($s) => $s->toArray(), $this->pendingApproval),
             'predicted_improvement' => $this->predictedImprovement,
             'timestamp' => $this->timestamp->toISOString(),
         ];

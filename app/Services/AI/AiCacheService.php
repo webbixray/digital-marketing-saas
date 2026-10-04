@@ -48,6 +48,7 @@ class AiCacheService
 
         if ($cached === null) {
             $this->recordMiss($agency->id);
+
             return null;
         }
 
@@ -69,6 +70,7 @@ class AiCacheService
         // Compress: don't cache if response is too large (> 50KB)
         if (strlen($response->content) > 50000) {
             Log::debug("AI cache skip: response too large ({$response->content} chars)");
+
             return;
         }
 
@@ -112,6 +114,7 @@ class AiCacheService
         $total = $agencyMetrics['hits'] + $agencyMetrics['misses'];
         $agencyMetrics['hit_rate'] = $total > 0 ? round($agencyMetrics['hits'] / $total * 100, 1) : 0.0;
         $agencyMetrics['total_requests'] = $total;
+
         return $agencyMetrics;
     }
 
@@ -121,6 +124,7 @@ class AiCacheService
     public function getSavings(int $agencyId): float
     {
         $metrics = Cache::get(self::METRICS_KEY, []);
+
         return $metrics[$agencyId]['saved_usd'] ?? 0.0;
     }
 
@@ -146,7 +150,7 @@ class AiCacheService
             $request->task,
         ]);
 
-        return 'ai_response:' . $agency->id . ':' . hash('sha256', $keyData) . ':' . $request->task;
+        return 'ai_response:'.$agency->id.':'.hash('sha256', $keyData).':'.$request->task;
     }
 
     /**
@@ -159,6 +163,7 @@ class AiCacheService
     {
         $prompt = trim($prompt);
         $prompt = preg_replace('/\s+/', ' ', $prompt);
+
         return strtolower($prompt);
     }
 
@@ -189,7 +194,7 @@ class AiCacheService
         return new AiResponse(
             content: $data['content'],
             model: $data['model'],
-            provider: $data['provider'] . ':cached',
+            provider: $data['provider'].':cached',
             promptTokens: $data['prompt_tokens'],
             completionTokens: $data['completion_tokens'],
             totalTokens: $data['total_tokens'],

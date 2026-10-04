@@ -2,10 +2,10 @@
 
 namespace App\Services\Webhooks;
 
+use App\Events\WebhookReceived;
 use App\Models\WebhookProcessingLog;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class WebhookProcessor
 {
@@ -47,7 +47,7 @@ class WebhookProcessor
             'max_attempts' => 5,
         ]);
 
-        event(new \App\Events\WebhookReceived(
+        event(new WebhookReceived(
             platform: $platform,
             eventType: $eventType,
             webhookId: $webhookId,
@@ -90,10 +90,10 @@ class WebhookProcessor
         };
 
         if ($id) {
-            return $platform . '_' . $id;
+            return $platform.'_'.$id;
         }
 
-        return $platform . '_' . md5(json_encode($payload) . now()->format('Y-m-d-H-i'));
+        return $platform.'_'.md5(json_encode($payload).now()->format('Y-m-d-H-i'));
     }
 
     private function isDuplicate(string $webhookId): bool
@@ -141,6 +141,7 @@ class WebhookProcessor
 
         if (! $secret) {
             Log::warning("No webhook secret configured for platform: {$platform}");
+
             return false;
         }
 
@@ -156,7 +157,7 @@ class WebhookProcessor
             return config('webhooks.allow_unsigned', false);
         }
 
-        $expected = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+        $expected = 'sha256='.hash_hmac('sha256', $payload, $secret);
 
         return hash_equals($expected, $signature);
     }
