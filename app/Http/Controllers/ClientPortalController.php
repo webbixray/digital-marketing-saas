@@ -12,6 +12,10 @@ use Illuminate\Support\Str;
 
 class ClientPortalController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'agency']);
+    }
     /**
      * Show the client portal settings page (agency admin)
      */

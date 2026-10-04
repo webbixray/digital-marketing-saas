@@ -14,6 +14,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class Chat2Controller extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'agency']);
+    }
     /**
      * Show chat index page with sidebar
      */

@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class MetricsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:owner|admin']);
+    }
+
     /**
      * Get key SaaS metrics (admin only)
      */

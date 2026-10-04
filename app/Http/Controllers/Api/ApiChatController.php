@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class ApiChatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
+
     /**
      * List channels for the agency
      */

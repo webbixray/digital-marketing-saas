@@ -17,6 +17,7 @@ class ClientPortal2Controller extends Controller
 
     public function __construct(ClientPortalService $service)
     {
+        $this->middleware(['auth', 'agency']);
         $this->service = $service;
     }
 

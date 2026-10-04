@@ -10,7 +10,9 @@ class DashboardInsightsController extends Controller
 {
     public function __construct(
         private readonly DashboardInsightsService $insightsService,
-    ) {}
+    ) {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
 
     /**
      * Get AI-powered dashboard insights for the current agency

@@ -16,7 +16,9 @@ class AICreditController extends Controller
 {
     public function __construct(
         private readonly QuotaService $quotaService,
-    ) {}
+    ) {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
 
     /**
      * Get current credit balance for the agency

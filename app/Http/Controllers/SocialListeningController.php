@@ -16,6 +16,7 @@ class SocialListeningController extends Controller
 
     public function __construct(SocialListeningService $service)
     {
+        $this->middleware(['auth', 'agency']);
         $this->service = $service;
     }
 

@@ -11,7 +11,9 @@ class OnboardingController extends Controller
 {
     public function __construct(
         private OnboardingEngine $engine
-    ) {}
+    ) {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
 
     /**
      * Get onboarding progress for the authenticated agency

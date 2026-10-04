@@ -12,7 +12,9 @@ class QuotaController extends Controller
 {
     public function __construct(
         private readonly QuotaService $quotaService,
-    ) {}
+    ) {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
 
     /**
      * Get current quota status for the agency
