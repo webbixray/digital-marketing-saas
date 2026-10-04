@@ -16855,36 +16855,6 @@ parameters:
 			path: app/Services/Analytics/Predictive/OptimalTimeService.php
 
 		-
-			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:getAudienceActivity\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
-			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:getBestPostingTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
-			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:getBestTimesForPlatform\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
-			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:getEngagementHeatmap\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
-			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:predictBestTime\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1

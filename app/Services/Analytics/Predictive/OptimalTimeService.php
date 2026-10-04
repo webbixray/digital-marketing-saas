@@ -3,7 +3,6 @@
 namespace App\Services\Analytics\Predictive;
 
 use App\Models\SocialPost;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +12,9 @@ class OptimalTimeService
 
     private const PLATFORMS = ['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube'];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getBestPostingTimes(int $agencyId, ?string $platform = null): array
     {
         $platforms = $platform ? [$platform] : self::PLATFORMS;
@@ -29,6 +31,9 @@ class OptimalTimeService
         return $results;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEngagementHeatmap(int $agencyId, string $platform): array
     {
         return Cache::remember("optimal:heatmap:{$agencyId}:{$platform}", self::CACHE_TTL, function () use ($agencyId, $platform) {
@@ -103,11 +108,14 @@ class OptimalTimeService
                 'peak_day' => $peakDay,
                 'peak_hour' => $peakHour,
                 'peak_engagement' => $peakValue,
-                'formatted_peak' => "{$peakDay} " . sprintf('%02d:00', $peakHour),
+                'formatted_peak' => "{$peakDay} ".sprintf('%02d:00', $peakHour),
             ];
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function predictBestTime(int $agencyId, string $platform, string $contentType): array
     {
         return Cache::remember("optimal:predict:{$agencyId}:{$platform}:{$contentType}", self::CACHE_TTL, function () use ($agencyId, $platform, $contentType) {
@@ -149,6 +157,9 @@ class OptimalTimeService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAudienceActivity(int $agencyId, string $platform): array
     {
         return Cache::remember("optimal:activity:{$agencyId}:{$platform}", self::CACHE_TTL, function () use ($agencyId, $platform) {
@@ -194,6 +205,9 @@ class OptimalTimeService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getBestTimesForPlatform(int $agencyId, string $platform): array
     {
         return Cache::remember("optimal:best:{$agencyId}:{$platform}", self::CACHE_TTL, function () use ($agencyId, $platform) {

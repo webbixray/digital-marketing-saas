@@ -4,7 +4,6 @@ namespace App\Services\Analytics\Predictive;
 
 use App\Models\ClientSubscription;
 use App\Models\Invoice;
-use App\Models\Plan;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -18,7 +17,9 @@ class RevenueForecastService
     private const CACHE_TTL = 300;
 
     /**
-     * Forecast revenue for the next N months.
+     * * Forecast revenue for the next N months.
+     *
+     * * @return array<string, mixed>
      */
     public function forecastRevenue(int $agencyId, int $months = 3): array
     {
@@ -56,7 +57,9 @@ class RevenueForecastService
     }
 
     /**
-     * Forecast Monthly Recurring Revenue.
+     * * Forecast Monthly Recurring Revenue.
+     *
+     * * @return array<string, mixed>
      */
     public function forecastMRR(int $agencyId): array
     {
@@ -85,7 +88,9 @@ class RevenueForecastService
     }
 
     /**
-     * Forecast Annual Recurring Revenue.
+     * * Forecast Annual Recurring Revenue.
+     *
+     * * @return array<string, mixed>
      */
     public function forecastARR(int $agencyId): array
     {
@@ -118,7 +123,9 @@ class RevenueForecastService
     }
 
     /**
-     * Get revenue trends for a given period.
+     * * Get revenue trends for a given period.
+     *
+     * * @return array<string, mixed>
      */
     public function getRevenueTrends(int $agencyId, string $period = 'quarterly'): array
     {
@@ -137,7 +144,7 @@ class RevenueForecastService
             ->groupBy(function ($invoice) use ($interval) {
                 return match ($interval['group']) {
                     'day' => Carbon::parse($invoice->paid_date)->format('M d'),
-                    'week' => 'W' . Carbon::parse($invoice->paid_date)->format('W'),
+                    'week' => 'W'.Carbon::parse($invoice->paid_date)->format('W'),
                     'month' => Carbon::parse($invoice->paid_date)->format('M Y'),
                 };
             })
@@ -158,7 +165,9 @@ class RevenueForecastService
     }
 
     /**
-     * Get distribution of clients across plans.
+     * * Get distribution of clients across plans.
+     *
+     * * @return array<string, array<mixed>|float|int>
      */
     public function getPlanDistribution(int $agencyId): array
     {
