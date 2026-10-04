@@ -27,7 +27,7 @@ class StoreBulkScheduleRequest extends FormRequest
             'csv_file' => [
                 'required',
                 'file',
-                'max:' . $maxSize,
+                'max:'.$maxSize,
                 'mimes:csv,txt',
                 'mimetypes:text/csv,text/plain,text/x-comma-separated-values,text/x-csv,application/csv,application/vnd.ms-excel',
             ],

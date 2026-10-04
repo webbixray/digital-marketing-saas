@@ -13,7 +13,9 @@ class UsageController extends Controller
     use HandlesErrors;
 
     protected MeteredBillingService $meteredBillingService;
+
     protected UsageQuotaService $usageQuotaService;
+
     protected CreditService $creditService;
 
     public function __construct(

@@ -8,8 +8,8 @@ use App\Services\Billing\StripeGateway;
 use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Stripe\Webhook;
 use Stripe\Exception\SignatureVerificationException;
+use Stripe\Webhook;
 
 class BillingController extends Controller
 {
@@ -132,6 +132,7 @@ class BillingController extends Controller
 
         if (empty($sigHeader)) {
             Log::warning('Stripe webhook received without signature header.');
+
             return response()->json(['error' => 'Missing Stripe-Signature header.'], 400);
         }
 
@@ -139,6 +140,7 @@ class BillingController extends Controller
 
         if (empty($endpointSecret)) {
             Log::error('Stripe webhook secret is not configured.');
+
             return response()->json(['error' => 'Webhook not configured.'], 500);
         }
 
@@ -146,10 +148,12 @@ class BillingController extends Controller
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
         } catch (SignatureVerificationException $e) {
-            Log::warning('Stripe webhook signature verification failed: ' . $e->getMessage());
+            Log::warning('Stripe webhook signature verification failed: '.$e->getMessage());
+
             return response()->json(['error' => 'Invalid signature.'], 400);
         } catch (\Exception $e) {
-            Log::error('Stripe webhook error: ' . $e->getMessage());
+            Log::error('Stripe webhook error: '.$e->getMessage());
+
             return response()->json(['error' => 'Webhook processing error.'], 400);
         }
 
@@ -162,7 +166,7 @@ class BillingController extends Controller
 
             return response()->json(['status' => 'ok']);
         } catch (\Exception $e) {
-            Log::error('Stripe webhook event processing failed: ' . $e->getMessage(), [
+            Log::error('Stripe webhook event processing failed: '.$e->getMessage(), [
                 'event_type' => $event->type ?? 'unknown',
             ]);
 

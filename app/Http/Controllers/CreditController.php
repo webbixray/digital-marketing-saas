@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use App\Services\Billing\CreditService;
 use App\Services\Billing\MeteredBillingService;
 use App\Services\Billing\UsageQuotaService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 
 class CreditController extends Controller
 {
     use HandlesErrors;
 
     protected CreditService $creditService;
+
     protected MeteredBillingService $meteredBillingService;
+
     protected UsageQuotaService $usageQuotaService;
 
     public function __construct(

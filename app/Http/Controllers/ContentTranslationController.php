@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\HandlesErrors;
 use App\Jobs\TranslateContentJob;
-use App\Models\Agency;
 use App\Models\Campaign;
 use App\Models\SocialPost;
-use App\Models\User;
-use App\Notifications\TranslationCompleteNotification;
 use App\Services\AI\ContentTranslationService;
 use App\Services\QuotaService;
 use Illuminate\Http\JsonResponse;
