@@ -103,26 +103,40 @@ class AiProviderManager
             } catch (\Exception $e) {
                 $lastException = $e;
                 Log::warning("AI provider {$providerName} failed: {$e->getMessage()}, trying fallback");
+
                 continue;
             }
         }
 
         throw new \RuntimeException(
-            'All AI providers failed. Last error: ' . ($lastException ? $lastException->getMessage() : 'unknown')
+            'All AI providers failed. Last error: '.($lastException ? $lastException->getMessage() : 'unknown')
         );
     }
 
     /**
      * Get active BYOK keys for an agency.
+     *
+     * Cached as plain arrays and rehydrated (Model::hydrate) because the
+     * database cache store blocks class unserialization
+     * (serializable_classes=false) — caching Eloquent collections directly
+     * would return __PHP_Incomplete_Class objects on read.
      */
     public function getActiveByokKeys(int $agencyId): Collection
     {
-        return Cache::remember("ai_byok:{$agencyId}", 360, function () use ($agencyId) {
-            return AiProviderKey::byAgency($agencyId)
-                ->active()
-                ->priority()
-                ->get();
-        });
+        $cached = Cache::get("ai_byok:{$agencyId}");
+
+        if (is_array($cached)) {
+            return AiProviderKey::hydrate($cached);
+        }
+
+        $keys = AiProviderKey::byAgency($agencyId)
+            ->active()
+            ->priority()
+            ->get();
+
+        Cache::put("ai_byok:{$agencyId}", $keys->toArray(), 360);
+
+        return $keys;
     }
 
     /**

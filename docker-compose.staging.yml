@@ -17,7 +17,7 @@ services:
       - DB_HOST=db
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
-      - CACHE_DRIVER=redis
+      - CACHE_STORE=redis
       - SESSION_DRIVER=redis
     networks:
       - dmsaas-network

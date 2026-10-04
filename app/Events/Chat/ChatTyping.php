@@ -14,7 +14,9 @@ class ChatTyping implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int $channelId;
+
     public User $user;
+
     public bool $isTyping;
 
     /**
@@ -33,7 +35,7 @@ class ChatTyping implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('chat.' . $this->channelId),
+            new Channel('chat.'.$this->channelId),
         ];
     }
 
@@ -47,6 +49,12 @@ class ChatTyping implements ShouldBroadcastNow
 
     /**
      * Get the data to broadcast.
+     *
+     * @return array{
+     *     channel_id: int,
+     *     user: array{id: int, name: string},
+     *     is_typing: bool
+     * }
      */
     public function broadcastWith(): array
     {

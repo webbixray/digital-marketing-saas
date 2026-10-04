@@ -48,7 +48,11 @@ class ClientController extends Controller
         $agency = $request->user()->agency;
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', function (string $attribute, mixed $value, \Closure $fail) {
+                if ($value !== strip_tags((string) $value)) {
+                    $fail('The name field contains invalid characters.');
+                }
+            }],
             'email' => 'required|email|unique:clients,email',
             'phone' => 'nullable|string|max:50',
             'company' => 'nullable|string|max:255',
@@ -101,7 +105,11 @@ class ClientController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', function (string $attribute, mixed $value, \Closure $fail) {
+                if ($value !== strip_tags((string) $value)) {
+                    $fail('The name field contains invalid characters.');
+                }
+            }],
             'email' => 'required|email|unique:clients,email,'.$client->id,
             'phone' => 'nullable|string|max:50',
             'company' => 'nullable|string|max:255',
@@ -128,6 +136,7 @@ class ClientController extends Controller
         $agency->decrement('clients_count');
 
         Log::info('Client operation', ['agency_id' => $request->user()->agency_id]);
+
         return redirect()->route('clients.index')
             ->with('success', 'Client deleted.');
     }

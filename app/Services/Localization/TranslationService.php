@@ -4,6 +4,7 @@ namespace App\Services\Localization;
 
 use App\Models\Language;
 use App\Services\AI\Gateway\AiGateway;
+use App\Services\AI\Gateway\AiRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -17,11 +18,6 @@ class TranslationService
 
     /**
      * Translate text from source language to target language.
-     *
-     * @param string $text
-     * @param string $sourceLang
-     * @param string $targetLang
-     * @return string
      */
     public function translate(string $text, string $sourceLang, string $targetLang): string
     {
@@ -48,19 +44,14 @@ class TranslationService
 
     /**
      * Call the AI gateway for translation.
-     *
-     * @param string $text
-     * @param string $sourceLang
-     * @param string $targetLang
-     * @return string
      */
     private function callAiGateway(string $text, string $sourceLang, string $targetLang): string
     {
         $prompt = "Translate the following text from {$sourceLang} to {$targetLang}. "
-            . "Return ONLY the translated text, no explanations or quotes.\n\n"
-            . $text;
+            ."Return ONLY the translated text, no explanations or quotes.\n\n"
+            .$text;
 
-        $request = new \App\Services\AI\Gateway\AiRequest(
+        $request = new AiRequest(
             prompt: $prompt,
             systemPrompt: null,
             model: 'gpt-4o',
@@ -84,33 +75,65 @@ class TranslationService
     /**
      * Get all supported (active) languages.
      *
+     * Falls back to an empty collection when the database is unavailable
+     * (e.g. before migrations, during a DB outage) so that global view
+     * composers and middleware never take the whole request down.
+     *
      * @return Collection<int, Language>
      */
     public function getSupportedLanguages(): Collection
     {
-        return Cache::remember('supported_languages', self::CACHE_TTL, function () {
-            return Language::active()->orderBy('sort_order')->get();
-        });
+        $cached = Cache::get('supported_languages');
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        try {
+            $languages = Language::active()->orderBy('sort_order')->get();
+            Cache::put('supported_languages', $languages, self::CACHE_TTL);
+
+            return $languages;
+        } catch (\Throwable $e) {
+            // DB unavailable: return the fallback WITHOUT caching it, so the
+            // next request retries once the database recovers.
+            return collect();
+        }
     }
 
     /**
-     * Check if a language is RTL.
+     * RTL locales that do not depend on database state.
      *
-     * @param string $lang
-     * @return bool
+     * Text direction is a property of the language itself, so a static list
+     * is a correct fallback when the languages table cannot be read.
+     */
+    private const RTL_LOCALES = ['ar', 'he', 'fa', 'ur', 'dv', 'ps', 'sd', 'ug', 'yi'];
+
+    /**
+     * Check if a language is RTL.
      */
     public function isRTL(string $lang): bool
     {
-        return Cache::remember("lang_rtl_{$lang}", self::CACHE_TTL, function () use ($lang) {
-            return Language::byCode($lang)->where('is_rtl', true)->exists();
-        });
+        $cacheKey = "lang_rtl_{$lang}";
+        $cached = Cache::get($cacheKey);
+        if ($cached !== null) {
+            return (bool) $cached;
+        }
+
+        try {
+            $isRtl = Language::byCode($lang)->where('is_rtl', true)->exists();
+        } catch (\Throwable $e) {
+            // DB unavailable: fall back to the static RTL list WITHOUT
+            // caching, so the DB is retried on the next request.
+            return in_array($lang, self::RTL_LOCALES, true);
+        }
+
+        Cache::put($cacheKey, $isRtl, self::CACHE_TTL);
+
+        return $isRtl;
     }
 
     /**
      * Get the text direction for a language.
-     *
-     * @param string $lang
-     * @return string
      */
     public function getLanguageDirection(string $lang): string
     {
@@ -120,9 +143,6 @@ class TranslationService
     /**
      * Simple language detection based on common patterns.
      * Returns the most likely language code.
-     *
-     * @param string $text
-     * @return string
      */
     public function detectLanguage(string $text): string
     {
@@ -170,9 +190,6 @@ class TranslationService
 
     /**
      * Clear translation cache for a specific language.
-     *
-     * @param string $lang
-     * @return void
      */
     public function clearCacheForLanguage(string $lang): void
     {
@@ -185,6 +202,6 @@ class TranslationService
      */
     private function getCacheKey(string $text, string $sourceLang, $targetLang): string
     {
-        return 'translate_' . md5($sourceLang . '|' . $targetLang . '|' . $text);
+        return 'translate_'.md5($sourceLang.'|'.$targetLang.'|'.$text);
     }
 }

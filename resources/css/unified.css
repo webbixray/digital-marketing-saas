@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Font Awesome (self-hosted, replaces cdnjs CDN blocked by tracking prevention) */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../../resources/views/**/*.blade.php';

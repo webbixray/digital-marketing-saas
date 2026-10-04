@@ -130,7 +130,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const result = document.getElementById('purchaseResult');

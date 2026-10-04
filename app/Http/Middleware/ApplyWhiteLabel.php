@@ -19,14 +19,24 @@ class ApplyWhiteLabel
         // Check if white-label is enabled for this agency
         if (auth()->check() && auth()->user()->agency_id) {
             $agencyId = auth()->user()->agency_id;
-            $settings = WhiteLabelSetting::where('agency_id', $agencyId)
-                ->where('enabled', true)
-                ->first();
+
+            // The WhiteLabelServiceProvider composer already resolves and
+            // shares the settings (cached) for view rendering; reuse that
+            // shared value here instead of querying the DB a second time.
+            $settings = view()->shared('whiteLabel');
+
+            if (! $settings instanceof WhiteLabelSetting) {
+                try {
+                    $settings = WhiteLabelSetting::where('agency_id', $agencyId)
+                        ->where('enabled', true)
+                        ->first();
+                } catch (\Throwable $e) {
+                    // DB unavailable: skip CSS injection, keep the response.
+                    return $response;
+                }
+            }
 
             if ($settings) {
-                // Share white-label data with all views
-                view()->share('whiteLabel', $settings);
-
                 // Inject custom CSS into HTML responses
                 if ($settings->custom_css && $response->headers->get('Content-Type') && str_contains($response->headers->get('Content-Type'), 'text/html')) {
                     $content = $response->getContent();

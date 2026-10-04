@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Stripe\StripeObject;
 
 class AICreditController extends Controller
 {
@@ -22,8 +23,12 @@ class AICreditController extends Controller
      */
     public function balance(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user || ! $user->agency) {
+            return response()->json(['credits' => 0, 'total_purchased' => 0]);
+        }
         /** @var Agency $agency */
-        $agency = $request->user()->agency;
+        $agency = $user->agency;
 
         return response()->json([
             'credits' => (int) $agency->ai_credits,
@@ -62,8 +67,8 @@ class AICreditController extends Controller
             'success_url' => route('agency.billing').'?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('agency.billing'),
             'metadata' => [
-                'agency_id' => $request->user()->agency_id,
-                'credits' => $credits,
+                'agency_id' => (string) $request->user()?->agency_id,
+                'credits' => (string) $credits,
             ],
         ]);
 
@@ -93,9 +98,17 @@ class AICreditController extends Controller
             return response()->json(['error' => 'Payment not completed.'], 400);
         }
 
-        /** @var Agency $agency */
-        $agency = Agency::find($session->metadata->agency_id);
-        $credits = (int) $session->metadata->credits;
+        /** @var StripeObject $metadata */
+        $metadata = $session->metadata ?? new \stdClass;
+        $agencyId = (int) ($metadata->agency_id ?? 0);
+        $credits = (int) ($metadata->credits ?? 0);
+
+        if (! $agencyId || ! $credits) {
+            return response()->json(['error' => 'Invalid session metadata.'], 400);
+        }
+
+        /** @var Agency|null $agency */
+        $agency = Agency::find($agencyId);
 
         if (! $agency) {
             return response()->json(['error' => 'Agency not found.'], 404);

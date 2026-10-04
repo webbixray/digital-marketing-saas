@@ -3,6 +3,7 @@
 namespace App\Services\AI\Agent;
 
 use App\Services\AI\Gateway\AiGateway;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class AgentOrchestrator
@@ -286,6 +287,44 @@ class AgentOrchestrator
     public function getRegisteredAgents(): array
     {
         return array_keys($this->agents);
+    }
+
+    /**
+     * Check if an agent is registered.
+     */
+    public function hasAgent(string $name): bool
+    {
+        return isset($this->agents[$name]);
+    }
+
+    /**
+     * Get all registered agent names.
+     *
+     * @return array<string>
+     */
+    public function getAgentNames(): array
+    {
+        return array_keys($this->agents);
+    }
+
+    /**
+     * Get all registered agents.
+     *
+     * @return array<string, AgentInterface>
+     */
+    public function getAllAgents(): array
+    {
+        return $this->agents;
+    }
+
+    /**
+     * Get agents by category.
+     *
+     * @return Collection<string, AgentInterface>
+     */
+    public function getAgentsByCategory(string $category): Collection
+    {
+        return collect($this->agents)->filter(fn ($agent) => $agent->getCategory() === $category)->values();
     }
 
     /**

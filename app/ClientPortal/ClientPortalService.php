@@ -4,15 +4,35 @@ namespace App\ClientPortal;
 
 use App\Models\Campaign;
 use App\Models\Client;
+use App\Models\ClientApproval;
 use App\Models\ClientNotification;
 use App\Models\ClientPortalSetting;
 use App\Models\Invoice;
 use App\Models\SocialPost;
-use App\Models\ClientApproval;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ClientPortalService
 {
+    /**
+     * @return array{
+     *     client: Client,
+     *     totalClients: int,
+     *     activeClients: int,
+     *     activeCampaigns: int,
+     *     totalCampaigns: int,
+     *     totalSpend: float,
+     *     pendingSpend: float,
+     *     performanceScore: int,
+     *     performanceData: object|null,
+     *     paidInvoices: int,
+     *     overdueInvoices: int,
+     *     recentCampaigns: \Illuminate\Database\Eloquent\Collection<int, Campaign>,
+     *     monthlySpend: array<string, float>,
+     *     portalSettings: ClientPortalSetting|null
+     * }
+     */
     public function getDashboardData(int $clientId): array
     {
         $client = Client::findOrFail($clientId);
@@ -26,10 +46,10 @@ class ClientPortalService
             ->count();
         $totalCampaigns = Campaign::where('agency_id', $agencyId)->count();
 
-        $totalSpend = Invoice::where('agency_id', $agencyId)
+        $totalSpend = (float) Invoice::where('agency_id', $agencyId)
             ->where('status', 'paid')
             ->sum('total');
-        $pendingSpend = Invoice::where('agency_id', $agencyId)
+        $pendingSpend = (float) Invoice::where('agency_id', $agencyId)
             ->whereIn('status', ['pending', 'overdue'])
             ->sum('total');
 
@@ -43,6 +63,7 @@ class ClientPortalService
             )
             ->first();
 
+        /** @var \stdClass|null $performanceData */
         $performanceScore = $this->calculatePerformanceScore($performanceData);
 
         $paidInvoices = Invoice::where('agency_id', $agencyId)->where('status', 'paid')->count();
@@ -54,11 +75,12 @@ class ClientPortalService
             ->get();
 
         $monthExpr = $this->getMonthExpression('paid_date');
+        /** @var array<string, float> $monthlySpend */
         $monthlySpend = Invoice::where('agency_id', $agencyId)
             ->where('status', 'paid')
             ->where('paid_date', '>=', now()->subMonths(6))
             ->select(
-                DB::raw("{$monthExpr} as month"),
+                DB::raw("(DATE_FORMAT(`paid_date`, '%Y-%m')) as month"),
                 DB::raw('SUM(total) as total')
             )
             ->groupBy('month')
@@ -86,7 +108,16 @@ class ClientPortalService
         ];
     }
 
-    public function getCampaigns(int $clientId, array $filters = [])
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array{
+     *     campaigns: LengthAwarePaginator<int, Campaign>,
+     *     clients: \Illuminate\Database\Eloquent\Collection<int, Client>,
+     *     statusCounts: array<string, int>,
+     *     client: Client
+     * }
+     */
+    public function getCampaigns(int $clientId, array $filters = []): array
     {
         $client = Client::findOrFail($clientId);
         $agencyId = $client->agency_id;
@@ -95,11 +126,11 @@ class ClientPortalService
             ->with(['client', 'posts'])
             ->withCount('posts');
 
-        if (!empty($filters['status']) && in_array($filters['status'], ['draft', 'active', 'paused', 'completed'])) {
+        if (! empty($filters['status']) && in_array($filters['status'], ['draft', 'active', 'paused', 'completed'])) {
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['client_id'])) {
+        if (! empty($filters['client_id'])) {
             $filterClientId = (int) $filters['client_id'];
             $filterClient = Client::where('agency_id', $agencyId)->find($filterClientId);
             if ($filterClient) {
@@ -107,8 +138,8 @@ class ClientPortalService
             }
         }
 
-        if (!empty($filters['search'])) {
-            $search = '%' . $filters['search'] . '%';
+        if (! empty($filters['search'])) {
+            $search = '%'.$filters['search'].'%';
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', $search)
                     ->orWhere('description', 'like', $search);
@@ -133,18 +164,30 @@ class ClientPortalService
         ];
     }
 
-    public function getInvoices(int $clientId, array $filters = [])
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array{
+     *     invoices: LengthAwarePaginator<int, Invoice>,
+     *     clients: \Illuminate\Database\Eloquent\Collection<int, Client>,
+     *     statusCounts: array<string, int>,
+     *     totalOutstanding: float,
+     *     totalPaid: float,
+     *     overdueCount: int,
+     *     client: Client
+     * }
+     */
+    public function getInvoices(int $clientId, array $filters = []): array
     {
         $client = Client::findOrFail($clientId);
         $agencyId = $client->agency_id;
 
         $query = Invoice::where('agency_id', $agencyId)->with('client');
 
-        if (!empty($filters['status']) && in_array($filters['status'], ['draft', 'pending', 'paid', 'overdue', 'cancelled'])) {
+        if (! empty($filters['status']) && in_array($filters['status'], ['draft', 'pending', 'paid', 'overdue', 'cancelled'])) {
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['client_id'])) {
+        if (! empty($filters['client_id'])) {
             $filterClientId = (int) $filters['client_id'];
             $filterClient = Client::where('agency_id', $agencyId)->find($filterClientId);
             if ($filterClient) {
@@ -152,25 +195,26 @@ class ClientPortalService
             }
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->where('issue_date', '>=', $filters['date_from']);
         }
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->where('issue_date', '<=', $filters['date_to']);
         }
 
         $invoices = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
 
-        $totalOutstanding = Invoice::where('agency_id', $agencyId)
+        $totalOutstanding = (float) Invoice::where('agency_id', $agencyId)
             ->whereIn('status', ['pending', 'overdue'])
             ->sum('total');
-        $totalPaid = Invoice::where('agency_id', $agencyId)
+        $totalPaid = (float) Invoice::where('agency_id', $agencyId)
             ->where('status', 'paid')
             ->sum('total');
         $overdueCount = Invoice::where('agency_id', $agencyId)
             ->where('status', 'overdue')
             ->count();
 
+        /** @var array<string, int> $statusCounts */
         $statusCounts = Invoice::where('agency_id', $agencyId)
             ->select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
@@ -190,6 +234,23 @@ class ClientPortalService
         ];
     }
 
+    /**
+     * @return array{
+     *     campaignPerformance: \Illuminate\Database\Eloquent\Collection<int, Campaign>,
+     *     platformMetrics: Collection<int, object>,
+     *     monthlyTrend: Collection<int, object>,
+     *     topPosts: \Illuminate\Database\Eloquent\Collection<int, SocialPost>,
+     *     overallMetrics: array{
+     *         total_impressions: int,
+     *         total_engagements: int,
+     *         avg_engagement_rate: float,
+     *         total_clicks: int,
+     *         total_posts: int,
+     *         published_posts: int
+     *     },
+     *     client: Client
+     * }
+     */
     public function getAnalytics(int $clientId): array
     {
         $client = Client::findOrFail($clientId);
@@ -212,7 +273,8 @@ class ClientPortalService
             ->take(10)
             ->get();
 
-        $platformMetrics = SocialPost::where('agency_id', $agencyId)
+        /** @var Collection<int, object> $platformMetrics */
+        $platformMetrics = (new Collection(SocialPost::where('agency_id', $agencyId)
             ->select(
                 'platform',
                 DB::raw('COUNT(*) as post_count'),
@@ -225,13 +287,15 @@ class ClientPortalService
             )
             ->groupBy('platform')
             ->orderByDesc('total_views')
-            ->get();
+            ->get()
+            ->all()))->map(fn ($item) => (object) $item);
 
         $monthExpr = $this->getMonthExpression('created_at');
-        $monthlyTrend = SocialPost::where('agency_id', $agencyId)
+        /** @var Collection<int, object> $monthlyTrend */
+        $monthlyTrend = (new Collection(SocialPost::where('agency_id', $agencyId)
             ->where('created_at', '>=', now()->subMonths(6))
             ->select(
-                DB::raw("{$monthExpr} as month"),
+                DB::raw("(DATE_FORMAT(`created_at`, '%Y-%m')) as month"),
                 DB::raw('COUNT(*) as post_count'),
                 DB::raw('SUM(views_count) as total_views'),
                 DB::raw('SUM(likes_count) as total_likes'),
@@ -240,7 +304,8 @@ class ClientPortalService
             )
             ->groupBy('month')
             ->orderBy('month')
-            ->get();
+            ->get()
+            ->all()))->map(fn ($item) => (object) $item);
 
         $topPosts = SocialPost::where('agency_id', $agencyId)
             ->where('status', 'published')
@@ -248,16 +313,16 @@ class ClientPortalService
             ->take(5)
             ->get();
 
-        $totalLikes = SocialPost::where('agency_id', $agencyId)->sum('likes_count');
-        $totalComments = SocialPost::where('agency_id', $agencyId)->sum('comments_count');
-        $totalShares = SocialPost::where('agency_id', $agencyId)->sum('shares_count');
-        $avgEngagementRate = SocialPost::where('agency_id', $agencyId)->avg('engagement_rate') ?? 0;
-        $totalClicks = SocialPost::where('agency_id', $agencyId)->sum('clicks_count');
-        $totalPosts = SocialPost::where('agency_id', $agencyId)->count();
-        $publishedPosts = SocialPost::where('agency_id', $agencyId)->where('status', 'published')->count();
+        $totalLikes = (int) SocialPost::where('agency_id', $agencyId)->sum('likes_count');
+        $totalComments = (int) SocialPost::where('agency_id', $agencyId)->sum('comments_count');
+        $totalShares = (int) SocialPost::where('agency_id', $agencyId)->sum('shares_count');
+        $avgEngagementRate = (float) (SocialPost::where('agency_id', $agencyId)->avg('engagement_rate') ?? 0);
+        $totalClicks = (int) SocialPost::where('agency_id', $agencyId)->sum('clicks_count');
+        $totalPosts = (int) SocialPost::where('agency_id', $agencyId)->count();
+        $publishedPosts = (int) SocialPost::where('agency_id', $agencyId)->where('status', 'published')->count();
 
         $overallMetrics = [
-            'total_impressions' => SocialPost::where('agency_id', $agencyId)->sum('views_count'),
+            'total_impressions' => (int) SocialPost::where('agency_id', $agencyId)->sum('views_count'),
             'total_engagements' => $totalLikes + $totalComments + $totalShares,
             'avg_engagement_rate' => $avgEngagementRate,
             'total_clicks' => $totalClicks,
@@ -275,13 +340,16 @@ class ClientPortalService
         ];
     }
 
+    /**
+     * @return array{settings: ClientPortalSetting, client: Client}
+     */
     public function getSettings(int $clientId): array
     {
         $client = Client::findOrFail($clientId);
         $settings = ClientPortalSetting::firstOrCreate(
             ['agency_id' => $client->agency_id],
             [
-                'brand_name' => $client->agency->name,
+                'brand_name' => $client->agency->name ?? 'Unknown Agency',
                 'brand_color' => '#6366f1',
                 'is_enabled' => true,
                 'show_analytics' => true,
@@ -294,6 +362,9 @@ class ClientPortalService
         return ['settings' => $settings, 'client' => $client];
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function updateSettings(int $clientId, array $data): ClientPortalSetting
     {
         $client = Client::findOrFail($clientId);
@@ -305,6 +376,9 @@ class ClientPortalService
         return $settings;
     }
 
+    /**
+     * @return array{activities: \Illuminate\Database\Eloquent\Collection<int, ClientNotification>, client: Client}
+     */
     public function getActivityFeed(int $clientId, int $limit = 50): array
     {
         $client = Client::findOrFail($clientId);
@@ -316,6 +390,9 @@ class ClientPortalService
         return ['activities' => $notifications, 'client' => $client];
     }
 
+    /**
+     * @return array{approvals: LengthAwarePaginator<int, ClientApproval>, client: Client}
+     */
     public function getApprovalQueue(int $clientId): array
     {
         $client = Client::findOrFail($clientId);
@@ -344,7 +421,7 @@ class ClientPortalService
             ]);
         }
 
-        return $approval->fresh();
+        return $approval->fresh() ?? throw new \RuntimeException('Failed to refresh approval');
     }
 
     public function rejectContent(int $clientId, int $contentId, string $reason = ''): ClientApproval
@@ -365,12 +442,12 @@ class ClientPortalService
             ]);
         }
 
-        return $approval->fresh();
+        return $approval->fresh() ?? throw new \RuntimeException('Failed to refresh approval');
     }
 
-    private function calculatePerformanceScore($data): int
+    private function calculatePerformanceScore(?\stdClass $data): int
     {
-        if (!$data || $data->total_posts == 0) {
+        if (! $data || $data->total_posts == 0) {
             return 0;
         }
 
@@ -392,6 +469,7 @@ class ClientPortalService
         if ($driver === 'sqlite') {
             return "strftime('%Y-%m', {$column})";
         }
+
         return "DATE_FORMAT({$column}, '%Y-%m')";
     }
 }

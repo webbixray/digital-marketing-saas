@@ -10,7 +10,6 @@ use App\Models\SocialPost;
 use App\Services\AI\Agent\AgentHealthMonitor;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\QuotaService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -65,6 +64,7 @@ class DashboardController extends Controller
                 $aiCount = Cache::remember("analytics:{$agency->id}:ai_generations", 300, function () use ($agency) {
                     return AiContentLog::where('agency_id', $agency->id)->count();
                 });
+
                 return [
                     'label' => 'AI Generations',
                     'used' => $aiCount,
@@ -106,6 +106,7 @@ class DashboardController extends Controller
                 $lpCount = Cache::remember("analytics:{$agency->id}:landing_pages", 300, function () use ($agency) {
                     return LandingPage::where('agency_id', $agency->id)->count();
                 });
+
                 return [
                     'label' => 'Landing Pages',
                     'used' => $lpCount,
@@ -115,13 +116,17 @@ class DashboardController extends Controller
             })(),
         ];
 
-        // Recent activity - eager loaded user relationship
+        // Recent activity - eager loaded user relationship.
+        // Cached as plain arrays: the database cache store blocks class
+        // unserialization (serializable_classes=false), so caching Eloquent
+        // collections would return __PHP_Incomplete_Class on read.
         $recentActivity = Cache::remember("dashboard:{$agency->id}:recent_activity", 60, function () use ($agency) {
             return ActivityLog::where('agency_id', $agency->id)
                 ->with(['user:id,name,email,avatar'])
                 ->orderBy('created_at', 'desc')
                 ->take(10)
-                ->get();
+                ->get()
+                ->toArray();
         });
 
         // Upcoming scheduled posts - eager loaded with socialAccount
@@ -132,7 +137,8 @@ class DashboardController extends Controller
                 ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
                 ->orderBy('scheduled_at', 'asc')
                 ->take(5)
-                ->get();
+                ->get()
+                ->toArray();
         });
 
         // Agent health summary
@@ -143,7 +149,8 @@ class DashboardController extends Controller
             return AgentCostLog::where('agency_id', $agency->id)
                 ->orderBy('executed_at', 'desc')
                 ->take(5)
-                ->get();
+                ->get()
+                ->toArray();
         });
 
         return view('dashboard.index', compact('stats', 'platformStats', 'quotas', 'recentActivity', 'upcomingPosts', 'agency', 'agentHealthSummary', 'recentAgentActivity'));

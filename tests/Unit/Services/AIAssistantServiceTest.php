@@ -10,7 +10,7 @@ use App\Services\QuotaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AgencyAIAssistantServiceTest extends TestCase
+class AIAssistantServiceTest extends TestCase
 {
     use RefreshDatabase;
 

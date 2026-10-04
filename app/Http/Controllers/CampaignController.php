@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\CampaignStatus;
 use App\Models\Campaign;
 use App\Models\Client;
-use App\Models\SocialPost;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CampaignController extends Controller
 {
@@ -25,9 +24,9 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $agencyId = $request->user()->agency_id;
-        $tags = ['agency_' . $agencyId, 'campaigns'];
+        $tags = ['agency_'.$agencyId, 'campaigns'];
 
-        $cacheKey = "campaigns:{$agencyId}:index:" . md5(serialize($request->query()));
+        $cacheKey = "campaigns:{$agencyId}:index:".md5(serialize($request->query()));
 
         $campaigns = Cache::remember($cacheKey, 300, function () use ($request, $agencyId) {
             $query = Campaign::where('agency_id', $agencyId)
@@ -104,7 +103,7 @@ class CampaignController extends Controller
         $agencyId = $request->user()->agency_id;
 
         $campaign = Cache::remember("campaign:{$campaignId}", 300, function () use ($campaignId) {
-            return Campaign::with(['client:id,name,email,avatar'])->findOrFail($campaignId);
+            return Campaign::with(['client:id,name,email'])->findOrFail($campaignId);
         });
 
         if ($campaign->agency_id !== $agencyId) {
@@ -193,6 +192,7 @@ class CampaignController extends Controller
         Cache::forget("campaigns:{$agencyId}:stats");
 
         Log::info('Campaign operation', ['agency_id' => $request->user()->agency_id]);
+
         return redirect()->route('campaigns.index')
             ->with('success', 'Campaign deleted.');
     }
@@ -383,7 +383,7 @@ class CampaignController extends Controller
 
         // Pre-compute individual campaign data
         Campaign::where('agency_id', $agencyId)
-            ->with(['client:id,name,email,avatar'])
+            ->with(['client:id,name,email'])
             ->chunk(100, function ($campaign) {
                 foreach ($campaign as $c) {
                     Cache::put("campaign:{$c->id}", $c, 600);

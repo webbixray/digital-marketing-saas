@@ -17,6 +17,11 @@ class SecurityAuditAgent implements AgentInterface
         return 'security_auditor';
     }
 
+    public function getCategory(): string
+    {
+        return 'security';
+    }
+
     public function getDescription(): string
     {
         return 'Scans for security vulnerabilities, weak credentials, and misconfigurations.';
@@ -37,15 +42,10 @@ class SecurityAuditAgent implements AgentInterface
         Log::info('SecurityAuditAgent parameters updated', $parameters);
     }
 
-    public function getCategory(): string
-    {
-        return 'security';
-    }
-
-    public function execute(array $context = []): array
+    public function execute(AgentTask $task, AgentContext $context): AgentResult
     {
         $findings = [];
-        $agency = $context['agency'] ?? null;
+        $agency = $context->agency ?? null;
 
         // Check for debug mode in production
         if (config('app.debug') === true && app()->environment('production')) {
@@ -139,8 +139,7 @@ class SecurityAuditAgent implements AgentInterface
             ];
         }
 
-        return [
-            'success' => true,
+        $output = json_encode([
             'findings' => $findings,
             'total_findings' => count($findings),
             'critical_count' => count(array_filter($findings, fn ($f) => $f['severity'] === 'critical')),
@@ -148,6 +147,13 @@ class SecurityAuditAgent implements AgentInterface
             'medium_count' => count(array_filter($findings, fn ($f) => $f['severity'] === 'medium')),
             'low_count' => count(array_filter($findings, fn ($f) => $f['severity'] === 'low')),
             'auto_fixable_count' => count(array_filter($findings, fn ($f) => $f['auto_fixable'])),
-        ];
+        ]);
+
+        return AgentResult::success(
+            taskId: $task->id,
+            agentName: $this->getName(),
+            output: $output,
+            metadata: ['findings' => $findings],
+        );
     }
 }

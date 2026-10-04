@@ -3,12 +3,10 @@
 namespace App\Services\AI\Audit;
 
 use App\Models\AiAuditLog;
-use App\Models\Agency;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class AiAuditService
 {
@@ -138,8 +136,19 @@ class AiAuditService
 
     public function checkCompliance(string $output, array $context = []): array
     {
-        $biasScore = $context['bias_score'] ?? 0;
-        $toxicityScore = $context['toxicity_score'] ?? 0;
+        $biasScore = $context['bias_score'] ?? null;
+        $toxicityScore = $context['toxicity_score'] ?? null;
+
+        // Analyze the text itself when scores were not pre-computed, so that
+        // direct calls to checkCompliance() cannot silently pass toxic or
+        // biased output through unexamined.
+        if ($biasScore === null) {
+            $biasScore = $this->checkBias($output)['score'];
+        }
+
+        if ($toxicityScore === null) {
+            $toxicityScore = $this->checkToxicity($output)['score'];
+        }
 
         $status = 'pass';
         $reason = null;
@@ -292,7 +301,7 @@ class AiAuditService
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $filename = "ai-audit-exports/{$agencyId}/audit-" . time() . ".{$format}";
+        $filename = "ai-audit-exports/{$agencyId}/audit-".time().".{$format}";
 
         if ($format === 'json') {
             $content = $logs->map(fn ($log) => [
@@ -313,13 +322,13 @@ class AiAuditService
                 $csv .= sprintf(
                     "%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
                     $log->id,
-                    '"' . ($log->user?->name ?? 'unknown') . '"',
+                    '"'.($log->user?->name ?? 'unknown').'"',
                     $log->action,
-                    '"' . ($log->model_used ?? '') . '"',
+                    '"'.($log->model_used ?? '').'"',
                     $log->bias_score,
                     $log->toxicity_score,
                     $log->compliance_status,
-                    '"' . str_replace('"', '""', $log->flagged_reason ?? '') . '"',
+                    '"'.str_replace('"', '""', $log->flagged_reason ?? '').'"',
                     $log->created_at->toISOString()
                 );
             }

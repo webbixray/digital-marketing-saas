@@ -8,6 +8,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="search-api-url" content="{{ route('api.search') }}">
+    <meta name="search-recent-url" content="{{ route('search.recent') }}">
     <title>@yield('title', 'Dashboard') | {{ ($whiteLabel ?? null)?->brand_name ?? config('app.name') }}</title>
     @if(($whiteLabel ?? null)?->favicon_url)
     <link rel="icon" href="{{ $whiteLabel->favicon_url }}">
@@ -18,8 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Icons: Font Awesome self-hosted via Vite (unified.css import) -->
     
     <!-- Tailwind CSS -->
     @vite(['resources/css/unified.css', 'resources/js/unified.js'])
@@ -657,7 +658,7 @@
                             aria-label="User menu"
                             aria-haspopup="true"
                             :aria-expanded="open">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'User') }}&background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="{{ auth()->user()?->name ?? 'User' }} avatar">
+                        <img src="/avatar/{{ urlencode(auth()->user()?->name ?? 'User') }}?background=6366f1&color=fff&size=32" class="w-8 h-8 rounded-full" alt="{{ auth()->user()?->name ?? 'User' }} avatar">
                         <i class="fas fa-chevron-down text-[10px] text-gray-500 dark:text-gray-400 hidden sm:block"></i>
                     </button>
                     <div x-show="open" 

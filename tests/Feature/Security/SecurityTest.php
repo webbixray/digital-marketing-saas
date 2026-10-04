@@ -5,6 +5,7 @@ namespace Tests\Feature\Security;
 use App\Models\Agency;
 use App\Models\Client;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,8 +13,7 @@ class SecurityTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_prevents_xss_in_forms(): void
+    public function test_it_prevents_xss_in_forms(): void
     {
         $agency = Agency::factory()->create();
         $user = User::factory()->create(['agency_id' => $agency->id]);
@@ -25,8 +25,7 @@ class SecurityTest extends TestCase
         $this->assertDatabaseMissing('clients', ['name' => '<script>alert("xss")</script>']);
     }
 
-    /** @test */
-    public function it_prevents_cross_tenant_access(): void
+    public function test_it_prevents_cross_tenant_access(): void
     {
         $agency1 = Agency::factory()->create();
         $agency2 = Agency::factory()->create();
@@ -36,21 +35,45 @@ class SecurityTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_requires_csrf_for_forms(): void
+    public function test_web_routes_are_protected_by_csrf_middleware(): void
     {
-        $agency = Agency::factory()->create();
-        $user = User::factory()->create(['agency_id' => $agency->id]);
-        $response = $this->actingAs($user)->post(route('clients.store'), [
-            'name' => 'Test',
-            'email' => 'test@example.com',
-            '_token' => 'invalid',
-        ]);
-        $response->assertStatus(419);
+        // Laravel's PreventRequestForgery middleware skips token validation
+        // while running unit tests (runningUnitTests()), so a 419 response
+        // cannot be triggered from the test environment. Instead, verify the
+        // CSRF middleware is actually applied to the web routes.
+        $route = app('router')->getRoutes()->getByName('clients.store');
+
+        $this->assertNotNull($route, 'clients.store route exists');
+
+        $resolved = collect($route->gatherMiddleware())
+            ->flatMap(function ($middleware) {
+                // Expand group references (e.g. 'web') to their class list
+                if (is_string($middleware) && str_starts_with($middleware, 'web')) {
+                    return app('router')->getMiddlewareGroups()['web'] ?? [];
+                }
+
+                return [$middleware];
+            })
+            ->flatMap(function ($middleware) {
+                // Resolve aliases to class names
+                if (is_string($middleware)) {
+                    $alias = explode(':', $middleware)[0];
+
+                    return [app('router')->getMiddleware()[$alias] ?? $middleware];
+                }
+
+                return [$middleware];
+            })
+            ->all();
+
+        $this->assertContains(
+            PreventRequestForgery::class,
+            $resolved,
+            'clients.store is protected by CSRF middleware'
+        );
     }
 
-    /** @test */
-    public function it_hashes_passwords(): void
+    public function test_it_hashes_passwords(): void
     {
         $user = User::factory()->create(['password' => 'secret123']);
         $this->assertNotEquals('secret123', $user->password);

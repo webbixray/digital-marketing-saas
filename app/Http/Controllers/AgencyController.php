@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Agency;
 use App\Models\Invoice;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AgencyController extends Controller
 {
@@ -17,9 +19,12 @@ class AgencyController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    public function show(Request $request)
+    public function show(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
@@ -35,44 +40,60 @@ class AgencyController extends Controller
         return view('agency.show', compact('agency', 'team', 'stats'));
     }
 
-    public function edit(Request $request)
+    public function edit(Request $request): View|RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
         return view('agency.edit', compact('agency'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:agencies,slug,'.$request->user()->agency_id,
+            'slug' => 'nullable|string|max:255|unique:agencies,slug,'.$user->agency_id,
             'email' => 'required|email|max:255',
             'timezone' => 'required|string|max:100',
             'currency' => 'required|string|size:3',
         ]);
 
-        $agencyId = $request->user()->agency_id;
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
         $agency->update($request->only(['name', 'slug', 'email', 'timezone', 'currency']));
 
-        Log::info('Agency updated', ['agency_id' => $agency->id, 'user_id' => $request->user()->id]);
+        Log::info('Agency updated', ['agency_id' => $agency->id, 'user_id' => $user->id]);
 
         return redirect()->route('agency.settings')->with('success', 'Agency updated.');
     }
 
-    public function settings(Request $request)
+    public function settings(Request $request): View|RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
         return view('agency.settings', compact('agency'));
     }
 
-    public function updateSettings(Request $request)
+    public function updateSettings(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $request->validate([
             'agency_name' => 'required|string|max:255',
             'website' => 'nullable|url|max:255',
@@ -84,7 +105,7 @@ class AgencyController extends Controller
             'currency' => 'required|string|size:3',
         ]);
 
-        $agencyId = $request->user()->agency_id;
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
 
         $agency->update([
@@ -101,9 +122,13 @@ class AgencyController extends Controller
         return redirect()->route('agency.settings')->with('success', 'Settings updated.');
     }
 
-    public function billing(Request $request)
+    public function billing(Request $request): View|RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
         $plans = [
             'starter' => ['name' => 'Starter', 'price' => 29, 'features' => ['posts_per_month' => 100, 'ai_generations_per_month' => 50, 'social_accounts' => 5, 'team_members' => 3]],
@@ -118,13 +143,17 @@ class AgencyController extends Controller
         return view('agency.billing', compact('agency', 'plans', 'currentPlan', 'invoices'));
     }
 
-    public function upgrade(Request $request)
+    public function upgrade(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $request->validate([
             'plan' => 'required|in:starter,pro,enterprise',
         ]);
 
-        $agencyId = $request->user()->agency_id;
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
         $agency->update([
             'subscription_plan' => $request->plan,
@@ -138,13 +167,17 @@ class AgencyController extends Controller
         return redirect()->route('agency.billing')->with('success', 'Subscription upgraded.');
     }
 
-    public function subscribe(Request $request)
+    public function subscribe(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $request->validate([
             'plan' => 'required|in:starter,pro,enterprise',
         ]);
 
-        $agencyId = $request->user()->agency_id;
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
         $agency->update([
             'subscription_plan' => $request->plan,
@@ -155,23 +188,30 @@ class AgencyController extends Controller
         return redirect()->route('agency.billing')->with('success', 'Subscription updated.');
     }
 
-    public function cancelSubscription(Request $request)
+    public function cancelSubscription(Request $request): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
         $agency->update([
             'subscription_plan' => 'free',
             'subscription_status' => 'cancelled',
         ]);
 
-        Log::warning('Agency subscription cancelled', ['agency_id' => $agency->id, 'user_id' => $request->user()->id]);
+        Log::warning('Agency subscription cancelled', ['agency_id' => $agency->id, 'user_id' => $user->id]);
 
         return redirect()->route('agency.billing')->with('success', 'Subscription cancelled.');
     }
 
-    public function team(Request $request)
+    public function team(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $agencyId = $user->agency_id;
         $agency = Agency::findOrFail($agencyId);
         $members = User::where('agency_id', $agencyId)
@@ -181,15 +221,19 @@ class AgencyController extends Controller
         return view('agency.team', compact('agency', 'members', 'user'));
     }
 
-    public function inviteMember(Request $request)
+    public function inviteMember(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $validated = $request->validate([
             'email' => 'required|email|max:255|unique:users,email',
             'name' => 'required|string|max:255',
             'role' => 'required|in:owner,admin,member,manager,editor',
         ]);
 
-        $agencyId = $request->user()->agency_id;
+        $agencyId = $user->agency_id;
 
         $member = new User([
             'name' => $validated['name'],
@@ -203,14 +247,17 @@ class AgencyController extends Controller
         return redirect()->route('agency.team')->with('success', 'Member invited.');
     }
 
-    public function updateMemberRole(Request $request, $userId)
+    public function updateMemberRole(Request $request, int $userId): RedirectResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $validated = $request->validate([
             'role' => 'required|in:owner,admin,member,manager,editor',
         ]);
 
-        $agencyId = $request->user()->agency_id;
-
+        $agencyId = $user->agency_id;
         $member = User::findOrFail($userId);
 
         if ((int) $member->agency_id !== (int) $agencyId) {
@@ -218,7 +265,7 @@ class AgencyController extends Controller
         }
 
         // Only owner or admin can change roles
-        if (! $request->user()->isOwner() && ! $request->user()->isAdmin()) {
+        if (! $user->isOwner() && ! $user->isAdmin()) {
             return redirect()->route('agency.team')->with('error', 'Only the owner or admin can change roles.');
         }
 
@@ -228,10 +275,13 @@ class AgencyController extends Controller
         return redirect()->route('agency.team')->with('success', 'Member role updated.');
     }
 
-    public function removeMember(Request $request, $userId)
+    public function removeMember(Request $request, int $userId): RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
-
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id;
         $member = User::findOrFail($userId);
 
         if ((int) $member->agency_id !== (int) $agencyId) {
@@ -239,12 +289,12 @@ class AgencyController extends Controller
         }
 
         // Only owner or admin can remove members
-        if (! $request->user()->isOwner() && ! $request->user()->isAdmin()) {
+        if (! $user->isOwner() && ! $user->isAdmin()) {
             return redirect()->route('agency.team')->with('error', 'Only the owner or admin can remove members.');
         }
 
         // Cannot remove yourself
-        if ((int) $member->id === (int) $request->user()->id) {
+        if ((int) $member->id === (int) $user->id) {
             return redirect()->route('agency.team')->with('error', 'You cannot remove yourself.');
         }
 

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\AI\Gateway\AiRequest;
+use App\Services\AI\Gateway\Contracts\AiProviderInterface;
 use App\Services\AI\Gateway\Providers\AnthropicProvider;
 use App\Services\AI\Gateway\Providers\GoogleProvider;
 use App\Services\AI\Gateway\Providers\GroqProvider;
@@ -121,7 +122,7 @@ class AiTestCommand extends Command
         }
     }
 
-    private function createProvider(string $providerName)
+    private function createProvider(string $providerName): ?AiProviderInterface
     {
         return match ($providerName) {
             'openai' => new OpenAiProvider,

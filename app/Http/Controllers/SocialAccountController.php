@@ -71,6 +71,49 @@ class SocialAccountController extends Controller
             ->with('success', 'Social account connected successfully.');
     }
 
+    public function edit(Request $request, $accountId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $account = SocialAccount::findOrFail($accountId);
+
+        if ($account->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        return view('social.accounts.edit', compact('account'));
+    }
+
+    public function update(Request $request, $accountId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $account = SocialAccount::findOrFail($accountId);
+
+        if ($account->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'access_token' => 'nullable|string',
+            'refresh_token' => 'nullable|string',
+            'platform_account_id' => 'nullable|string',
+            'platform_username' => 'nullable|string',
+            'platform_display_name' => 'nullable|string|max:255',
+        ]);
+
+        $account->update([
+            'access_token' => isset($validated['access_token']) && $validated['access_token'] !== '' ? encrypt($validated['access_token']) : $account->access_token,
+            'refresh_token' => isset($validated['refresh_token']) && $validated['refresh_token'] !== '' ? encrypt($validated['refresh_token']) : $account->refresh_token,
+            'platform_account_id' => $validated['platform_account_id'] ?? $account->platform_account_id,
+            'platform_username' => $validated['platform_username'] ?? $account->platform_username,
+            'platform_display_name' => $validated['platform_display_name'] ?? $account->platform_display_name,
+        ]);
+
+        return redirect()->route('social.accounts.index')
+            ->with('success', 'Social account updated successfully.');
+    }
+
     public function destroy(Request $request, $accountId)
     {
         $agencyId = $request->user()->agency_id;

@@ -22,52 +22,45 @@ class ApiEndpointTest extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_returns_health_status(): void
+    public function test_it_returns_health_status(): void
     {
         $response = $this->getJson('/api/health');
         $response->assertOk();
         $response->assertJson(['status' => 'ok']);
     }
 
-    /** @test */
-    public function it_returns_version_info(): void
+    public function test_it_returns_version_info(): void
     {
         $response = $this->getJson('/api/version');
         $response->assertOk();
         $response->assertJsonStructure(['version', 'name']);
     }
 
-    /** @test */
-    public function it_requires_auth_for_protected_endpoints(): void
+    public function test_it_requires_auth_for_protected_endpoints(): void
     {
         $response = $this->getJson('/api/v1/social-posts');
         $response->assertUnauthorized();
     }
 
-    /** @test */
-    public function it_returns_404_for_unknown_endpoints(): void
+    public function test_it_returns_404_for_unknown_endpoints(): void
     {
         $response = $this->getJson('/api/unknown');
         $response->assertNotFound();
     }
 
-    /** @test */
-    public function it_returns_openapi_docs(): void
+    public function test_it_returns_openapi_docs(): void
     {
         $response = $this->get('/api/docs');
         $response->assertOk();
     }
 
-    /** @test */
-    public function it_returns_openapi_yaml(): void
+    public function test_it_returns_openapi_yaml(): void
     {
         $response = $this->get('/api/docs/openapi.yaml');
         $response->assertOk();
     }
 
-    /** @test */
-    public function it_returns_openapi_json(): void
+    public function test_it_returns_openapi_json(): void
     {
         $response = $this->get('/api/docs/openapi.json');
         $response->assertOk();

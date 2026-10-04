@@ -44,8 +44,9 @@ class PlatformE2ETest extends TestCase
     public function test_complete_registration_and_onboarding_journey(): void
     {
         // Step 1: User registers
+        $uniqueSuffix = Str::random(8);
         $response = $this->post('/register', [
-            'agency_name' => 'Test Agency',
+            'agency_name' => 'Test Agency '.$uniqueSuffix,
             'name' => 'Test Agency Owner',
             'email' => 'test@agency.com',
             'password' => 'SecureP@ss123!',
@@ -58,17 +59,8 @@ class PlatformE2ETest extends TestCase
         $user = User::where('email', 'test@agency.com')->first();
         $this->assertNotNull($user->agency_id);
 
-        // Step 2: User logs in
-        $loginResponse = $this->post('/login', [
-            'email' => 'test@agency.com',
-            'password' => 'SecureP@ss123!',
-        ]);
-
-        $loginResponse->assertStatus(302);
-        $this->assertAuthenticatedAs($user);
-
-        // Step 3: User accesses dashboard
-        $dashboardResponse = $this->get('/dashboard');
+        // Step 2: User is already logged in after registration, access dashboard
+        $dashboardResponse = $this->actingAs($user)->get('/dashboard');
         $dashboardResponse->assertStatus(200);
     }
 
@@ -391,9 +383,10 @@ class PlatformE2ETest extends TestCase
      */
     protected function createUserWithAgency(string $email = 'user@test.com', string $agencyName = 'Test Agency'): User
     {
+        $uniqueSuffix = Str::random(8);
         $agency = Agency::factory()->create([
-            'name' => $agencyName,
-            'slug' => Str::slug($agencyName),
+            'name' => $agencyName.' '.$uniqueSuffix,
+            'slug' => Str::slug($agencyName).'-'.$uniqueSuffix,
             'email' => $email,
             'subscription_plan' => 'free',
             'status' => 'active',

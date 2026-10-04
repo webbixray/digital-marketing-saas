@@ -2,12 +2,13 @@
 
 namespace App\Services\Calendar;
 
-use App\Models\SocialPost;
 use App\Models\OptimalPostingTime;
+use App\Models\SocialPost;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ContentCalendarService
 {
@@ -21,9 +22,11 @@ class ContentCalendarService
         ?string $platform = null,
         ?int $accountId = null
     ): Collection {
-        $cacheKey = "calendar:{$agencyId}:events:" . md5("{$startDate}:{$endDate}:{$platform}:{$accountId}");
-        
-        return Cache::remember($cacheKey, 300, function () use ($agencyId, $startDate, $endDate, $platform, $accountId) {
+        $cacheKey = "calendar:{$agencyId}:events:".md5("{$startDate}:{$endDate}:{$platform}:{$accountId}");
+
+        // Cache a plain array (serializable_classes=false forbids caching Collection
+        // objects — they unserialize as __PHP_Incomplete_Class) and rehydrate.
+        $events = Cache::remember($cacheKey, 300, function () use ($agencyId, $startDate, $endDate, $platform, $accountId) {
             $query = SocialPost::where('agency_id', $agencyId)
                 ->whereBetween('scheduled_at', [$startDate, $endDate])
                 ->with(['socialAccount:id,platform,platform_username,platform_display_name']);
@@ -57,8 +60,10 @@ class ContentCalendarService
                         'scheduled_at' => $post->scheduled_at?->toDateTimeString(),
                         'edit_url' => route('social.posts.edit', $post->id),
                     ],
-                ]);
+                ])->all();
         });
+
+        return collect($events);
     }
 
     /**
@@ -77,8 +82,8 @@ class ContentCalendarService
      */
     public function getStats(int $agencyId, string $startDate, string $endDate): array
     {
-        $cacheKey = "calendar:{$agencyId}:stats:" . md5("{$startDate}:{$endDate}");
-        
+        $cacheKey = "calendar:{$agencyId}:stats:".md5("{$startDate}:{$endDate}");
+
         return Cache::remember($cacheKey, 600, function () use ($agencyId, $startDate, $endDate) {
             $stats = SocialPost::where('agency_id', $agencyId)
                 ->whereBetween('scheduled_at', [$startDate, $endDate])
@@ -141,13 +146,17 @@ class ContentCalendarService
         }
 
         // Fallback: compute from historical published posts - optimized with single query
+        $hourExpr = DB::connection()->getDriverName() === 'sqlite'
+            ? 'strftime("%H", published_at)'
+            : 'HOUR(published_at)';
+
         $hourlyPerformance = SocialPost::where('agency_id', $agencyId)
             ->where('status', 'published')
             ->whereNotNull('published_at')
-            ->selectRaw('
-                strftime("%H", published_at) as hour,
+            ->selectRaw("
+                {$hourExpr} as hour,
                 SUM(likes_count + comments_count + shares_count) as total_engagement
-            ')
+            ")
             ->groupBy('hour')
             ->orderByDesc('total_engagement')
             ->get();
@@ -175,7 +184,7 @@ class ContentCalendarService
         // Pre-compute current month stats
         $start = Carbon::now()->startOfMonth()->toDateTimeString();
         $end = Carbon::now()->endOfMonth()->toDateTimeString();
-        
+
         $stats = SocialPost::where('agency_id', $agencyId)
             ->whereBetween('scheduled_at', [$start, $end])
             ->selectRaw('
@@ -194,7 +203,7 @@ class ContentCalendarService
             ->pluck('count', 'platform')
             ->toArray();
 
-        Cache::put("calendar:{$agencyId}:stats:" . md5("{$start}:{$end}"), [
+        Cache::put("calendar:{$agencyId}:stats:".md5("{$start}:{$end}"), [
             'total' => (int) $stats->total,
             'published' => (int) $stats->published,
             'scheduled' => (int) $stats->scheduled,
@@ -206,7 +215,7 @@ class ContentCalendarService
         // Pre-compute next month as well
         $nextStart = Carbon::now()->addMonth()->startOfMonth()->toDateTimeString();
         $nextEnd = Carbon::now()->addMonth()->endOfMonth()->toDateTimeString();
-        
+
         $nextStats = SocialPost::where('agency_id', $agencyId)
             ->whereBetween('scheduled_at', [$nextStart, $nextEnd])
             ->selectRaw('
@@ -218,7 +227,7 @@ class ContentCalendarService
             ')
             ->first();
 
-        Cache::put("calendar:{$agencyId}:stats:" . md5("{$nextStart}:{$nextEnd}"), [
+        Cache::put("calendar:{$agencyId}:stats:".md5("{$nextStart}:{$nextEnd}"), [
             'total' => (int) $nextStats->total,
             'published' => (int) $nextStats->published,
             'scheduled' => (int) $nextStats->scheduled,
@@ -278,8 +287,8 @@ class ContentCalendarService
      */
     public function suggestOptimalSlots(int $agencyId, ?string $platform = null): array
     {
-        $cacheKey = "calendar:{$agencyId}:slots:" . ($platform ?? 'all');
-        
+        $cacheKey = "calendar:{$agencyId}:slots:".($platform ?? 'all');
+
         return Cache::remember($cacheKey, 1800, function () use ($agencyId, $platform) {
             $query = OptimalPostingTime::where('agency_id', $agencyId)->best();
 

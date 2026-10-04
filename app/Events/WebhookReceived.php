@@ -13,6 +13,9 @@ class WebhookReceived
         public readonly string $platform,
         public readonly string $eventType,
         public readonly string $webhookId,
+        /**
+         * @var array<string, mixed>
+         */
         public readonly array $payload,
         public readonly ?string $signature = null,
         public readonly bool $signatureValid = false,

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Chat\ChatMessageSent;
+use App\Events\Chat\ChatRead;
+use App\Events\Chat\ChatTyping;
 use App\Models\ChatChannel;
 use App\Models\ChatMessage;
 use App\Models\ChatReaction;
-use App\Events\Chat\ChatMessageSent;
-use App\Events\Chat\ChatTyping;
-use App\Events\Chat\ChatRead;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class Chat2Controller extends Controller
 {
@@ -21,14 +21,21 @@ class Chat2Controller extends Controller
     {
         $channels = ChatChannel::forCurrentAgency()
             ->active()
-            ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
+            ->with(['users', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->withCount('users')
             ->orderByDesc('updated_at')
             ->get();
 
         $activeChannel = $channels->first();
 
-        $messages = collect();
+        // The view contract expects a paginator ($messages->items()); when the
+        // agency has no channels, return an empty LengthAwarePaginator instead
+        // of a plain Collection to keep that contract intact.
+        $messages = new LengthAwarePaginator(
+            [],
+            0,
+            50
+        );
         if ($activeChannel) {
             $messages = ChatMessage::where('channel_id', $activeChannel->id)
                 ->with(['user', 'replyTo', 'reactions'])
@@ -51,7 +58,7 @@ class Chat2Controller extends Controller
 
         $channels = ChatChannel::forCurrentAgency()
             ->active()
-            ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
+            ->with(['users', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->withCount('users')
             ->orderByDesc('updated_at')
             ->get();

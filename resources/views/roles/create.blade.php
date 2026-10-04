@@ -123,7 +123,7 @@
     </form>
 
     @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         document.querySelectorAll('.permission-check').forEach(cb => {
             cb.addEventListener('change', () => {
                 document.getElementById('selected-count').textContent =

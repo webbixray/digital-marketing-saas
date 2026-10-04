@@ -8,6 +8,8 @@ trait StructuredLogger
 {
     /**
      * Log authentication events with structured context.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logAuth(string $event, array $context = []): void
     {
@@ -20,6 +22,8 @@ trait StructuredLogger
 
     /**
      * Log authentication failure.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logAuthFailure(string $reason, array $context = []): void
     {
@@ -33,6 +37,8 @@ trait StructuredLogger
 
     /**
      * Log billing/subscription events with structured context.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logBilling(string $event, array $context = []): void
     {
@@ -45,6 +51,8 @@ trait StructuredLogger
 
     /**
      * Log billing errors.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logBillingError(string $event, array $context = []): void
     {
@@ -57,6 +65,8 @@ trait StructuredLogger
 
     /**
      * Log agent execution with structured context.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logAgentExecution(string $event, array $context = []): void
     {
@@ -69,6 +79,8 @@ trait StructuredLogger
 
     /**
      * Log agent errors.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logAgentError(string $event, array $context = []): void
     {
@@ -81,6 +93,8 @@ trait StructuredLogger
 
     /**
      * Log security-related events.
+     *
+     * @param  array<string, mixed>  $context
      */
     protected function logSecurity(string $event, array $context = []): void
     {

@@ -172,8 +172,8 @@ class Handler extends ExceptionHandler
         parent::report($e);
     }
 
-    protected function shouldReturnJson(Throwable $e, $request): bool
+    protected function shouldReturnJson(mixed $request, Throwable $e): bool
     {
-        return $request->is('api/*') || $request->wantsJson() || parent::shouldReturnJson($e, $request);
+        return parent::shouldReturnJson($request, $e);
     }
 }

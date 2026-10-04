@@ -253,7 +253,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     let folders = [];
     let assets = [];
     let selectedFolder = null;

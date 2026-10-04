@@ -23,16 +23,14 @@ class SocialAccountTest extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_lists_accounts(): void
+    public function test_it_lists_accounts(): void
     {
         SocialAccount::factory()->count(3)->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('social.accounts.index'));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_creates_an_account(): void
+    public function test_it_creates_an_account(): void
     {
         $response = $this->actingAs($this->user)->post(route('social.accounts.store'), [
             'platform' => 'twitter',
@@ -43,15 +41,13 @@ class SocialAccountTest extends TestCase
         $this->assertDatabaseHas('social_accounts', ['platform_display_name' => 'Test Account']);
     }
 
-    /** @test */
-    public function it_validates_account_creation(): void
+    public function test_it_validates_account_creation(): void
     {
         $response = $this->actingAs($this->user)->post(route('social.accounts.store'), []);
         $response->assertSessionHasErrors(['platform', 'access_token']);
     }
 
-    /** @test */
-    public function it_toggles_account(): void
+    public function test_it_toggles_account(): void
     {
         $account = SocialAccount::factory()->create(['agency_id' => $this->agency->id, 'is_active' => true]);
         $response = $this->actingAs($this->user)->post(route('social.accounts.toggle', $account));
@@ -59,17 +55,16 @@ class SocialAccountTest extends TestCase
         $this->assertDatabaseHas('social_accounts', ['id' => $account->id, 'is_active' => false]);
     }
 
-    /** @test */
-    public function it_deletes_an_account(): void
+    public function test_it_deletes_an_account(): void
     {
         $account = SocialAccount::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->delete(route('social.accounts.destroy', $account));
         $response->assertRedirect();
-        $this->assertDatabaseMissing('social_accounts', ['id' => $account->id]);
+        // SocialAccount uses soft deletes (OAuth reconnect history is retained).
+        $this->assertSoftDeleted('social_accounts', ['id' => $account->id]);
     }
 
-    /** @test */
-    public function it_prevents_access_to_other_agency_accounts(): void
+    public function test_it_prevents_access_to_other_agency_accounts(): void
     {
         $otherAgency = Agency::factory()->create();
         $account = SocialAccount::factory()->create(['agency_id' => $otherAgency->id]);
@@ -77,8 +72,7 @@ class SocialAccountTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_requires_auth(): void
+    public function test_it_requires_auth(): void
     {
         $response = $this->get(route('social.accounts.index'));
         $response->assertRedirect(route('login'));

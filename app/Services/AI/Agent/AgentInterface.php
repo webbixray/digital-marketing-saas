@@ -10,6 +10,16 @@ interface AgentInterface
     public function getName(): string;
 
     /**
+     * Get the category this agent belongs to.
+     */
+    public function getCategory(): string;
+
+    /**
+     * Get a human-readable description of this agent.
+     */
+    public function getDescription(): string;
+
+    /**
      * Get the task types this agent supports.
      *
      * @return array<string>

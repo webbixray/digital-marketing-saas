@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AbTest;
 use App\Models\SocialAccount;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class AbTestController extends Controller
@@ -18,9 +20,13 @@ class AbTestController extends Controller
     /**
      * List all A/B tests for the agency.
      */
-    public function index(Request $request)
+    public function index(Request $request): View|RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $agencyId = $user->agency_id ?? 0;
         $status = $request->query('status', 'all');
         $type = $request->query('type', 'all');
 
@@ -52,9 +58,13 @@ class AbTestController extends Controller
     /**
      * Show create form.
      */
-    public function create(Request $request)
+    public function create(Request $request): View|RedirectResponse
     {
-        $accounts = SocialAccount::where('agency_id', $request->user()->agency_id)
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        $accounts = SocialAccount::where('agency_id', $user->agency_id ?? 0)
             ->active()
             ->get();
 
@@ -64,7 +74,7 @@ class AbTestController extends Controller
     /**
      * Store new A/B test.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -77,8 +87,9 @@ class AbTestController extends Controller
             'sample_size' => 'required|integer|min:50|max:10000',
         ]);
 
+        $user = $request->user();
         $test = AbTest::create([
-            'agency_id' => $request->user()->agency_id,
+            'agency_id' => $user->agency_id ?? 0,
             'social_account_id' => $validated['social_account_id'],
             'name' => $validated['name'],
             'type' => $validated['type'],
@@ -97,11 +108,10 @@ class AbTestController extends Controller
     /**
      * Show single test with results.
      */
-    public function show(Request $request, AbTest $test)
+    public function show(Request $request, AbTest $test): View|RedirectResponse
     {
         $this->authorizeAgency($test);
         $test->load('socialAccount');
-        
         $analysis = $test->analyze();
 
         return view('ab-testing.show', compact('test', 'analysis'));
@@ -113,19 +123,19 @@ class AbTestController extends Controller
     public function analyze(Request $request, AbTest $test): JsonResponse
     {
         $this->authorizeAgency($test);
-        
+
         $analysis = $test->analyze();
-        
+
         return response()->json($analysis);
     }
 
     /**
      * Start a test.
      */
-    public function start(Request $request, AbTest $test)
+    public function start(Request $request, AbTest $test): RedirectResponse
     {
         $this->authorizeAgency($test);
-        
+
         if ($test->status !== 'draft') {
             return back()->with('error', 'Test can only be started from draft status.');
         }
@@ -135,7 +145,8 @@ class AbTestController extends Controller
             'started_at' => now(),
         ]);
 
-        Log::info('A/B test started', ['test_id' => $test->id, 'agency_id' => $request->user()->agency_id]);
+        $user = $request->user();
+        Log::info('A/B test started', ['test_id' => $test->id, 'agency_id' => $user->agency_id ?? 0]);
 
         return back()->with('success', 'Test started! Results will be tracked automatically.');
     }
@@ -143,17 +154,18 @@ class AbTestController extends Controller
     /**
      * Pause a test.
      */
-    public function pause(Request $request, AbTest $test)
+    public function pause(Request $request, AbTest $test): RedirectResponse
     {
         $this->authorizeAgency($test);
-        
+
         if ($test->status !== 'running') {
             return back()->with('error', 'Only running tests can be paused.');
         }
 
         $test->update(['status' => 'paused']);
 
-        Log::info('A/B test paused', ['test_id' => $test->id, 'agency_id' => $request->user()->agency_id]);
+        $user = $request->user();
+        Log::info('A/B test paused', ['test_id' => $test->id, 'agency_id' => $user->agency_id ?? 0]);
 
         return back()->with('success', 'Test paused.');
     }
@@ -161,10 +173,10 @@ class AbTestController extends Controller
     /**
      * Complete a test and determine winner.
      */
-    public function complete(Request $request, AbTest $test)
+    public function complete(Request $request, AbTest $test): RedirectResponse
     {
         $this->authorizeAgency($test);
-        
+
         if ($test->status !== 'running') {
             return back()->with('error', 'Only running tests can be completed.');
         }
@@ -180,23 +192,24 @@ class AbTestController extends Controller
         ]);
 
         $winnerLabel = $winner === 'inconclusive' ? 'Inconclusive' : ucfirst($winner);
+
         return back()->with('success', "Test completed! Winner: {$winnerLabel} ({$confidence}% confidence)");
     }
 
     /**
      * Track an event (impression, engagement, click).
      */
-    public function trackEvent(Request $request, AbTest $test, string $variant, string $event)
+    public function trackEvent(Request $request, AbTest $test, string $variant, string $event): JsonResponse
     {
         if (! $test->isRunning()) {
             return response()->json(['error' => 'Test not running'], 400);
         }
 
-        if (!in_array($variant, ['a', 'b'])) {
+        if (! in_array($variant, ['a', 'b'])) {
             return response()->json(['error' => 'Invalid variant'], 400);
         }
 
-        if (!in_array($event, ['impression', 'engagement', 'click'])) {
+        if (! in_array($event, ['impression', 'engagement', 'click'])) {
             return response()->json(['error' => 'Invalid event type'], 400);
         }
 
@@ -211,18 +224,28 @@ class AbTestController extends Controller
 
         // Update counters - map event to column
         $columnMap = [
-            'impression' => 'variant_' . $variant . '_impressions',
-            'engagement' => 'variant_' . $variant . '_engagement',
-            'click' => 'variant_' . $variant . '_clicks',
+            'impression' => 'variant_'.$variant.'_impressions',
+            'engagement' => 'variant_'.$variant.'_engagement',
+            'click' => 'variant_'.$variant.'_clicks',
         ];
         $column = $columnMap[$event];
         $test->increment($column);
+
+        $freshTest = $test->fresh();
+        if (! $freshTest) {
+            return response()->json([
+                'success' => true,
+                'variant' => $variant,
+                'event' => $event,
+                'total' => 0,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
             'variant' => $variant,
             'event' => $event,
-            'total' => $test->fresh()->{$column},
+            'total' => $freshTest->{$column},
         ]);
     }
 
@@ -231,7 +254,12 @@ class AbTestController extends Controller
      */
     private function authorizeAgency(AbTest $test): void
     {
-        if ((int) $test->agency_id !== (int) request()->user()->agency_id) {
+        $user = request()->user();
+        if (! $user) {
+            abort(403);
+        }
+
+        if ((int) $test->agency_id !== (int) ($user->agency_id ?? 0)) {
             abort(403);
         }
     }

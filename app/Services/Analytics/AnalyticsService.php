@@ -25,9 +25,7 @@ class AnalyticsService
     /**
      * Return all core dashboard stats for an agency.
      *
-     * @param Agency $agency
-     * @param int $days Number of days for date-range queries (default 30)
-     * @return array
+     * @param  int  $days  Number of days for date-range queries (default 30)
      */
     public function getDashboardStats(Agency $agency, int $days = 30): array
     {
@@ -577,10 +575,14 @@ class AnalyticsService
     public function getOptimalPostingTimes(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:optimal_times", self::CACHE_TTL, function () use ($agency) {
+            $hourExpr = DB::connection()->getDriverName() === 'sqlite'
+                ? "strftime('%H', published_at)"
+                : 'HOUR(published_at)';
+
             // Single query for all platforms
             $hours = SocialPost::where('agency_id', $agency->id)
                 ->where('status', 'published')
-                ->selectRaw("platform, strftime('%H', published_at) as hour, AVG(engagement_rate) as avg_engagement")
+                ->selectRaw("platform, {$hourExpr} as hour, AVG(engagement_rate) as avg_engagement")
                 ->groupBy('platform', 'hour')
                 ->orderBy('platform')
                 ->orderByDesc('avg_engagement')

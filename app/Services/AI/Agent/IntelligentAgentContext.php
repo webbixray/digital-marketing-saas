@@ -4,19 +4,23 @@ namespace App\Services\AI\Agent;
 
 use App\Models\Agency;
 use App\Models\Campaign;
-use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
 
 class IntelligentAgentContext
 {
     private User $user;
+
     private Agency $agency;
+
     private array $userPreferences = [];
+
     private array $recentActions = [];
+
     private array $brandVoice = [];
+
     private array $performanceMetrics = [];
-    
+
     public function __construct(
         private readonly AgentMemory $memory,
         private readonly BrandVoiceService $brandVoiceService,
@@ -50,35 +54,35 @@ class IntelligentAgentContext
 
         // User role and preferences
         $context[] = "User Role: {$this->user->role}";
-        $context[] = "User Language: {$this->userPreferences['language'] ?? 'en'}";
-        $context[] = "Preferred Tone: {$this->userPreferences['tone'] ?? 'professional'}";
+        $context[] = 'User Language: '.($this->userPreferences['language'] ?? 'en');
+        $context[] = 'Preferred Tone: '.($this->userPreferences['tone'] ?? 'professional');
 
         // Agency context
         $context[] = "Agency: {$this->user->agency->name}";
-        $context[] = "Industry: {$this->user->agency->industry ?? 'general'}";
+        $context[] = 'Industry: '.($this->user->agency->industry ?? 'general');
         $context[] = "Subscription Plan: {$this->user->agency->subscription_plan}";
 
         // Brand voice
-        if (!empty($this->brandVoice)) {
-            $context[] = "Brand Voice: " . json_encode($this->brandVoice);
+        if (! empty($this->brandVoice)) {
+            $context[] = 'Brand Voice: '.json_encode($this->brandVoice);
         }
 
         // Recent actions (for continuity)
-        if (!empty($this->recentActions)) {
-            $context[] = "Recent Actions: " . json_encode(array_slice($this->recentActions, 0, 5));
+        if (! empty($this->recentActions)) {
+            $context[] = 'Recent Actions: '.json_encode(array_slice($this->recentActions, 0, 5));
         }
 
         // Performance insights
-        if (!empty($this->performanceMetrics)) {
-            $context[] = "Top Performing Content: " . json_encode($this->performanceMetrics['top_posts'] ?? []);
-            $context[] = "Best Posting Times: " . json_encode($this->performanceMetrics['best_times'] ?? []);
+        if (! empty($this->performanceMetrics)) {
+            $context[] = 'Top Performing Content: '.json_encode($this->performanceMetrics['top_posts'] ?? []);
+            $context[] = 'Best Posting Times: '.json_encode($this->performanceMetrics['best_times'] ?? []);
         }
 
         // Platform context
         $platform = $this->additionalContext['platform'] ?? null;
         if ($platform) {
             $context[] = "Target Platform: {$platform}";
-            $context[] = "Platform Best Practices: " . json_encode($this->getPlatformBestPractices($platform));
+            $context[] = 'Platform Best Practices: '.json_encode($this->getPlatformBestPractices($platform));
         }
 
         // Campaign context
@@ -86,7 +90,7 @@ class IntelligentAgentContext
         if ($campaign) {
             $context[] = "Campaign: {$campaign->name}";
             $context[] = "Campaign Objective: {$campaign->objective}";
-            $context[] = "Campaign History: " . json_encode($this->getCampaignHistory($campaign));
+            $context[] = 'Campaign History: '.json_encode($this->getCampaignHistory($campaign));
         }
 
         return implode("\n", $context);

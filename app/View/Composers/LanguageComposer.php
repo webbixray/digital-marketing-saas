@@ -2,21 +2,17 @@
 
 namespace App\View\Composers;
 
+use App\Models;
 use App\Services\Localization\LocaleService;
 use App\Services\Localization\TranslationService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\View\View;
 
 class LanguageComposer
 {
-    /**
-     * @var LocaleService
-     */
     protected LocaleService $localeService;
 
-    /**
-     * @var TranslationService
-     */
     protected TranslationService $translationService;
 
     public function __construct(LocaleService $localeService, TranslationService $translationService)
@@ -55,7 +51,7 @@ class LanguageComposer
     /**
      * Format language collection for the picker dropdown.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection<int, \App\Models>  $supportedLanguages
+     * @param  Collection<int, Models>  $supportedLanguages
      * @return array<string, array{code: string, name: string, native: string, flag: string, rtl: bool}>
      */
     protected function formatLanguagesForPicker($supportedLanguages): array
@@ -63,6 +59,12 @@ class LanguageComposer
         $formatted = [];
 
         foreach ($supportedLanguages as $language) {
+            // Guard against poisoned/legacy cache entries that stored plain
+            // strings (locale codes) instead of Language models.
+            if (! is_object($language) || ! isset($language->code)) {
+                continue;
+            }
+
             $formatted[$language->code] = [
                 'code' => $language->code,
                 'name' => $language->name ?? $language->code,
@@ -82,7 +84,7 @@ class LanguageComposer
 
         // Merge: Language model data takes priority, then fall back to defaults
         foreach ($defaultLanguages as $code => $data) {
-            if (!isset($formatted[$code])) {
+            if (! isset($formatted[$code])) {
                 $formatted[$code] = $data;
             }
         }
@@ -98,6 +100,7 @@ class LanguageComposer
     protected function getCurrentLanguageData($supportedLanguages, string $currentLocale): array
     {
         $formatted = $this->formatLanguagesForPicker($supportedLanguages);
+
         return $formatted[$currentLocale] ?? [
             'code' => $currentLocale,
             'name' => strtoupper($currentLocale),
@@ -117,6 +120,7 @@ class LanguageComposer
         $service = app(LocaleService::class);
         $languages = $service->getSupportedLanguages();
         $instance = new static($service, app(TranslationService::class));
+
         return $instance->formatLanguagesForPicker($languages);
     }
 

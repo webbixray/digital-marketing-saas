@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
@@ -38,20 +39,48 @@ class Platform extends Model
         return $this->hasMany(SocialAccount::class, 'platform', 'name');
     }
 
-    public static function getAllActive(): array
+    /**
+     * All active platforms, keyed by name.
+     *
+     * Cached as plain arrays and rehydrated (Model::hydrate) because the
+     * database cache store blocks class unserialization
+     * (serializable_classes=false).
+     *
+     * @return Collection<int, self>
+     */
+    public static function getAllActive()
     {
-        return Cache::remember('platforms:active', 3600, function () {
-            return self::where('is_active', true)
-                ->orderBy('sort_order')
-                ->get()
-                ->keyBy('name');
-        });
+        $cached = Cache::get('platforms:active');
+
+        if (is_array($cached)) {
+            return self::hydrate($cached)->keyBy('name');
+        }
+
+        $platforms = self::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        Cache::put('platforms:active', $platforms->toArray(), 3600);
+
+        return $platforms->keyBy('name');
     }
 
     public static function findByName(string $name): ?self
     {
+        $cached = Cache::get("platform:{$name}");
+
+        if (is_array($cached)) {
+            $model = self::newModelInstance()->newFromBuilder($cached);
+
+            return $model->exists ? $model : null;
+        }
+
         return Cache::remember("platform:{$name}", 3600, function () use ($name) {
-            return self::where('name', $name)->first();
+            $platform = self::where('name', $name)->first();
+
+            // Cache a plain array (or [] when absent) — never a model, which
+            // cannot be unserialized under serializable_classes=false.
+            return $platform ? $platform->toArray() : [];
         });
     }
 }

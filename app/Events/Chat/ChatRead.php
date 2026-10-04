@@ -14,6 +14,7 @@ class ChatRead implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int $channelId;
+
     public User $user;
 
     /**
@@ -31,7 +32,7 @@ class ChatRead implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('chat.' . $this->channelId),
+            new Channel('chat.'.$this->channelId),
         ];
     }
 
@@ -45,6 +46,12 @@ class ChatRead implements ShouldBroadcastNow
 
     /**
      * Get the data to broadcast.
+     *
+     * @return array{
+     *     channel_id: int,
+     *     user: array{id: int, name: string},
+     *     read_at: string
+     * }
      */
     public function broadcastWith(): array
     {
@@ -54,7 +61,7 @@ class ChatRead implements ShouldBroadcastNow
                 'id' => $this->user->id,
                 'name' => $this->user->name,
             ],
-            'read_at' => now()->toISOString(),
+            'read_at' => now()->toISOString() ?? '',
         ];
     }
 }

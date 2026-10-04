@@ -12,16 +12,14 @@ class NotificationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function quota_warning_notification_can_be_created(): void
+    public function test_quota_warning_notification_can_be_created(): void
     {
         $agency = Agency::factory()->create();
         $notification = new QuotaWarningNotification($agency, 'posts', 90, 100);
         $this->assertNotNull($notification);
     }
 
-    /** @test */
-    public function notification_has_correct_via_channels(): void
+    public function test_notification_has_correct_via_channels(): void
     {
         $agency = Agency::factory()->create();
         $notification = new QuotaWarningNotification($agency, 'posts', 90, 100);

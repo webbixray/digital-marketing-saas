@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\SelfImprovementEngine;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class AgentImprovementCommand extends Command
@@ -48,9 +50,11 @@ class AgentImprovementCommand extends Command
             }
             $agents = [$agentName => $orchestrator->getAgent($agentName)];
         } else {
-            $agents = $orchestrator->getAllAgents();
+            /** @var Collection<string, AgentInterface> $agents */
+            $agents = collect($orchestrator->getAllAgents())->filter()->values();
         }
 
+        /** @var Collection<string, AgentInterface> $agents */
         if ($agents->isEmpty()) {
             $this->warn('No agents registered. Register agents in the AgentOrchestrator first.');
 
@@ -64,12 +68,14 @@ class AgentImprovementCommand extends Command
         $totalTuned = 0;
 
         foreach ($agents as $name => $agent) {
+            /** @var AgentInterface $agent */
             $this->info("─── Agent: {$name} ───");
             $this->line("  Category: {$agent->getCategory()}");
             $this->line("  Description: {$agent->getDescription()}");
             $this->newLine();
 
             // Generate improvements
+            /** @var AgentInterface $agent */
             $improvements = $engine->generateImprovements($agent);
 
             if (empty($improvements)) {
@@ -94,6 +100,7 @@ class AgentImprovementCommand extends Command
                 $this->newLine();
                 $this->line('  Applying auto-tuning...');
                 try {
+                    /** @var AgentInterface $agent */
                     $engine->autoTune($agent);
                     $totalTuned++;
                     $this->line('  ✓ Auto-tuning complete.');

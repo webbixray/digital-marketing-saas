@@ -52,36 +52,54 @@ class InvoiceController extends Controller
             $agency = $request->user()->agency;
 
             $validated = $request->validate([
+                'client_name' => 'nullable|string|max:255',
                 'issue_date' => 'required|date',
                 'due_date' => 'required|date|after_or_equal:issue_date',
                 'notes' => 'nullable|string',
+                'total' => 'nullable|numeric|min:0',
                 'items' => 'required|array|min:1',
                 'items.*.description' => 'required|string',
-                'items.*.quantity' => 'required|numeric|min:0',
-                'items.*.unit_price' => 'required|numeric|min:0',
+                'items.*.quantity' => 'nullable|numeric|min:0',
+                'items.*.unit_price' => 'nullable|numeric|min:0',
+                'items.*.amount' => 'nullable|numeric|min:0',
             ]);
 
+            // Normalize items: accept either quantity+unit_price or a flat amount.
+            $items = collect($validated['items'])->map(function (array $item) {
+                $quantity = $item['quantity'] ?? 1;
+                $unitPrice = isset($item['unit_price'])
+                    ? $item['unit_price']
+                    : ($item['amount'] ?? 0) / max($quantity, 1);
+
+                return [
+                    'description' => $item['description'],
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                ];
+            })->all();
+
             $subtotal = 0;
-            foreach ($validated['items'] as $item) {
+            foreach ($items as $item) {
                 $subtotal += $item['quantity'] * $item['unit_price'];
             }
 
             $tax = $subtotal * 0.0;
-            $total = $subtotal + $tax;
+            $total = $validated['total'] ?? ($subtotal + $tax);
 
             $invoice = Invoice::create([
                 'agency_id' => $agency->id,
                 'invoice_number' => Invoice::generateNumber(),
                 'status' => InvoiceStatus::PENDING->value,
+                'client_name' => $validated['client_name'] ?? null,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'total' => $total,
-                'issue_date' => $validated['issue_date'],
-                'due_date' => $validated['due_date'],
+                'issue_date' => $validated['issue_date'] ?? now()->toDateString(),
+                'due_date' => $validated['due_date'] ?? now()->addDays(30)->toDateString(),
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            foreach ($validated['items'] as $item) {
+            foreach ($items as $item) {
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'description' => $item['description'],
@@ -137,7 +155,7 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        return $this->handleAction(function () use ($request, $invoice) {
+        return $this->handleAction(function () use ($request, $invoice, $agency) {
             $validated = $request->validate([
                 'issue_date' => 'required|date',
                 'due_date' => 'required|date|after_or_equal:issue_date',
@@ -192,7 +210,7 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        return $this->handleAction(function () use ($request, $invoice) {
+        return $this->handleAction(function () use ($request, $invoice, $agencyId) {
             $invoice->markPaid(
                 $request->input('payment_method', 'manual'),
                 $request->input('transaction_id', '')

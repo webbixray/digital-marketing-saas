@@ -100,7 +100,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function translationEditor() {
     return {
         sourceContent: '',

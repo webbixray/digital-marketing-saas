@@ -150,7 +150,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function searchPage() {
     return {
         searchQuery: '{{ addslashes($query) }}',

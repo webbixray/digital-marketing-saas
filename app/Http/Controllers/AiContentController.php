@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agency;
 use App\Models\AiContentLog;
+use App\Models\User;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
 use App\Services\QuotaService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -18,9 +21,13 @@ class AiContentController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $agency = $request->user()->agency;
+        /** @var User $user */
+        $user = $request->user();
+
+        /** @var Agency $agency */
+        $agency = $user->agency;
 
         // Get recent generations
         $recentGenerations = AiContentLog::where('agency_id', $agency->id)

@@ -17,6 +17,9 @@ class AgentWorkflowCompleted
         public readonly int $agencyId,
         public readonly int $userId,
         public readonly bool $success,
+        /**
+         * @var array<int, array<string, mixed>>
+         */
         public readonly array $results = [],
         public readonly ?string $errorMessage = null,
     ) {}

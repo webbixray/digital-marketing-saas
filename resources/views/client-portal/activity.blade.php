@@ -70,7 +70,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function markRead(id) {
     fetch(`/client-portal-v2/{{ $client->id }}/notifications/${id}/mark-read`, {
         method: 'POST',

@@ -6,9 +6,12 @@ use App\Models\Agency;
 use App\Models\Client;
 use App\Models\ClientSubscription;
 use App\Models\Invoice;
-use App\Models\SocialListening;
 use App\Models\SocialPost;
 use App\Models\User;
+use App\Services\Analytics\Predictive\ChurnPredictionService;
+use App\Services\Analytics\Predictive\OptimalTimeService;
+use App\Services\Analytics\Predictive\RevenueForecastService;
+use App\Services\Analytics\Predictive\TrendDetectionService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -19,6 +22,7 @@ class PredictiveAnalyticsTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void
@@ -29,7 +33,6 @@ class PredictiveAnalyticsTest extends TestCase
         Cache::flush();
     }
 
-    /** @test */
     public function test_it_shows_predictive_dashboard()
     {
         $response = $this->actingAs($this->user)->get(route('predictive.dashboard'));
@@ -42,7 +45,6 @@ class PredictiveAnalyticsTest extends TestCase
         $response->assertViewHas('trends');
     }
 
-    /** @test */
     public function test_it_predicts_churn_for_client()
     {
         $client = Client::factory()->create([
@@ -54,7 +56,7 @@ class PredictiveAnalyticsTest extends TestCase
         // No posts in last 60 days — triggers low engagement risk
         // No active subscription — triggers critical risk
 
-        $service = app(\App\Services\Analytics\Predictive\ChurnPredictionService::class);
+        $service = app(ChurnPredictionService::class);
         $prediction = $service->predictChurn($client->id, $this->agency->id);
 
         $this->assertArrayHasKey('risk_score', $prediction);
@@ -65,7 +67,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertNotEmpty($prediction['risk_factors']);
     }
 
-    /** @test */
     public function test_it_shows_churn_risk_factors()
     {
         $client = Client::factory()->create([
@@ -81,7 +82,7 @@ class PredictiveAnalyticsTest extends TestCase
             'due_date' => Carbon::now()->subDays(30),
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\ChurnPredictionService::class);
+        $service = app(ChurnPredictionService::class);
         $factors = $service->getChurnRiskFactors($client->id);
 
         $this->assertNotEmpty($factors);
@@ -90,7 +91,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertContains('payment_overdue', $factorNames);
     }
 
-    /** @test */
     public function test_it_returns_churn_risk_score()
     {
         $client = Client::factory()->create([
@@ -98,7 +98,7 @@ class PredictiveAnalyticsTest extends TestCase
             'status' => 'active',
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\ChurnPredictionService::class);
+        $service = app(ChurnPredictionService::class);
         $score = $service->getChurnRiskScore($client->id);
 
         $this->assertIsFloat($score);
@@ -106,7 +106,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertLessThanOrEqual(1, $score);
     }
 
-    /** @test */
     public function test_it_identifies_high_risk_clients()
     {
         $highRiskClient = Client::factory()->create([
@@ -132,14 +131,13 @@ class PredictiveAnalyticsTest extends TestCase
             'published_at' => Carbon::now()->subDays(5),
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\ChurnPredictionService::class);
+        $service = app(ChurnPredictionService::class);
         $highRisk = $service->getHighRiskClients($this->agency->id, 0.5);
 
         $this->assertGreaterThanOrEqual(1, $highRisk->count());
         $this->assertTrue($highRisk->contains(fn ($c) => $c->id === $highRiskClient->id));
     }
 
-    /** @test */
     public function test_it_calculates_revenue_forecast()
     {
         ClientSubscription::factory()->count(3)->create([
@@ -156,7 +154,7 @@ class PredictiveAnalyticsTest extends TestCase
             'paid_date' => Carbon::now()->subDays(10),
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\RevenueForecastService::class);
+        $service = app(RevenueForecastService::class);
         $forecast = $service->forecastRevenue($this->agency->id, 3);
 
         $this->assertArrayHasKey('current_mrr', $forecast);
@@ -165,7 +163,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertEquals(597, $forecast['current_mrr']); // 3 * 199
     }
 
-    /** @test */
     public function test_it_forecasts_mrr_and_arr()
     {
         ClientSubscription::factory()->create([
@@ -175,7 +172,7 @@ class PredictiveAnalyticsTest extends TestCase
             'price' => 199,
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\RevenueForecastService::class);
+        $service = app(RevenueForecastService::class);
         $mrr = $service->forecastMRR($this->agency->id);
         $arr = $service->forecastARR($this->agency->id);
 
@@ -185,7 +182,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertEquals(2388, $arr['current_arr']); // 199 * 12
     }
 
-    /** @test */
     public function test_it_gets_plan_distribution()
     {
         ClientSubscription::factory()->count(2)->create([
@@ -201,7 +197,7 @@ class PredictiveAnalyticsTest extends TestCase
             'price' => 499,
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\RevenueForecastService::class);
+        $service = app(RevenueForecastService::class);
         $dist = $service->getPlanDistribution($this->agency->id);
 
         $this->assertEquals(3, $dist['total_clients']);
@@ -209,7 +205,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertEquals(897, $dist['total_revenue']); // 2*199 + 499
     }
 
-    /** @test */
     public function test_it_detects_optimal_posting_times()
     {
         SocialPost::factory()->count(5)->create([
@@ -227,7 +222,7 @@ class PredictiveAnalyticsTest extends TestCase
             'engagement_rate' => 2.0,
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\OptimalTimeService::class);
+        $service = app(OptimalTimeService::class);
         $bestTimes = $service->getBestPostingTimes($this->agency->id, 'facebook');
 
         $this->assertArrayHasKey('best_times', $bestTimes);
@@ -236,7 +231,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertEquals(14, $bestTimes['top_hour']);
     }
 
-    /** @test */
     public function test_it_generates_engagement_heatmap()
     {
         SocialPost::factory()->create([
@@ -247,7 +241,7 @@ class PredictiveAnalyticsTest extends TestCase
             'engagement_rate' => 3.5,
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\OptimalTimeService::class);
+        $service = app(OptimalTimeService::class);
         $heatmap = $service->getEngagementHeatmap($this->agency->id, 'instagram');
 
         $this->assertArrayHasKey('heatmap', $heatmap);
@@ -256,7 +250,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertEquals(16, $heatmap['peak_hour']);
     }
 
-    /** @test */
     public function test_it_detects_emerging_trends()
     {
         // Current period posts with a topic
@@ -281,14 +274,13 @@ class PredictiveAnalyticsTest extends TestCase
             'engagement_rate' => 2.0,
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\TrendDetectionService::class);
+        $service = app(TrendDetectionService::class);
         $trends = $service->detectTrends($this->agency->id, 30);
 
         $this->assertArrayHasKey('trending', $trends);
         $this->assertArrayHasKey('overall_velocity', $trends);
     }
 
-    /** @test */
     public function test_it_shows_hashtag_trends()
     {
         SocialPost::factory()->count(3)->create([
@@ -306,7 +298,7 @@ class PredictiveAnalyticsTest extends TestCase
             'hashtags' => ['trending'],
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\TrendDetectionService::class);
+        $service = app(TrendDetectionService::class);
         $hashtags = $service->getHashtagTrends($this->agency->id);
 
         $this->assertNotEmpty($hashtags);
@@ -314,7 +306,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertArrayHasKey('growth_rate', $hashtags[0]);
     }
 
-    /** @test */
     public function test_it_requires_auth_for_predictive_routes()
     {
         $routes = [
@@ -331,7 +322,6 @@ class PredictiveAnalyticsTest extends TestCase
         }
     }
 
-    /** @test */
     public function test_it_prevents_cross_agency_data_access()
     {
         $otherAgency = Agency::factory()->create();
@@ -352,7 +342,6 @@ class PredictiveAnalyticsTest extends TestCase
         $this->assertNotContains($otherClient->id, $clientIds);
     }
 
-    /** @test */
     public function test_it_shows_churn_page()
     {
         $response = $this->actingAs($this->user)->get(route('predictive.churn'));
@@ -364,7 +353,6 @@ class PredictiveAnalyticsTest extends TestCase
         $response->assertViewHas('threshold');
     }
 
-    /** @test */
     public function test_it_shows_revenue_page()
     {
         $response = $this->actingAs($this->user)->get(route('predictive.revenue'));
@@ -377,7 +365,6 @@ class PredictiveAnalyticsTest extends TestCase
         $response->assertViewHas('plan_distribution');
     }
 
-    /** @test */
     public function test_it_shows_trends_page()
     {
         $response = $this->actingAs($this->user)->get(route('predictive.trends'));
@@ -389,7 +376,6 @@ class PredictiveAnalyticsTest extends TestCase
         $response->assertViewHas('hashtags');
     }
 
-    /** @test */
     public function test_it_shows_optimal_times_page()
     {
         $response = $this->actingAs($this->user)->get(route('predictive.optimal-times'));
@@ -400,7 +386,6 @@ class PredictiveAnalyticsTest extends TestCase
         $response->assertViewHas('audience_activity');
     }
 
-    /** @test */
     public function test_it_shows_churn_trends()
     {
         // Create subscriptions cancelled in different months
@@ -415,7 +400,7 @@ class PredictiveAnalyticsTest extends TestCase
             'cancelled_at' => Carbon::now()->subMonths(2)->startOfMonth(),
         ]);
 
-        $service = app(\App\Services\Analytics\Predictive\ChurnPredictionService::class);
+        $service = app(ChurnPredictionService::class);
         $trends = $service->getChurnTrends($this->agency->id, 6);
 
         $this->assertCount(6, $trends);

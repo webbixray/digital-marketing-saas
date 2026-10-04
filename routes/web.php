@@ -5,28 +5,35 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AgentDashboardController;
+use App\Http\Controllers\AgentMarketplaceController;
 use App\Http\Controllers\AiAuditController;
 use App\Http\Controllers\AiContentController;
 use App\Http\Controllers\AiProviderController;
 use App\Http\Controllers\AiTrainingController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApprovalController;
-use App\Http\Controllers\PredictiveAnalyticsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\BillingHealthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CancellationController;
+use App\Http\Controllers\Chat2Controller;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientPortal2Controller;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContentCalendarController;
 use App\Http\Controllers\ContentLibraryController;
 use App\Http\Controllers\ContentTemplateController;
 use App\Http\Controllers\ContentTranslationController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Email\EmailCampaignController;
@@ -36,31 +43,38 @@ use App\Http\Controllers\Email\UnsubscribeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\FeatureFlagController;
 use App\Http\Controllers\FormController;
-use App\Http\Controllers\GdprController;
 use App\Http\Controllers\GDPRAdminController;
+use App\Http\Controllers\GdprController;
 use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingPageController;
-use App\Http\Controllers\MediaLibraryController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\Media\MediaAiController;
 use App\Http\Controllers\MediaEditorController;
 use App\Http\Controllers\MediaFolderController;
+use App\Http\Controllers\MediaLibraryController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PermissionMatrixController;
+use App\Http\Controllers\PredictiveAnalyticsController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PublicClientReportController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReferralController;
-use App\Http\Controllers\PermissionMatrixController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResellerController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
-
 use App\Http\Controllers\SocialAccountController;
+use App\Http\Controllers\SocialCommerceController;
 use App\Http\Controllers\SocialPostController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\SystemBackupController;
 use App\Http\Controllers\SystemStatusController;
 use App\Http\Controllers\TeamActivityController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TwitterController;
+use App\Http\Controllers\UsageController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WhiteLabelController;
 use App\Http\Controllers\WorkflowController;
@@ -331,7 +345,7 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
     Route::get('/ref/{code}', [ReferralController::class, 'track'])->name('referrals.track');
 
-// Reports
+    // Reports
     Route::resource('reports', ReportController::class, ['where' => ['report' => '[0-9]+']]);
     Route::get('reports/{report}/download', [ReportController::class, 'download'])->whereNumber('report')->name('reports.download');
     Route::post('reports/{report}/generate', [ReportController::class, 'generate'])->whereNumber('report')->name('reports.generate');
@@ -401,9 +415,9 @@ Route::middleware(['auth', 'agency'])->group(function () {
     Route::get('agency/invoices/{invoice}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoice.download');
 
     // Billing Health Monitor
-    Route::get('/billing/health', [App\Http\Controllers\BillingHealthController::class, 'index'])->name('billing.health');
-    Route::get('/billing/health/metrics', [App\Http\Controllers\BillingHealthController::class, 'metrics'])->name('billing.health.metrics');
-    Route::get('/billing/health/forecast', [App\Http\Controllers\BillingHealthController::class, 'forecast'])->name('billing.health.forecast');
+    Route::get('/billing/health', [BillingHealthController::class, 'index'])->name('billing.health');
+    Route::get('/billing/health/metrics', [BillingHealthController::class, 'metrics'])->name('billing.health.metrics');
+    Route::get('/billing/health/forecast', [BillingHealthController::class, 'forecast'])->name('billing.health.forecast');
 });
 
 // Billing webhook (public - Stripe can't authenticate)
@@ -436,23 +450,23 @@ Route::middleware(['auth', 'agency'])->group(function () {
 
     // Onboarding (auth only — no agency required yet)
     Route::middleware(['auth', 'agency'])->prefix('onboarding')->name('onboarding.')->group(function () {
-            Route::get('/', function () {
-                return view('onboarding');
-            });
-
-            Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
-            Route::post('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1.post')->middleware('throttle:5,1');
-            Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
-            Route::post('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2.post')->middleware('throttle:5,1');
-            Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
-            Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3.post')->middleware('throttle:5,1');
-            Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
-            Route::post('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4.post')->middleware('throttle:5,1');
-            Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
-            Route::post('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5.post')->middleware('throttle:5,1');
-            Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete')->middleware('throttle:5,1');
-            Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart')->middleware('throttle:5,1');
+        Route::get('/', function () {
+            return view('onboarding');
         });
+
+        Route::get('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1');
+        Route::post('/step1', [OnboardingController::class, 'step1_createAgency'])->name('step1.post')->middleware('throttle:5,1');
+        Route::get('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2');
+        Route::post('/step2', [OnboardingController::class, 'step2_connectSocial'])->name('step2.post')->middleware('throttle:5,1');
+        Route::get('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3');
+        Route::post('/step3', [OnboardingController::class, 'step3_inviteTeam'])->name('step3.post')->middleware('throttle:5,1');
+        Route::get('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4');
+        Route::post('/step4', [OnboardingController::class, 'step4_createCampaign'])->name('step4.post')->middleware('throttle:5,1');
+        Route::get('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5');
+        Route::post('/step5', [OnboardingController::class, 'step5_activateAI'])->name('step5.post')->middleware('throttle:5,1');
+        Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete')->middleware('throttle:5,1');
+        Route::post('/quick-start', [OnboardingController::class, 'quickStart'])->name('quickStart')->middleware('throttle:5,1');
+    });
 
     Route::prefix('agency')->name('agency.')->group(function () {
         Route::get('settings', [AgencyController::class, 'settings'])->name('settings');
@@ -553,116 +567,116 @@ Route::middleware(['auth', 'agency'])->prefix('approvals')->name('approvals.')->
 
 // Client Portal (agency admin settings)
 Route::middleware(['auth', 'agency'])->prefix('client-portal')->name('client-portal.')->group(function () {
-    Route::get('/settings', [\App\Http\Controllers\ClientPortalController::class, 'settings'])->name('settings');
-    Route::put('/settings', [\App\Http\Controllers\ClientPortalController::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
-    Route::post('/clients/{client}/generate-token', [\App\Http\Controllers\ClientPortalController::class, 'generateToken'])->name('generate-token')->middleware('throttle:5,1');
-    Route::delete('/clients/{client}/tokens/{accessToken}', [\App\Http\Controllers\ClientPortalController::class, 'revokeToken'])->name('revoke-token')->middleware('throttle:10,1');
+    Route::get('/settings', [ClientPortalController::class, 'settings'])->name('settings');
+    Route::put('/settings', [ClientPortalController::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
+    Route::post('/clients/{client}/generate-token', [ClientPortalController::class, 'generateToken'])->name('generate-token')->middleware('throttle:5,1');
+    Route::delete('/clients/{client}/tokens/{accessToken}', [ClientPortalController::class, 'revokeToken'])->name('revoke-token')->middleware('throttle:10,1');
 });
 
 // Client Portal 2.0 (self-service portal for agency clients)
 Route::middleware(['auth', 'agency'])->prefix('client-portal-v2/{client}')->name('client-portal.v2.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\ClientPortal2Controller::class, 'dashboard'])->name('dashboard');
-    Route::get('/campaigns', [\App\Http\Controllers\ClientPortal2Controller::class, 'campaigns'])->name('campaigns');
-    Route::get('/analytics', [\App\Http\Controllers\ClientPortal2Controller::class, 'analytics'])->name('analytics');
-    Route::get('/invoices', [\App\Http\Controllers\ClientPortal2Controller::class, 'invoices'])->name('invoices');
-    Route::get('/settings', [\App\Http\Controllers\ClientPortal2Controller::class, 'settings'])->name('settings');
-    Route::put('/settings', [\App\Http\Controllers\ClientPortal2Controller::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
-    Route::get('/activity', [\App\Http\Controllers\ClientPortal2Controller::class, 'activity'])->name('activity');
-    Route::get('/notifications', [\App\Http\Controllers\ClientPortal2Controller::class, 'notifications'])->name('notifications');
-    Route::post('/notifications/{notification}/mark-read', [\App\Http\Controllers\ClientPortal2Controller::class, 'markNotificationRead'])->name('notifications.mark-read')->middleware('throttle:20,1');
-    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\ClientPortal2Controller::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read')->middleware('throttle:10,1');
-    Route::get('/reports/{report}/download', [\App\Http\Controllers\ClientPortal2Controller::class, 'downloadReport'])->name('reports.download');
-    Route::get('/profile', [\App\Http\Controllers\ClientPortal2Controller::class, 'profile'])->name('profile');
-    Route::put('/profile', [\App\Http\Controllers\ClientPortal2Controller::class, 'updateProfile'])->name('profile.update')->middleware('throttle:10,1');
-    Route::put('/password', [\App\Http\Controllers\ClientPortal2Controller::class, 'updatePassword'])->name('password.update')->middleware('throttle:5,1');
-    Route::post('/social/connect', [\App\Http\Controllers\ClientPortal2Controller::class, 'connectSocial'])->name('social.connect')->middleware('throttle:5,1');
-    Route::delete('/social/{account}', [\App\Http\Controllers\ClientPortal2Controller::class, 'disconnectSocial'])->name('social.disconnect')->middleware('throttle:10,1');
-    Route::get('/approvals', [\App\Http\Controllers\ClientPortal2Controller::class, 'approvals'])->name('approvals');
-    Route::post('/approvals/{approval}/approve', [\App\Http\Controllers\ClientPortal2Controller::class, 'approve'])->name('approve')->middleware('throttle:20,1');
-    Route::post('/approvals/{approval}/reject', [\App\Http\Controllers\ClientPortal2Controller::class, 'reject'])->name('reject')->middleware('throttle:20,1');
+    Route::get('/', [ClientPortal2Controller::class, 'dashboard'])->name('dashboard');
+    Route::get('/campaigns', [ClientPortal2Controller::class, 'campaigns'])->name('campaigns');
+    Route::get('/analytics', [ClientPortal2Controller::class, 'analytics'])->name('analytics');
+    Route::get('/invoices', [ClientPortal2Controller::class, 'invoices'])->name('invoices');
+    Route::get('/settings', [ClientPortal2Controller::class, 'settings'])->name('settings');
+    Route::put('/settings', [ClientPortal2Controller::class, 'updateSettings'])->name('settings.update')->middleware('throttle:10,1');
+    Route::get('/activity', [ClientPortal2Controller::class, 'activity'])->name('activity');
+    Route::get('/notifications', [ClientPortal2Controller::class, 'notifications'])->name('notifications');
+    Route::post('/notifications/{notification}/mark-read', [ClientPortal2Controller::class, 'markNotificationRead'])->name('notifications.mark-read')->middleware('throttle:20,1');
+    Route::post('/notifications/mark-all-read', [ClientPortal2Controller::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read')->middleware('throttle:10,1');
+    Route::get('/reports/{report}/download', [ClientPortal2Controller::class, 'downloadReport'])->name('reports.download');
+    Route::get('/profile', [ClientPortal2Controller::class, 'profile'])->name('profile');
+    Route::put('/profile', [ClientPortal2Controller::class, 'updateProfile'])->name('profile.update')->middleware('throttle:10,1');
+    Route::put('/password', [ClientPortal2Controller::class, 'updatePassword'])->name('password.update')->middleware('throttle:5,1');
+    Route::post('/social/connect', [ClientPortal2Controller::class, 'connectSocial'])->name('social.connect')->middleware('throttle:5,1');
+    Route::delete('/social/{account}', [ClientPortal2Controller::class, 'disconnectSocial'])->name('social.disconnect')->middleware('throttle:10,1');
+    Route::get('/approvals', [ClientPortal2Controller::class, 'approvals'])->name('approvals');
+    Route::post('/approvals/{approval}/approve', [ClientPortal2Controller::class, 'approve'])->name('approve')->middleware('throttle:20,1');
+    Route::post('/approvals/{approval}/reject', [ClientPortal2Controller::class, 'reject'])->name('reject')->middleware('throttle:20,1');
 });
 
 // Products Resource Routes
-Route::resource('products', \App\Http\Controllers\ProductController::class);
+Route::resource('products', ProductController::class);
 
 // Social Commerce Routes
 Route::middleware(['auth', 'agency'])->prefix('social-commerce')->name('social-commerce.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\SocialCommerceController::class, 'index'])->name('index');
-    Route::get('/create', [\App\Http\Controllers\SocialCommerceController::class, 'create'])->name('create');
-    Route::post('/', [\App\Http\Controllers\SocialCommerceController::class, 'store'])->name('store');
-    Route::get('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'show'])->name('show');
-    Route::get('/{post}/edit', [\App\Http\Controllers\SocialCommerceController::class, 'edit'])->name('edit');
-    Route::put('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'update'])->name('update');
-    Route::delete('/{post}', [\App\Http\Controllers\SocialCommerceController::class, 'destroy'])->name('destroy');
-    Route::get('/{post}/analytics', [\App\Http\Controllers\SocialCommerceController::class, 'analytics'])->name('analytics');
-    Route::post('/shopify/connect', [\App\Http\Controllers\SocialCommerceController::class, 'shopifyConnect'])->name('shopify-connect');
-    Route::delete('/shopify/disconnect', [\App\Http\Controllers\SocialCommerceController::class, 'shopifyDisconnect'])->name('shopify-disconnect');
-    Route::post('/woo/connect', [\App\Http\Controllers\SocialCommerceController::class, 'wooConnect'])->name('woo-connect');
-    Route::delete('/woo/disconnect', [\App\Http\Controllers\SocialCommerceController::class, 'wooDisconnect'])->name('woo-disconnect');
+    Route::get('/', [SocialCommerceController::class, 'index'])->name('index');
+    Route::get('/create', [SocialCommerceController::class, 'create'])->name('create');
+    Route::post('/', [SocialCommerceController::class, 'store'])->name('store');
+    Route::get('/{post}', [SocialCommerceController::class, 'show'])->name('show');
+    Route::get('/{post}/edit', [SocialCommerceController::class, 'edit'])->name('edit');
+    Route::put('/{post}', [SocialCommerceController::class, 'update'])->name('update');
+    Route::delete('/{post}', [SocialCommerceController::class, 'destroy'])->name('destroy');
+    Route::get('/{post}/analytics', [SocialCommerceController::class, 'analytics'])->name('analytics');
+    Route::post('/shopify/connect', [SocialCommerceController::class, 'shopifyConnect'])->name('shopify-connect');
+    Route::delete('/shopify/disconnect', [SocialCommerceController::class, 'shopifyDisconnect'])->name('shopify-disconnect');
+    Route::post('/woo/connect', [SocialCommerceController::class, 'wooConnect'])->name('woo-connect');
+    Route::delete('/woo/disconnect', [SocialCommerceController::class, 'wooDisconnect'])->name('woo-disconnect');
 });
 
 // Reseller Routes
 Route::middleware(['auth', 'agency'])->prefix('resellers')->name('resellers.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\ResellerController::class, 'index'])->name('index');
-    Route::get('/create', [\App\Http\Controllers\ResellerController::class, 'create'])->name('create');
-    Route::post('/', [\App\Http\Controllers\ResellerController::class, 'store'])->name('store');
-    Route::get('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'show'])->name('show');
-    Route::get('/{reseller}/edit', [\App\Http\Controllers\ResellerController::class, 'edit'])->name('edit');
-    Route::put('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'update'])->name('update');
-    Route::delete('/{reseller}', [\App\Http\Controllers\ResellerController::class, 'destroy'])->name('destroy');
-    Route::get('/{reseller}/commissions', [\App\Http\Controllers\ResellerController::class, 'commissions'])->name('commissions');
-    Route::post('/{reseller}/commissions/{commission}/pay', [\App\Http\Controllers\ResellerController::class, 'payCommission'])->name('commissions.pay');
-    Route::get('/{reseller}/settings', [\App\Http\Controllers\ResellerController::class, 'settings'])->name('settings');
-    Route::put('/{reseller}/settings', [\App\Http\Controllers\ResellerController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/', [ResellerController::class, 'index'])->name('index');
+    Route::get('/create', [ResellerController::class, 'create'])->name('create');
+    Route::post('/', [ResellerController::class, 'store'])->name('store');
+    Route::get('/{reseller}', [ResellerController::class, 'show'])->name('show');
+    Route::get('/{reseller}/edit', [ResellerController::class, 'edit'])->name('edit');
+    Route::put('/{reseller}', [ResellerController::class, 'update'])->name('update');
+    Route::delete('/{reseller}', [ResellerController::class, 'destroy'])->name('destroy');
+    Route::get('/{reseller}/commissions', [ResellerController::class, 'commissions'])->name('commissions');
+    Route::post('/{reseller}/commissions/{commission}/pay', [ResellerController::class, 'payCommission'])->name('commissions.pay');
+    Route::get('/{reseller}/settings', [ResellerController::class, 'settings'])->name('settings');
+    Route::put('/{reseller}/settings', [ResellerController::class, 'updateSettings'])->name('settings.update');
 });
 
 // Billing Credits Routes
 Route::prefix('billing/credits')->name('billing.credits.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\CreditController::class, 'index'])->name('index');
-    Route::post('/purchase', [\App\Http\Controllers\CreditController::class, 'purchase'])->name('purchase');
-    Route::get('/usage', [\App\Http\Controllers\CreditController::class, 'usage'])->name('usage');
-    Route::get('/summary', [\App\Http\Controllers\CreditController::class, 'summary'])->name('summary');
+    Route::get('/', [CreditController::class, 'index'])->name('index');
+    Route::post('/purchase', [CreditController::class, 'purchase'])->name('purchase');
+    Route::get('/usage', [CreditController::class, 'usage'])->name('usage');
+    Route::get('/summary', [CreditController::class, 'summary'])->name('summary');
 });
 
 // Billing Usage Routes
 Route::prefix('billing/usage')->name('billing.usage.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\UsageController::class, 'index'])->name('index');
-    Route::get('/quota', [\App\Http\Controllers\UsageController::class, 'quota'])->name('quota');
-    Route::get('/metered', [\App\Http\Controllers\UsageController::class, 'metered'])->name('metered');
+    Route::get('/', [UsageController::class, 'index'])->name('index');
+    Route::get('/quota', [UsageController::class, 'quota'])->name('quota');
+    Route::get('/metered', [UsageController::class, 'metered'])->name('metered');
 });
 
 // Public client portal (token-based access, no auth required)
 Route::prefix('portal')->name('portal.')->group(function () {
-    Route::get('/{token}', [\App\Http\Controllers\ClientPortalController::class, 'show'])->name('show');
-    Route::post('/{token}/posts/{post}/approve', [\App\Http\Controllers\ClientPortalController::class, 'approvePost'])->name('approve-post')->middleware('throttle:10,1');
-    Route::post('/{token}/posts/{post}/reject', [\App\Http\Controllers\ClientPortalController::class, 'rejectPost'])->name('reject-post')->middleware('throttle:10,1');
+    Route::get('/{token}', [ClientPortalController::class, 'show'])->name('show');
+    Route::post('/{token}/posts/{post}/approve', [ClientPortalController::class, 'approvePost'])->name('approve-post')->middleware('throttle:10,1');
+    Route::post('/{token}/posts/{post}/reject', [ClientPortalController::class, 'rejectPost'])->name('reject-post')->middleware('throttle:10,1');
 });
 
 // Team Management (v7.0)
 Route::middleware(['auth', 'agency'])->prefix('teams')->name('teams.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\TeamController::class, 'index'])->name('index');
-    Route::get('/create', [\App\Http\Controllers\TeamController::class, 'create'])->name('create');
-    Route::post('/', [\App\Http\Controllers\TeamController::class, 'store'])->name('store');
-    Route::get('/{team}', [\App\Http\Controllers\TeamController::class, 'show'])->name('show');
-    Route::get('/{team}/edit', [\App\Http\Controllers\TeamController::class, 'edit'])->name('edit');
-    Route::put('/{team}', [\App\Http\Controllers\TeamController::class, 'update'])->name('update');
-    Route::delete('/{team}', [\App\Http\Controllers\TeamController::class, 'destroy'])->name('destroy');
-    Route::post('/{team}/invite', [\App\Http\Controllers\TeamController::class, 'invite'])->name('invite')->middleware('throttle:10,1');
-    Route::get('/invite/{token}/accept', [\App\Http\Controllers\TeamController::class, 'acceptInvite'])->name('invite.accept');
-    Route::delete('/invite/{token}', [\App\Http\Controllers\TeamController::class, 'cancelInvite'])->name('invite.cancel');
+    Route::get('/', [TeamController::class, 'index'])->name('index');
+    Route::get('/create', [TeamController::class, 'create'])->name('create');
+    Route::post('/', [TeamController::class, 'store'])->name('store');
+    Route::get('/{team}', [TeamController::class, 'show'])->name('show');
+    Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
+    Route::put('/{team}', [TeamController::class, 'update'])->name('update');
+    Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+    Route::post('/{team}/invite', [TeamController::class, 'invite'])->name('invite')->middleware('throttle:10,1');
+    Route::get('/invite/{token}/accept', [TeamController::class, 'acceptInvite'])->name('invite.accept');
+    Route::delete('/invite/{token}', [TeamController::class, 'cancelInvite'])->name('invite.cancel');
 });
 
 // Chat 2.0 (Real-Time Messaging) - MUST be before legacy chat routes
 Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Chat2Controller::class, 'index'])->name('index');
-    Route::get('/{channel}', [\App\Http\Controllers\Chat2Controller::class, 'channel'])->name('channel');
-    Route::post('/{channel}/send', [\App\Http\Controllers\Chat2Controller::class, 'sendMessage'])->name('send')->middleware('throttle:30,1');
-    Route::post('/{channel}/typing', [\App\Http\Controllers\Chat2Controller::class, 'typing'])->name('typing')->middleware('throttle:60,1');
-    Route::post('/{channel}/read', [\App\Http\Controllers\Chat2Controller::class, 'read'])->name('read')->middleware('throttle:30,1');
-    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Chat2Controller::class, 'addReaction'])->name('reactions.add')->middleware('throttle:30,1');
-    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Chat2Controller::class, 'removeReaction'])->name('reactions.remove')->middleware('throttle:30,1');
-    Route::put('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'editMessage'])->name('messages.edit')->middleware('throttle:10,1');
-    Route::delete('/messages/{message}', [\App\Http\Controllers\Chat2Controller::class, 'deleteMessage'])->name('messages.destroy')->middleware('throttle:10,1');
+    Route::get('/', [Chat2Controller::class, 'index'])->name('index');
+    Route::get('/{channel}', [Chat2Controller::class, 'channel'])->name('channel');
+    Route::post('/{channel}/send', [Chat2Controller::class, 'sendMessage'])->name('send')->middleware('throttle:30,1');
+    Route::post('/{channel}/typing', [Chat2Controller::class, 'typing'])->name('typing')->middleware('throttle:60,1');
+    Route::post('/{channel}/read', [Chat2Controller::class, 'read'])->name('read')->middleware('throttle:30,1');
+    Route::post('/messages/{message}/reactions', [Chat2Controller::class, 'addReaction'])->name('reactions.add')->middleware('throttle:30,1');
+    Route::delete('/messages/{message}/reactions/{emoji}', [Chat2Controller::class, 'removeReaction'])->name('reactions.remove')->middleware('throttle:30,1');
+    Route::put('/messages/{message}', [Chat2Controller::class, 'editMessage'])->name('messages.edit')->middleware('throttle:10,1');
+    Route::delete('/messages/{message}', [Chat2Controller::class, 'deleteMessage'])->name('messages.destroy')->middleware('throttle:10,1');
 });
 
 // RBAC API endpoints
@@ -673,52 +687,56 @@ Route::middleware(['auth', 'agency'])->group(function () {
 
 // Team Chat (Legacy - uses slug-based channels)
 Route::middleware(['auth', 'agency'])->prefix('chat')->name('chat.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('index');
-    Route::get('/{channel}', [\App\Http\Controllers\ChatController::class, 'show'])->name('show');
+    Route::get('/', [ChatController::class, 'index'])->name('index');
+    Route::get('/{channel}', [ChatController::class, 'show'])->name('show');
 });
 
 // Language routes
 Route::middleware('auth')->group(function () {
-    Route::get('/languages', [\App\Http\Controllers\LanguageController::class, 'index'])->name('languages.index');
-    Route::post('/languages/switch', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('languages.switch');
-    Route::get('/languages/current', [\App\Http\Controllers\LanguageController::class, 'current'])->name('languages.current');
+    Route::get('/languages', [LanguageController::class, 'index'])->name('languages.index');
+    Route::post('/languages/switch', [LanguageController::class, 'switch'])->name('languages.switch');
+    Route::get('/languages/current', [LanguageController::class, 'current'])->name('languages.current');
 });
 
 // Media AI (v7.0) — AI image generation & analytics
 Route::middleware(['auth', 'agency'])->prefix('media/ai')->name('media.ai.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Media\MediaAiController::class, 'index'])->name('index');
-    Route::post('/generate', [\App\Http\Controllers\Media\MediaAiController::class, 'generate'])->name('generate')->middleware('throttle:10,1');
-    Route::post('/{asset}/edit', [\App\Http\Controllers\Media\MediaAiController::class, 'edit'])->name('edit')->middleware('throttle:10,1');
-    Route::post('/{asset}/variations', [\App\Http\Controllers\Media\MediaAiController::class, 'variations'])->name('variations')->middleware('throttle:10,1');
-    Route::get('/styles', [\App\Http\Controllers\Media\MediaAiController::class, 'styles'])->name('styles');
-    Route::get('/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('analytics');
+    Route::get('/', [MediaAiController::class, 'index'])->name('index');
+    Route::post('/generate', [MediaAiController::class, 'generate'])->name('generate')->middleware('throttle:10,1');
+    Route::post('/{asset}/edit', [MediaAiController::class, 'edit'])->name('edit')->middleware('throttle:10,1');
+    Route::post('/{asset}/variations', [MediaAiController::class, 'variations'])->name('variations')->middleware('throttle:10,1');
+    Route::get('/styles', [MediaAiController::class, 'styles'])->name('styles');
+    Route::get('/analytics', [MediaAiController::class, 'analytics'])->name('analytics');
 });
-
 
 // AI Model Training & Fine-Tuning (v7.0)
 Route::middleware(['auth', 'agency'])->prefix('ai-training')->name('ai-training.')->group(function () {
-    Route::get('/', [App\Http\Controllers\AiTrainingController::class, 'index'])->name('index');
-    Route::get('/create', [App\Http\Controllers\AiTrainingController::class, 'create'])->name('create');
-    Route::post('/', [App\Http\Controllers\AiTrainingController::class, 'store'])->name('store');
-    Route::get('/datasets', [App\Http\Controllers\AiTrainingController::class, 'datasets'])->name('datasets');
-    Route::post('/datasets/upload', [App\Http\Controllers\AiTrainingController::class, 'uploadDataset'])->name('datasets.upload')->middleware('throttle:5,1');
-    Route::get('/jobs', [App\Http\Controllers\AiTrainingController::class, 'jobs'])->name('jobs');
-    Route::post('/jobs/{job}/cancel', [App\Http\Controllers\AiTrainingController::class, 'cancelJob'])->name('jobs.cancel');
-    Route::get('/jobs/{job}/status', [App\Http\Controllers\AiTrainingController::class, 'jobStatus'])->name('jobs.status');
-    Route::get('/{version}', [App\Http\Controllers\AiTrainingController::class, 'show'])->name('show');
-    Route::post('/{version}/activate', [App\Http\Controllers\AiTrainingController::class, 'activate'])->name('activate');
-    Route::get('/{version}/evaluate', [App\Http\Controllers\AiTrainingController::class, 'evaluate'])->name('evaluate');
+    Route::get('/', [AiTrainingController::class, 'index'])->name('index');
+    Route::get('/create', [AiTrainingController::class, 'create'])->name('create');
+    Route::post('/', [AiTrainingController::class, 'store'])->name('store');
+    Route::get('/datasets', [AiTrainingController::class, 'datasets'])->name('datasets');
+    Route::post('/datasets/upload', [AiTrainingController::class, 'uploadDataset'])->name('datasets.upload')->middleware('throttle:5,1');
+    Route::get('/jobs', [AiTrainingController::class, 'jobs'])->name('jobs');
+    Route::post('/jobs/{job}/cancel', [AiTrainingController::class, 'cancelJob'])->name('jobs.cancel');
+    Route::get('/jobs/{job}/status', [AiTrainingController::class, 'jobStatus'])->name('jobs.status');
+    Route::get('/{version}', [AiTrainingController::class, 'show'])->name('show');
+    Route::post('/{version}/activate', [AiTrainingController::class, 'activate'])->name('activate');
+    Route::get('/{version}/evaluate', [AiTrainingController::class, 'evaluate'])->name('evaluate');
 });
-
 
 // AI Agent Marketplace (v7.0)
 Route::middleware(['auth', 'agency'])->prefix('agent-marketplace')->name('agent-marketplace.')->group(function () {
-    Route::get('/', [App\Http\Controllers\AgentMarketplaceController::class, 'index'])->name('index');
-    Route::get('/create', [App\Http\Controllers\AgentMarketplaceController::class, 'create'])->name('create');
-    Route::post('/', [App\Http\Controllers\AgentMarketplaceController::class, 'store'])->name('store');
-    Route::get('/my-agents', [App\Http\Controllers\AgentMarketplaceController::class, 'myAgents'])->name('my-agents');
-    Route::post('/install', [App\Http\Controllers\AgentMarketplaceController::class, 'install'])->name('install');
-    Route::post('/uninstall', [App\Http\Controllers\AgentMarketplaceController::class, 'uninstall'])->name('uninstall');
-    Route::post('/configure', [App\Http\Controllers\AgentMarketplaceController::class, 'configure'])->name('configure');
-    Route::get('/{slug}', [App\Http\Controllers\AgentMarketplaceController::class, 'show'])->name('show');
+    Route::get('/', [AgentMarketplaceController::class, 'index'])->name('index');
+    Route::get('/create', [AgentMarketplaceController::class, 'create'])->name('create');
+    Route::post('/', [AgentMarketplaceController::class, 'store'])->name('store');
+    Route::get('/my-agents', [AgentMarketplaceController::class, 'myAgents'])->name('my-agents');
+    Route::post('/install', [AgentMarketplaceController::class, 'install'])->name('install');
+    Route::post('/uninstall', [AgentMarketplaceController::class, 'uninstall'])->name('uninstall');
+    Route::post('/configure', [AgentMarketplaceController::class, 'configure'])->name('configure');
+    Route::get('/{slug}', [AgentMarketplaceController::class, 'show'])->name('show');
 });
+
+// Local avatar generation (replaces external ui-avatars.com dependency)
+Route::get('/avatar/{name}', [AvatarController::class, 'show'])
+    ->name('avatar.show')
+    ->whereIn('background', ['6366f1', 'random'])
+    ->middleware('throttle:120,1');

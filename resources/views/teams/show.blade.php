@@ -233,7 +233,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function teamShow() {
     return {
         showInviteModal: false,
@@ -241,3 +241,4 @@ function teamShow() {
 }
 </script>
 @endpush
+@endsection

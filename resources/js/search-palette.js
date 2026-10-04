@@ -21,11 +21,16 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
-            // Fetch recent searches
-            fetch('{{ route("search.recent") }}')
-                .then(r => r.json())
-                .then(data => { this.recent = data.recent || []; })
-                .catch(() => {});
+            // Fetch recent searches — URL provided by the layout via data attribute
+            // (this is a plain JS file; Blade directives never compile here).
+            const recentUrl = document.body.dataset.searchRecentUrl
+                || document.querySelector('meta[name="search-recent-url"]')?.content;
+            if (recentUrl) {
+                fetch(recentUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                    .then(r => r.json())
+                    .then(data => { this.recent = data.recent || []; })
+                    .catch(() => {});
+            }
 
             // Global Cmd+K listener
             document.addEventListener('keydown', (e) => {
@@ -81,13 +86,16 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
 
             try {
-                const response = await fetch('{{ route("api.search") }}', {
+                // URL + CSRF provided by the layout via meta tags (plain JS file,
+                // Blade directives never compile here).
+                const searchUrl = document.querySelector('meta[name="search-api-url"]')?.content
+                    || '/api/v1/search';
+                const response = await fetch(`${searchUrl}?q=${encodeURIComponent(this.query)}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                    params: { q: this.query },
                 });
 
                 const data = await response.json();

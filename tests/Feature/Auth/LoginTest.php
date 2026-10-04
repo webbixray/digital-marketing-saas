@@ -11,15 +11,13 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_shows_login_form(): void
+    public function test_it_shows_login_form(): void
     {
         $response = $this->get(route('login'));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_logs_in_user(): void
+    public function test_it_logs_in_user(): void
     {
         $agency = Agency::factory()->create();
         $user = User::factory()->create([
@@ -34,15 +32,13 @@ class LoginTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    /** @test */
-    public function it_validates_login(): void
+    public function test_it_validates_login(): void
     {
         $response = $this->post(route('login'), []);
         $response->assertSessionHasErrors(['email', 'password']);
     }
 
-    /** @test */
-    public function it_logs_out_user(): void
+    public function test_it_logs_out_user(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);

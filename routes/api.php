@@ -3,32 +3,43 @@
 use App\Http\Controllers\AI\AICreditController;
 use App\Http\Controllers\Api\ApiAgencyController;
 use App\Http\Controllers\Api\ApiAgentController;
+use App\Http\Controllers\Api\ApiAgentMarketplaceController;
 use App\Http\Controllers\Api\ApiAgentWorkflowController;
 use App\Http\Controllers\Api\ApiAiAuditController;
 use App\Http\Controllers\Api\ApiAiController;
 use App\Http\Controllers\Api\ApiAnalyticsController;
 use App\Http\Controllers\Api\ApiCampaignController;
+use App\Http\Controllers\Api\ApiChatController;
 use App\Http\Controllers\Api\ApiClientController;
+use App\Http\Controllers\Api\ApiClientPortalController;
 use App\Http\Controllers\Api\ApiDashboardController;
 use App\Http\Controllers\Api\ApiDocsController;
 use App\Http\Controllers\Api\ApiInvoiceController;
+use App\Http\Controllers\Api\ApiProductController;
 use App\Http\Controllers\Api\ApiReportController;
 use App\Http\Controllers\Api\ApiRoleController;
+use App\Http\Controllers\Api\ApiSearchController;
 use App\Http\Controllers\Api\ApiSocialAccountController;
+use App\Http\Controllers\Api\ApiSocialCommerceController;
 use App\Http\Controllers\Api\ApiSocialPostController;
+use App\Http\Controllers\Api\ApiWebhookController;
 use App\Http\Controllers\Api\ApiWorkflowController;
+use App\Http\Controllers\Api\OnboardingController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ClientReportController;
+use App\Http\Controllers\ContentTranslationController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\DashboardInsightsController;
 use App\Http\Controllers\HealthCheckController;
+use App\Http\Controllers\Integrations\ZapierController;
+use App\Http\Controllers\Media\MediaAiController;
 use App\Http\Controllers\MetricsController;
 use App\Http\Controllers\PredictiveAnalyticsController;
 use App\Http\Controllers\QuotaController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SocialPostController;
-use App\Http\Controllers\ContentTranslationController;
-use App\Http\Controllers\Integrations\ZapierController;
+use App\Http\Controllers\UsageController;
 use App\Http\Controllers\WorkflowWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +49,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 
     // Resources with dedicated controllers
     Route::apiResource('posts', ApiSocialPostController::class);
+    // Alias for API consumers: /api/v1/social-posts maps to the posts resource
+    Route::apiResource('social-posts', ApiSocialPostController::class)->parameters(['social-posts' => 'post']);
     Route::apiResource('accounts', ApiSocialAccountController::class);
     Route::apiResource('campaigns', ApiCampaignController::class);
     Route::apiResource('clients', ApiClientController::class);
@@ -181,15 +194,15 @@ Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health
 
 // Webhook management routes
 Route::prefix('v1/webhooks')->middleware(['auth:sanctum', 'agency'])->as('api.webhooks.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Api\ApiWebhookController::class, 'index'])->name('index');
-    Route::post('/', [\App\Http\Controllers\Api\ApiWebhookController::class, 'store'])->name('store');
-    Route::get('/events', [\App\Http\Controllers\Api\ApiWebhookController::class, 'availableEvents'])->name('events');
-    Route::get('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'show'])->name('show');
-    Route::put('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'update'])->name('update');
-    Route::delete('/{webhook}', [\App\Http\Controllers\Api\ApiWebhookController::class, 'destroy'])->name('destroy');
-    Route::post('/{webhook}/regenerate-secret', [\App\Http\Controllers\Api\ApiWebhookController::class, 'regenerateSecret'])->name('regenerate-secret');
-    Route::post('/{webhook}/test', [\App\Http\Controllers\Api\ApiWebhookController::class, 'test'])->name('test');
-    Route::get('/{webhook}/deliveries', [\App\Http\Controllers\Api\ApiWebhookController::class, 'deliveries'])->name('deliveries');
+    Route::get('/', [ApiWebhookController::class, 'index'])->name('index');
+    Route::post('/', [ApiWebhookController::class, 'store'])->name('store');
+    Route::get('/events', [ApiWebhookController::class, 'availableEvents'])->name('events');
+    Route::get('/{webhook}', [ApiWebhookController::class, 'show'])->name('show');
+    Route::put('/{webhook}', [ApiWebhookController::class, 'update'])->name('update');
+    Route::delete('/{webhook}', [ApiWebhookController::class, 'destroy'])->name('destroy');
+    Route::post('/{webhook}/regenerate-secret', [ApiWebhookController::class, 'regenerateSecret'])->name('regenerate-secret');
+    Route::post('/{webhook}/test', [ApiWebhookController::class, 'test'])->name('test');
+    Route::get('/{webhook}/deliveries', [ApiWebhookController::class, 'deliveries'])->name('deliveries');
 });
 
 // API Documentation (public)
@@ -201,47 +214,47 @@ Route::prefix('v1/docs')->name('api.docs.')->group(function () {
 
 // Onboarding routes (outside cache middleware for real-time updates)
 Route::prefix('v1/onboarding')->middleware(['auth:sanctum', 'agency'])->as('api.onboarding.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Api\OnboardingController::class, 'index'])->name('index');
-    Route::post('/{step}/complete', [\App\Http\Controllers\Api\OnboardingController::class, 'complete'])->name('complete');
-    Route::post('/auto-detect', [\App\Http\Controllers\Api\OnboardingController::class, 'autoDetect'])->name('auto-detect');
+    Route::get('/', [OnboardingController::class, 'index'])->name('index');
+    Route::post('/{step}/complete', [OnboardingController::class, 'complete'])->name('complete');
+    Route::post('/auto-detect', [OnboardingController::class, 'autoDetect'])->name('auto-detect');
 });
 
 // Client Portal 2.0 API
 Route::prefix('v1/client-portal')->middleware(['auth:sanctum', 'agency'])->name('api.client-portal.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'dashboard'])->name('dashboard');
-    Route::get('/campaigns', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'campaigns'])->name('campaigns');
-    Route::get('/invoices', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'invoices'])->name('invoices');
-    Route::get('/analytics', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'analytics'])->name('analytics');
-    Route::get('/settings', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'settings'])->name('settings');
-    Route::get('/notifications', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'notifications'])->name('notifications');
-    Route::post('/approvals/{approval}/approve', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
-    Route::post('/approvals/{approval}/reject', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
+    Route::get('/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
+    Route::get('/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
+    Route::get('/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
+    Route::get('/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
+    Route::get('/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
+    Route::post('/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
+    Route::post('/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
 });
 
 // Team Chat routes
 Route::prefix('v1/chat')->middleware(['auth:sanctum', 'agency'])->as('api.chat.')->group(function () {
-    Route::get('/channels', [\App\Http\Controllers\Api\ApiChatController::class, 'channels'])->name('channels');
-    Route::post('/channels', [\App\Http\Controllers\Api\ApiChatController::class, 'createChannel'])->name('channels.store');
-    Route::get('/channels/{channel}/messages', [\App\Http\Controllers\Api\ApiChatController::class, 'messages'])->name('messages');
-    Route::post('/channels/{channel}/messages', [\App\Http\Controllers\Api\ApiChatController::class, 'sendMessage'])->name('messages.store');
-    Route::post('/channels/{channel}/read', [\App\Http\Controllers\Api\ApiChatController::class, 'markAsRead'])->name('mark-read');
-    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Api\ApiChatController::class, 'addReaction'])->name('reactions.add');
-    Route::delete('/messages/{message}/reactions/{emoji}', [\App\Http\Controllers\Api\ApiChatController::class, 'removeReaction'])->name('reactions.remove');
-    Route::put('/messages/{message}', [\App\Http\Controllers\Api\ApiChatController::class, 'editMessage'])->name('messages.update');
-    Route::delete('/messages/{message}', [\App\Http\Controllers\Api\ApiChatController::class, 'deleteMessage'])->name('messages.destroy');
+    Route::get('/channels', [ApiChatController::class, 'channels'])->name('channels');
+    Route::post('/channels', [ApiChatController::class, 'createChannel'])->name('channels.store');
+    Route::get('/channels/{channel}/messages', [ApiChatController::class, 'messages'])->name('messages');
+    Route::post('/channels/{channel}/messages', [ApiChatController::class, 'sendMessage'])->name('messages.store');
+    Route::post('/channels/{channel}/read', [ApiChatController::class, 'markAsRead'])->name('mark-read');
+    Route::post('/messages/{message}/reactions', [ApiChatController::class, 'addReaction'])->name('reactions.add');
+    Route::delete('/messages/{message}/reactions/{emoji}', [ApiChatController::class, 'removeReaction'])->name('reactions.remove');
+    Route::put('/messages/{message}', [ApiChatController::class, 'editMessage'])->name('messages.update');
+    Route::delete('/messages/{message}', [ApiChatController::class, 'deleteMessage'])->name('messages.destroy');
 });
 
 // Analytics routes (dedicated analytics controller)
 Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency'])->as('api.analytics.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'dashboard'])->name('dashboard');
-    Route::get('/daily', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'daily'])->name('daily');
-    Route::get('/top-events', [\App\Http\Controllers\Api\ApiAnalyticsController::class, 'topEvents'])->name('top-events');
+    Route::get('/dashboard', [ApiAnalyticsController::class, 'dashboard'])->name('dashboard');
+    Route::get('/daily', [ApiAnalyticsController::class, 'daily'])->name('daily');
+    Route::get('/top-events', [ApiAnalyticsController::class, 'topEvents'])->name('top-events');
 });
 
 // Media AI API routes (v7.0)
 Route::prefix('v1')->middleware(['auth:sanctum', 'agency'])->group(function () {
-    Route::post('/media/ai/generate', [\App\Http\Controllers\Media\MediaAiController::class, 'generate'])->name('api.media.ai.generate')->middleware('throttle:10,1');
-    Route::get('/media/analytics', [\App\Http\Controllers\Media\MediaAiController::class, 'analytics'])->name('api.media.analytics');
+    Route::post('/media/ai/generate', [MediaAiController::class, 'generate'])->name('api.media.ai.generate')->middleware('throttle:10,1');
+    Route::get('/media/analytics', [MediaAiController::class, 'analytics'])->name('api.media.analytics');
 });
 
 // Predictive Analytics API (v7.0)
@@ -255,48 +268,48 @@ Route::prefix('v1/predictive')->middleware(['auth:sanctum', 'agency'])->name('ap
 
 // AI Agent Marketplace API (v7.0)
 Route::prefix('v1/agent-marketplace')->middleware(['auth:sanctum', 'agency'])->as('api.agent-marketplace.')->group(function () {
-    Route::get('/', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'index'])->name('index');
-    Route::get('/search', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'search'])->name('search');
-    Route::get('/my-agents', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'myAgents'])->name('my-agents');
-    Route::get('/{slug}', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'show'])->name('show');
-    Route::post('/{item}/install', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'install'])->name('install');
-    Route::post('/{item}/configure', [App\Http\Controllers\Api\ApiAgentMarketplaceController::class, 'configure'])->name('configure');
+    Route::get('/', [ApiAgentMarketplaceController::class, 'index'])->name('index');
+    Route::get('/search', [ApiAgentMarketplaceController::class, 'search'])->name('search');
+    Route::get('/my-agents', [ApiAgentMarketplaceController::class, 'myAgents'])->name('my-agents');
+    Route::get('/{slug}', [ApiAgentMarketplaceController::class, 'show'])->name('show');
+    Route::post('/{item}/install', [ApiAgentMarketplaceController::class, 'install'])->name('install');
+    Route::post('/{item}/configure', [ApiAgentMarketplaceController::class, 'configure'])->name('configure');
 });
 
 // Products API Resource
-Route::apiResource('products', \App\Http\Controllers\Api\ApiProductController::class);
+Route::apiResource('products', ApiProductController::class);
 
 // Social Commerce API
 Route::prefix('v1/social-commerce')->name('api.social-commerce.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'index'])->name('index');
-    Route::post('/', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'store'])->name('store');
-    Route::get('/{post}', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'show'])->name('show');
-    Route::put('/{post}', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'update'])->name('update');
-    Route::delete('/{post}', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'destroy'])->name('destroy');
-    Route::get('/{post}/analytics', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'analytics'])->name('analytics');
-    Route::post('/shopify/connect', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'shopifyConnect'])->name('shopify-connect');
-    Route::delete('/shopify/disconnect', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'shopifyDisconnect'])->name('shopify-disconnect');
-    Route::post('/woo/connect', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'wooConnect'])->name('woo-connect');
-    Route::delete('/woo/disconnect', [\App\Http\Controllers\Api\ApiSocialCommerceController::class, 'wooDisconnect'])->name('woo-disconnect');
+    Route::get('/', [ApiSocialCommerceController::class, 'index'])->name('index');
+    Route::post('/', [ApiSocialCommerceController::class, 'store'])->name('store');
+    Route::get('/{post}', [ApiSocialCommerceController::class, 'show'])->name('show');
+    Route::put('/{post}', [ApiSocialCommerceController::class, 'update'])->name('update');
+    Route::delete('/{post}', [ApiSocialCommerceController::class, 'destroy'])->name('destroy');
+    Route::get('/{post}/analytics', [ApiSocialCommerceController::class, 'analytics'])->name('analytics');
+    Route::post('/shopify/connect', [ApiSocialCommerceController::class, 'shopifyConnect'])->name('shopify-connect');
+    Route::delete('/shopify/disconnect', [ApiSocialCommerceController::class, 'shopifyDisconnect'])->name('shopify-disconnect');
+    Route::post('/woo/connect', [ApiSocialCommerceController::class, 'wooConnect'])->name('woo-connect');
+    Route::delete('/woo/disconnect', [ApiSocialCommerceController::class, 'wooDisconnect'])->name('woo-disconnect');
 });
 
 // Billing Credits API
-Route::get('/billing/credits', [\App\Http\Controllers\CreditController::class, 'index'])->name('api.billing.credits');
+Route::get('/billing/credits', [CreditController::class, 'index'])->name('api.billing.credits');
 
 // Billing Usage API
-Route::get('/billing/usage', [\App\Http\Controllers\UsageController::class, 'index'])->name('api.billing.usage');
+Route::get('/billing/usage', [UsageController::class, 'index'])->name('api.billing.usage');
 
 // Client Portal 2.0 API
 Route::prefix('v1/client-portal')->name('api.client-portal.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'dashboard'])->name('dashboard');
-    Route::get('/campaigns', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'campaigns'])->name('campaigns');
-    Route::get('/invoices', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'invoices'])->name('invoices');
-    Route::get('/analytics', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'analytics'])->name('analytics');
-    Route::get('/settings', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'settings'])->name('settings');
-    Route::get('/notifications', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'notifications'])->name('notifications');
-    Route::post('/approvals/{approval}/approve', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
-    Route::post('/approvals/{approval}/reject', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
-    Route::get('/activity', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'activity'])->name('activity');
-    Route::get('/profile', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'profile'])->name('profile');
-    Route::put('/profile', [\App\Http\Controllers\Api\ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
+    Route::get('/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
+    Route::get('/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
+    Route::get('/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
+    Route::get('/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
+    Route::post('/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
+    Route::post('/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
+    Route::get('/activity', [ApiClientPortalController::class, 'activity'])->name('activity');
+    Route::get('/profile', [ApiClientPortalController::class, 'profile'])->name('profile');
+    Route::put('/profile', [ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
 });

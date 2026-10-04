@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Agency;
 use App\Services\AI\Gateway\AiGateway;
 use App\Services\AI\Gateway\AiRequest;
 use Illuminate\Console\Command;
@@ -57,7 +58,9 @@ class OpenAiTestCommand extends Command
             $this->info('Calling OpenAI API...');
             $startTime = microtime(true);
 
-            $response = $gateway->send($request);
+            /** @var Agency $agency */
+            $agency = Agency::first() ?? Agency::factory()->make(['id' => 1]);
+            $response = $gateway->send($request, $agency);
 
             $elapsed = round((microtime(true) - $startTime) * 1000, 2);
 

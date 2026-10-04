@@ -12,8 +12,7 @@ class CacheTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_caches_dashboard_stats(): void
+    public function test_it_caches_dashboard_stats(): void
     {
         $agency = Agency::factory()->create();
         $service = new AnalyticsService;
@@ -22,8 +21,7 @@ class CacheTest extends TestCase
         $this->assertEquals($stats1, $stats2);
     }
 
-    /** @test */
-    public function it_clears_cache_on_model_update(): void
+    public function test_it_clears_cache_on_model_update(): void
     {
         $agency = Agency::factory()->create();
         Cache::put("test:{$agency->id}", 'value', 60);
@@ -32,8 +30,7 @@ class CacheTest extends TestCase
         $this->assertNull(Cache::get("test:{$agency->id}"));
     }
 
-    /** @test */
-    public function it_stores_and_retrieves_cache(): void
+    public function test_it_stores_and_retrieves_cache(): void
     {
         Cache::put('test_key', 'test_value', 60);
         $this->assertEquals('test_value', Cache::get('test_key'));

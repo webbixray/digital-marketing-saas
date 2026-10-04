@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AgentCostLog;
 use App\Models\AgentLearningReport;
 use App\Models\AgentPerformanceLog;
 use App\Models\AgentSharedKnowledge;
@@ -12,6 +11,8 @@ use App\Services\AI\Agent\AgentCostTracker;
 use App\Services\AI\Agent\AgentHealthMonitor;
 use App\Services\AI\Agent\AgentOrchestrator;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -30,12 +31,18 @@ class AgentDashboardController extends Controller
      * Shows real-time agent status, cost tracking, learning progress,
      * workflow execution log, and collaboration graph.
      */
-    public function index(Request $request)
+    public function index(Request $request): View|RedirectResponse
     {
-        try {
-            $user = $request->user();
-            $agencyId = $user->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        if (! $user->agency_id) {
+            return redirect()->route('home')->with('error', 'Agency not found.');
+        }
+        $agencyId = $user->agency_id;
 
+        try {
             // ─── Agent Status Cards ───────────────────────────────────────
             $agentStats = $this->orchestrator->getAgentStats();
             $agents = [];
@@ -163,6 +170,4 @@ class AgentDashboardController extends Controller
             return back()->with('error', 'Failed to load agent orchestration dashboard.');
         }
     }
-
-
 }

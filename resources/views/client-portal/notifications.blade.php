@@ -60,7 +60,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function applyFilter() {
     const type = document.getElementById('filter-type').value;
     const url = new URL(window.location.href);

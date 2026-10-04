@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Models\ActivityLog;
+use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -10,6 +11,8 @@ class Kernel extends ConsoleKernel
 {
     /**
      * The Artisan commands provided by your application.
+     *
+     * @var array<int, class-string<Command>>
      */
     protected $commands = [];
 

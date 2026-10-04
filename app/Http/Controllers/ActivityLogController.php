@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
@@ -12,17 +14,20 @@ class ActivityLogController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $agencyId = $user->agency_id;
         $query = ActivityLog::where('agency_id', $agencyId);
 
-        // Authorization: only owners/admins/managers can view other users' activity
+        // Authorization: only *** can view other users' activity
         if ($request->filled('user_id')) {
             $requestedUserId = (int) $request->user_id;
             if ($requestedUserId !== $user->id && ! $user->isEditor()) {
-                abort(403, 'You do not have permission to view other users\' activity.');
+                abort(403, 'You do not have permission to view other users activity.');
             }
             $query->where('user_id', $requestedUserId);
         } elseif (! $user->isEditor()) {
@@ -50,9 +55,12 @@ class ActivityLogController extends Controller
         return view('activity.index', compact('logs', 'actions'));
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, int $id): View|RedirectResponse
     {
         $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
         $agencyId = $user->agency_id;
         $log = ActivityLog::findOrFail($id);
 
@@ -61,7 +69,7 @@ class ActivityLogController extends Controller
             abort(403);
         }
 
-        // User-level authorization: non-editors can only view their own activity
+        // User-level authorization: non-editors *** only view their own activity
         if ((int) $log->user_id !== (int) $user->id && ! $user->isEditor()) {
             abort(403, 'You do not have permission to view this activity log.');
         }

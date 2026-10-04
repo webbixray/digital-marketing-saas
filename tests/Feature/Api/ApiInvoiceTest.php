@@ -91,7 +91,8 @@ class ApiInvoiceTest extends TestCase
         $response = $this->actingAs($this->user)->deleteJson("/api/v1/invoices/{$invoice->id}");
 
         $response->assertNoContent();
-        $this->assertDatabaseMissing('invoices', ['id' => $invoice->id]);
+        // Invoices use soft deletes (financial audit trail).
+        $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
     }
 
     public function test_it_requires_auth(): void

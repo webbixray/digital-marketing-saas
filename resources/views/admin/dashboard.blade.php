@@ -118,16 +118,24 @@
         <div class="p-6">
             <div class="space-y-4">
                 @forelse($recentActivity ?? [] as $post)
+                @php
+                    $postPlatform = is_object($post) ? $post->platform : ($post['platform'] ?? '');
+                    $postAgencyName = is_object($post)
+                        ? ($post->agency->name ?? 'Unknown')
+                        : ($post['agency']['name'] ?? 'Unknown');
+                    $postCreatedAt = is_object($post) ? ($post->created_at ?? null) : ($post['created_at'] ?? null);
+                    $postStatus = is_object($post) ? $post->status : ($post['status'] ?? '');
+                @endphp
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                        <i class="fab fa-{{ $post->platform }} text-gray-600 dark:text-gray-300 text-xs"></i>
+                        <i class="fab fa-{{ $postPlatform }} text-gray-600 dark:text-gray-300 text-xs"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ ucfirst($post->platform) }} — {{ $post->agency->name ?? 'Unknown' }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $post->created_at->diffForHumans() }}</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ ucfirst($postPlatform) }} — {{ $postAgencyName }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $postCreatedAt ? \Illuminate\Support\Carbon::parse($postCreatedAt)->diffForHumans() : '' }}</p>
                     </div>
-                    <span class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ $post->status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : ($post->status === 'failed' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300') }}">
-                        {{ ucfirst($post->status) }}
+                    <span class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ $postStatus === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : ($postStatus === 'failed' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300') }}">
+                        {{ ucfirst($postStatus) }}
                     </span>
                 </div>
                 @empty

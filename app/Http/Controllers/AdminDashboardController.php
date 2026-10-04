@@ -7,20 +7,17 @@ use App\Models\InboxMessage;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
-use App\Services\Analytics\AnalyticsService;
 use App\Services\SystemHealthCheckService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
 {
     public function __construct(
-        private readonly AnalyticsService $analytics,
         private readonly SystemHealthCheckService $healthService,
     ) {
         $this->middleware(['auth', 'agency', 'role:owner|admin']);
@@ -50,10 +47,13 @@ class AdminDashboardController extends Controller
         });
 
         $recentActivity = Cache::remember('admin_recent_activity', 60, function () {
-            return SocialPost::with('agency')
+            // Cached as plain arrays: the database cache store blocks class
+            // unserialization (serializable_classes=false).
+            return SocialPost::with('agency:id,name')
                 ->orderBy('created_at', 'desc')
                 ->limit(20)
-                ->get();
+                ->get()
+                ->toArray();
         });
 
         $failedPosts = SocialPost::where('status', 'failed')
@@ -126,5 +126,4 @@ class AdminDashboardController extends Controller
 
         return back()->with('success', 'Failed job deleted');
     }
-
 }

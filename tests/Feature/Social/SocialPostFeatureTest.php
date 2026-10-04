@@ -27,16 +27,14 @@ class SocialPostFeatureTest extends TestCase
         $this->account = SocialAccount::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_lists_social_posts(): void
+    public function test_it_lists_social_posts(): void
     {
         SocialPost::factory()->count(3)->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('social.posts.index'));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_creates_social_post(): void
+    public function test_it_creates_social_post(): void
     {
         $response = $this->actingAs($this->user)->post(route('social.posts.store'), [
             'content' => 'Test post content',
@@ -47,23 +45,20 @@ class SocialPostFeatureTest extends TestCase
         $this->assertDatabaseHas('social_posts', ['content' => 'Test post content']);
     }
 
-    /** @test */
-    public function it_validates_post_creation(): void
+    public function test_it_validates_post_creation(): void
     {
         $response = $this->actingAs($this->user)->post(route('social.posts.store'), []);
         $response->assertSessionHasErrors();
     }
 
-    /** @test */
-    public function it_shows_post(): void
+    public function test_it_shows_post(): void
     {
         $post = SocialPost::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('social.posts.show', $post));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_updates_post(): void
+    public function test_it_updates_post(): void
     {
         $post = SocialPost::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->put(route('social.posts.update', $post), [
@@ -72,8 +67,7 @@ class SocialPostFeatureTest extends TestCase
         $response->assertRedirect();
     }
 
-    /** @test */
-    public function it_deletes_post(): void
+    public function test_it_deletes_post(): void
     {
         $post = SocialPost::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->delete(route('social.posts.destroy', $post));
@@ -81,8 +75,7 @@ class SocialPostFeatureTest extends TestCase
         $this->assertSoftDeleted('social_posts', ['id' => $post->id]);
     }
 
-    /** @test */
-    public function it_prevents_unauthorized_access(): void
+    public function test_it_prevents_unauthorized_access(): void
     {
         $otherAgency = Agency::factory()->create();
         $post = SocialPost::factory()->create(['agency_id' => $otherAgency->id]);
@@ -90,8 +83,7 @@ class SocialPostFeatureTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_filters_by_status(): void
+    public function test_it_filters_by_status(): void
     {
         SocialPost::factory()->create(['agency_id' => $this->agency->id, 'status' => 'draft']);
         SocialPost::factory()->create(['agency_id' => $this->agency->id, 'status' => 'published']);
@@ -99,8 +91,7 @@ class SocialPostFeatureTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_filters_by_platform(): void
+    public function test_it_filters_by_platform(): void
     {
         SocialPost::factory()->create(['agency_id' => $this->agency->id, 'platform' => 'facebook']);
         SocialPost::factory()->create(['agency_id' => $this->agency->id, 'platform' => 'twitter']);

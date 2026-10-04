@@ -3,6 +3,7 @@
 namespace App\Services\Localization;
 
 use App\Models\Language;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -22,7 +23,6 @@ class LocaleService
     /**
      * Set the application locale.
      *
-     * @param string $locale
      * @return bool True if locale was set successfully, false otherwise.
      */
     public function setLocale(string $locale): bool
@@ -39,8 +39,6 @@ class LocaleService
 
     /**
      * Get the current locale from user/agency/session/default.
-     *
-     * @return string
      */
     public function getLocale(): string
     {
@@ -68,8 +66,6 @@ class LocaleService
 
     /**
      * Get the fallback locale.
-     *
-     * @return string
      */
     public function getFallbackLocale(): string
     {
@@ -79,32 +75,60 @@ class LocaleService
     /**
      * Get all supported locale codes.
      *
+     * Falls back to the configured locale list when the database is
+     * unavailable so locale resolution never fails a request.
+     *
      * @return array<int, string>
      */
     public function getSupportedLocales(): array
     {
-        return Cache::remember('supported_locales', 86400, function () {
-            return Language::active()->pluck('code')->toArray();
-        });
+        $cached = Cache::get('supported_locales');
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        try {
+            $locales = Language::active()->pluck('code')->toArray();
+        } catch (\Throwable $e) {
+            // DB unavailable: fall back to config WITHOUT caching, so the DB
+            // is retried once it recovers.
+            return config('app.supported_locales', ['en']);
+        }
+
+        if ($locales === []) {
+            return config('app.supported_locales', ['en']);
+        }
+
+        Cache::put('supported_locales', $locales, 86400);
+
+        return $locales;
     }
 
     /**
      * Get all supported languages as a collection.
      *
-     * @return \Illuminate\Support\Collection<int, Language>
+     * @return Collection<int, Language>
      */
     public function getSupportedLanguages()
     {
-        return Cache::remember('supported_languages_collection', 86400, function () {
-            return Language::active()->orderBy('sort_order')->get();
-        });
+        $cached = Cache::get('supported_languages_collection');
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        try {
+            $languages = Language::active()->orderBy('sort_order')->get();
+            Cache::put('supported_languages_collection', $languages, 86400);
+
+            return $languages;
+        } catch (\Throwable $e) {
+            // DB unavailable: return empty collection WITHOUT caching it.
+            return collect();
+        }
     }
 
     /**
      * Check if a locale is supported.
-     *
-     * @param string $locale
-     * @return bool
      */
     public function isValidLocale(string $locale): bool
     {
@@ -113,9 +137,6 @@ class LocaleService
 
     /**
      * Get language info by code.
-     *
-     * @param string $code
-     * @return Language|null
      */
     public function getLanguageByCode(string $code): ?Language
     {
@@ -124,8 +145,6 @@ class LocaleService
 
     /**
      * Get the text direction for the current locale.
-     *
-     * @return string
      */
     public function getDirection(): string
     {
@@ -134,8 +153,6 @@ class LocaleService
 
     /**
      * Clear locale-related caches.
-     *
-     * @return void
      */
     public function clearCache(): void
     {

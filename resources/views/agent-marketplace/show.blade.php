@@ -215,7 +215,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function markHelpful(reviewId) {
     fetch(`/api/v1/agent-marketplace/reviews/${reviewId}/helpful`, { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } })
     .then(r => r.json())

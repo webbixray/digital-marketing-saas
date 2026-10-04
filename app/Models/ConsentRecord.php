@@ -20,4 +20,12 @@ class ConsentRecord extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Scope to only include records where consent was granted.
+     */
+    public function scopeGranted($query)
+    {
+        return $query->where('granted', true);
+    }
 }

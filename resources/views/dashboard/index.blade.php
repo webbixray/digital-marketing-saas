@@ -243,13 +243,18 @@
             <div class="p-6">
                 <div class="space-y-4">
                     @forelse($recentActivity ?? [] as $activity)
+                        @php
+                            $activityAction = is_object($activity) ? $activity->action : ($activity['action'] ?? '');
+                            $activityDescription = is_object($activity) ? ($activity->description ?? 'Activity') : ($activity['description'] ?? 'Activity');
+                            $activityCreatedAt = is_object($activity) ? ($activity->created_at ?? null) : ($activity['created_at'] ?? null);
+                        @endphp
                         <div class="flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg p-2 -mx-2 transition-colors duration-150">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-{{ $activity->action === 'created' ? 'plus' : ($activity->action === 'deleted' ? 'trash' : 'edit') }} text-indigo-600 dark:text-indigo-400 text-xs"></i>
+                                <i class="fas fa-{{ $activityAction === 'created' ? 'plus' : ($activityAction === 'deleted' ? 'trash' : 'edit') }} text-indigo-600 dark:text-indigo-400 text-xs"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $activity->description ?? 'Activity' }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $activity->created_at->diffForHumans() }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $activityDescription }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $activityCreatedAt ? \Illuminate\Support\Carbon::parse($activityCreatedAt)->diffForHumans() : '' }}</p>
                             </div>
                         </div>
                     @empty

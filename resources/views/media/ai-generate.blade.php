@@ -114,7 +114,7 @@
         <div class="results-grid" id="resultsGrid" style="display:none;"></div>
     </div>
 
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         const resultsGrid = document.getElementById('resultsGrid');
         const resultsPlaceholder = document.getElementById('results');
         const loading = document.getElementById('loading');

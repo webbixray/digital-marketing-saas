@@ -79,7 +79,7 @@ class ContentGenerateCommand extends Command
         }
     }
 
-    private function getDefaultPrompt(string $type, string $platform): string
+    private function getDefaultPrompt(string $type, ?string $platform): string
     {
         return match ($type) {
             'post' => "Write an engaging {$platform} post about the future of AI in digital marketing. Keep it under 280 characters for Twitter or 2000 for LinkedIn. Include relevant hashtags.",
@@ -90,7 +90,7 @@ class ContentGenerateCommand extends Command
         };
     }
 
-    private function getSystemPrompt(string $type, string $platform): string
+    private function getSystemPrompt(string $type, ?string $platform): string
     {
         return "You are an expert digital marketing specialist. Create compelling, professional content optimized for {$platform}. Focus on engagement, clarity, and actionable insights. Use appropriate formatting and hashtags.";
     }

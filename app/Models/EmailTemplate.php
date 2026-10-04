@@ -41,4 +41,26 @@ class EmailTemplate extends Model
     {
         return $query->where('category', $category);
     }
+
+    /**
+     * Render the template with the given variables, replacing {{ var }} placeholders
+     * in both subject and content. Returns ['subject' => ..., 'html' => ..., 'text' => ...].
+     *
+     * @param  array<string, mixed>  $variables
+     * @return array{subject: string, html: string, text: string}
+     */
+    public function render(array $variables = []): array
+    {
+        $replace = fn (string $template): string => preg_replace_callback(
+            '/{{\s*([a-zA-Z0-9_.]+)\s*}}/',
+            fn (array $m) => (string) ($variables[$m[1]] ?? ''),
+            $template ?? ''
+        );
+
+        return [
+            'subject' => $replace($this->subject ?? ''),
+            'html' => $replace($this->html_content ?? ''),
+            'text' => $replace($this->plain_text_content ?? ''),
+        ];
+    }
 }

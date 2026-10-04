@@ -25,8 +25,7 @@ class WorkflowExecutionTest extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_executes_a_simple_notification_workflow(): void
+    public function test_it_executes_a_simple_notification_workflow(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -51,8 +50,7 @@ class WorkflowExecutionTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_executes_ai_generate_workflow(): void
+    public function test_it_executes_ai_generate_workflow(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -72,8 +70,7 @@ class WorkflowExecutionTest extends TestCase
             ->assertJson(['success' => true]);
     }
 
-    /** @test */
-    public function it_executes_webhook_call_workflow(): void
+    public function test_it_executes_webhook_call_workflow(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -93,8 +90,7 @@ class WorkflowExecutionTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_skips_when_conditions_not_met(): void
+    public function test_it_skips_when_conditions_not_met(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -119,8 +115,7 @@ class WorkflowExecutionTest extends TestCase
         $this->assertArrayHasKey('skipped', $execution->action_results);
     }
 
-    /** @test */
-    public function it_records_failed_execution(): void
+    public function test_it_records_failed_execution(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -144,8 +139,7 @@ class WorkflowExecutionTest extends TestCase
         $this->assertEquals('failed', $execution->action_results[0]['status']); // Action failed
     }
 
-    /** @test */
-    public function it_prevents_unauthorized_execution(): void
+    public function test_it_prevents_unauthorized_execution(): void
     {
         $otherAgency = Agency::factory()->create();
         $workflow = Workflow::factory()->create([
@@ -163,8 +157,7 @@ class WorkflowExecutionTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_stores_workflow_from_builder_and_executes(): void
+    public function test_it_stores_workflow_from_builder_and_executes(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson(route('workflows.builder.save'), [
@@ -219,8 +212,7 @@ class WorkflowExecutionTest extends TestCase
             ->assertJson(['success' => true]);
     }
 
-    /** @test */
-    public function it_updates_existing_workflow_from_builder(): void
+    public function test_it_updates_existing_workflow_from_builder(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -271,8 +263,7 @@ class WorkflowExecutionTest extends TestCase
         $this->assertEquals('auto_reply', $workflow->actions[0]['type']);
     }
 
-    /** @test */
-    public function it_loads_existing_workflow_into_builder(): void
+    public function test_it_loads_existing_workflow_into_builder(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,
@@ -291,8 +282,7 @@ class WorkflowExecutionTest extends TestCase
         $response->assertOk();
     }
 
-    /** @test */
-    public function it_executes_loop_action(): void
+    public function test_it_executes_loop_action(): void
     {
         $workflow = Workflow::factory()->create([
             'agency_id' => $this->agency->id,

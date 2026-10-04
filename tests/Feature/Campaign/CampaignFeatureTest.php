@@ -23,19 +23,18 @@ class CampaignFeatureTest extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_lists_campaigns(): void
+    public function test_it_lists_campaigns(): void
     {
         Campaign::factory()->count(3)->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('campaigns.index'));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_creates_campaign(): void
+    public function test_it_creates_campaign(): void
     {
         $response = $this->actingAs($this->user)->post(route('campaigns.store'), [
             'name' => 'Test Campaign',
+            'type' => 'general',
             'description' => 'Test description',
             'start_date' => now()->toDateString(),
             'end_date' => now()->addMonth()->toDateString(),
@@ -44,23 +43,20 @@ class CampaignFeatureTest extends TestCase
         $this->assertDatabaseHas('campaigns', ['name' => 'Test Campaign']);
     }
 
-    /** @test */
-    public function it_validates_campaign_creation(): void
+    public function test_it_validates_campaign_creation(): void
     {
         $response = $this->actingAs($this->user)->post(route('campaigns.store'), []);
         $response->assertSessionHasErrors();
     }
 
-    /** @test */
-    public function it_shows_campaign(): void
+    public function test_it_shows_campaign(): void
     {
         $campaign = Campaign::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('campaigns.show', $campaign));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_updates_campaign(): void
+    public function test_it_updates_campaign(): void
     {
         $campaign = Campaign::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->put(route('campaigns.update', $campaign), [
@@ -69,8 +65,7 @@ class CampaignFeatureTest extends TestCase
         $response->assertRedirect();
     }
 
-    /** @test */
-    public function it_deletes_campaign(): void
+    public function test_it_deletes_campaign(): void
     {
         $campaign = Campaign::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->delete(route('campaigns.destroy', $campaign));
@@ -78,8 +73,7 @@ class CampaignFeatureTest extends TestCase
         $this->assertSoftDeleted('campaigns', ['id' => $campaign->id]);
     }
 
-    /** @test */
-    public function it_prevents_unauthorized_access(): void
+    public function test_it_prevents_unauthorized_access(): void
     {
         $otherAgency = Agency::factory()->create();
         $campaign = Campaign::factory()->create(['agency_id' => $otherAgency->id]);
@@ -87,8 +81,7 @@ class CampaignFeatureTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_filters_by_status(): void
+    public function test_it_filters_by_status(): void
     {
         Campaign::factory()->create(['agency_id' => $this->agency->id, 'status' => 'active']);
         Campaign::factory()->create(['agency_id' => $this->agency->id, 'status' => 'completed']);

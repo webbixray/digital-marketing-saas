@@ -7,8 +7,6 @@ use App\Services\Email\MailDeliverabilityService;
 use App\Services\Queue\QueueHealthService;
 use App\Services\SystemHealthCheckService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class HealthCheckController extends Controller
 {
@@ -34,15 +32,34 @@ class HealthCheckController extends Controller
             'storage' => $this->systemHealth->checkStorage(),
         ];
 
-        $healthy = collect($checks)->every(fn ($check) => $check['healthy'] ?? false);
+        // Core dependencies must be up for the service to be healthy.
+        $coreUp = collect($checks)->only(['database', 'cache', 'storage'])
+            ->every(fn ($check) => $check['healthy'] ?? false);
+
+        // Mail/queue driver choice (log mailer, sync queue) is a configuration
+        // advisory — common and intentional in local/dev — not an outage.
+        // In non-production environments these never degrade the reported status.
+        $advisoryRelevant = ! app()->environment('testing', 'local');
+
+        $advisories = $advisoryRelevant
+            ? collect($checks)->only(['mail', 'queue'])
+                ->filter(fn ($check) => ! ($check['healthy'] ?? true))
+                ->map(fn ($check, $name) => $check['issues'] ?? ["{$name} not configured for production"])
+                ->flatten()
+                ->values()
+                ->all()
+            : [];
+
+        $status = $coreUp ? (empty($advisories) ? 'ok' : 'degraded') : 'unhealthy';
 
         return response()->json([
-            'status' => $healthy ? 'healthy' : 'unhealthy',
+            'status' => $status,
             'timestamp' => now()->toIso8601String(),
             'version' => config('services.sentry.release', '1.0.0'),
             'environment' => app()->environment(),
             'checks' => $checks,
-        ], $healthy ? 200 : 503);
+            'advisories' => $advisories,
+        ], $coreUp ? 200 : 503);
     }
 
     public function readiness(): JsonResponse
@@ -88,5 +105,4 @@ class HealthCheckController extends Controller
             'used_percent' => $usedPercent,
         ]);
     }
-
 }

@@ -157,7 +157,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function permissionMatrix() {
     return {
         saving: false,

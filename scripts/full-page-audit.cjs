@@ -8,15 +8,15 @@ const { chromium } = require('@playwright/test');
 const fs = require('fs');
 
 const BASE = 'http://127.0.0.1:8000';
-const LOGIN_EMAIL = 'test@agency.com';
-const LOGIN_PASSWORD = 'password';
+const LOGIN_EMAIL = 'owner@agency.com';
+const LOGIN_PASSWORD = 'password123';
 
 const pages = [
   { name: 'Dashboard', path: '/dashboard' },
   { name: 'Posts', path: '/social/posts' },
   { name: 'Create Post', path: '/social/posts/create' },
-  { name: 'Edit Post', path: '/social/posts/26/edit' },
-  { name: 'Post Detail', path: '/social/posts/26' },
+  { name: 'Edit Post', path: '/social/posts/1/edit' },
+  { name: 'Post Detail', path: '/social/posts/1' },
   { name: 'Accounts', path: '/social/accounts' },
   { name: 'Inbox', path: '/inbox' },
   { name: 'Calendar', path: '/calendar' },
@@ -28,16 +28,16 @@ const pages = [
   { name: 'Content Library', path: '/content' },
   { name: 'Content Templates', path: '/content-templates' },
   { name: 'AI Content', path: '/ai' },
-  { name: 'AI Credits', path: '/ai/credits' },
+  { name: 'AI Credits', path: '/billing/credits' },
   { name: 'Workflows', path: '/workflows' },
-  { name: 'A/B Tests', path: '/ab-tests' },
-  { name: 'Billing', path: '/billing' },
-  { name: 'Invoices', path: '/billing/invoices' },
+  { name: 'A/B Tests', path: '/ab-testing' },
+  { name: 'Billing', path: '/agency/billing' },
+  { name: 'Invoices', path: '/agency/invoices' },
   { name: 'Team', path: '/agency/team' },
   { name: 'Settings', path: '/agency/settings' },
   { name: 'Admin', path: '/admin' },
   { name: 'Activity Log', path: '/activity' },
-  { name: 'Audit Trail', path: '/audit-trail' },
+  { name: 'Audit Trail', path: '/ai-audit' },
 ];
 
 (async () => {
@@ -152,8 +152,8 @@ const pages = [
     console.log(`\n--- Pages with failures ---`);
     withErrors.forEach(r => {
       console.log(`  ${r.name} (${r.path}): ${r.errors} errors, ${r.failedReqs} failed reqs`);
-      r.errorDetails.slice(0, 3).forEach(e => console.log(`    ERR: ${e.substring(0, 150)}`));
-      r.failedDetails.slice(0, 3).forEach(f => console.log(`    REQ: ${f.substring(0, 150)}`));
+      (r.errorDetails || []).slice(0, 3).forEach(e => console.log(`    ERR: ${e.substring(0, 150)}`));
+      (r.failedDetails || []).slice(0, 3).forEach(f => console.log(`    REQ: ${f.substring(0, 150)}`));
     });
   }
 

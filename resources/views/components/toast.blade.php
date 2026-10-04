@@ -102,7 +102,7 @@ $hasSessionToasts = !empty($toasts);
     </template>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function toastSystem() {
     return {
         toasts: [],

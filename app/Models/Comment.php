@@ -12,8 +12,6 @@ class Comment extends Model
 {
     use HasAgency, HasFactory;
 
-
-
     protected $fillable = [
         'agency_id',
         'user_id',
@@ -55,7 +53,7 @@ class Comment extends Model
 
     public function scopeForCommentable($query, Model $commentable)
     {
-        return $query->where('commentable_type', get_class($commentable))
-            ->where('commentable_id', $commentable->id);
+        return $query->where('commentable_type', $commentable->getMorphClass())
+            ->where('commentable_id', $commentable->getKey());
     }
 }

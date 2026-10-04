@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\SocialPost;
 
 use App\Models\Agency;
 use App\Models\SocialAccount;
@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class SocialPostTest extends TestCase
+class SocialPostCrudTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -21,4 +21,13 @@ class DataDeletionRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Scope to only include pending requests whose scheduled deletion date has passed.
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->where('status', 'pending')
+            ->where('scheduled_at', '<', now());
+    }
 }

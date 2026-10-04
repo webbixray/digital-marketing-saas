@@ -111,7 +111,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function teamsIndex() {
     return {
         showDeleteModal: false,
@@ -126,3 +126,4 @@ function teamsIndex() {
 }
 </script>
 @endpush
+@endsection

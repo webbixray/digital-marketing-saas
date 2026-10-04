@@ -3,10 +3,15 @@
 namespace App\Console\Commands;
 
 use App\Models\SocialPost;
+use App\Services\AI\Agent\AgentContext;
+use App\Services\AI\Agent\AgentInterface;
 use App\Services\AI\Agent\AgentOrchestrator;
+use App\Services\AI\Agent\AgentResult;
+use App\Services\AI\Agent\AgentTask;
 use App\Services\AI\Agent\SecurityAuditAgent;
 use App\Services\AI\Agent\SelfImprovementEngine;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class AgentAuditCommand extends Command
@@ -35,7 +40,7 @@ class AgentAuditCommand extends Command
 
         // Register the security audit agent if not already registered
         if (! $orchestrator->hasAgent('security_auditor')) {
-            $orchestrator->registerAgent(new SecurityAuditAgent);
+            $orchestrator->registerAgent('security_auditor', new SecurityAuditAgent);
         }
 
         // Get agents to run
@@ -48,12 +53,15 @@ class AgentAuditCommand extends Command
             }
             $agents = [$agentName => $orchestrator->getAgent($agentName)];
         } else {
+            /** @var Collection<string, AgentInterface> $agents */
             $agents = $orchestrator->getAgentsByCategory('security');
             if ($agents->isEmpty()) {
-                $agents = $orchestrator->getAllAgents();
+                /** @var Collection<string, AgentInterface> $agents */
+                $agents = collect($orchestrator->getAllAgents());
             }
         }
 
+        /** @var Collection<string, AgentInterface> $agents */
         if ($agents->isEmpty()) {
             $this->warn('No audit agents available.');
 
@@ -71,24 +79,34 @@ class AgentAuditCommand extends Command
         $totalFailed = 0;
 
         foreach ($agents as $name => $agent) {
+            /** @var AgentInterface $agent */
             $this->info("─── Agent: {$name} ───");
             $this->line("  Category: {$agent->getCategory()}");
             $this->newLine();
 
             // Execute the agent
             try {
-                $result = $agent->execute([]);
+                $task = new AgentTask(
+                    id: (string) random_int(100000, 999999),
+                    type: 'audit',
+                    prompt: 'Run security audit',
+                    data: [],
+                );
+                /** @var AgentResult $result */
+                $result = $agent->execute($task, new AgentContext);
 
-                if (! ($result['success'] ?? false)) {
+                if (! $result->success) {
                     $this->error('  ✗ Agent execution failed.');
                     $totalFailed++;
 
                     continue;
                 }
 
-                $findings = $result['findings'] ?? [];
-                $this->line("  Total findings: {$result['total_findings']}");
-                $this->line("  Critical: {$result['critical_count']} | High: {$result['high_count']} | Medium: {$result['medium_count']} | Low: {$result['low_count']}");
+                /** @var array<string, mixed> $findings */
+                $findings = json_decode($result->output, true)['findings'] ?? [];
+                $decodedOutput = json_decode($result->output, true);
+                $this->line("  Total findings: {$decodedOutput['total_findings']}");
+                $this->line("  Critical: {$decodedOutput['critical_count']} | High: {$decodedOutput['high_count']} | Medium: {$decodedOutput['medium_count']} | Low: {$decodedOutput['low_count']}");
 
                 // Filter by severity if specified
                 if ($severity) {
@@ -185,8 +203,11 @@ class AgentAuditCommand extends Command
 
         // Record performance for the security agent
         try {
+            /** @var AgentInterface|null $securityAgent */
             $securityAgent = $orchestrator->getAgent('security_auditor');
-            $engine->generateImprovements($securityAgent);
+            if ($securityAgent !== null) {
+                $engine->generateImprovements($securityAgent);
+            }
         } catch (\Exception $e) {
             // Silently skip if not available
         }
@@ -196,6 +217,8 @@ class AgentAuditCommand extends Command
 
     /**
      * Attempt to auto-fix a finding.
+     *
+     * @param  array<string, mixed>  $finding
      */
     private function attemptAutoFix(array $finding): bool
     {

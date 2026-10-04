@@ -3,9 +3,12 @@
 namespace App\Events\Chat;
 
 use App\Models\ChatMessage;
+use App\Models\ChatReaction;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -13,7 +16,8 @@ class ChatMessageSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public ChatMessage $message;
+    /** @var ChatMessage */
+    protected $message;
 
     /**
      * Create a new event instance.
@@ -29,7 +33,7 @@ class ChatMessageSent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('chat.' . $this->message->channel_id),
+            new Channel('chat.'.$this->message->channel_id),
         ];
     }
 
@@ -43,6 +47,24 @@ class ChatMessageSent implements ShouldBroadcastNow
 
     /**
      * Get the data to broadcast.
+     *
+     * @return array{
+     *     id: int,
+     *     channel_id: int,
+     *     user_id: int,
+     *     content: string,
+     *     type: string,
+     *     file_url: string|null,
+     *     file_name: string|null,
+     *     file_type: string|null,
+     *     file_size: int|null,
+     *     reply_to_id: int|null,
+     *     is_edited: bool,
+     *     is_deleted: bool,
+     *     user: array{id: int, name: string, avatar: string},
+     *     reactions: array<int, array{emoji: string, user_id: int}>,
+     *     created_at: string
+     * }
      */
     public function broadcastWith(): array
     {
@@ -60,15 +82,24 @@ class ChatMessageSent implements ShouldBroadcastNow
             'is_edited' => $this->message->is_edited,
             'is_deleted' => $this->message->is_deleted,
             'user' => [
-                'id' => $this->message->user->id,
-                'name' => $this->message->user->name,
-                'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($this->message->user->name) . '&background=6366f1&color=fff&size=32',
+                /** @var User|null $user */
+                $user = $this->message->user,
+                'id' => $user->id ?? 0,
+                'name' => $user->name ?? 'Unknown',
+                'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($user->name ?? 'Unknown').'&background=6366f1&color=fff&size=32',
             ],
-            'reactions' => $this->message->reactions->map(fn($r) => [
-                'emoji' => $r->emoji,
-                'user_id' => $r->user_id,
-            ]),
-            'created_at' => $this->message->created_at->toISOString(),
+            'reactions' => $this->message->reactions->map(
+                function (Model $model, int|string $key): array {
+                    /** @var ChatReaction $r */
+                    $r = $model;
+
+                    return [
+                        'emoji' => $r->emoji,
+                        'user_id' => $r->user_id,
+                    ];
+                }
+            )->toArray(),
+            'created_at' => $this->message->created_at?->toISOString() ?? '',
         ];
     }
 }

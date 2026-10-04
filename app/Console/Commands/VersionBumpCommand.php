@@ -28,10 +28,12 @@ class VersionBumpCommand extends Command
 
         $current = $version->getVersion();
         $parts = explode('.', $current);
+        // Ensure we have at least 3 parts
+        $parts = array_pad($parts, 3, '0');
 
-        $major = (int) ($parts[0] ?? 0);
-        $minor = (int) ($parts[1] ?? 0);
-        $patch = (int) ($parts[2] ?? 0);
+        $major = (int) $parts[0];
+        $minor = (int) $parts[1];
+        $patch = (int) $parts[2];
 
         switch ($type) {
             case 'major':
@@ -68,10 +70,10 @@ class VersionBumpCommand extends Command
         $path = config_path('version.php');
         $content = File::get($path);
         $content = preg_replace(
-            "/'version' => '[^']+/'",
+            "/'version' => '[^']+'/",
             "'version' => '{$version}'",
             $content
         );
-        File::put($path, $content);
+        File::put($path, (string) $content);
     }
 }

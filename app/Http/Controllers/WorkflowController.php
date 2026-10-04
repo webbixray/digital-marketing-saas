@@ -246,6 +246,7 @@ class WorkflowController extends Controller
 
         $workflow->update([
             'name' => $validated['name'],
+            'description' => $validated['description'] ?? $workflow->description,
             'trigger_type' => $triggerNode['subtype'] ?? 'manual',
             'trigger_config' => $triggerNode['config'] ?? [],
             'actions' => array_map(fn ($node) => [

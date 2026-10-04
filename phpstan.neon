@@ -1,3 +1,6 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
 parameters:
     level: 8
     paths:
@@ -6,8 +9,4 @@ parameters:
         - routes
     excludePaths:
         - app/Providers/*
-    rules:
-        - PHPStan\Rules\Debug\DumpDebugRule
-    composerAutoloader:
-        - vendor/autoload.php
     reportUnmatchedIgnoredErrors: false

@@ -5,6 +5,10 @@ import focus from '@alpinejs/focus';
 window.Alpine = Alpine;
 Alpine.plugin(focus);
 
+// Command palette (Cmd+K) — registers via alpine:init listener; must load
+// after window.Alpine is set since it references the global.
+import './search-palette.js';
+
 // Register layout component with Alpine
 Alpine.data('layoutState', () => ({
     srAnnouncement: '',

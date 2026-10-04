@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Version;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class VersionTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_returns_version_info(): void
     {
         $response = $this->getJson('/api/version');

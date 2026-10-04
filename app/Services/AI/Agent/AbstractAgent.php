@@ -47,6 +47,22 @@ abstract class AbstractAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
+    public function getCategory(): string
+    {
+        return 'general';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDescription(): string
+    {
+        return 'AI Agent';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSupportedTaskTypes(): array
     {
         return $this->supportedTaskTypes;

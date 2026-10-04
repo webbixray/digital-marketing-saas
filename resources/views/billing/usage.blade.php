@@ -126,7 +126,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     @if(!empty($usageSummary['by_metric']))
     const metrics = @json(array_keys($usageSummary['by_metric']));
     const prices = @json(array_map(fn($m) => $m['total_price'], $usageSummary['by_metric']));

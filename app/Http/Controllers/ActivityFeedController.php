@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityFeed;
+use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View as FacadeView;
 
 class ActivityFeedController extends Controller
 {
@@ -13,9 +17,14 @@ class ActivityFeedController extends Controller
         $this->middleware(['auth', 'agency']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request): ViewContract|RedirectResponse
     {
-        $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        $agencyId = $user->agency_id;
         $query = ActivityFeed::where('agency_id', $agencyId)
             ->with('user')
             ->orderBy('created_at', 'desc');
@@ -29,11 +38,16 @@ class ActivityFeedController extends Controller
 
         $activities = $query->paginate(20);
 
-        return view('activity-feed.index', compact('activities'));
+        return FacadeView::make('activity-feed.index', compact('activities'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+        }
+
         $validated = $request->validate([
             'action' => 'required|string|max:255',
             'description' => 'required|string|max:500',
@@ -43,19 +57,24 @@ class ActivityFeedController extends Controller
         ]);
 
         ActivityFeed::create([
-            'agency_id' => $request->user()->agency_id,
-            'user_id' => $request->user()->id,
+            'agency_id' => $user->agency_id,
+            'user_id' => $user->id,
             ...$validated,
         ]);
 
         return response()->json(['success' => true]);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, int $id): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+        }
+
         $activity = DB::table('activity_feed')->where('id', $id)->first();
 
-        if (! $activity || (int) $activity->agency_id !== (int) $request->user()->agency_id) {
+        if (! $activity || (int) $activity->agency_id !== (int) $user->agency_id) {
             abort(403);
         }
 

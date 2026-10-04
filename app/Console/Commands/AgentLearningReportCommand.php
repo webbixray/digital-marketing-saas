@@ -89,6 +89,8 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Get high-level learning overview.
+     *
+     * @return array<string, int|float|string>
      */
     private function getLearningOverview(int $days): array
     {
@@ -128,6 +130,14 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Get detailed performance data for a specific agent.
+     *
+     * @return array{
+     *     agent_name: string,
+     *     total_records: int,
+     *     average_accuracy: float,
+     *     recent_learning_reports: array<int, array<string, mixed>>,
+     *     accuracy_trend: string
+     * }
      */
     private function getAgentDetails(string $agentName, int $days): array
     {
@@ -155,6 +165,11 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Get learned patterns report from AgentMemory.
+     *
+     * @return array{
+     *     total_patterns: int,
+     *     patterns: array<int, array<string, mixed>>
+     * }
      */
     private function getLearnedPatternsReport(AgentMemory $memory, ?string $agentName): array
     {
@@ -171,6 +186,14 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Get accuracy trends from performance logs.
+     *
+     * @return array{
+     *     data_points: int,
+     *     latest_accuracy: float|null,
+     *     average_accuracy: float|null,
+     *     trend: string,
+     *     recent_values: array<int, array{accuracy: float, recorded_at: string}>
+     * }
      */
     private function getAccuracyTrends(?string $agentName, int $days): array
     {
@@ -204,6 +227,11 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Get recent feedback outcomes.
+     *
+     * @return array{
+     *     total_recent: int,
+     *     outcomes: array<int, array{agent: string, accuracy: float, task_type: string, recorded_at: string, delta: string|null}>
+     * }
      */
     private function getRecentOutcomes(?string $agentName, int $days): array
     {
@@ -232,6 +260,9 @@ class AgentLearningReportCommand extends Command
 
     /**
      * Generate actionable recommendations based on the report data.
+     *
+     * @param  array<string, mixed>  $report
+     * @return array<int, array<string, string>>
      */
     private function generateRecommendations(array $report): array
     {
@@ -290,6 +321,9 @@ class AgentLearningReportCommand extends Command
 
     // ─── Display Methods ───────────────────────────────────────────────
 
+    /**
+     * @param  array<string, int|float|string>  $overview
+     */
     private function displayOverview(array $overview): void
     {
         $this->info('─── Learning Overview ───');
@@ -302,6 +336,15 @@ class AgentLearningReportCommand extends Command
         $this->newLine();
     }
 
+    /**
+     * @param array{
+     *     agent_name: string,
+     *     total_records: int,
+     *     average_accuracy: float,
+     *     recent_learning_reports: array<int, array<string, mixed>>,
+     *     accuracy_trend: string
+     * } $details
+     */
     private function displayAgentDetails(array $details): void
     {
         $this->info("─── Agent: {$details['agent_name']} ───");
@@ -318,6 +361,12 @@ class AgentLearningReportCommand extends Command
         $this->newLine();
     }
 
+    /**
+     * @param array{
+     *     total_patterns: int,
+     *     patterns: array<int, array<string, mixed>>
+     * } $patternsReport
+     */
     private function displayLearnedPatterns(array $patternsReport): void
     {
         $this->info('─── Learned Patterns ───');
@@ -329,12 +378,25 @@ class AgentLearningReportCommand extends Command
                 $confidence = round(($pattern['confidence'] ?? 0) * 100);
                 $occurrences = $pattern['occurrence_count'] ?? 1;
                 $this->line("    • [{$pattern['agent_name']}] confidence={$confidence}%, occurrences={$occurrences}");
-                $this->line('      Pattern: '.Str::limit(json_encode($pattern['pattern']), 80));
+                /** @var non-empty-string|false $patternJson */
+                $patternJson = json_encode($pattern['pattern']);
+                if ($patternJson !== false) {
+                    $this->line('      Pattern: '.Str::limit($patternJson, 80));
+                }
             }
         }
         $this->newLine();
     }
 
+    /**
+     * @param array{
+     *     data_points: int,
+     *     latest_accuracy: float|null,
+     *     average_accuracy: float|null,
+     *     trend: string,
+     *     recent_values: array<int, array{accuracy: float, recorded_at: string}>
+     * } $trends
+     */
     private function displayAccuracyTrends(array $trends): void
     {
         $this->info('─── Prediction Accuracy Trends ───');
@@ -358,6 +420,12 @@ class AgentLearningReportCommand extends Command
         $this->newLine();
     }
 
+    /**
+     * @param array{
+     *     total_recent: int,
+     *     outcomes: array<int, array{agent: string, accuracy: float, task_type: string, recorded_at: string, delta: string|null}>
+     * } $outcomes
+     */
     private function displayRecentOutcomes(array $outcomes): void
     {
         $this->info('─── Recent Feedback Outcomes ───');
@@ -371,6 +439,9 @@ class AgentLearningReportCommand extends Command
         $this->newLine();
     }
 
+    /**
+     * @param  array<int, array<string, string>>  $recommendations
+     */
     private function displayRecommendations(array $recommendations): void
     {
         $this->info('─── Recommendations ───');
@@ -387,7 +458,7 @@ class AgentLearningReportCommand extends Command
     }
 
     /**
-     * Export report as JSON file.
+     * @param  array<string, mixed>  $report
      */
     private function exportReport(array $report): void
     {
@@ -404,9 +475,11 @@ class AgentLearningReportCommand extends Command
 
     // ─── Helper Methods ────────────────────────────────────────────────
 
+    /**
+     * @param  array<int|float>  $values
+     */
     private function calculateTrend(array $values): string
     {
-        $values = array_values(array_filter($values, fn ($v) => is_numeric($v)));
         if (count($values) < 3) {
             return 'stable';
         }
@@ -429,6 +502,9 @@ class AgentLearningReportCommand extends Command
         return 'stable';
     }
 
+    /**
+     * @param  array<int|float>  $values
+     */
     private function calculateAgentTrend(array $values): string
     {
         return $this->calculateTrend($values);

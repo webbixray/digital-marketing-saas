@@ -20,6 +20,7 @@ class VersionController extends Controller
     public function latest(): JsonResponse
     {
         return response()->json([
+            'name' => config('app.name'),
             'version' => $this->version->getVersionInfo(),
             'latest_release' => $this->version->getLatestRelease(),
             'api_versions' => config('version.api'),

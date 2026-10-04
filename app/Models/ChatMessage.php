@@ -2,9 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read User $user
+ * @property-read ChatMessage $replyTo
+ * @property-read Collection<ChatReaction> $reactions
+ */
 class ChatMessage extends Model
 {
     use HasFactory;
@@ -34,17 +42,20 @@ class ChatMessage extends Model
         return $this->belongsTo(ChatChannel::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function replyTo()
+    public function replyTo(): BelongsTo
     {
         return $this->belongsTo(ChatMessage::class, 'reply_to_id');
     }
 
-    public function reactions()
+    /**
+     * @return HasMany<ChatReaction>
+     */
+    public function reactions(): HasMany
     {
         return $this->hasMany(ChatReaction::class, 'message_id');
     }

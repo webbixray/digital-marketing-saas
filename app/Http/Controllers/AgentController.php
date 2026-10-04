@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Concerns\StructuredLogger;
 use App\Jobs\RunAgentWorkflowJob;
+use App\Models\Agency;
 use App\Models\AgentCostLog;
 use App\Models\AgentWorkflowExecution;
+use App\Models\User;
 use App\Services\AgentRegistry;
 use App\Services\AI\Agent\AgentContext;
 use App\Services\AI\Agent\AgentCostTracker;
 use App\Services\AI\Agent\AgentHealthMonitor;
 use App\Services\AI\Agent\AgentOrchestrator;
 use App\Services\AI\Agent\AgentTask;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -33,12 +37,21 @@ class AgentController extends Controller
     /**
      * Agent dashboard page with agent cards, health score, costs, and activity.
      */
-    public function dashboard(Request $request)
+    public function dashboard(Request $request): View|RedirectResponse
     {
-        try {
-            $agency = $request->user()->agency;
-            $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        /** @var User $user */
+        if (! $user->agency_id) {
+            return redirect()->route('home')->with('error', 'Agency not found.');
+        }
+        $agency = $user->agency;
+        /** @var Agency $agency */
+        $agencyId = $agency->id;
 
+        try {
             // Get agent stats from orchestrator
             $agentStats = $this->orchestrator->getAgentStats();
 
@@ -85,7 +98,8 @@ class AgentController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Failed to load agent dashboard', [
-                'agency_id' => $request->user()->agency_id,
+                /* @phpstan-ignore-next-line property.notFound */
+                'agency_id' => $user->agency_id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -97,11 +111,21 @@ class AgentController extends Controller
     /**
      * Single agent detail page.
      */
-    public function agentDetail(Request $request, string $agentName)
+    public function agentDetail(Request $request, string $agentName): View|RedirectResponse
     {
-        try {
-            $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        /** @var User $user */
+        if (! $user->agency_id) {
+            return redirect()->route('home')->with('error', 'Agency not found.');
+        }
+        $agency = $user->agency;
+        /** @var Agency $agency */
+        $agencyId = $agency->id;
 
+        try {
             $agents = $this->orchestrator->getAgentStats();
 
             if (! isset($agents[$agentName])) {
@@ -122,7 +146,7 @@ class AgentController extends Controller
             $memoryPath = "agent_memory/global/{$agentName}.json";
             try {
                 if (Storage::exists($memoryPath)) {
-                    $data = json_decode(Storage::get($memoryPath), true);
+                    $data = json_decode(Storage::get($memoryPath) ?: '{}', true);
                     $patterns = $data['stats'] ?? [];
                     foreach ($patterns as $key => $value) {
                         if (is_array($value) && ! empty($value)) {
@@ -147,7 +171,7 @@ class AgentController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to load agent detail', [
                 'agent_name' => $agentName,
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -159,11 +183,21 @@ class AgentController extends Controller
     /**
      * Workflows page.
      */
-    public function workflows(Request $request)
+    public function workflows(Request $request): View|RedirectResponse
     {
-        try {
-            $agencyId = $request->user()->agency_id;
+        $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+        /** @var User $user */
+        if (! $user->agency_id) {
+            return redirect()->route('home')->with('error', 'Agency not found.');
+        }
+        $agency = $user->agency;
+        /** @var Agency $agency */
+        $agencyId = $agency->id;
 
+        try {
             // Get workflow data
             $workflows = $this->listWorkflows()->getData(true)['data'];
 
@@ -176,7 +210,7 @@ class AgentController extends Controller
             return view('agents.workflows', compact('workflows', 'executions'));
         } catch (\Exception $e) {
             Log::error('Failed to load workflows page', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -190,6 +224,23 @@ class AgentController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (! $user->agency_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found.',
+            ], 400);
+        }
+
+        $agencyId = $user->agency_id;
+
         try {
             $agents = $this->orchestrator->getAgentStats();
 
@@ -199,7 +250,7 @@ class AgentController extends Controller
             ]);
         } catch (\Exception $e) {
             $this->logAgentError('list_agents_failed', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
             ]);
 
@@ -215,6 +266,23 @@ class AgentController extends Controller
      */
     public function show(Request $request, string $agentName): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (! $user->agency_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found.',
+            ], 400);
+        }
+
+        $agencyId = $user->agency_id;
+
         try {
             $agents = $this->orchestrator->getAgentStats();
 
@@ -233,7 +301,7 @@ class AgentController extends Controller
 
             try {
                 if (Storage::exists($memoryPath)) {
-                    $data = json_decode(Storage::get($memoryPath), true);
+                    $data = json_decode(Storage::get($memoryPath) ?: '{}', true);
                     $learnedPatterns = $data['stats'] ?? [];
                 }
             } catch (\Exception $e) {
@@ -253,7 +321,7 @@ class AgentController extends Controller
         } catch (\Exception $e) {
             $this->logAgentError('show_agent_failed', [
                 'agent_name' => $agentName,
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
             ]);
 
@@ -269,6 +337,23 @@ class AgentController extends Controller
      */
     public function dispatch(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (! $user->agency_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found.',
+            ], 400);
+        }
+
+        $agencyId = $user->agency_id;
+
         try {
             $validated = $request->validate([
                 'agent_name' => 'required|string',
@@ -285,11 +370,11 @@ class AgentController extends Controller
                 preferredAgent: $validated['agent_name'],
             );
 
-            $context = AgentContext::fromUser($request->user());
+            $context = AgentContext::fromUser($user);
             $result = $this->orchestrator->dispatch($task, $context);
 
             $this->logAgentExecution('task_dispatched', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'agent_name' => $validated['agent_name'],
                 'task_type' => $validated['task_type'],
                 'task_id' => $task->id,
@@ -317,7 +402,7 @@ class AgentController extends Controller
             ], 422);
         } catch (\Exception $e) {
             $this->logAgentError('dispatch_failed', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -334,6 +419,23 @@ class AgentController extends Controller
      */
     public function stats(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (! $user->agency_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found.',
+            ], 400);
+        }
+
+        $agencyId = $user->agency_id;
+
         try {
             $agents = $this->orchestrator->getAgentStats();
 
@@ -362,7 +464,7 @@ class AgentController extends Controller
             ]);
         } catch (\Exception $e) {
             $this->logAgentError('stats_failed', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'error' => $e->getMessage(),
             ]);
 
@@ -376,8 +478,29 @@ class AgentController extends Controller
     /**
      * Execute a named workflow.
      */
+    /**
+     * Execute a named workflow.
+     */
     public function runWorkflow(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (! $user->agency_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found.',
+            ], 400);
+        }
+
+        $agencyId = $user->agency_id;
+        $userId = $user->id;
+
         try {
             $validated = $request->validate([
                 'workflow_name' => 'required|string|in:content_campaign,competitor_analysis,security_audit,content_optimization,trend_report',
@@ -390,8 +513,6 @@ class AgentController extends Controller
             $async = $validated['async'] ?? true;
 
             $executionId = 'wf_'.uniqid();
-            $agencyId = $request->user()->agency_id;
-            $userId = $request->user()->id;
 
             // Create execution record
             $execution = AgentWorkflowExecution::create([
@@ -430,8 +551,32 @@ class AgentController extends Controller
                         'message' => 'Workflow dispatched for async execution.',
                     ],
                 ], 202);
-            }
+            } else {
+                // Run the workflow synchronously
+                $job = new RunAgentWorkflowJob($workflowName, $executionId, $agencyId, $userId, $input);
+                $job->handle($this->orchestrator);
 
+                // Refresh the execution record
+                $execution->refresh();
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'execution_id' => $execution->execution_id,
+                        'workflow_name' => $execution->workflow_name,
+                        'status' => $execution->status,
+                        'steps_total' => $execution->steps_total,
+                        'steps_completed' => $execution->steps_completed,
+                        'progress_percentage' => $execution->steps_total > 0 ? round(($execution->steps_completed / $execution->steps_total) * 100, 1) : 0,
+                        'input_data' => $execution->input_data,
+                        'output_data' => $execution->output_data,
+                        'error_message' => $execution->error_message,
+                        'started_at' => $execution->started_at?->toIso8601String(),
+                        'completed_at' => $execution->completed_at?->toIso8601String(),
+                        'duration_ms' => $execution->duration_ms,
+                    ],
+                ]);
+            }
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -440,7 +585,7 @@ class AgentController extends Controller
             ], 422);
         } catch (\Exception $e) {
             $this->logAgentError('workflow_failed', [
-                'agency_id' => $request->user()->agency_id,
+                'agency_id' => $agencyId,
                 'workflow_name' => $validated['workflow_name'] ?? 'unknown',
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -554,5 +699,4 @@ class AgentController extends Controller
             ], 500);
         }
     }
-
 }

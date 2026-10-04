@@ -130,7 +130,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('alpine:init', () => {
     Alpine.data('commerceDetail', () => ({}));
 });

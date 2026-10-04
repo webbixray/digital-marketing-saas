@@ -90,6 +90,9 @@ class SystemCleanupCommand extends Command
         return self::SUCCESS;
     }
 
+    /**
+     * @return array{count: int, size: int}
+     */
     private function cleanupLogs(int $days, bool $dryRun): array
     {
         $logPath = storage_path('logs');
@@ -122,6 +125,9 @@ class SystemCleanupCommand extends Command
         return ['count' => $count, 'size' => $size];
     }
 
+    /**
+     * @return array{count: int, size: int}
+     */
     private function cleanupTemp(bool $dryRun): array
     {
         $count = 0;
@@ -174,6 +180,9 @@ class SystemCleanupCommand extends Command
         return ['count' => $count, 'size' => $size];
     }
 
+    /**
+     * @return array{count: int, size: int}
+     */
     private function cleanupCache(bool $dryRun): array
     {
         $count = 0;
@@ -199,6 +208,9 @@ class SystemCleanupCommand extends Command
         return ['count' => $count, 'size' => 0];
     }
 
+    /**
+     * @return array{count: int, size: int}
+     */
     private function cleanupSessions(int $days, bool $dryRun): array
     {
         $count = 0;

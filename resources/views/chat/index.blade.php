@@ -1,13 +1,9 @@
-@php
-$cspNonce = base64_encode(random_bytes(16));
-@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'nonce-{{ $cspNonce }}' 'strict-dynamic' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https://ui-avatars.com data:;">
     <title>Chat 2.0 | Team Chat</title>
     
     <!-- Fonts -->
@@ -15,13 +11,12 @@ $cspNonce = base64_encode(random_bytes(16));
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Icons: Font Awesome self-hosted via Vite (unified.css import) -->
     
     <!-- Tailwind CSS -->
     @vite(['resources/css/unified.css', 'resources/js/unified.js'])
     
-    <style nonce="{{ $cspNonce }}">
+    <style nonce="{{ $cspNonce ?? '' }}">
         [x-cloak] { display: none !important; }
         .chat-container { height: calc(100vh - 64px); }
         .message-bubble { max-width: 75%; }
@@ -149,7 +144,7 @@ $cspNonce = base64_encode(random_bytes(16));
                     <div class="flex gap-3 message-animate {{ $msg->user_id === auth()->id() ? 'justify-end' : 'justify-start' }}">
                         @if($msg->user_id !== auth()->id())
                             <div class="flex-shrink-0">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($msg->user->name) }}&background=6366f1&color=fff&size=32" 
+                                <img src="/avatar/{{ urlencode($msg->user->name) }}?background=6366f1&color=fff&size=32" 
                                      class="w-8 h-8 rounded-full" alt="{{ $msg->user->name }}">
                             </div>
                         @endif
@@ -213,7 +208,7 @@ $cspNonce = base64_encode(random_bytes(16));
 
                         @if($msg->user_id === auth()->id())
                             <div class="flex-shrink-0">
-                                <img src="https://ui-avatars.com/api/?name=You&background=6366f1&color=fff&size=32" 
+                                <img src="/avatar/You?background=6366f1&color=fff&size=32" 
                                      class="w-8 h-8 rounded-full" alt="You">
                             </div>
                         @endif
@@ -313,7 +308,7 @@ $cspNonce = base64_encode(random_bytes(16));
         </main>
     </div>
 
-    <script nonce="{{ $cspNonce }}">
+    <script nonce="{{ $cspNonce ?? '' }}">
         function chat2App() {
             return {
                 activeChannelId: {{ $activeChannel?->id ?? 'null' }},

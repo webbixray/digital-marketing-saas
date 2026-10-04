@@ -93,7 +93,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 let currentApprovalId = null;
 
 function approveContent(id) {

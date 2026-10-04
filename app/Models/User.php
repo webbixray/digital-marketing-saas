@@ -47,6 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_active_at' => 'datetime',
+        'password' => 'hashed',
         'ccpa_opt_out' => 'boolean',
         'ccpa_opt_out_at' => 'datetime',
         'is_active' => 'boolean',

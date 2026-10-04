@@ -50,6 +50,11 @@ class ContentLibraryController extends Controller
     {
         $agencyId = $request->user()->agency_id;
 
+        // Normalize legacy type values (e.g. 'post' from older form versions) to current asset types.
+        if ($request->input('type') === 'post') {
+            $request->merge(['type' => 'text']);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|in:text,image,video,audio,document,link',

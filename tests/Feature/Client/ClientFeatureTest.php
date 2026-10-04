@@ -23,16 +23,14 @@ class ClientFeatureTest extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
     }
 
-    /** @test */
-    public function it_lists_clients(): void
+    public function test_it_lists_clients(): void
     {
         Client::factory()->count(3)->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('clients.index'));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_creates_client(): void
+    public function test_it_creates_client(): void
     {
         $response = $this->actingAs($this->user)->post(route('clients.store'), [
             'name' => 'Test Client',
@@ -43,23 +41,20 @@ class ClientFeatureTest extends TestCase
         $this->assertDatabaseHas('clients', ['name' => 'Test Client']);
     }
 
-    /** @test */
-    public function it_validates_client_creation(): void
+    public function test_it_validates_client_creation(): void
     {
         $response = $this->actingAs($this->user)->post(route('clients.store'), []);
         $response->assertSessionHasErrors();
     }
 
-    /** @test */
-    public function it_shows_client(): void
+    public function test_it_shows_client(): void
     {
         $client = Client::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->get(route('clients.show', $client));
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function it_updates_client(): void
+    public function test_it_updates_client(): void
     {
         $client = Client::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->put(route('clients.update', $client), [
@@ -68,8 +63,7 @@ class ClientFeatureTest extends TestCase
         $response->assertRedirect();
     }
 
-    /** @test */
-    public function it_deletes_client(): void
+    public function test_it_deletes_client(): void
     {
         $client = Client::factory()->create(['agency_id' => $this->agency->id]);
         $response = $this->actingAs($this->user)->delete(route('clients.destroy', $client));
@@ -77,8 +71,7 @@ class ClientFeatureTest extends TestCase
         $this->assertSoftDeleted('clients', ['id' => $client->id]);
     }
 
-    /** @test */
-    public function it_prevents_unauthorized_access(): void
+    public function test_it_prevents_unauthorized_access(): void
     {
         $otherAgency = Agency::factory()->create();
         $client = Client::factory()->create(['agency_id' => $otherAgency->id]);
@@ -86,8 +79,7 @@ class ClientFeatureTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
-    public function it_searches_clients(): void
+    public function test_it_searches_clients(): void
     {
         Client::factory()->create(['agency_id' => $this->agency->id, 'name' => 'ABC Company']);
         Client::factory()->create(['agency_id' => $this->agency->id, 'name' => 'XYZ Corp']);

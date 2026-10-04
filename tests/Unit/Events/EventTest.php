@@ -11,8 +11,7 @@ class EventTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function post_published_event_can_be_instantiated(): void
+    public function test_post_published_event_can_be_instantiated(): void
     {
         $post = SocialPost::factory()->create();
         $event = new PostPublished($post);
@@ -20,8 +19,7 @@ class EventTest extends TestCase
         $this->assertEquals($post->id, $event->post->id);
     }
 
-    /** @test */
-    public function event_broadcasts_on_channel(): void
+    public function test_event_broadcasts_on_channel(): void
     {
         $post = SocialPost::factory()->create();
         $event = new PostPublished($post);

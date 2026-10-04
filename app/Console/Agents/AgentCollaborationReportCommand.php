@@ -90,7 +90,9 @@ class AgentCollaborationReportCommand extends Command
         // 5. Best Practices
         $this->info('⭐ BEST PRACTICES');
         $this->line('───────────────────────────────────────────────────────────');
-        $bestPractices = $knowledgeBase->getBestPractices($agencyId, $category ?? 'general');
+        /** @var string $domain */
+        $domain = $category ?? 'general';
+        $bestPractices = $knowledgeBase->getBestPractices($agencyId, $domain);
         $this->line('Best practice entries: '.count($bestPractices));
 
         foreach ($bestPractices as $practice) {
@@ -137,7 +139,9 @@ class AgentCollaborationReportCommand extends Command
         $this->line('───────────────────────────────────────────────────────────');
         $recentQuery = AgentSharedKnowledge::byAgency($agencyId)->recent(10);
         if ($category) {
-            $recentQuery->byCategory($category);
+            /** @var string $cat */
+            $cat = $category;
+            $recentQuery->byCategory($cat);
         }
         $recent = $recentQuery->get();
 

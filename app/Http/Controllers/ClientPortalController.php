@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\ClientAccessToken;
 use App\Models\ClientPortalSetting;
 use App\Models\SocialPost;
-use App\Models\Campaign;
-use App\Models\Invoice;
-use App\Models\ClientAccessToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -87,7 +85,7 @@ class ClientPortalController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('success', 'Access token generated: ' . $token)
+            ->with('success', 'Access token generated: '.$token)
             ->with('token', $token);
     }
 
@@ -113,7 +111,7 @@ class ClientPortalController extends Controller
             })
             ->first();
 
-        if (!$accessToken) {
+        if (! $accessToken) {
             abort(403, 'Invalid or expired access token');
         }
 
@@ -122,24 +120,23 @@ class ClientPortalController extends Controller
         $client = $accessToken->client;
         $agency = $client->agency;
 
-        $settings = Cache::remember("client_portal:{$agency->id}:{$client->id}:settings", 600, function () use ($agency) {
-            return ClientPortalSetting::where('agency_id', $agency->id)->first();
-        });
+        // NOTE: settings, campaigns, invoices and posts are intentionally NOT
+        // cached. The database cache store blocks class unserialization
+        // (serializable_classes=false), so caching Eloquent models or
+        // paginators returns __PHP_Incomplete_Class on read. Only plain
+        // arrays/scalars (e.g. $stats below) are safe to cache.
+        $settings = ClientPortalSetting::where('agency_id', $agency->id)->first();
 
         // Get client's campaigns with eager loaded counts
-        $campaigns = Cache::remember("client_portal:{$agency->id}:{$client->id}:campaigns", 300, function () use ($client) {
-            return $client->campaigns()
-                ->withCount('socialPosts')
-                ->orderByDesc('created_at')
-                ->paginate(10);
-        });
+        $campaigns = $client->campaigns()
+            ->withCount('socialPosts')
+            ->orderByDesc('created_at')
+            ->paginate(10);
 
         // Get client's invoices
-        $invoices = Cache::remember("client_portal:{$agency->id}:{$client->id}:invoices", 300, function () use ($client) {
-            return $client->invoices()
-                ->orderByDesc('created_at')
-                ->paginate(10);
-        });
+        $invoices = $client->invoices()
+            ->orderByDesc('created_at')
+            ->paginate(10);
 
         // Calculate stats - optimized with single queries
         $stats = Cache::remember("client_portal:{$agency->id}:{$client->id}:stats", 300, function () use ($client) {
@@ -158,14 +155,12 @@ class ClientPortalController extends Controller
             ];
         });
 
-        // Get client's social posts with eager loading
-        $posts = Cache::remember("client_portal:{$agency->id}:{$client->id}:posts", 300, function () use ($client) {
-            return SocialPost::where('client_id', $client->id)
-                ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
-                ->orderByDesc('created_at')
-                ->take(10)
-                ->get();
-        });
+        // Get client's social posts with eager loading (not cached — see note above)
+        $posts = SocialPost::where('client_id', $client->id)
+            ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
 
         return view('client-portal.show', compact(
             'client', 'agency', 'settings', 'campaigns', 'invoices', 'stats', 'posts', 'token'
