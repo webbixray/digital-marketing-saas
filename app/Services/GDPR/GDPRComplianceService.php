@@ -242,6 +242,9 @@ class GDPRComplianceService
     /**
      * Get user data for export.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getUserData(User $user): array
     {
         return [
@@ -258,6 +261,9 @@ class GDPRComplianceService
 
     /**
      * Get agency data for export.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function getAgencyData(Agency $agency): array
     {
@@ -303,6 +309,9 @@ class GDPRComplianceService
     /**
      * Get compliance overview statistics for admin dashboard.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getComplianceOverview(?int $agencyId = null): array
     {
         $query = GDPRComplianceAudit::query();
@@ -340,6 +349,9 @@ class GDPRComplianceService
 
     /**
      * Get all compliance audits, optionally filtered.
+     */
+    /**
+     * @param  array<string, mixed>  $filters
      */
     public function getAuditLogs(array $filters = [], int $perPage = 50)
     {
@@ -478,6 +490,9 @@ class GDPRComplianceService
     /**
      * Run automated data retention cleanup for expired data.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function runDataRetentionCleanup(int $agencyId): array
     {
         $agency = Agency::findOrFail($agencyId);
@@ -528,6 +543,9 @@ class GDPRComplianceService
     /**
      * Get consent statistics for dashboard charts.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getConsentStatistics(?int $agencyId = null): array
     {
         $query = ConsentRecord::query();
@@ -564,7 +582,7 @@ class GDPRComplianceService
     /**
      * Get pending requests queue for admin dashboard.
      */
-    public function getPendingRequests(?int $agencyId = null): \Illuminate\Database\Eloquent\Collection
+    public function getPendingRequests(?int $agencyId = null): Collection
     {
         $exportQuery = DataExportRequest::with('user')->where('status', 'pending');
         $deletionQuery = DataDeletionRequest::with('user')->where('status', 'pending');
@@ -595,10 +613,11 @@ class GDPRComplianceService
         ]);
 
         $combined = $exports->merge($deletions)->sortByDesc('created_at');
-        $results = new \Illuminate\Database\Eloquent\Collection();
+        $results = new Collection;
         foreach ($combined as $item) {
             $results->push(new DataExportRequest((array) $item));
         }
+
         return $results;
     }
 }

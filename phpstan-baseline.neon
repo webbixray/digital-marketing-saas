@@ -6997,48 +6997,6 @@ parameters:
 			path: app/Jobs/GenerateReportJob.php
 
 		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateAudienceReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateCampaignReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateCompetitorReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateEngagementReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateSocialMediaReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
-			message: '#^Method App\\Jobs\\GenerateReportJob\:\:generateSummaryReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/GenerateReportJob.php
-
-		-
 			message: '#^Parameter \#1 \$agency of method App\\Jobs\\GenerateReportJob\:\:generateAudienceReport\(\) expects App\\Models\\Agency, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15295,56 +15253,14 @@ parameters:
 			path: app/Services/AI/Audit/AiAuditService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:checkBias\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:checkCompliance\(\) has parameter \$context with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:checkCompliance\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:checkToxicity\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:getAuditLogs\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:getAuditLogs\(\) return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Services/AI/Audit/AiAuditService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:getComplianceReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:getFlaggedContent\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\AiAuditService\:\:getStatsForNav\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/Audit/AiAuditService.php
 
@@ -15407,48 +15323,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/Audit/BiasDetectionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:assessComplexity\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:buildReasoningSteps\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:explainDecision\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:extractFeatures\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:generateExplanation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:getDecisionPath\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\ExplainabilityService\:\:getFeatureImportance\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/ExplainabilityService.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Campaign\:\:\$platform\.$#'
@@ -16105,12 +15979,6 @@ parameters:
 			path: app/Services/AI/PerformanceAnalysis.php
 
 		-
-			message: '#^Method App\\Services\\AI\\PerformanceAnalysis\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/PerformanceAnalysis.php
-
-		-
 			message: '#^Method App\\Services\\AI\\PredictionResult\:\:__construct\(\) has parameter \$factors with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -16455,54 +16323,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$agency_id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:configure\(\) has parameter \$config with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:configure\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:getInstallationStatus\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:install\(\) has parameter \$config with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:install\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:recordInstallation\(\) has parameter \$config with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:uninstall\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Agent/Marketplace/AgentInstallerService.php
-
-		-
-			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:validateRequirements\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Agent/Marketplace/AgentInstallerService.php
 
@@ -18115,38 +17935,14 @@ parameters:
 			path: app/Services/GDPR/GDPRComplianceService.php
 
 		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getAgencyData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
 			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getAuditLogs\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: app/Services/GDPR/GDPRComplianceService.php
 
 		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getAuditLogs\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getComplianceOverview\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
 			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getConsentHistory\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getConsentStatistics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/GDPR/GDPRComplianceService.php
 
@@ -18165,18 +17961,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getPendingRequests\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getUserData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:runDataRetentionCleanup\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/GDPR/GDPRComplianceService.php
 
@@ -18949,26 +18733,8 @@ parameters:
 			path: app/Services/SmartSchedulingService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:createProduct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
 			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:deleteProduct\(\) should return bool but returns bool\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:getProductAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:getProducts\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Social/CommerceIntegrationService.php
 
@@ -18981,30 +18747,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:getTopProducts\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:syncTags\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:tagProduct\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:untagProduct\(\) has parameter \$tagIds with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/CommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\CommerceIntegrationService\:\:updateProduct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Social/CommerceIntegrationService.php
 

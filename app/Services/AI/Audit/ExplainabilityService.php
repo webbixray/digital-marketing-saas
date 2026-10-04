@@ -2,12 +2,13 @@
 
 namespace App\Services\AI\Audit;
 
-use Illuminate\Support\Facades\Log;
-
 class ExplainabilityService
 {
     /**
      * Explain an AI decision/model output in human-readable form.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function explainDecision(string $model, string $input, string $output): array
     {
@@ -29,6 +30,9 @@ class ExplainabilityService
 
     /**
      * Get feature importance for a given input.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getFeatureImportance(string $model, string $input): array
     {
@@ -59,6 +63,9 @@ class ExplainabilityService
     /**
      * Generate a human-readable explanation for the model output.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function generateExplanation(string $model, string $input, string $output): array
     {
         $inputLength = strlen($input);
@@ -67,8 +74,8 @@ class ExplainabilityService
         $confidence = $this->estimateConfidence($input, $output, $model);
 
         $summary = sprintf(
-            "The %s model processed a %d-character input and generated a %d-character response. "
-            . "The response has a complexity rating of %s with an estimated confidence of %s%%.",
+            'The %s model processed a %d-character input and generated a %d-character response. '
+            .'The response has a complexity rating of %s with an estimated confidence of %s%%.',
             $model,
             $inputLength,
             $outputLength,
@@ -91,6 +98,9 @@ class ExplainabilityService
 
     /**
      * Get the decision path taken for an input.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getDecisionPath(string $model, string $input): array
     {
@@ -156,6 +166,9 @@ class ExplainabilityService
     /**
      * Extract features from input text.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function extractFeatures(string $input): array
     {
         $features = [
@@ -200,6 +213,9 @@ class ExplainabilityService
     /**
      * Assess complexity of the output.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function assessComplexity(string $input, string $output): array
     {
         $score = strlen($output) / max(strlen($input), 1);
@@ -237,6 +253,8 @@ class ExplainabilityService
 
     /**
      * Build reasoning steps for the explanation.
+     *
+     * @return array<int, array<string, int|string>>
      */
     private function buildReasoningSteps(string $input, string $output, string $model): array
     {

@@ -2,18 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Models\Report;
 use App\Models\Agency;
-use App\Models\SocialPost;
 use App\Models\Campaign;
 use App\Models\Client;
+use App\Models\Report;
+use App\Models\SocialPost;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class GenerateReportJob implements ShouldQueue
@@ -21,7 +20,9 @@ class GenerateReportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $backoff = 60;
+
     public int $timeout = 300;
 
     public function __construct(
@@ -67,6 +68,9 @@ class GenerateReportJob implements ShouldQueue
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generate(): array
     {
         $agency = $this->report->agency;
@@ -88,6 +92,9 @@ class GenerateReportJob implements ShouldQueue
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateSocialMediaReport(Agency $agency): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
@@ -105,7 +112,7 @@ class GenerateReportJob implements ShouldQueue
                 'total_engagement' => $posts->sum('engagement_rate'),
                 'avg_engagement_rate' => $posts->avg('engagement_rate') ?? 0,
             ],
-            'platform_breakdown' => $posts->groupBy('platform')->map(fn($group) => [
+            'platform_breakdown' => $posts->groupBy('platform')->map(fn ($group) => [
                 'posts' => $group->count(),
                 'avg_engagement' => round($group->avg('engagement_rate') ?? 0, 2),
                 'total_reach' => $group->sum('reach'),
@@ -116,6 +123,9 @@ class GenerateReportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateCampaignReport(Agency $agency): array
     {
         $campaigns = Campaign::where('agency_id', $agency->id)
@@ -136,6 +146,9 @@ class GenerateReportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateEngagementReport(Agency $agency): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
@@ -151,7 +164,7 @@ class GenerateReportJob implements ShouldQueue
                 'max_engagement_rate' => $posts->max('engagement_rate') ?? 0,
                 'min_engagement_rate' => $posts->min('engagement_rate') ?? 0,
             ],
-            'platform_breakdown' => $posts->groupBy('platform')->map(fn($group) => [
+            'platform_breakdown' => $posts->groupBy('platform')->map(fn ($group) => [
                 'avg_engagement' => round($group->avg('engagement_rate') ?? 0, 2),
                 'post_count' => $group->count(),
             ])->toArray(),
@@ -161,6 +174,9 @@ class GenerateReportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateAudienceReport(Agency $agency): array
     {
         $accounts = $agency->socialAccounts;
@@ -171,7 +187,7 @@ class GenerateReportJob implements ShouldQueue
                 'avg_growth_rate' => $accounts->avg('follower_growth_rate') ?? 0,
                 'platforms_count' => $accounts->count(),
             ],
-            'platform_breakdown' => $accounts->map(fn($a) => [
+            'platform_breakdown' => $accounts->map(fn ($a) => [
                 'platform' => $a->platform,
                 'followers' => $a->follower_count,
                 'growth_rate' => $a->follower_growth_rate,
@@ -182,6 +198,9 @@ class GenerateReportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateCompetitorReport(Agency $agency): array
     {
         // This would integrate with competitor tracking data
@@ -198,6 +217,9 @@ class GenerateReportJob implements ShouldQueue
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function generateSummaryReport(Agency $agency): array
     {
         $postsQuery = SocialPost::where('agency_id', $agency->id)->where('status', 'published');

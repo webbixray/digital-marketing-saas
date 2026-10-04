@@ -14,13 +14,16 @@ class CommerceIntegrationService
     /**
      * Create a new product for an agency.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function createProduct(int $agencyId, array $data): Product
     {
         return DB::transaction(function () use ($agencyId, $data) {
             $product = Product::create([
                 'agency_id' => $agencyId,
                 'name' => $data['name'],
-                'slug' => $data['slug'] ?? Str::slug($data['name']) . '-' . $agencyId,
+                'slug' => $data['slug'] ?? Str::slug($data['name']).'-'.$agencyId,
                 'description' => $data['description'] ?? null,
                 'sku' => $data['sku'] ?? null,
                 'price' => $data['price'] ?? 0,
@@ -44,6 +47,9 @@ class CommerceIntegrationService
     /**
      * Update an existing product.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function updateProduct(int $id, array $data): ?Product
     {
         $product = Product::find($id);
@@ -59,7 +65,7 @@ class CommerceIntegrationService
             ]));
 
             if (empty($updateData['slug']) && ! empty($data['name'])) {
-                $updateData['slug'] = Str::slug($data['name']) . '-' . $product->agency_id;
+                $updateData['slug'] = Str::slug($data['name']).'-'.$product->agency_id;
             }
 
             $product->update($updateData);
@@ -91,6 +97,9 @@ class CommerceIntegrationService
     /**
      * Get products for an agency with optional filters.
      */
+    /**
+     * @param  array<string, mixed>  $filters
+     */
     public function getProducts(int $agencyId, array $filters = []): Collection
     {
         $query = Product::byAgency($agencyId);
@@ -120,6 +129,9 @@ class CommerceIntegrationService
     /**
      * Tag a product with one or more tags.
      */
+    /**
+     * @param  array<int, string>  $tags
+     */
     public function tagProduct(int $productId, array $tags): void
     {
         $product = Product::find($productId);
@@ -134,6 +146,9 @@ class CommerceIntegrationService
     /**
      * Remove tags from a product.
      */
+    /**
+     * @param  array<int, int>  $tagIds
+     */
     public function untagProduct(int $productId, array $tagIds): void
     {
         $product = Product::find($productId);
@@ -147,6 +162,9 @@ class CommerceIntegrationService
 
     /**
      * Get analytics for a product.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getProductAnalytics(int $productId): array
     {
@@ -241,6 +259,9 @@ class CommerceIntegrationService
 
     /**
      * Sync tags for a product.
+     */
+    /**
+     * @param  array<int, string>  $tags
      */
     private function syncTags(Product $product, array $tags, bool $detach = false): void
     {

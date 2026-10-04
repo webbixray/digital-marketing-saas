@@ -20,6 +20,9 @@ class PerformanceAnalysis
         public readonly float $roi,
     ) {}
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

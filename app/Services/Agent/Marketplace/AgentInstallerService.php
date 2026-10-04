@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Storage;
 
 class AgentInstallerService
 {
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
     public function install(AgentMarketplaceItem $item, int $agencyId, array $config = []): array
     {
         try {
@@ -26,7 +30,7 @@ class AgentInstallerService
             if (! $validation['valid']) {
                 return [
                     'success' => false,
-                    'message' => 'Requirements not met: ' . implode(', ', $validation['missing']),
+                    'message' => 'Requirements not met: '.implode(', ', $validation['missing']),
                 ];
             }
 
@@ -53,11 +57,14 @@ class AgentInstallerService
 
             return [
                 'success' => false,
-                'message' => 'Installation failed: ' . $e->getMessage(),
+                'message' => 'Installation failed: '.$e->getMessage(),
             ];
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function uninstall(AgentMarketplaceItem $item, int $agencyId): array
     {
         try {
@@ -87,11 +94,15 @@ class AgentInstallerService
 
             return [
                 'success' => false,
-                'message' => 'Uninstallation failed: ' . $e->getMessage(),
+                'message' => 'Uninstallation failed: '.$e->getMessage(),
             ];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
     public function configure(AgentMarketplaceItem $item, array $config): array
     {
         try {
@@ -112,11 +123,14 @@ class AgentInstallerService
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Failed to save configuration: ' . $e->getMessage(),
+                'message' => 'Failed to save configuration: '.$e->getMessage(),
             ];
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function validateRequirements(AgentMarketplaceItem $item, int $agencyId): array
     {
         $agency = Agency::findOrFail($agencyId);
@@ -144,6 +158,9 @@ class AgentInstallerService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getInstallationStatus(int $itemId, int $agencyId): array
     {
         $item = AgentMarketplaceItem::findOrFail($itemId);
@@ -165,6 +182,9 @@ class AgentInstallerService
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     */
     private function recordInstallation(AgentMarketplaceItem $item, int $agencyId, array $config): void
     {
         $installPath = "agent_installations/{$agencyId}/{$item->slug}";

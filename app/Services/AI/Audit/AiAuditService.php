@@ -45,6 +45,9 @@ class AiAuditService
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkBias(string $output): array
     {
         $score = 0.0;
@@ -92,6 +95,9 @@ class AiAuditService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkToxicity(string $output): array
     {
         $score = 0.0;
@@ -134,6 +140,10 @@ class AiAuditService
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
     public function checkCompliance(string $output, array $context = []): array
     {
         $biasScore = $context['bias_score'] ?? null;
@@ -187,6 +197,9 @@ class AiAuditService
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $filters
+     */
     public function getAuditLogs(int $agencyId, array $filters = []): LengthAwarePaginator
     {
         $query = AiAuditLog::byAgency($agencyId)->with(['user', 'agency']);
@@ -226,6 +239,9 @@ class AiAuditService
             ->get();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getComplianceReport(int $agencyId, ?string $period = '30 days'): array
     {
         $query = AiAuditLog::byAgency($agencyId);
@@ -347,6 +363,9 @@ class AiAuditService
         return $filename;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStatsForNav(int $agencyId): array
     {
         $flaggedCount = AiAuditLog::byAgency($agencyId)
