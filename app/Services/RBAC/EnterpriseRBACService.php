@@ -14,6 +14,9 @@ class EnterpriseRBACService
     /**
      * Create a custom role for an agency with specific permissions.
      */
+    /**
+     * @param  array<int, string>  $permissions
+     */
     public function createCustomRole(int $agencyId, string $name, array $permissions): Role
     {
         $role = Role::create([
@@ -35,6 +38,9 @@ class EnterpriseRBACService
 
     /**
      * Update an existing role.
+     */
+    /**
+     * @param  array<string, mixed>  $data
      */
     public function updateRole(int $agencyId, int $roleId, array $data): bool
     {
@@ -132,6 +138,9 @@ class EnterpriseRBACService
     /**
      * Get all permissions for a user.
      */
+    /**
+     * @return array<int, string>
+     */
     public function getUserPermissions(int $user): array
     {
         $user = is_int($user) ? User::find($user) : $user;
@@ -145,6 +154,9 @@ class EnterpriseRBACService
 
     /**
      * Get all permissions for a role.
+     */
+    /**
+     * @return array<int, string>
      */
     public function getRolePermissions(int $roleId): array
     {
@@ -176,6 +188,9 @@ class EnterpriseRBACService
 
     /**
      * Get audit trail for an agency with optional filters.
+     */
+    /**
+     * @param  array<string, mixed>  $filters
      */
     public function getAuditTrail(int $agencyId, array $filters = []): Collection
     {
@@ -219,6 +234,9 @@ class EnterpriseRBACService
 
     /**
      * Log an audit trail entry.
+     */
+    /**
+     * @param  array<string, mixed>  $metadata
      */
     private function logAuditTrail(int $agencyId, string $action, string $description, ?User $user = null, ?string $subjectType = null, ?int $subjectId = null, array $metadata = []): void
     {

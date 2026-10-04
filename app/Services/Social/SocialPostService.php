@@ -16,6 +16,9 @@ class SocialPostService
     /**
      * Create a new social post (draft or scheduled).
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function createPost(int $agencyId, array $data): SocialPost
     {
         return DB::transaction(function () use ($agencyId, $data) {
@@ -42,6 +45,9 @@ class SocialPostService
     /**
      * Schedule a post for future publishing.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function schedulePost(int $agencyId, array $data): SocialPost
     {
         $data['status'] = PostStatus::SCHEDULED->value;
@@ -51,6 +57,9 @@ class SocialPostService
 
     /**
      * Publish a post immediately.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function publishPost(SocialPost $post): array
     {
@@ -99,6 +108,9 @@ class SocialPostService
     /**
      * Publish to the social media platform.
      */
+    /**
+     * @return array<string, mixed>
+     */
     protected function publishToPlatform(SocialPost $post): array
     {
         $account = $post->socialAccount;
@@ -123,6 +135,9 @@ class SocialPostService
     /**
      * Get post statistics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPostStats(SocialPost $post): array
     {
         return [
@@ -137,6 +152,9 @@ class SocialPostService
 
     /**
      * Retry a failed post.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function retryPost(SocialPost $post): array
     {

@@ -103,6 +103,9 @@ class AgentMemory
      *
      * @return array<string, array{total: int, successes: int, success_rate: float, total_cost: float}>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getAgentStats(): array
     {
         $history = $this->getHistory();
@@ -224,6 +227,9 @@ class AgentMemory
      * @param  int  $limit  Maximum number of patterns to return
      * @return array<int, array>
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getTopLearnedPatterns(int $limit = 10): array
     {
         $patterns = $this->getLearnedPatterns(minConfidence: 0.7);
@@ -235,6 +241,9 @@ class AgentMemory
      * Store learned patterns in cache.
      *
      * @param  array<string, array>  $patterns
+     */
+    /**
+     * @param  array<int|string, array>  $patterns
      */
     private function storeLearnedPatterns(array $patterns): void
     {
@@ -266,6 +275,9 @@ class AgentMemory
      *
      * @return array<int, array>
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getHistory(): array
     {
         return Cache::get(self::CACHE_KEY, []);
@@ -276,6 +288,9 @@ class AgentMemory
      *
      * @param  array<int, array>  $history
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $history
+     */
     private function storeHistory(array $history): void
     {
         Cache::put(self::CACHE_KEY, $history, now()->addDays(7));
@@ -284,6 +299,9 @@ class AgentMemory
     /**
      * Get recent actions for a user.
      *
+     * @return array<int, array<string, mixed>>
+     */
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function getRecentActions(int $userId, int $limit = 20): array
@@ -297,6 +315,9 @@ class AgentMemory
     /**
      * Get user preferences.
      *
+     * @return array<string, mixed>
+     */
+    /**
      * @return array<string, mixed>
      */
     public function getUserPreferences(int $userId): array

@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
-use App\Models\Agency;
 use App\Models\ClientSubscription;
+use App\Models\Invoice;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -72,7 +70,9 @@ class BillingHealthController extends Controller
     }
 
     /**
-     * Calculate all billing health metrics.
+     * * Calculate all billing health metrics.
+     *
+     * * @return array<string, mixed>
      */
     private function calculateMetrics(int $agencyId): array
     {
@@ -165,7 +165,7 @@ class BillingHealthController extends Controller
 
         return [
             'mrr' => round($totalMRR, 2),
-            'mrr_formatted' => '$' . number_format($totalMRR, 2),
+            'mrr_formatted' => '$'.number_format($totalMRR, 2),
             'mrr_growth' => $mrrGrowth,
             'mrr_growth_direction' => $mrrGrowth >= 0 ? 'up' : 'down',
             'churn_rate' => $churnRate,
@@ -173,23 +173,25 @@ class BillingHealthController extends Controller
             'cancelled_count' => $cancelledThisMonth,
             'overdue_count' => $overdueCount,
             'overdue_amount' => round($overdueAmount, 2),
-            'overdue_amount_formatted' => '$' . number_format($overdueAmount, 2),
+            'overdue_amount_formatted' => '$'.number_format($overdueAmount, 2),
             'collected_this_month' => round($collectedThisMonth, 2),
-            'collected_formatted' => '$' . number_format($collectedThisMonth, 2),
+            'collected_formatted' => '$'.number_format($collectedThisMonth, 2),
             'outstanding_amount' => round($outstandingAmount, 2),
-            'outstanding_formatted' => '$' . number_format($outstandingAmount, 2),
+            'outstanding_formatted' => '$'.number_format($outstandingAmount, 2),
             'total_revenue' => round($totalRevenue, 2),
-            'total_revenue_formatted' => '$' . number_format($totalRevenue, 2),
+            'total_revenue_formatted' => '$'.number_format($totalRevenue, 2),
             'avg_invoice_value' => round($avgInvoiceValue, 2),
-            'avg_invoice_formatted' => '$' . number_format($avgInvoiceValue, 2),
+            'avg_invoice_formatted' => '$'.number_format($avgInvoiceValue, 2),
             'pending_count' => $pendingCount,
             'pending_amount' => round($pendingAmount, 2),
-            'pending_formatted' => '$' . number_format($pendingAmount, 2),
+            'pending_formatted' => '$'.number_format($pendingAmount, 2),
         ];
     }
 
     /**
-     * Generate revenue forecast based on historical data.
+     * * Generate revenue forecast based on historical data.
+     *
+     * * @return array<string, mixed>
      */
     private function generateForecast(int $agencyId, int $months = 6): array
     {
@@ -237,12 +239,14 @@ class BillingHealthController extends Controller
             'projected' => $projected,
             'growth_rate' => round($avgGrowth * 100, 2),
             'arr_projection' => round($arrProjection, 2),
-            'arr_formatted' => '$' . number_format($arrProjection, 2),
+            'arr_formatted' => '$'.number_format($arrProjection, 2),
         ];
     }
 
     /**
-     * Get overdue invoices for alerts section.
+     * * Get overdue invoices for alerts section.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     private function getOverdueInvoices(int $agencyId, int $limit = 10): array
     {
@@ -255,12 +259,13 @@ class BillingHealthController extends Controller
             ->get()
             ->map(function ($invoice) {
                 $daysOverdue = Carbon::parse($invoice->due_date)->diffInDays(Carbon::now());
+
                 return [
                     'id' => $invoice->id,
                     'invoice_number' => $invoice->invoice_number,
                     'client_name' => $invoice->client?->name ?? 'Unknown',
                     'amount' => $invoice->total,
-                    'amount_formatted' => '$' . number_format($invoice->total, 2),
+                    'amount_formatted' => '$'.number_format($invoice->total, 2),
                     'due_date' => Carbon::parse($invoice->due_date)->format('M d, Y'),
                     'days_overdue' => $daysOverdue,
                     'severity' => $daysOverdue > 30 ? 'critical' : ($daysOverdue > 14 ? 'warning' : 'info'),
@@ -270,7 +275,9 @@ class BillingHealthController extends Controller
     }
 
     /**
-     * Get payment timeline (recent payments).
+     * * Get payment timeline (recent payments).
+     *
+     * * @return array<int, array<string, mixed>>
      */
     private function getPaymentTimeline(int $agencyId, int $limit = 15): array
     {
@@ -286,7 +293,7 @@ class BillingHealthController extends Controller
                     'invoice_number' => $invoice->invoice_number,
                     'client_name' => $invoice->client?->name ?? 'Unknown',
                     'amount' => $invoice->total,
-                    'amount_formatted' => '$' . number_format($invoice->total, 2),
+                    'amount_formatted' => '$'.number_format($invoice->total, 2),
                     'paid_date' => $invoice->paid_date
                         ? Carbon::parse($invoice->paid_date)->format('M d, Y')
                         : '—',
@@ -300,7 +307,9 @@ class BillingHealthController extends Controller
     }
 
     /**
-     * Get plan distribution for agencies with subscription data.
+     * * Get plan distribution for agencies with subscription data.
+     *
+     * * @return array<string, int>
      */
     private function getPlanDistribution(int $agencyId): array
     {
@@ -314,7 +323,7 @@ class BillingHealthController extends Controller
                 'plan' => $sub->plan_name ?? 'Unknown',
                 'count' => $sub->count,
                 'revenue' => round($sub->revenue, 2),
-                'revenue_formatted' => '$' . number_format($sub->revenue, 2),
+                'revenue_formatted' => '$'.number_format($sub->revenue, 2),
             ];
         })->toArray();
     }
@@ -333,15 +342,18 @@ class BillingHealthController extends Controller
         if ($rate <= 10) {
             return 'warning';
         }
+
         return 'critical';
     }
 
     /**
-     * Calculate average growth rate from historical data.
+     * * Calculate average growth rate from historical data.
+     *
+     * * @param  array<int, float|null>  $values
      */
     private function calculateGrowthRate(array $values): float
     {
-        $nonNull = array_filter($values, fn($v) => $v !== null && $v > 0);
+        $nonNull = array_filter($values, fn ($v) => $v !== null && $v > 0);
 
         if (count($nonNull) < 2) {
             return 0.02; // Default 2% monthly growth if insufficient data
@@ -362,16 +374,19 @@ class BillingHealthController extends Controller
 
         // Cap growth rate to reasonable bounds
         $avgGrowth = array_sum($growthRates) / count($growthRates);
+
         return max(-0.1, min(0.15, $avgGrowth));
     }
 
     /**
-     * Calculate recent average from historical data.
+     * * Calculate recent average from historical data.
+     *
+     * * @param  array<int, float|null>  $values
      */
     private function calculateRecentAverage(array $values): float
     {
         $recent = array_slice($values, -3);
-        $nonNull = array_filter($recent, fn($v) => $v !== null);
+        $nonNull = array_filter($recent, fn ($v) => $v !== null);
 
         if (empty($nonNull)) {
             return 0;

@@ -4,7 +4,6 @@ namespace App\Services\Analytics\Predictive;
 
 use App\Models\SocialListening;
 use App\Models\SocialPost;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -12,6 +11,9 @@ class TrendDetectionService
 {
     private const CACHE_TTL = 600;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function detectTrends(int $agencyId, int $days = 30): array
     {
         return Cache::remember("trends:detect:{$agencyId}:{$days}", self::CACHE_TTL, function () use ($agencyId, $days) {
@@ -56,6 +58,9 @@ class TrendDetectionService
         });
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getEmergingTopics(int $agencyId, int $limit = 10): array
     {
         return Cache::remember("trends:topics:{$agencyId}:{$limit}", self::CACHE_TTL, function () use ($agencyId, $limit) {
@@ -98,6 +103,9 @@ class TrendDetectionService
         });
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getHashtagTrends(int $agencyId): array
     {
         return Cache::remember("trends:hashtags:{$agencyId}", self::CACHE_TTL, function () use ($agencyId) {
@@ -139,6 +147,9 @@ class TrendDetectionService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCompetitorTrends(int $agencyId): array
     {
         return Cache::remember("trends:competitor:{$agencyId}", self::CACHE_TTL, function () use ($agencyId) {
@@ -176,6 +187,9 @@ class TrendDetectionService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getIndustryTrends(int $agencyId): array
     {
         return Cache::remember("trends:industry:{$agencyId}", self::CACHE_TTL, function () use ($agencyId) {
@@ -207,6 +221,9 @@ class TrendDetectionService
         });
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function extractAndCount(Collection $tagCollections): array
     {
         $counts = [];
