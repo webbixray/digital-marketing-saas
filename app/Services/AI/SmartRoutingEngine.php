@@ -96,6 +96,7 @@ class SmartRoutingEngine
             $providerHealth = $health[$provider] ?? 0.95;
             if ($providerHealth < self::HEALTH_THRESHOLD) {
                 Log::debug("Provider {$provider} deprioritized due to low health: {$providerHealth}");
+
                 continue;
             }
 
@@ -169,6 +170,9 @@ class SmartRoutingEngine
     /**
      * Get routing dashboard data for the agency.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getDashboardData(int $agencyId): array
     {
         $providers = ['openai', 'anthropic', 'google', 'mistral', 'groq', 'nvidia_nim', 'nous_portal', 'ollama'];
@@ -194,6 +198,9 @@ class SmartRoutingEngine
     /**
      * Get which tasks a provider excels at.
      */
+    /**
+     * @return array<int, string>
+     */
     protected function getBestTasksForProvider(string $provider): array
     {
         $tasks = [];
@@ -202,6 +209,7 @@ class SmartRoutingEngine
                 $tasks[] = $task;
             }
         }
+
         return $tasks;
     }
 
@@ -209,6 +217,9 @@ class SmartRoutingEngine
     // Private helpers
     // ──────────────────────────────────────────────────────────────
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getProviderHealth(int $agencyId): array
     {
         $providers = ['openai', 'anthropic', 'google', 'mistral', 'groq', 'nvidia_nim', 'nous_portal', 'ollama'];
@@ -228,6 +239,9 @@ class SmartRoutingEngine
         return $health;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getProviderCosts(): array
     {
         return [
@@ -242,6 +256,9 @@ class SmartRoutingEngine
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getProviderLatencies(): array
     {
         return [

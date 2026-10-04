@@ -2,13 +2,9 @@
 
 namespace App\Services\Media;
 
-use App\Models\MediaAsset;
-use App\Models\SocialPost;
-use App\Models\User;
+use App\Models\Agency;
 use App\Services\AI\Gateway\AiGateway;
 use App\Services\AI\Gateway\AiRequest;
-use App\Services\AI\Gateway\AiResponse;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -79,6 +75,9 @@ class AiImageGenerationService
     /**
      * Generate an image using AI based on prompt, style, and size.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function generateImage(string $prompt, string $style, string $size): array
     {
         $styleConfig = self::STYLE_PRESETS[$style] ?? self::STYLE_PRESETS['photorealistic'];
@@ -103,6 +102,9 @@ class AiImageGenerationService
 
     /**
      * AI-powered image editing.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function editImage(string $imagePath, string $prompt): array
     {
@@ -131,6 +133,9 @@ class AiImageGenerationService
     /**
      * AI-powered image upscaling.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function upscaleImage(string $imagePath): array
     {
         $imageContent = Storage::disk('public')->exists($imagePath);
@@ -151,6 +156,8 @@ class AiImageGenerationService
 
     /**
      * Generate variations of an existing image.
+     *
+     * @return array<string, mixed>
      */
     public function generateVariations(string $imagePath, int $count = 4): array
     {
@@ -173,6 +180,8 @@ class AiImageGenerationService
 
     /**
      * Get available style presets.
+     *
+     * @return array<int, array<string, string>>
      */
     public function getAvailableStyles(): array
     {
@@ -191,6 +200,8 @@ class AiImageGenerationService
 
     /**
      * Get available size presets.
+     *
+     * @return array<int, array<string, int|string>>
      */
     public function getAvailableSizes(): array
     {
@@ -211,6 +222,9 @@ class AiImageGenerationService
     /**
      * Build enhanced prompt with style suffix.
      */
+    /**
+     * @param  array<string, mixed>  $styleConfig
+     */
     private function buildEnhancedPrompt(string $prompt, array $styleConfig): string
     {
         return trim($prompt).', '.$styleConfig['prompt_suffix'];
@@ -218,6 +232,10 @@ class AiImageGenerationService
 
     /**
      * Generate image with AI provider.
+     */
+    /**
+     * @param  array<string, mixed>  $sizeConfig
+     * @return array<string, mixed>
      */
     private function generateWithAi(string $enhancedPrompt, array $sizeConfig): array
     {
@@ -257,8 +275,8 @@ class AiImageGenerationService
     /**
      * Get system agency for gateway requests.
      */
-    private function getSystemAgency(): \App\Models\Agency
+    private function getSystemAgency(): Agency
     {
-        return \App\Models\Agency::first();
+        return Agency::first();
     }
 }

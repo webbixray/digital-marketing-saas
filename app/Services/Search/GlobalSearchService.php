@@ -7,12 +7,17 @@ use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ContentAsset;
 use App\Models\ContentTemplate;
-use App\Models\Invoice;
 use App\Models\SearchHistory;
 use App\Models\SocialPost;
+use Illuminate\Support\Str;
 
 class GlobalSearchService
 {
+    /**
+     * Search across all content types.
+     *
+     * @return array<string, array<int, array<string, mixed>>>
+     */
     public function search(string $query, int $agencyId, string $type = 'all', int $limit = 20): array
     {
         $query = trim($query);
@@ -46,11 +51,14 @@ class GlobalSearchService
         return $results;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function searchPosts(string $query, int $agencyId, int $limit = 10): array
     {
         return SocialPost::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('content', 'LIKE', $search)
                     ->orWhere('platform', 'LIKE', $search);
             })
@@ -58,7 +66,7 @@ class GlobalSearchService
             ->get()
             ->map(fn ($post) => [
                 'id' => $post->id,
-                'title' => \Illuminate\Support\Str::limit($post->content, 60),
+                'title' => Str::limit($post->content, 60),
                 'type' => 'post',
                 'url' => route('social.posts.index'),
                 'icon' => 'fas fa-pen-nib',
@@ -67,11 +75,14 @@ class GlobalSearchService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function searchCampaigns(string $query, int $agencyId, int $limit = 10): array
     {
         return Campaign::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('name', 'LIKE', $search)
                     ->orWhere('description', 'LIKE', $search);
             })
@@ -88,11 +99,14 @@ class GlobalSearchService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function searchClients(string $query, int $agencyId, int $limit = 10): array
     {
         return Client::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('name', 'LIKE', $search)
                     ->orWhere('email', 'LIKE', $search)
                     ->orWhere('company', 'LIKE', $search);
@@ -110,11 +124,14 @@ class GlobalSearchService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function searchContent(string $query, int $agencyId, int $limit = 10): array
     {
         $assets = ContentAsset::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('name', 'LIKE', $search)
                     ->orWhere('content', 'LIKE', $search);
             })
@@ -132,7 +149,7 @@ class GlobalSearchService
 
         $templates = ContentTemplate::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('name', 'LIKE', $search)
                     ->orWhere('template_content', 'LIKE', $search);
             })
@@ -151,11 +168,14 @@ class GlobalSearchService
         return array_merge($assets, $templates);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function searchAnalytics(string $query, int $agencyId, int $limit = 10): array
     {
         return AnalyticsEvent::where('agency_id', $agencyId)
             ->where(function ($q) use ($query) {
-                $search = '%' . $query . '%';
+                $search = '%'.$query.'%';
                 $q->where('event_type', 'LIKE', $search)
                     ->orWhere('platform', 'LIKE', $search);
             })
@@ -172,6 +192,9 @@ class GlobalSearchService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getRecentSearches(int $userId, int $limit = 10): array
     {
         return SearchHistory::byUser($userId)
@@ -226,6 +249,9 @@ class GlobalSearchService
         };
     }
 
+    /**
+     * @param  array<string, mixed>  $result
+     */
     public function getResultUrl(array $result): string
     {
         if (! empty($result['url'])) {

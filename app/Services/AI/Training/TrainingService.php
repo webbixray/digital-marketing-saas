@@ -9,11 +9,15 @@ use App\Models\AiTrainingDataset;
 use App\Models\AiTrainingJob;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TrainingService
 {
     /**
      * Start a new training job.
+     */
+    /**
+     * @param  array<string, mixed>  $hyperparameters
      */
     public function startTraining(int $agencyId, string $modelName, int $datasetId, array $hyperparameters = []): AiTrainingJob
     {
@@ -119,6 +123,9 @@ class TrainingService
     /**
      * Get training status for a job.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getTrainingStatus(int $jobId): array
     {
         $job = AiTrainingJob::with(['modelVersion', 'dataset'])->findOrFail($jobId);
@@ -200,6 +207,9 @@ class TrainingService
 
     /**
      * Compare multiple model versions.
+     *
+     * @param  array<int, int>  $versionIds
+     * @return list<array<string, array|bool|int<0, max>|string|null>>
      */
     public function compareModels(array $versionIds): array
     {
@@ -258,6 +268,10 @@ class TrainingService
     /**
      * Build default hyperparameters merged with user-provided ones.
      */
+    /**
+     * @param  array<string, mixed>  $userParams
+     * @return array<string, mixed>
+     */
     private function buildHyperparameters(array $userParams): array
     {
         $defaults = [
@@ -291,6 +305,10 @@ class TrainingService
 
     /**
      * Calculate training metrics based on dataset and hyperparameters.
+     */
+    /**
+     * @param  array<string, mixed>  $hyperparameters
+     * @return array<string, mixed>
      */
     private function calculateTrainingMetrics(AiTrainingDataset $dataset, array $hyperparameters): array
     {
@@ -327,7 +345,7 @@ class TrainingService
         $path = sprintf(
             'ai-training/models/agency_%d/%s_v%s.model',
             $modelVersion->agency_id,
-            \Illuminate\Support\Str::slug($modelVersion->name),
+            Str::slug($modelVersion->name),
             $modelVersion->version
         );
 

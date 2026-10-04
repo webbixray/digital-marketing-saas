@@ -62,6 +62,10 @@ class AgentFeedbackService
      * @param  array  $actual  Actual measured values
      * @return float Accuracy score 0.0 to 1.0
      */
+    /**
+     * @param  array<string, mixed>  $prediction
+     * @param  array<string, mixed>  $actual
+     */
     public function calculateAccuracy(array $prediction, array $actual): float
     {
         if (empty($prediction) || empty($actual)) {
@@ -153,6 +157,11 @@ class AgentFeedbackService
     /**
      * Compute delta between prediction and actual for diagnostic logging.
      */
+    /**
+     * @param  array<string, mixed>  $prediction
+     * @param  array<string, mixed>  $actual
+     * @return array<string, mixed>
+     */
     private function computeDelta(array $prediction, array $actual): array
     {
         $delta = [];
@@ -195,6 +204,8 @@ class AgentFeedbackService
 
     /**
      * Calculate accuracy trend direction from recent values.
+     *
+     * @param  array<int, mixed>  $values
      */
     private function calculateAccuracyTrend(array $values): string
     {
@@ -227,6 +238,9 @@ class AgentFeedbackService
 
     /**
      * Derive parameter adjustment recommendations based on performance.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function deriveParameterAdjustments(float $avgAccuracy, string $trend): array
     {

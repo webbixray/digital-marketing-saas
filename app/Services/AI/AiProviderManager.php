@@ -185,6 +185,9 @@ class AiProviderManager
     /**
      * Get available providers with status.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getAvailableProviders(int $agencyId): array
     {
         $byokKeys = $this->getActiveByokKeys($agencyId);
@@ -223,6 +226,8 @@ class AiProviderManager
 
     /**
      * Get models supported by a provider.
+     *
+     * @return list<int|string>
      */
     public function getProviderModels(string $providerName): array
     {
@@ -241,6 +246,8 @@ class AiProviderManager
 
     /**
      * Get routing recommendation for a task type.
+     *
+     * @return list<array<string, mixed>>
      */
     public function getRoutingRecommendation(string $taskType, ?int $agencyId = null): array
     {
@@ -342,6 +349,9 @@ class AiProviderManager
     /**
      * Override provider config with BYOK credentials.
      */
+    /**
+     * @param  array<string, mixed>  $byokConfig
+     */
     protected function overrideProviderConfig(AiProviderInterface $provider, array $byokConfig): void
     {
         // Set config dynamically for this request
@@ -360,6 +370,11 @@ class AiProviderManager
             ->exists();
     }
 
+    /**
+     * Get available Ollama models.
+     *
+     * @return array<string, string>
+     */
     protected function getOllamaModels(): array
     {
         return [

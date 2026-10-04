@@ -29,6 +29,9 @@ class IntelligentAgentContext
     /**
      * Build comprehensive context for agent execution
      */
+    /**
+     * @param  array<string, mixed>  $additionalContext
+     */
     public function build(User $user, array $additionalContext = []): self
     {
         $this->user = $user;
@@ -101,7 +104,9 @@ class IntelligentAgentContext
     }
 
     /**
-     * Get platform-specific best practices
+     * Get platform-specific best practices.
+     *
+     * @return array<string, string>
      */
     private function getPlatformBestPractices(string $platform): array
     {
@@ -156,6 +161,9 @@ class IntelligentAgentContext
     /**
      * Get performance metrics for the agency
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getPerformanceMetrics(Agency $agency): array
     {
         $topPosts = SocialPost::where('agency_id', $agency->id)
@@ -183,6 +191,9 @@ class IntelligentAgentContext
     /**
      * Get campaign history
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getCampaignHistory(Campaign $campaign): array
     {
         return SocialPost::where('campaign_id', $campaign->id)
@@ -195,6 +206,9 @@ class IntelligentAgentContext
 
     /**
      * Convert to array
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

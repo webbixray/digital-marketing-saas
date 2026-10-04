@@ -33,6 +33,9 @@ class TwitterApiService
      * Authenticate with Twitter API v2 by verifying credentials.
      * Returns user info if authentication is successful.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function authenticate(): array
     {
         try {
@@ -63,6 +66,10 @@ class TwitterApiService
     /**
      * Post a tweet to Twitter/X with optional media.
      * Uses OAuth 1.0a for user-context requests.
+     */
+    /**
+     * @param  array<int, string>  $media
+     * @return array<string, mixed>
      */
     public function postTweet(string $text, array $media = []): array
     {
@@ -108,6 +115,9 @@ class TwitterApiService
     /**
      * Get user metrics for a given Twitter username.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getUserMetrics(string $username): array
     {
         try {
@@ -151,6 +161,9 @@ class TwitterApiService
 
     /**
      * Get metrics for a specific tweet.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getTweetMetrics(string $tweetId): array
     {
@@ -197,6 +210,9 @@ class TwitterApiService
     /**
      * Build OAuth 1.0a headers for a request.
      */
+    /**
+     * @return array<string, string>
+     */
     protected function buildOAuth1Headers(string $method, string $url): array
     {
         $oauth = [
@@ -227,6 +243,8 @@ class TwitterApiService
 
     /**
      * Build the OAuth 1.0a signature base string.
+     *
+     * @param  array<string, mixed>  $params
      */
     protected function buildBaseString(string $method, string $url, array $params): string
     {
@@ -260,6 +278,9 @@ class TwitterApiService
 
     /**
      * Get replies to a tweet (conversation replies).
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getTweetReplies(string $tweetId, int $maxResults = 100): array
     {
@@ -295,6 +316,9 @@ class TwitterApiService
 
     /**
      * Reply to a tweet using OAuth 1.0a user context.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function replyToTweet(string $tweetId, string $text): array
     {
