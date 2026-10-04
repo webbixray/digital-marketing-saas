@@ -3,7 +3,7 @@
 use App\Http\Controllers\TikTokController;
 
 // TikTok integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('tiktok')->name('tiktok.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('tiktok')->name('tiktok.')->group(function () {
     Route::get('/', [TikTokController::class, 'index'])->name('index');
     Route::get('/connect', [TikTokController::class, 'connect'])->name('connect');
     Route::get('/callback', [TikTokController::class, 'callback'])->name('callback');

@@ -3,7 +3,7 @@
 use App\Http\Controllers\AdminDashboardController;
 
 // Admin dashboard (owner/admin only)
-Route::middleware(['auth', 'agency', 'role:owner|admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'agency', 'role:owner|admin', 'throttle:30,1'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/health', [AdminDashboardController::class, 'health'])->name('health');
     Route::get('/failed-jobs', [AdminDashboardController::class, 'failedJobs'])->name('failed-jobs');

@@ -3,7 +3,7 @@
 use App\Http\Controllers\LinkedInController;
 
 // LinkedIn integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('linkedin')->name('linkedin.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('linkedin')->name('linkedin.')->group(function () {
     Route::get('/', [LinkedInController::class, 'index'])->name('index');
     Route::get('/connect', [LinkedInController::class, 'connect'])->name('connect');
     Route::get('/callback', [LinkedInController::class, 'callback'])->name('callback');

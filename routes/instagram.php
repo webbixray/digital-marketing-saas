@@ -8,7 +8,7 @@ Route::post('/instagram/webhook', [InstagramWebhookController::class, 'handle'])
     ->name('instagram.webhook');
 
 // Instagram Business API integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('instagram')->name('instagram.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('instagram')->name('instagram.')->group(function () {
     Route::get('/', [InstagramController::class, 'index'])->name('index');
     Route::get('/connect', [InstagramController::class, 'connect'])->name('connect');
     Route::get('/callback', [InstagramController::class, 'callback'])->name('callback');

@@ -176,7 +176,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle.api:60,1', 
 });
 
 // Zapier Integration routes
-Route::prefix('v1/integrations/zapier')->middleware(['auth:sanctum', 'agency'])->as('api.integrations.zapier.')->group(function () {
+Route::prefix('v1/integrations/zapier')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->as('api.integrations.zapier.')->group(function () {
     Route::get('/triggers', [ZapierController::class, 'triggers'])->name('triggers');
     Route::get('/actions', [ZapierController::class, 'actions'])->name('actions');
     Route::post('/actions/execute', [ZapierController::class, 'executeAction'])->name('actions.execute');
@@ -193,7 +193,7 @@ Route::post('workflows/{workflow}/webhook/{secret}', [WorkflowWebhookController:
 Route::get('/health', [HealthCheckController::class, 'check'])->name('api.health');
 
 // Webhook management routes
-Route::prefix('v1/webhooks')->middleware(['auth:sanctum', 'agency'])->as('api.webhooks.')->group(function () {
+Route::prefix('v1/webhooks')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->as('api.webhooks.')->group(function () {
     Route::get('/', [ApiWebhookController::class, 'index'])->name('index');
     Route::post('/', [ApiWebhookController::class, 'store'])->name('store');
     Route::get('/events', [ApiWebhookController::class, 'availableEvents'])->name('events');
@@ -213,26 +213,29 @@ Route::prefix('v1/docs')->name('api.docs.')->group(function () {
 });
 
 // Onboarding routes (outside cache middleware for real-time updates)
-Route::prefix('v1/onboarding')->middleware(['auth:sanctum', 'agency'])->as('api.onboarding.')->group(function () {
+Route::prefix('v1/onboarding')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->as('api.onboarding.')->group(function () {
     Route::get('/', [OnboardingController::class, 'index'])->name('index');
     Route::post('/{step}/complete', [OnboardingController::class, 'complete'])->name('complete');
     Route::post('/auto-detect', [OnboardingController::class, 'autoDetect'])->name('auto-detect');
 });
 
 // Client Portal 2.0 API
-Route::prefix('v1/client-portal')->middleware(['auth:sanctum', 'agency'])->name('api.client-portal.')->group(function () {
+Route::prefix('v1/client-portal')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->name('api.client-portal.')->group(function () {
     Route::get('/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
     Route::get('/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
     Route::get('/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
     Route::get('/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
     Route::get('/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
     Route::get('/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
+    Route::get('/activity', [ApiClientPortalController::class, 'activity'])->name('activity');
+    Route::get('/profile', [ApiClientPortalController::class, 'profile'])->name('profile');
+    Route::put('/profile', [ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
     Route::post('/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
     Route::post('/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
 });
 
 // Team Chat routes
-Route::prefix('v1/chat')->middleware(['auth:sanctum', 'agency'])->as('api.chat.')->group(function () {
+Route::prefix('v1/chat')->middleware(['auth:sanctum', 'agency', 'throttle:120,1'])->as('api.chat.')->group(function () {
     Route::get('/channels', [ApiChatController::class, 'channels'])->name('channels');
     Route::post('/channels', [ApiChatController::class, 'createChannel'])->name('channels.store');
     Route::get('/channels/{channel}/messages', [ApiChatController::class, 'messages'])->name('messages');
@@ -245,20 +248,20 @@ Route::prefix('v1/chat')->middleware(['auth:sanctum', 'agency'])->as('api.chat.'
 });
 
 // Analytics routes (dedicated analytics controller)
-Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency'])->as('api.analytics.')->group(function () {
+Route::prefix('v1/analytics')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->as('api.analytics.')->group(function () {
     Route::get('/dashboard', [ApiAnalyticsController::class, 'dashboard'])->name('dashboard');
     Route::get('/daily', [ApiAnalyticsController::class, 'daily'])->name('daily');
     Route::get('/top-events', [ApiAnalyticsController::class, 'topEvents'])->name('top-events');
 });
 
 // Media AI API routes (v7.0)
-Route::prefix('v1')->middleware(['auth:sanctum', 'agency'])->group(function () {
+Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->group(function () {
     Route::post('/media/ai/generate', [MediaAiController::class, 'generate'])->name('api.media.ai.generate')->middleware('throttle:10,1');
     Route::get('/media/analytics', [MediaAiController::class, 'analytics'])->name('api.media.analytics');
 });
 
 // Predictive Analytics API (v7.0)
-Route::prefix('v1/predictive')->middleware(['auth:sanctum', 'agency'])->name('api.predictive.')->group(function () {
+Route::prefix('v1/predictive')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->name('api.predictive.')->group(function () {
     Route::get('/churn', [PredictiveAnalyticsController::class, 'churn'])->name('churn');
     Route::get('/revenue', [PredictiveAnalyticsController::class, 'revenue'])->name('revenue');
     Route::get('/trends', [PredictiveAnalyticsController::class, 'trends'])->name('trends');
@@ -267,7 +270,7 @@ Route::prefix('v1/predictive')->middleware(['auth:sanctum', 'agency'])->name('ap
 });
 
 // AI Agent Marketplace API (v7.0)
-Route::prefix('v1/agent-marketplace')->middleware(['auth:sanctum', 'agency'])->as('api.agent-marketplace.')->group(function () {
+Route::prefix('v1/agent-marketplace')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->as('api.agent-marketplace.')->group(function () {
     Route::get('/', [ApiAgentMarketplaceController::class, 'index'])->name('index');
     Route::get('/search', [ApiAgentMarketplaceController::class, 'search'])->name('search');
     Route::get('/my-agents', [ApiAgentMarketplaceController::class, 'myAgents'])->name('my-agents');
@@ -277,10 +280,10 @@ Route::prefix('v1/agent-marketplace')->middleware(['auth:sanctum', 'agency'])->a
 });
 
 // Products API Resource
-Route::apiResource('products', ApiProductController::class);
+Route::apiResource('products', ApiProductController::class)->middleware('throttle:60,1');
 
 // Social Commerce API
-Route::prefix('v1/social-commerce')->name('api.social-commerce.')->group(function () {
+Route::prefix('v1/social-commerce')->middleware('throttle:60,1')->name('api.social-commerce.')->group(function () {
     Route::get('/', [ApiSocialCommerceController::class, 'index'])->name('index');
     Route::post('/', [ApiSocialCommerceController::class, 'store'])->name('store');
     Route::get('/{post}', [ApiSocialCommerceController::class, 'show'])->name('show');
@@ -294,22 +297,12 @@ Route::prefix('v1/social-commerce')->name('api.social-commerce.')->group(functio
 });
 
 // Billing Credits API
-Route::get('/billing/credits', [CreditController::class, 'index'])->name('api.billing.credits');
+Route::get('/billing/credits', [CreditController::class, 'index'])->middleware('throttle:60,1')->name('api.billing.credits');
 
 // Billing Usage API
-Route::get('/billing/usage', [UsageController::class, 'index'])->name('api.billing.usage');
+Route::get('/billing/usage', [UsageController::class, 'index'])->middleware('throttle:60,1')->name('api.billing.usage');
 
-// Client Portal 2.0 API
-Route::prefix('v1/client-portal')->name('api.client-portal.')->group(function () {
-    Route::get('/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
-    Route::get('/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
-    Route::get('/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
-    Route::get('/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
-    Route::get('/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
-    Route::get('/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
-    Route::post('/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
-    Route::post('/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
-    Route::get('/activity', [ApiClientPortalController::class, 'activity'])->name('activity');
-    Route::get('/profile', [ApiClientPortalController::class, 'profile'])->name('profile');
-    Route::put('/profile', [ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
-});
+// NOTE: The unauthenticated `v1/client-portal` group that previously lived here
+// shadowed the authenticated group defined earlier in this file (identical URIs
+// resolve last-registered-first), exposing client-portal data publicly. It has
+// been removed; the authenticated group is now the single source of truth.

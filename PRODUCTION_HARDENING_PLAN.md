@@ -6,6 +6,27 @@
 
 ---
 
+## ✅ STATUS UPDATE — Verified Re-Audit (2026-10-04, later)
+
+Each P0/P1 claim was independently re-verified against the code. Results:
+
+| # | Item | Claimed | **Verified Reality** | Action |
+|---|------|---------|----------------------|--------|
+| 1 | Authorization gaps (19 controllers) | CRITICAL | Real — 10 controllers patched (`bdc85f7`); rest already had middleware | ✅ FIXED |
+| 2 | CSRF missing on 7 forms | HIGH | **FALSE POSITIVE** — all 7 have `@csrf` (5 are GET filters; 2 use `X-CSRF-TOKEN` header on XHR) | ✅ No action |
+| 3 | Rate limiting gaps | HIGH | Real — applied `throttle` to all authenticated API groups + platform/webhook/admin routes | ✅ FIXED |
+| 4 | HealthCheck/Metrics exposed | HIGH | Already resolved (public `/api/health` by design; web metrics behind `auth`) | ✅ No action |
+| 5 | PHPStan L8 (4,803 errors) | P0 | Real — baseline in place | ⏳ PENDING |
+| 6 | File upload MIME validation | P1 | **ALREADY DONE** — `MediaUploadService` uses `finfo` + spoof detection; downloads force attachment | ✅ No action |
+| — | **Duplicate route shadowing** | *not in original audit* | **NEW CRITICAL** — `api/v1/client-portal/*` had an unauthenticated duplicate group shadowing the authenticated one → public data exposure | ✅ FIXED |
+
+**Key lesson:** the original audit contained false positives; every finding must be verified against code before "fixing".
+
+### New regression guards added
+- `tests/Feature/Api/RouteIntegrityTest.php` — asserts (a) zero duplicate method+URI routes, (b) client-portal API requires auth, (c) every authenticated `api/*` route is throttled. This prevents the shadowing class of bug from returning.
+
+---
+
 ## 📊 EXECUTIVE SUMMARY
 
 | Area | Current Status | Risk Level | Priority |

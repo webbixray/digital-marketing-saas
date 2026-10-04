@@ -3,7 +3,7 @@
 use App\Http\Controllers\PinterestController;
 
 // Pinterest integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('pinterest')->name('pinterest.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('pinterest')->name('pinterest.')->group(function () {
     Route::get('/', [PinterestController::class, 'index'])->name('index');
     Route::get('/connect', [PinterestController::class, 'connect'])->name('connect');
     Route::get('/callback', [PinterestController::class, 'callback'])->name('callback');

@@ -2,10 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\Models\Agency;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class HealthCheckTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
+    }
+
     public function test_health_endpoint_returns_200(): void
     {
         $response = $this->get('/health');
@@ -32,9 +44,34 @@ class HealthCheckTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_disk_space_endpoint_returns_200(): void
+    public function test_disk_space_endpoint_requires_authentication(): void
     {
-        $response = $this->get('/disk-space');
-        $response->assertStatus(200);
+        // Operational detail endpoints must not be publicly reachable.
+        $this->get('/disk-space')->assertRedirect('/login');
+    }
+
+    public function test_queue_status_endpoint_requires_authentication(): void
+    {
+        $this->get('/queue-status')->assertRedirect('/login');
+    }
+
+    public function test_owner_can_access_disk_space_endpoint(): void
+    {
+        $agency = Agency::factory()->create();
+        $user = User::factory()->create(['agency_id' => $agency->id, 'role' => 'owner']);
+        $user->assignRole('owner');
+
+        $this->actingAs($user)->get('/disk-space')->assertStatus(200);
+    }
+
+    public function test_public_health_endpoint_hides_infrastructure_details(): void
+    {
+        $response = $this->getJson('/api/health');
+
+        $response->assertOk();
+        $response->assertJson(['status' => 'ok']);
+        // Anonymous callers must not receive dependency internals.
+        $response->assertJsonMissingPath('checks');
+        $response->assertJsonMissingPath('environment');
     }
 }

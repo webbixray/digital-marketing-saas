@@ -3,7 +3,7 @@
 use App\Http\Controllers\FacebookController;
 
 // Facebook integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('facebook')->name('facebook.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('facebook')->name('facebook.')->group(function () {
     Route::get('/', [FacebookController::class, 'index'])->name('index');
     Route::get('/connect', [FacebookController::class, 'connect'])->name('connect');
     Route::get('/callback', [FacebookController::class, 'callback'])->name('callback');

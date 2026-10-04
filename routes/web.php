@@ -97,11 +97,11 @@ Route::post('/newsletter', [PublicController::class, 'newsletter'])->name('publi
 
 // Email unsubscribe (public, no auth)
 Route::get('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'show'])->name('email.unsubscribe');
-Route::post('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'confirm'])->name('email.unsubscribe.confirm');
+Route::post('/email/unsubscribe/{recipient}', [UnsubscribeController::class, 'confirm'])->middleware('throttle:30,1')->name('email.unsubscribe.confirm');
 
 // Email tracking (public, no auth)
-Route::get('/email/track/open/{recipient}', [TrackingController::class, 'open'])->name('email.track.open');
-Route::get('/email/track/click/{recipient}', [TrackingController::class, 'click'])->name('email.track.click');
+Route::get('/email/track/open/{recipient}', [TrackingController::class, 'open'])->middleware('throttle:120,1')->name('email.track.open');
+Route::get('/email/track/click/{recipient}', [TrackingController::class, 'click'])->middleware('throttle:120,1')->name('email.track.click');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -539,13 +539,17 @@ Route::get('/.well-known/security.txt', function () {
     ]);
 })->name('security.txt');
 
-// Health Checks (public)
+// Health Checks
+// Liveness/readiness endpoints stay public for load balancers and uptime monitors.
 Route::get('/health', [HealthCheckController::class, 'index'])->name('health');
 Route::get('/ready', [HealthCheckController::class, 'readiness'])->name('ready');
 Route::get('/live', [HealthCheckController::class, 'liveness'])->name('live');
 Route::get('/status', [HealthCheckController::class, 'status'])->name('status');
-Route::get('/disk-space', [HealthCheckController::class, 'diskSpace'])->name('disk-space');
-Route::get('/queue-status', [HealthCheckController::class, 'queueStatus'])->name('queue-status');
+// Operational detail endpoints are restricted — they expose disk/queue internals.
+Route::middleware(['auth', 'agency', 'role:owner|admin'])->group(function () {
+    Route::get('/disk-space', [HealthCheckController::class, 'diskSpace'])->name('disk-space');
+    Route::get('/queue-status', [HealthCheckController::class, 'queueStatus'])->name('queue-status');
+});
 
 // Global Search
 Route::middleware(['auth', 'agency'])->prefix('search')->name('search.')->group(function () {
@@ -680,7 +684,7 @@ Route::middleware(['auth', 'agency'])->prefix('chat/v2')->name('chat.v2.')->grou
 });
 
 // RBAC API endpoints
-Route::middleware(['auth', 'agency'])->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:60,1'])->group(function () {
     Route::get('/api/my-permissions', [PermissionMatrixController::class, 'myPermissions'])->name('api.my-permissions');
     Route::post('/api/check-permission', [PermissionMatrixController::class, 'checkPermission'])->name('api.check-permission');
 });

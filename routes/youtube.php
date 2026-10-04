@@ -3,7 +3,7 @@
 use App\Http\Controllers\YouTubeController;
 
 // YouTube integration (authenticated users)
-Route::middleware(['auth', 'agency'])->prefix('youtube')->name('youtube.')->group(function () {
+Route::middleware(['auth', 'agency', 'throttle:30,1'])->prefix('youtube')->name('youtube.')->group(function () {
     Route::get('/', [YouTubeController::class, 'index'])->name('index');
     Route::get('/connect', [YouTubeController::class, 'connect'])->name('connect');
     Route::get('/callback', [YouTubeController::class, 'callback'])->name('callback');

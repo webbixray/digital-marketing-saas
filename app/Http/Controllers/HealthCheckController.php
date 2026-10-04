@@ -7,6 +7,7 @@ use App\Services\Email\MailDeliverabilityService;
 use App\Services\Queue\QueueHealthService;
 use App\Services\SystemHealthCheckService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class HealthCheckController extends Controller
 {
@@ -22,7 +23,7 @@ class HealthCheckController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function check(): JsonResponse
+    public function check(Request $request): JsonResponse
     {
         $checks = [
             'database' => $this->systemHealth->checkDatabase(),
@@ -52,14 +53,26 @@ class HealthCheckController extends Controller
 
         $status = $coreUp ? (empty($advisories) ? 'ok' : 'degraded') : 'unhealthy';
 
-        return response()->json([
+        // Detailed dependency checks (driver names, connection internals, disk
+        // paths, error strings) are an information-disclosure vector. They are
+        // returned only to an authenticated owner/admin; anonymous callers — e.g.
+        // uptime monitors and load balancers — get the overall status only.
+        $user = $request->user();
+        $maySeeDetails = $user !== null && in_array($user->role ?? '', ['owner', 'admin'], true);
+
+        $payload = [
             'status' => $status,
             'timestamp' => now()->toIso8601String(),
-            'version' => config('services.sentry.release', '1.0.0'),
-            'environment' => app()->environment(),
-            'checks' => $checks,
-            'advisories' => $advisories,
-        ], $coreUp ? 200 : 503);
+        ];
+
+        if ($maySeeDetails) {
+            $payload['version'] = config('services.sentry.release', '1.0.0');
+            $payload['environment'] = app()->environment();
+            $payload['checks'] = $checks;
+            $payload['advisories'] = $advisories;
+        }
+
+        return response()->json($payload, $coreUp ? 200 : 503);
     }
 
     public function readiness(): JsonResponse
