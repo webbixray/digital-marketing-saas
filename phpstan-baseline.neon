@@ -3397,30 +3397,6 @@ parameters:
 			path: app/Http/Controllers/InstagramController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\InstagramController\:\:apiInsights\(\) has invalid return type App\\Http\\Controllers\\JsonResponse\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Http/Controllers/InstagramController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\InstagramController\:\:apiInsights\(\) should return App\\Http\\Controllers\\JsonResponse but returns Illuminate\\Http\\JsonResponse\.$#'
-			identifier: return.type
-			count: 3
-			path: app/Http/Controllers/InstagramController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\InstagramController\:\:apiPublish\(\) has invalid return type App\\Http\\Controllers\\JsonResponse\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Http/Controllers/InstagramController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\InstagramController\:\:apiPublish\(\) should return App\\Http\\Controllers\\JsonResponse but returns Illuminate\\Http\\JsonResponse\.$#'
-			identifier: return.type
-			count: 3
-			path: app/Http/Controllers/InstagramController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\InstagramController\:\:oauthConnect\(\) should return Illuminate\\Http\\RedirectResponse but returns Illuminate\\Http\\RedirectResponse\|Illuminate\\Routing\\Redirector\.$#'
 			identifier: return.type
 			count: 1
@@ -8975,6 +8951,48 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: app/Models/AuditLog.php
+
+		-
+			message: '#^Cannot access property \$agency_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Class App\\Models\\AutonomousOptimizationLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Method App\\Models\\AutonomousOptimizationLog\:\:campaign\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Method App\\Models\\AutonomousOptimizationLog\:\:scopeForAgency\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Method App\\Models\\AutonomousOptimizationLog\:\:scopeForAgency\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Method App\\Models\\AutonomousOptimizationLog\:\:scopeForCurrentAgency\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
+
+		-
+			message: '#^Method App\\Models\\AutonomousOptimizationLog\:\:scopeForCurrentAgency\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/AutonomousOptimizationLog.php
 
 		-
 			message: '#^Cannot access property \$agency_id on App\\Models\\User\|null\.$#'
@@ -15403,24 +15421,6 @@ parameters:
 			path: app/Services/AI/Agent/Collaboration/SharedKnowledgeBase.php
 
 		-
-			message: '#^Call to an undefined method App\\Services\\AI\\Agent\\AgentMemory\:\:getRecentActions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\AI\\Agent\\AgentMemory\:\:getUserPreferences\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
-			message: '#^Call to method getProfile\(\) on an unknown class App\\Services\\AI\\Agent\\BrandVoiceService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
 			message: '#^Cannot access property \$name on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -15463,18 +15463,6 @@ parameters:
 			path: app/Services/AI/Agent/IntelligentAgentContext.php
 
 		-
-			message: '#^Parameter \#1 \$agency of method App\\Services\\AI\\Agent\\IntelligentAgentContext\:\:getPerformanceMetrics\(\) expects App\\Models\\Agency, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
-			message: '#^Parameter \$brandVoiceService of method App\\Services\\AI\\Agent\\IntelligentAgentContext\:\:__construct\(\) has invalid type App\\Services\\AI\\Agent\\BrandVoiceService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
 			message: '#^Property App\\Services\\AI\\Agent\\IntelligentAgentContext\:\:\$agency is unused\.$#'
 			identifier: property.unused
 			count: 1
@@ -15483,12 +15471,6 @@ parameters:
 		-
 			message: '#^Property App\\Services\\AI\\Agent\\IntelligentAgentContext\:\:\$brandVoice type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/IntelligentAgentContext.php
-
-		-
-			message: '#^Property App\\Services\\AI\\Agent\\IntelligentAgentContext\:\:\$brandVoiceService has unknown class App\\Services\\AI\\Agent\\BrandVoiceService as its type\.$#'
-			identifier: class.notFound
 			count: 1
 			path: app/Services/AI/Agent/IntelligentAgentContext.php
 
@@ -16231,12 +16213,6 @@ parameters:
 			path: app/Services/AI/AutonomousMarketingEngine.php
 
 		-
-			message: '#^Call to static method create\(\) on an unknown class App\\Services\\AI\\AutonomousOptimizationLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/AI/AutonomousMarketingEngine.php
-
-		-
 			message: '#^Cannot call method isNotEmpty\(\) on array\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -16251,12 +16227,6 @@ parameters:
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Services/AI/AutonomousMarketingEngine.php
-
-		-
-			message: '#^Instantiated class App\\Services\\AI\\CrisisAlert not found\.$#'
-			identifier: class.notFound
 			count: 1
 			path: app/Services/AI/AutonomousMarketingEngine.php
 
@@ -16347,12 +16317,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\AI\\AutonomousMarketingEngine\:\:detectAnomalies\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AutonomousMarketingEngine.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AutonomousMarketingEngine\:\:detectCrisis\(\) has invalid return type App\\Services\\AI\\CrisisAlert\.$#'
-			identifier: class.notFound
 			count: 1
 			path: app/Services/AI/AutonomousMarketingEngine.php
 
@@ -18869,24 +18833,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/Billing/WhiteLabelService.php
-
-		-
-			message: '#^Call to static method create\(\) on an unknown class App\\Services\\Client\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Call to static method where\(\) on an unknown class App\\Services\\Campaign\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Services/BulkOperationService.php
-
-		-
-			message: '#^Call to static method where\(\) on an unknown class App\\Services\\Client\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/BulkOperationService.php
 
 		-
 			message: '#^Method App\\Services\\BulkOperationService\:\:bulkCampaignStatus\(\) has parameter \$campaignIds with no value type specified in iterable type array\.$#'
@@ -22315,62 +22261,8 @@ parameters:
 			path: app/Services/Workflow/WorkflowEngine.php
 
 		-
-			message: '#^Access to property \$code on an unknown class App\\Models\.$#'
-			identifier: class.notFound
-			count: 5
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Access to property \$flag_emoji on an unknown class App\\Models\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Access to property \$is_rtl on an unknown class App\\Models\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Access to property \$name on an unknown class App\\Models\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Access to property \$native_name on an unknown class App\\Models\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Call to function is_object\(\) with App\\Models will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
 			message: '#^Method App\\View\\Composers\\LanguageComposer\:\:getCurrentLanguageData\(\) has parameter \$supportedLanguages with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Parameter \#1 \$supportedLanguages of method App\\View\\Composers\\LanguageComposer\:\:formatLanguagesForPicker\(\) expects Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\>, Illuminate\\Support\\Collection\<int, App\\Models\\Language\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Parameter \$supportedLanguages of method App\\View\\Composers\\LanguageComposer\:\:formatLanguagesForPicker\(\) has invalid type App\\Models\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/View/Composers/LanguageComposer.php
-
-		-
-			message: '#^Type App\\Models in generic type Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\> in PHPDoc tag @param for parameter \$supportedLanguages is not subtype of template type TModel of Illuminate\\Database\\Eloquent\\Model of class Illuminate\\Database\\Eloquent\\Collection\.$#'
-			identifier: generics.notSubtype
 			count: 1
 			path: app/View/Composers/LanguageComposer.php
 

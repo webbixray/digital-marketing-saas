@@ -2,7 +2,7 @@
 
 namespace App\View\Composers;
 
-use App\Models;
+use App\Models\Language;
 use App\Services\Localization\LocaleService;
 use App\Services\Localization\TranslationService;
 use Illuminate\Database\Eloquent\Collection;
@@ -51,17 +51,15 @@ class LanguageComposer
     /**
      * Format language collection for the picker dropdown.
      *
-     * @param  Collection<int, Models>  $supportedLanguages
+     * @param  iterable<Language>  $supportedLanguages
      * @return array<string, array{code: string, name: string, native: string, flag: string, rtl: bool}>
      */
-    protected function formatLanguagesForPicker($supportedLanguages): array
+    protected function formatLanguagesForPicker(iterable $supportedLanguages): array
     {
         $formatted = [];
 
         foreach ($supportedLanguages as $language) {
-            // Guard against poisoned/legacy cache entries that stored plain
-            // strings (locale codes) instead of Language models.
-            if (! is_object($language) || ! isset($language->code)) {
+            if (! isset($language->code)) {
                 continue;
             }
 

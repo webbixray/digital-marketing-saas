@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 use App\Models\SocialAccount;
 use App\Services\Social\InstagramApiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class InstagramController extends Controller
 {
     use SocialOAuthConnectTrait;
 
     protected string $oauthPlatform = 'instagram';
+
     protected string $oauthPlatformName = 'Instagram';
+
     protected string $oauthRoutePrefix = 'instagram';
+
     public function __construct(
         private readonly InstagramApiService $instagram,
     ) {
@@ -274,6 +277,7 @@ class InstagramController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('Instagram API publish failed', ['error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'error' => 'Failed to publish content'], 500);
         }
     }
@@ -307,6 +311,7 @@ class InstagramController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('Instagram API insights failed', ['error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'error' => 'Failed to fetch insights'], 500);
         }
     }

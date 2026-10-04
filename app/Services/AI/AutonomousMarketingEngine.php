@@ -3,6 +3,7 @@
 namespace App\Services\AI;
 
 use App\Models\Agency;
+use App\Models\AutonomousOptimizationLog;
 use App\Models\Campaign;
 use App\Models\SocialPost;
 use App\Services\AI\Gateway\AiGateway;
@@ -102,39 +103,39 @@ class AutonomousMarketingEngine
 
         $prompt .= "Current Performance:\n";
         $prompt .= "- Total Posts: {$performance->totalPosts}\n";
-        $prompt .= "- Avg Engagement Rate: " . number_format($performance->avgEngagementRate, 2) . "%\n";
+        $prompt .= '- Avg Engagement Rate: '.number_format($performance->avgEngagementRate, 2)."%\n";
         $prompt .= "- Total Reach: {$performance->totalReach}\n";
         $prompt .= "- Total Clicks: {$performance->totalClicks}\n";
-        $prompt .= "- Conversion Rate: " . number_format($performance->conversionRate, 2) . "%\n";
-        $prompt .= "- ROI: " . number_format($performance->roi, 2) . "%\n\n";
+        $prompt .= '- Conversion Rate: '.number_format($performance->conversionRate, 2)."%\n";
+        $prompt .= '- ROI: '.number_format($performance->roi, 2)."%\n\n";
 
         $prompt .= "Top Performing Posts:\n";
         foreach ($performance->topPerformingPosts as $post) {
-            $prompt .= "- [{$post->engagement_rate}%] " . substr($post->content ?? '', 0, 100) . "\n";
+            $prompt .= "- [{$post->engagement_rate}%] ".substr($post->content ?? '', 0, 100)."\n";
         }
         $prompt .= "\n";
 
         $prompt .= "Worst Performing Posts:\n";
         foreach ($performance->worstPerformingPosts as $post) {
-            $prompt .= "- [{$post->engagement_rate}%] " . substr($post->content ?? '', 0, 100) . "\n";
+            $prompt .= "- [{$post->engagement_rate}%] ".substr($post->content ?? '', 0, 100)."\n";
         }
         $prompt .= "\n";
 
         $prompt .= "Engagement by Platform:\n";
         foreach ($performance->engagementByPlatform as $platform => $rate) {
-            $prompt .= "- {$platform}: " . number_format($rate, 2) . "%\n";
+            $prompt .= "- {$platform}: ".number_format($rate, 2)."%\n";
         }
         $prompt .= "\n";
 
         $prompt .= "Engagement by Day:\n";
         foreach ($performance->engagementByDay as $day => $rate) {
-            $prompt .= "- {$day}: " . number_format($rate, 2) . "%\n";
+            $prompt .= "- {$day}: ".number_format($rate, 2)."%\n";
         }
         $prompt .= "\n";
 
         $prompt .= "Engagement by Hour:\n";
         foreach ($performance->engagementByHour as $hour => $rate) {
-            $prompt .= "- {$hour}:00: " . number_format($rate, 2) . "%\n";
+            $prompt .= "- {$hour}:00: ".number_format($rate, 2)."%\n";
         }
         $prompt .= "\n";
 
@@ -159,7 +160,9 @@ class AutonomousMarketingEngine
         $simulations = [];
 
         foreach ($recommendations as $category => $items) {
-            if (!is_array($items)) continue;
+            if (! is_array($items)) {
+                continue;
+            }
 
             foreach ($items as $recommendation) {
                 $simulations[] = new Simulation(
@@ -174,8 +177,7 @@ class AutonomousMarketingEngine
         }
 
         // Sort by predicted improvement * confidence / risk
-        usort($simulations, fn($a, $b) => 
-            ($b->predictedEngagementChange * $b->confidence / $b->riskLevel) <=> 
+        usort($simulations, fn ($a, $b) => ($b->predictedEngagementChange * $b->confidence / $b->riskLevel) <=>
             ($a->predictedEngagementChange * $a->confidence / $a->riskLevel)
         );
 
@@ -239,8 +241,8 @@ class AutonomousMarketingEngine
 
         // Run prediction
         $response = $this->aiGateway->send(new AiRequest(
-            prompt: "Analyze these social media signals and predict trends for the next {$hoursAhead} hours:\n\n" .
-                    json_encode($signals, JSON_PRETTY_PRINT) .
+            prompt: "Analyze these social media signals and predict trends for the next {$hoursAhead} hours:\n\n".
+                    json_encode($signals, JSON_PRETTY_PRINT).
                     "\n\nRespond with JSON: {\"trends\": [{\"topic\": \"...\", \"confidence\": 0.0-1.0, \"platforms\": [...], \"suggested_content\": \"...\"}]}",
             maxTokens: 2000,
         ));
@@ -289,9 +291,9 @@ class AutonomousMarketingEngine
         // Get top performing content themes
         $topThemes = $recentPosts->groupBy(function ($post) {
             return $this->extractTheme($post->content ?? '');
-        })->map(fn($group) => $group->avg('engagement_rate'))
-        ->sortDesc()
-        ->take(5);
+        })->map(fn ($group) => $group->avg('engagement_rate'))
+            ->sortDesc()
+            ->take(5);
 
         return [
             'agency_industry' => $agency->industry ?? 'general',
@@ -345,61 +347,88 @@ class AutonomousMarketingEngine
     // Helper methods
     private function calculateConversionRate($posts): float
     {
-        if ($posts->isEmpty()) return 0.0;
+        if ($posts->isEmpty()) {
+            return 0.0;
+        }
         $converted = $posts->where('converted', true)->count();
+
         return ($converted / $posts->count()) * 100;
     }
 
-    private function getTopPosts($posts, int $limit) { return $posts->sortByDesc('engagement_rate')->take($limit); }
-    private function getWorstPosts($posts, int $limit) { return $posts->sortBy('engagement_rate')->take($limit); }
+    private function getTopPosts($posts, int $limit)
+    {
+        return $posts->sortByDesc('engagement_rate')->take($limit);
+    }
+
+    private function getWorstPosts($posts, int $limit)
+    {
+        return $posts->sortBy('engagement_rate')->take($limit);
+    }
 
     private function getEngagementByPlatform($posts): array
     {
         return $posts->groupBy('platform')
-            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+            ->map(fn ($group) => round($group->avg('engagement_rate') ?? 0, 2))
             ->toArray();
     }
 
     private function getEngagementByDay($posts): array
     {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return $posts->groupBy(fn($p) => $p->published_at?->dayOfWeek ?? 0)
-            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+
+        return $posts->groupBy(fn ($p) => $p->published_at?->dayOfWeek ?? 0)
+            ->map(fn ($group) => round($group->avg('engagement_rate') ?? 0, 2))
             ->sortKeys()
-            ->map(fn($v, $k) => ['day' => $days[$k], 'rate' => $v])
+            ->map(fn ($v, $k) => ['day' => $days[$k], 'rate' => $v])
             ->toArray();
     }
 
     private function getEngagementByHour($posts): array
     {
-        return $posts->groupBy(fn($p) => $p->published_at?->hour ?? 0)
-            ->map(fn($group) => round($group->avg('engagement_rate') ?? 0, 2))
+        return $posts->groupBy(fn ($p) => $p->published_at?->hour ?? 0)
+            ->map(fn ($group) => round($group->avg('engagement_rate') ?? 0, 2))
             ->sortKeys()
             ->toArray();
     }
 
     private function analyzeContentThemes($posts): array
     {
-        if ($posts->isEmpty()) return [];
+        if ($posts->isEmpty()) {
+            return [];
+        }
         $themes = [];
         foreach ($posts as $post) {
             $content = strtolower($post->content ?? '');
-            if (str_contains($content, 'sale') || str_contains($content, 'discount')) $themes[] = 'promotional';
-            if (str_contains($content, 'tip') || str_contains($content, 'how to')) $themes[] = 'educational';
-            if (str_contains($content, 'new') || str_contains($content, 'launch')) $themes[] = 'announcement';
-            if (str_contains($content, 'behind') || str_contains($content, 'team')) $themes[] = 'behind-the-scenes';
-            if (str_contains($content, 'testimonial') || str_contains($content, 'review')) $themes[] = 'social-proof';
+            if (str_contains($content, 'sale') || str_contains($content, 'discount')) {
+                $themes[] = 'promotional';
+            }
+            if (str_contains($content, 'tip') || str_contains($content, 'how to')) {
+                $themes[] = 'educational';
+            }
+            if (str_contains($content, 'new') || str_contains($content, 'launch')) {
+                $themes[] = 'announcement';
+            }
+            if (str_contains($content, 'behind') || str_contains($content, 'team')) {
+                $themes[] = 'behind-the-scenes';
+            }
+            if (str_contains($content, 'testimonial') || str_contains($content, 'review')) {
+                $themes[] = 'social-proof';
+            }
         }
         $counts = array_count_values($themes);
         arsort($counts);
+
         return array_slice(array_keys($counts), 0, 5);
     }
 
     private function calculateAudienceGrowth(Campaign $campaign): float
     {
         $accounts = $campaign->socialAccounts;
-        if ($accounts->isEmpty()) return 0.0;
+        if ($accounts->isEmpty()) {
+            return 0.0;
+        }
         $totalGrowth = $accounts->sum('follower_growth_rate') ?? 0;
+
         return round($totalGrowth / $accounts->count(), 2);
     }
 
@@ -407,15 +436,20 @@ class AutonomousMarketingEngine
     {
         $revenue = $campaign->revenue_attributed ?? 0;
         $cost = $campaign->budget_spent ?? 1;
+
         return round((($revenue - $cost) / $cost) * 100, 2);
     }
 
-    private function parseRecommendations(string $content): array { return json_decode($content, true) ?? []; }
+    private function parseRecommendations(string $content): array
+    {
+        return json_decode($content, true) ?? [];
+    }
 
     private function predictEngagementChange(Campaign $campaign, array $recommendation): float
     {
         $priority = $recommendation['priority'] ?? 'medium';
-        return match($priority) {
+
+        return match ($priority) {
             'high' => 0.25,
             'medium' => 0.15,
             'low' => 0.05,
@@ -426,18 +460,21 @@ class AutonomousMarketingEngine
     private function predictReachChange(Campaign $campaign, array $recommendation): float
     {
         $type = $recommendation['type'] ?? '';
+
         return str_contains($type, 'hashtag') ? 0.15 : 0.08;
     }
 
     private function calculateConfidence(array $recommendation): float
     {
         $type = $recommendation['type'] ?? '';
+
         return in_array($type, ['timing', 'hashtag', 'content']) ? 0.85 : 0.65;
     }
 
     private function assessRisk(array $recommendation): string
     {
         $type = $recommendation['type'] ?? '';
+
         return in_array($type, ['delete', 'remove', 'pause']) ? 'high' : 'low';
     }
 
@@ -453,8 +490,11 @@ class AutonomousMarketingEngine
 
     private function calculateTotalImprovement(array $simulations): float
     {
-        if (empty($simulations)) return 0.0;
-        $total = array_sum(array_map(fn($s) => $s->predictedEngagementChange * $s->confidence, $simulations));
+        if (empty($simulations)) {
+            return 0.0;
+        }
+        $total = array_sum(array_map(fn ($s) => $s->predictedEngagementChange * $s->confidence, $simulations));
+
         return round($total / count($simulations), 4);
     }
 
@@ -469,7 +509,8 @@ class AutonomousMarketingEngine
     private function calculateCrisisSeverity(array $anomalies): string
     {
         $score = count($anomalies);
-        return match(true) {
+
+        return match (true) {
             $score >= 10 => 'critical',
             $score >= 5 => 'high',
             $score >= 2 => 'medium',
@@ -489,7 +530,7 @@ class AutonomousMarketingEngine
     private function recommendCrisisActions(array $anomalies): array
     {
         $actions = ['Pause all scheduled posts immediately'];
-        
+
         $platforms = collect($anomalies)->pluck('platform')->unique();
         if ($platforms->contains('twitter')) {
             $actions[] = 'Prepare official statement for Twitter/X';
@@ -500,17 +541,18 @@ class AutonomousMarketingEngine
         if ($platforms->contains('instagram')) {
             $actions[] = 'Consider Instagram Story addressing concerns';
         }
-        
+
         $actions[] = 'Monitor mentions closely for next 24-48 hours';
         $actions[] = 'Escalate to senior management if severity increases';
-        
+
         return $actions;
     }
 
     private function extractTheme(string $content): string
     {
         $content = strtolower($content);
-        return match(true) {
+
+        return match (true) {
             str_contains($content, 'sale') || str_contains($content, 'discount') => 'promotional',
             str_contains($content, 'tip') || str_contains($content, 'how to') => 'educational',
             str_contains($content, 'new') || str_contains($content, 'launch') => 'announcement',

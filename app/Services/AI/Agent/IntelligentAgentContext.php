@@ -34,6 +34,10 @@ class IntelligentAgentContext
         $this->user = $user;
         $agency = $user->agency;
 
+        if (! $agency instanceof Agency) {
+            throw new \InvalidArgumentException('User must have an associated agency.');
+        }
+
         // User context
         $this->userPreferences = $this->memory->getUserPreferences($user->id);
         $this->recentActions = $this->memory->getRecentActions($user->id, 20);

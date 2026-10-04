@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Agency;
+use App\Models\Campaign;
+use App\Models\Client;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

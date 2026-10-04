@@ -282,6 +282,31 @@ class AgentMemory
     }
 
     /**
+     * Get recent actions for a user.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRecentActions(int $userId, int $limit = 20): array
+    {
+        return array_slice(array_filter(
+            $this->getHistory(),
+            fn (array $entry) => ($entry['user_id'] ?? null) === $userId,
+        ), 0, $limit);
+    }
+
+    /**
+     * Get user preferences.
+     *
+     * @return array<string, mixed>
+     */
+    public function getUserPreferences(int $userId): array
+    {
+        $key = self::CACHE_KEY.'.preferences.'.$userId;
+
+        return Cache::get($key, []);
+    }
+
+    /**
      * Clear all memory including learned patterns.
      */
     public function clear(): void
