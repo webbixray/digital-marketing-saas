@@ -41,6 +41,9 @@ class FacebookApiService
     /**
      * Exchange authorization code for a long-lived access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -77,6 +80,9 @@ class FacebookApiService
     /**
      * Get Facebook Pages the user manages.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPages(string $accessToken): array
     {
         try {
@@ -107,6 +113,9 @@ class FacebookApiService
     /**
      * Get Facebook Page details.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPage(string $pageId, string $accessToken): array
     {
         try {
@@ -130,6 +139,9 @@ class FacebookApiService
 
     /**
      * Get Page insights (fans, impressions, reach).
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getPageInsights(string $pageId, string $accessToken, string $period = 'day', int $days = 30): array
     {
@@ -172,6 +184,9 @@ class FacebookApiService
     /**
      * Post text to Facebook Page.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function postText(string $pageId, string $accessToken, string $message): array
     {
         try {
@@ -201,6 +216,9 @@ class FacebookApiService
 
     /**
      * Post photo to Facebook Page.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function postPhoto(string $pageId, string $accessToken, string $imageUrl, ?string $message = null): array
     {
@@ -239,6 +257,9 @@ class FacebookApiService
     /**
      * Post video to Facebook Page.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function postVideo(string $pageId, string $accessToken, string $videoUrl, ?string $description = null): array
     {
         try {
@@ -274,6 +295,9 @@ class FacebookApiService
 
     /**
      * Get post insights (likes, comments, shares, reach).
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getPostInsights(string $postId, string $accessToken): array
     {
@@ -313,6 +337,9 @@ class FacebookApiService
     /**
      * Delete a Facebook post.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function deletePost(string $postId, string $accessToken): array
     {
         try {
@@ -337,6 +364,9 @@ class FacebookApiService
 
     /**
      * Get recent posts from Facebook Page.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getPosts(string $pageId, string $accessToken, int $limit = 25): array
     {
@@ -367,6 +397,9 @@ class FacebookApiService
 
     /**
      * Validate access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {
@@ -403,6 +436,9 @@ class FacebookApiService
     /**
      * Get comments on a Facebook post.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPostComments(string $postId, string $accessToken, int $limit = 100): array
     {
         try {
@@ -429,6 +465,9 @@ class FacebookApiService
 
     /**
      * Reply to a Facebook comment.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function replyToComment(string $commentId, string $accessToken, string $message): array
     {

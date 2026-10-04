@@ -41,6 +41,9 @@ class TikTokApiService
     /**
      * Exchange authorization code for an access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -86,6 +89,9 @@ class TikTokApiService
     /**
      * Get TikTok user info.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getUserInfo(string $accessToken): array
     {
         try {
@@ -116,6 +122,9 @@ class TikTokApiService
 
     /**
      * Get user's videos.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getVideos(string $accessToken, int $cursor = 0, int $maxCount = 20): array
     {
@@ -152,6 +161,9 @@ class TikTokApiService
     /**
      * Get video statistics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getVideoStats(string $accessToken, string $videoId): array
     {
         try {
@@ -184,6 +196,10 @@ class TikTokApiService
 
     /**
      * Publish video via URL (Content Posting API).
+     */
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
      */
     public function publishVideo(string $accessToken, string $videoUrl, string $title, ?string $description = null, array $options = []): array
     {
@@ -237,6 +253,9 @@ class TikTokApiService
     /**
      * Upload video directly (PULL_FROM_URL is preferred but can support direct upload).
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function uploadVideo(string $accessToken, $file, string $title, ?string $description = null): array
     {
         try {
@@ -269,6 +288,9 @@ class TikTokApiService
 
     /**
      * Get user's comments.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getComments(string $accessToken, string $videoId, int $cursor = 0, int $count = 20): array
     {
@@ -306,6 +328,9 @@ class TikTokApiService
     /**
      * Reply to a comment.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function replyToComment(string $accessToken, string $commentId, string $text): array
     {
         try {
@@ -333,6 +358,9 @@ class TikTokApiService
 
     /**
      * Refresh the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function refreshToken(string $refreshToken): array
     {
@@ -369,6 +397,9 @@ class TikTokApiService
 
     /**
      * Validate the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {

@@ -139,6 +139,9 @@ class CampaignAgent extends AbstractAgent
      *
      * @return array<string, float>
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getBudgetRecommendations(): array
     {
         return $this->executionStats['budget_recommendations'] ?? [];
@@ -148,6 +151,9 @@ class CampaignAgent extends AbstractAgent
      * Get audience segments that perform well.
      *
      * @return array<string, array>
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function getTopAudienceSegments(): array
     {
@@ -177,7 +183,7 @@ class CampaignAgent extends AbstractAgent
         if (! empty($successfulStrategies)) {
             $prompt .= "\nBased on past successful optimizations:\n";
             foreach ($successfulStrategies as $strategy) {
-                $prompt .= "- {$strategy}\n";
+                $prompt .= '- '.(string) $strategy."\n";
             }
         }
 
@@ -396,6 +402,9 @@ class CampaignAgent extends AbstractAgent
     /**
      * Get campaign data for optimization.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getCampaignData(Agency $agency, Campaign $campaign): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
@@ -423,6 +432,9 @@ class CampaignAgent extends AbstractAgent
     /**
      * Get recent campaigns data.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getRecentCampaignsData(Agency $agency): array
     {
         $campaigns = Campaign::where('agency_id', $agency->id)
@@ -445,6 +457,10 @@ class CampaignAgent extends AbstractAgent
 
     /**
      * Get platform performance data.
+     */
+    /**
+     * @param  array<int, string>  $platforms
+     * @return array<string, mixed>
      */
     private function getPlatformPerformance(Agency $agency, array $platforms): array
     {
@@ -470,6 +486,8 @@ class CampaignAgent extends AbstractAgent
 
     /**
      * Calculate ROI score for campaign data.
+     *
+     * @param  array<int|string, mixed>  $campaignData
      */
     private function calculateRoiScore(array $campaignData): float
     {
@@ -497,6 +515,10 @@ class CampaignAgent extends AbstractAgent
     /**
      * Extract successful strategies from past optimizations.
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $pastResults
+     * @return array<int, string>
+     */
     private function extractSuccessfulStrategies(array $pastResults): array
     {
         $strategies = [];
@@ -518,6 +540,9 @@ class CampaignAgent extends AbstractAgent
     /**
      * Parse audience segments from AI response.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function parseAudienceSegments(string $content): array
     {
         $segments = [];
@@ -536,6 +561,9 @@ class CampaignAgent extends AbstractAgent
 
     /**
      * Learn audience segments that perform well.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $segments
      */
     private function learnAudienceSegments(string $platform, array $segments): void
     {
@@ -568,6 +596,9 @@ class CampaignAgent extends AbstractAgent
     /**
      * Parse budget allocations from AI response.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function parseBudgetAllocations(string $content): array
     {
         $allocations = [];
@@ -588,6 +619,9 @@ class CampaignAgent extends AbstractAgent
 
     /**
      * Learn from budget allocations.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $allocations
      */
     private function learnBudgetAllocations(array $allocations): void
     {
@@ -613,6 +647,10 @@ class CampaignAgent extends AbstractAgent
 
     /**
      * Extract successful test patterns from past results.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $pastResults
+     * @return array<int, array<string, mixed>>
      */
     private function extractSuccessfulTestPatterns(array $pastResults): array
     {

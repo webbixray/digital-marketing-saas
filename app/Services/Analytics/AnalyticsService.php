@@ -27,6 +27,9 @@ class AnalyticsService
      *
      * @param  int  $days  Number of days for date-range queries (default 30)
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getDashboardStats(Agency $agency, int $days = 30): array
     {
         return Cache::remember("analytics:{$agency->id}:dashboard:{$days}", self::CACHE_TTL, function () use ($agency, $days) {
@@ -48,6 +51,9 @@ class AnalyticsService
     /**
      * High-level overview: clients, posts, campaigns, revenue.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getOverviewStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:overview", self::CACHE_TTL, function () use ($agency) {
@@ -68,6 +74,9 @@ class AnalyticsService
 
     /**
      * Social media stats - optimized with single query using database aggregations.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getSocialStats(Agency $agency): array
     {
@@ -99,6 +108,9 @@ class AnalyticsService
 
     /**
      * Email marketing stats - optimized with single query.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getEmailStats(Agency $agency): array
     {
@@ -134,6 +146,9 @@ class AnalyticsService
     /**
      * Financial stats - optimized with single query.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getFinancialStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:financial", self::CACHE_TTL, function () use ($agency) {
@@ -164,6 +179,9 @@ class AnalyticsService
     /**
      * AI usage stats - optimized with single query.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getAiStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:ai", self::CACHE_TTL, function () use ($agency) {
@@ -193,6 +211,9 @@ class AnalyticsService
     /**
      * Engagement stats - single query for all engagement metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getEngagementStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:engagement", self::CACHE_TTL, function () use ($agency) {
@@ -220,6 +241,9 @@ class AnalyticsService
     /**
      * Campaign stats - single query for all campaign metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getCampaignStats(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:campaigns", self::CACHE_TTL, function () use ($agency) {
@@ -241,6 +265,9 @@ class AnalyticsService
 
     /**
      * Client stats - single query for all client metrics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getClientStats(Agency $agency): array
     {
@@ -264,6 +291,9 @@ class AnalyticsService
     /**
      * Daily engagement over time - single query.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getDailyEngagement(Agency $agency, int $days = 30): array
     {
         return Cache::remember("analytics:{$agency->id}:daily_engagement:{$days}", self::CACHE_TTL, function () use ($agency, $days) {
@@ -283,6 +313,9 @@ class AnalyticsService
 
     /**
      * Best performing posts - single query.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function getBestPosts(Agency $agency, int $limit = 5): array
     {
@@ -351,6 +384,9 @@ class AnalyticsService
     /**
      * Get posts grouped by platform.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getBestPlatform(Agency $agency): array
     {
         return Cache::remember("analytics:{$agency->id}:best_platform", self::CACHE_TTL, function () use ($agency) {
@@ -373,6 +409,9 @@ class AnalyticsService
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function groupByPlatform(Agency $agency): array
     {
         return SocialPost::where('agency_id', $agency->id)
@@ -385,6 +424,9 @@ class AnalyticsService
     /**
      * Get AI logs grouped by action.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function groupByAction(Agency $agency): array
     {
         return AiContentLog::where('agency_id', $agency->id)
@@ -396,6 +438,9 @@ class AnalyticsService
 
     /**
      * Get logs grouped by type (kept for backward compatibility).
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function groupByType(Collection $logs, string $field): array
     {
@@ -411,6 +456,9 @@ class AnalyticsService
     /**
      * Get posts by status.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPostsByStatus(Agency $agency): array
     {
         return SocialPost::where('agency_id', $agency->id)
@@ -422,6 +470,9 @@ class AnalyticsService
 
     /**
      * Get cross-platform social analytics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getCrossPlatformStats(Agency $agency): array
     {
@@ -485,6 +536,9 @@ class AnalyticsService
     /**
      * Get stats for a specific platform - OPTIMIZED: single aggregation instead of 9 clone queries.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPlatformStats(Agency $agency, string $platform): array
     {
         $stats = SocialPost::where('agency_id', $agency->id)
@@ -532,6 +586,9 @@ class AnalyticsService
     /**
      * Get best performing platform by engagement.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getBestPerformingPlatform(Agency $agency): array
     {
         $result = SocialPost::where('agency_id', $agency->id)
@@ -549,6 +606,8 @@ class AnalyticsService
 
     /**
      * Get social media growth over time.
+     *
+     * @return array<string, array<int>>
      */
     public function getSocialGrowth(Agency $agency, int $days = 30): array
     {
@@ -571,6 +630,8 @@ class AnalyticsService
 
     /**
      * Get optimal posting times by platform.
+     *
+     * @return array<string, string>
      */
     public function getOptimalPostingTimes(Agency $agency): array
     {
@@ -601,6 +662,9 @@ class AnalyticsService
 
     /**
      * Get email campaigns by status.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getEmailCampaignsByStatus(Agency $agency): array
     {
@@ -659,6 +723,9 @@ class AnalyticsService
 
     /**
      * Generate a client-facing report for a specific date range.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function generateClientReport(Agency $agency, Client $client, string $startDate, string $endDate): array
     {

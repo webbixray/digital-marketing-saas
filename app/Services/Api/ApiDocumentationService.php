@@ -2,12 +2,13 @@
 
 namespace App\Services\Api;
 
-use Illuminate\Support\Facades\Route;
-
 class ApiDocumentationService
 {
     /**
      * Generate the OpenAPI 3.0 specification for the Digital Marketing SaaS API.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function generateOpenApiSpec(): array
     {
@@ -53,6 +54,9 @@ class ApiDocumentationService
     /**
      * Get all tags for grouping endpoints.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getTags(): array
     {
         return [
@@ -71,6 +75,9 @@ class ApiDocumentationService
     /**
      * Get all API paths.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getPaths(): array
     {
         return array_merge(
@@ -86,6 +93,9 @@ class ApiDocumentationService
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getSocialAccountPaths(): array
     {
         return [
@@ -209,6 +219,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getPostPaths(): array
     {
         return [
@@ -387,6 +400,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getCampaignPaths(): array
     {
         return [
@@ -528,6 +544,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getAnalyticsPaths(): array
     {
         return [
@@ -605,6 +624,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getReportPaths(): array
     {
         return [
@@ -806,6 +828,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getBillingPaths(): array
     {
         return [
@@ -974,6 +999,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getIntegrationPaths(): array
     {
         return [
@@ -1281,6 +1309,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getAgencyPaths(): array
     {
         return [
@@ -1479,6 +1510,9 @@ class ApiDocumentationService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getUtilityPaths(): array
     {
         return [
@@ -1733,6 +1767,9 @@ class ApiDocumentationService
     /**
      * Get reusable schemas.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getSchemas(): array
     {
         return [
@@ -1872,6 +1909,9 @@ class ApiDocumentationService
     /**
      * Get reusable error response definitions.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getErrorResponses(): array
     {
         return [
@@ -1953,6 +1993,9 @@ class ApiDocumentationService
     /**
      * Generate a Postman collection from the OpenAPI spec.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function generatePostmanCollection(): array
     {
         $spec = $this->generateOpenApiSpec();
@@ -1990,7 +2033,7 @@ class ApiDocumentationService
         foreach ($spec['paths'] as $path => $methods) {
             foreach ($methods as $method => $details) {
                 $tag = $details['tags'][0] ?? 'Other';
-                if (!isset($groupedItems[$tag])) {
+                if (! isset($groupedItems[$tag])) {
                     $groupedItems[$tag] = [];
                 }
                 $groupedItems[$tag][] = [
@@ -2008,7 +2051,7 @@ class ApiDocumentationService
                             ],
                         ],
                         'url' => [
-                            'raw' => '{{base_url}}' . $path,
+                            'raw' => '{{base_url}}'.$path,
                             'host' => ['{{base_url}}'],
                             'path' => explode('/', ltrim($path, '/')),
                         ],

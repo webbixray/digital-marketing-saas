@@ -19,6 +19,10 @@ class SelfImprovementEngine
      * @param  array  $results  Recent execution results from an agent
      * @return array Performance analysis with patterns
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $results
+     * @return array<string, mixed>
+     */
     public function analyzePerformance(array $results): array
     {
         if (empty($results)) {
@@ -98,6 +102,9 @@ class SelfImprovementEngine
      * Suggest prompt/strategy changes for an agent based on its performance history.
      *
      * @return array List of suggested improvements
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function generateImprovements(AgentInterface $agent): array
     {
@@ -265,6 +272,9 @@ class SelfImprovementEngine
      *
      * @return array Learning report
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getLearningReport(): array
     {
         $cacheKey = 'agent_learning_report';
@@ -378,6 +388,10 @@ class SelfImprovementEngine
     /**
      * Extract best-performing parameter combinations.
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $successfulParams
+     * @return array<string, mixed>
+     */
     private function extractBestParameters(array $successfulParams): array
     {
         if (empty($successfulParams)) {
@@ -404,6 +418,10 @@ class SelfImprovementEngine
 
     /**
      * Extract worst-performing parameter combinations.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $failedParams
+     * @return array<string, mixed>
      */
     private function extractWorstParameters(array $failedParams): array
     {
@@ -469,6 +487,8 @@ class SelfImprovementEngine
 
     /**
      * Calculate trend from a series of values.
+     *
+     * @param  array<int, mixed>  $values
      */
     private function calculateTrend(array $values): string
     {
@@ -496,6 +516,9 @@ class SelfImprovementEngine
 
     /**
      * Calculate variance of an array.
+     */
+    /**
+     * @param  array<int, float>  $values
      */
     private function calculateVariance(array $values): float
     {
@@ -531,6 +554,9 @@ class SelfImprovementEngine
     /**
      * Calculate overall health score across all agents.
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $agentReports
+     */
     private function calculateOverallHealth(array $agentReports): float
     {
         if (empty($agentReports)) {
@@ -552,6 +578,9 @@ class SelfImprovementEngine
 
     /**
      * Extract top learnings from the learning reports.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     private function extractTopLearnings(): array
     {

@@ -22,6 +22,9 @@ class AgencyAIAssistantService
     /**
      * Process a natural language command and return a response.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function processCommand(Agency $agency, User $user, string $message): array
     {
         $intent = $this->detectIntent(strtolower(trim($message)));
@@ -48,6 +51,9 @@ class AgencyAIAssistantService
 
     /**
      * Detect intent from natural language input.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function detectIntent(string $message): array
     {
@@ -80,6 +86,9 @@ class AgencyAIAssistantService
         return ['action' => 'unknown', 'keywords' => []];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getDashboardStats(Agency $agency): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)->count();
@@ -102,6 +111,10 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function listPosts(Agency $agency, array $intent): array
     {
         $query = SocialPost::where('agency_id', $agency->id);
@@ -134,16 +147,28 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function createPost(Agency $agency, User $user, array $intent): array
     {
         return ['type' => 'text', 'content' => "To create a post, use:\n\n/newpost [content]\n\nOr use the web panel for rich media posts."];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function schedulePost(Agency $agency, User $user, array $intent): array
     {
         return ['type' => 'text', 'content' => "To schedule a post:\n\n/schedule [content] YYYY-MM-DD HH:MM\n\nExample: /schedule \"Launch day tomorrow!\" 2026-09-06 09:00"];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function listCampaigns(Agency $agency, array $intent): array
     {
         $campaigns = Campaign::where('agency_id', $agency->id)->orderBy('created_at', 'desc')->limit(5)->get();
@@ -166,11 +191,19 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function createCampaign(Agency $agency, array $intent): array
     {
         return ['type' => 'text', 'content' => "To create a campaign:\n\n/newcampaign [name] [type] [client]\n\nTypes: brand_awareness, lead_generation, engagement, traffic, conversions\nExample: /newcampaign \"Summer Sale\" brand_awareness"];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function listClients(Agency $agency, array $intent): array
     {
         $query = Client::where('agency_id', $agency->id);
@@ -200,11 +233,19 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function createClient(Agency $agency, array $intent): array
     {
         return ['type' => 'text', 'content' => "To add a client:\n\n/addclient [name] | [email] | [company]\n\nExample: /addclient \"John Doe\" john@acme.com \"Acme Corp\""];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function listInvoices(Agency $agency, array $intent): array
     {
         $query = Invoice::where('agency_id', $agency->id);
@@ -237,11 +278,18 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function generateContent(Agency $agency, array $intent): array
     {
         return ['type' => 'text', 'content' => "To generate AI content:\n\n/ai [prompt]\n\nExamples:\n/ai \"Write a tweet about our summer sale\"\n/ai \"Generate hashtags for fitness brand\"\n/ai \"Write email newsletter for product launch\""];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getQuotaStatus(Agency $agency): array
     {
         $quotas = [
@@ -261,6 +309,9 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getRecentActivity(Agency $agency): array
     {
         $activities = ActivityLog::where('agency_id', $agency->id)
@@ -281,11 +332,18 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @param  array<string, mixed>  $intent
+     * @return array<string, mixed>
+     */
     private function performSearch(Agency $agency, array $intent): array
     {
         return ['type' => 'text', 'content' => "Search across all modules:\n\n/search [query]\n\nExample: /search \"summer sale campaign\""];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getHelp(): array
     {
         $text = "🤖 **AI Assistant Commands**\n\n";
@@ -316,6 +374,9 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getGreeting(User $user): array
     {
         $text = "👋 Hello {$user->name}!\n\n";
@@ -329,6 +390,9 @@ class AgencyAIAssistantService
         return ['type' => 'text', 'content' => $text];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getFallbackResponse(string $message): array
     {
         $text = "🤔 I'm not sure what you mean by that.\n\n";

@@ -83,6 +83,11 @@ class WorkflowEngine
         return true;
     }
 
+    /**
+     * @param  array<string, mixed>  $action
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function executeAction(array $action, array $triggerData): array
     {
         $type = $action['type'] ?? 'unknown';
@@ -100,6 +105,11 @@ class WorkflowEngine
         };
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function actionSendNotification(array $config, array $triggerData): array
     {
         $channel = $config['channel'] ?? 'log';
@@ -123,6 +133,11 @@ class WorkflowEngine
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function actionCreatePost(array $config, array $triggerData): array
     {
         $accountId = $config['social_account_id'] ?? null;
@@ -149,6 +164,11 @@ class WorkflowEngine
         return ['status' => 'success', 'action' => 'create_post', 'post_id' => $post->id];
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function actionSchedulePost(array $config, array $triggerData): array
     {
         $accountId = $config['social_account_id'] ?? null;
@@ -176,6 +196,11 @@ class WorkflowEngine
         return ['status' => 'success', 'action' => 'schedule_post', 'post_id' => $post->id, 'scheduled_at' => $scheduledAt];
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function actionAiGenerate(array $config, array $triggerData): array
     {
         $prompt = $config['prompt'] ?? $triggerData['prompt'] ?? null;
@@ -202,10 +227,16 @@ class WorkflowEngine
             ];
         } catch (\Exception $e) {
             Log::error('Workflow AI generate failed', ['error' => $e->getMessage()]);
+
             return ['status' => 'failed', 'reason' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
+     */
     protected function actionWebhook(array $config, array $triggerData): array
     {
         $url = $config['url'] ?? null;
@@ -229,6 +260,10 @@ class WorkflowEngine
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
     protected function actionSleep(array $config): array
     {
         $seconds = $config['seconds'] ?? 1;
@@ -238,6 +273,11 @@ class WorkflowEngine
 
     /**
      * Execute a loop action - repeats nested actions N times.
+     */
+    /**
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $triggerData
+     * @return array<string, mixed>
      */
     protected function actionLoop(array $config, array $triggerData): array
     {

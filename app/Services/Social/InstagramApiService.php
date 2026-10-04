@@ -39,6 +39,9 @@ class InstagramApiService
     /**
      * Exchange authorization code for a long-lived access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -108,6 +111,9 @@ class InstagramApiService
     /**
      * Get Facebook Pages the user manages (needed to find Instagram accounts).
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPages(string $accessToken): array
     {
         try {
@@ -142,6 +148,9 @@ class InstagramApiService
 
     /**
      * Get Instagram account details for a given page access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getInstagramAccount(string $pageAccessToken): array
     {
@@ -182,6 +191,9 @@ class InstagramApiService
     /**
      * Get Instagram user profile and metrics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getUserProfile(string $igUserId, string $accessToken): array
     {
         try {
@@ -210,6 +222,9 @@ class InstagramApiService
 
     /**
      * Get Instagram account insights (requires Instagram Business account).
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getAccountInsights(string $igUserId, string $accessToken, string $period = 'day'): array
     {
@@ -240,6 +255,10 @@ class InstagramApiService
 
     /**
      * Create a media container for Instagram (required before publishing).
+     */
+    /**
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
      */
     public function createMediaContainer(string $igUserId, string $accessToken, array $params): array
     {
@@ -308,6 +327,9 @@ class InstagramApiService
     /**
      * Publish a media container to Instagram.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function publishMedia(string $igUserId, string $accessToken, string $containerId): array
     {
         try {
@@ -341,6 +363,9 @@ class InstagramApiService
 
     /**
      * Get media insights for a specific post.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getMediaInsights(string $mediaId, string $accessToken): array
     {
@@ -380,6 +405,10 @@ class InstagramApiService
     /**
      * Post to Instagram (full flow: create container -> publish).
      */
+    /**
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
+     */
     public function post(string $igUserId, string $accessToken, array $params): array
     {
         // Step 1: Create media container
@@ -412,6 +441,9 @@ class InstagramApiService
     /**
      * Check media container status.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getContainerStatus(string $containerId, string $accessToken): array
     {
         try {
@@ -442,6 +474,9 @@ class InstagramApiService
     /**
      * Delete a published Instagram media.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function deleteMedia(string $mediaId, string $accessToken): array
     {
         try {
@@ -466,6 +501,9 @@ class InstagramApiService
 
     /**
      * Refresh a long-lived token before it expires.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function refreshToken(string $accessToken): array
     {
@@ -498,6 +536,9 @@ class InstagramApiService
 
     /**
      * Validate access token and check permissions.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {
@@ -538,6 +579,9 @@ class InstagramApiService
     /**
      * Get comments on an Instagram media object.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getMediaComments(string $mediaId, string $accessToken, int $limit = 100): array
     {
         try {
@@ -564,6 +608,9 @@ class InstagramApiService
 
     /**
      * Reply to an Instagram comment.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function replyToComment(string $commentId, string $accessToken, string $message): array
     {

@@ -77,6 +77,9 @@ class AutonomousMarketingEngine
     /**
      * Generate AI-powered optimization recommendations
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function generateRecommendations(Campaign $campaign, PerformanceAnalysis $performance): array
     {
         $prompt = $this->buildOptimizationPrompt($campaign, $performance);
@@ -154,6 +157,14 @@ class AutonomousMarketingEngine
 
     /**
      * Simulate outcomes for each recommendation
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $recommendations
+     * @return array<int, array<string, mixed>>
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $recommendations
+     * @return array<int, Simulation>
      */
     private function simulateOutcomes(Campaign $campaign, array $recommendations): array
     {
@@ -234,6 +245,9 @@ class AutonomousMarketingEngine
     /**
      * Predict viral trends for an industry
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function predictTrends(Agency $agency, int $hoursAhead = 48): array
     {
         // Gather social signals
@@ -281,6 +295,9 @@ class AutonomousMarketingEngine
     /**
      * Gather social signals for trend prediction
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function gatherSocialSignals(Agency $agency): array
     {
         // Get agency's recent posts and their performance
@@ -308,6 +325,14 @@ class AutonomousMarketingEngine
     /**
      * Analyze sentiment of mentions
      */
+    /**
+     * @param  array<int, array<string, mixed>>  $mentions
+     * @return array<string, mixed>
+     */
+    /**
+     * @param  iterable<array<string, mixed>>  $mentions
+     * @return array<string, mixed>
+     */
     private function analyzeSentiment($mentions): array
     {
         $sentiment = [];
@@ -326,6 +351,14 @@ class AutonomousMarketingEngine
 
     /**
      * Detect anomalies in sentiment
+     */
+    /**
+     * @param  array<string, mixed>  $sentiment
+     * @return array<int, array<string, mixed>>
+     */
+    /**
+     * @param  array<string, mixed>  $sentiment
+     * @return array<int, array<string, mixed>>
      */
     private function detectAnomalies(array $sentiment): array
     {
@@ -365,6 +398,14 @@ class AutonomousMarketingEngine
         return $posts->sortBy('engagement_rate')->take($limit);
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $posts
+     * @return array<string, mixed>
+     */
+    /**
+     * @param  iterable<SocialPost>  $posts
+     * @return array<string, mixed>
+     */
     private function getEngagementByPlatform($posts): array
     {
         return $posts->groupBy('platform')
@@ -372,6 +413,14 @@ class AutonomousMarketingEngine
             ->toArray();
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $posts
+     * @return array<string, mixed>
+     */
+    /**
+     * @param  iterable<SocialPost>  $posts
+     * @return array<string, mixed>
+     */
     private function getEngagementByDay($posts): array
     {
         $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -383,6 +432,14 @@ class AutonomousMarketingEngine
             ->toArray();
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $posts
+     * @return array<string, mixed>
+     */
+    /**
+     * @param  iterable<SocialPost>  $posts
+     * @return array<string, mixed>
+     */
     private function getEngagementByHour($posts): array
     {
         return $posts->groupBy(fn ($p) => $p->published_at?->hour ?? 0)
@@ -391,6 +448,14 @@ class AutonomousMarketingEngine
             ->toArray();
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $posts
+     * @return array<string, mixed>
+     */
+    /**
+     * @param  iterable<SocialPost>  $posts
+     * @return array<string, mixed>
+     */
     private function analyzeContentThemes($posts): array
     {
         if ($posts->isEmpty()) {
@@ -440,11 +505,17 @@ class AutonomousMarketingEngine
         return round((($revenue - $cost) / $cost) * 100, 2);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function parseRecommendations(string $content): array
     {
         return json_decode($content, true) ?? [];
     }
 
+    /**
+     * @param  array<string, mixed>  $recommendation
+     */
     private function predictEngagementChange(Campaign $campaign, array $recommendation): float
     {
         $priority = $recommendation['priority'] ?? 'medium';
@@ -457,6 +528,9 @@ class AutonomousMarketingEngine
         };
     }
 
+    /**
+     * @param  array<string, mixed>  $recommendation
+     */
     private function predictReachChange(Campaign $campaign, array $recommendation): float
     {
         $type = $recommendation['type'] ?? '';
@@ -464,6 +538,9 @@ class AutonomousMarketingEngine
         return str_contains($type, 'hashtag') ? 0.15 : 0.08;
     }
 
+    /**
+     * @param  array<string, mixed>  $recommendation
+     */
     private function calculateConfidence(array $recommendation): float
     {
         $type = $recommendation['type'] ?? '';
@@ -471,6 +548,9 @@ class AutonomousMarketingEngine
         return in_array($type, ['timing', 'hashtag', 'content']) ? 0.85 : 0.65;
     }
 
+    /**
+     * @param  array<string, mixed>  $recommendation
+     */
     private function assessRisk(array $recommendation): string
     {
         $type = $recommendation['type'] ?? '';
@@ -478,6 +558,9 @@ class AutonomousMarketingEngine
         return in_array($type, ['delete', 'remove', 'pause']) ? 'high' : 'low';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function applyChange(Campaign $campaign, Simulation $simulation): array
     {
         return [
@@ -488,6 +571,12 @@ class AutonomousMarketingEngine
         ];
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $simulations
+     */
+    /**
+     * @param  array<int, Simulation>  $simulations
+     */
     private function calculateTotalImprovement(array $simulations): float
     {
         if (empty($simulations)) {
@@ -506,6 +595,9 @@ class AutonomousMarketingEngine
             ->get();
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $anomalies
+     */
     private function calculateCrisisSeverity(array $anomalies): string
     {
         $score = count($anomalies);
@@ -518,6 +610,9 @@ class AutonomousMarketingEngine
         };
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $anomalies
+     */
     private function describeCrisis(array $anomalies): string
     {
         return sprintf(
@@ -527,6 +622,14 @@ class AutonomousMarketingEngine
         );
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $anomalies
+     * @return array<int, string>
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $anomalies
+     * @return array<int, string>
+     */
     private function recommendCrisisActions(array $anomalies): array
     {
         $actions = ['Pause all scheduled posts immediately'];

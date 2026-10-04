@@ -4,11 +4,15 @@ namespace App\Services\Integrations;
 
 use App\Models\Campaign;
 use App\Models\Client;
+use App\Models\InboxMessage;
 use App\Models\Invoice;
+use App\Models\SocialAccount;
+use App\Models\SocialComment;
+use App\Models\SocialListening;
 use App\Models\SocialPost;
-use App\Models\ZapierSubscription;
 use App\Services\Social\SocialPostService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ZapierIntegrationService
 {
@@ -16,6 +20,9 @@ class ZapierIntegrationService
 
     /**
      * Returns 50+ trigger definitions for Zapier integration.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function getTriggers(): array
     {
@@ -645,6 +652,9 @@ class ZapierIntegrationService
     /**
      * Returns 30+ action definitions for Zapier integration.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getActions(): array
     {
         return [
@@ -1096,10 +1106,14 @@ class ZapierIntegrationService
     /**
      * Executes the requested action.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function executeAction(string $action, array $data): array
     {
         $agencyId = $data['agency_id'] ?? null;
-        if (!$agencyId) {
+        if (! $agencyId) {
             return ['success' => false, 'message' => 'Agency ID is required'];
         }
 
@@ -1144,6 +1158,8 @@ class ZapierIntegrationService
 
     /**
      * Fetches recent data for a trigger.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function getTriggerData(string $trigger, int $agencyId): array
     {
@@ -1167,89 +1183,132 @@ class ZapierIntegrationService
 
     // Action execution methods
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCreatePost(int $agencyId, array $data): array
     {
         try {
             $post = $this->socialPostService->createPost($agencyId, $data);
+
             return ['success' => true, 'data' => ['id' => $post->id, 'status' => $post->status]];
         } catch (\Exception $e) {
-            Log::error('Zapier create_post failed: ' . $e->getMessage());
+            Log::error('Zapier create_post failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executePublishPost(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
             $result = $this->socialPostService->publishPost($post);
+
             return $result;
         } catch (\Exception $e) {
-            Log::error('Zapier publish_post failed: ' . $e->getMessage());
+            Log::error('Zapier publish_post failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeSchedulePost(int $agencyId, array $data): array
     {
         try {
             $post = $this->socialPostService->schedulePost($agencyId, $data);
+
             return ['success' => true, 'data' => ['id' => $post->id]];
         } catch (\Exception $e) {
-            Log::error('Zapier schedule_post failed: ' . $e->getMessage());
+            Log::error('Zapier schedule_post failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeDeletePost(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
             $post->delete();
+
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeUpdatePost(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
             $updateData = array_diff_key($data, array_flip(['post_id']));
             $post->update($updateData);
+
             return ['success' => true, 'data' => ['id' => $post->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeApprovePost(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
             $post->update(['approval_status' => 'approved', 'approved_at' => now()]);
+
             return ['success' => true, 'data' => ['id' => $post->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executePinPost(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
             $post->update(['is_pinned' => true]);
+
             return ['success' => true, 'data' => ['id' => $post->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeGetPostMetrics(array $data): array
     {
         try {
             $post = SocialPost::findOrFail($data['post_id']);
+
             return [
                 'success' => true,
                 'data' => [
@@ -1265,132 +1324,193 @@ class ZapierIntegrationService
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeSendCampaign(int $agencyId, array $data): array
     {
         try {
             $campaign = Campaign::create(array_merge($data, [
                 'agency_id' => $agencyId,
                 'status' => 'active',
-                'slug' => \Illuminate\Support\Str::slug($data['name'] ?? 'campaign-' . time()),
+                'slug' => Str::slug($data['name'] ?? 'campaign-'.time()),
             ]));
+
             return ['success' => true, 'data' => ['id' => $campaign->id, 'name' => $campaign->name, 'status' => $campaign->status]];
         } catch (\Exception $e) {
-            Log::error('Zapier send_campaign failed: ' . $e->getMessage());
+            Log::error('Zapier send_campaign failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeUpdateCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $updateData = array_diff_key($data, array_flip(['campaign_id']));
             $campaign->update($updateData);
+
             return ['success' => true, 'data' => ['id' => $campaign->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executePauseCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $campaign->update(['status' => 'paused']);
+
             return ['success' => true, 'data' => ['id' => $campaign->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeActivateCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $campaign->update(['status' => 'active']);
+
             return ['success' => true, 'data' => ['id' => $campaign->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCompleteCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $campaign->update(['status' => 'completed']);
+
             return ['success' => true, 'data' => ['id' => $campaign->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCancelCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $campaign->update(['status' => 'cancelled']);
+
             return ['success' => true, 'data' => ['id' => $campaign->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeAddPostToCampaign(array $data): array
     {
         try {
             $campaign = Campaign::findOrFail($data['campaign_id']);
             $campaign->posts()->attach($data['post_id']);
+
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCreateClient(int $agencyId, array $data): array
     {
         try {
             $client = Client::create(array_merge($data, ['agency_id' => $agencyId]));
+
             return ['success' => true, 'data' => ['id' => $client->id]];
         } catch (\Exception $e) {
-            Log::error('Zapier create_client failed: ' . $e->getMessage());
+            Log::error('Zapier create_client failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeUpdateContact(array $data): array
     {
         try {
             $client = Client::findOrFail($data['client_id']);
             $updateData = array_diff_key($data, array_flip(['client_id']));
             $client->update($updateData);
+
             return ['success' => true, 'data' => ['id' => $client->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeDeleteClient(array $data): array
     {
         try {
             $client = Client::findOrFail($data['client_id']);
             $client->delete();
+
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeGetClient(array $data): array
     {
         try {
             $client = Client::findOrFail($data['client_id']);
+
             return ['success' => true, 'data' => ['id' => $client->id, 'name' => $client->name, 'email' => $client->email]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeSearchClients(int $agencyId, array $data): array
     {
         try {
@@ -1401,23 +1521,33 @@ class ZapierIntegrationService
                 })
                 ->limit(10)
                 ->get();
+
             return ['success' => true, 'data' => ['clients' => $clients]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeChangeClientStatus(array $data): array
     {
         try {
             $client = Client::findOrFail($data['client_id']);
             $client->update(['status' => $data['status']]);
+
             return ['success' => true, 'data' => ['id' => $client->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCreateInvoice(int $agencyId, array $data): array
     {
         try {
@@ -1427,67 +1557,98 @@ class ZapierIntegrationService
                 'status' => 'pending',
                 'issue_date' => now(),
             ]));
+
             return ['success' => true, 'data' => ['id' => $invoice->id, 'invoice_number' => $invoice->invoice_number]];
         } catch (\Exception $e) {
-            Log::error('Zapier create_invoice failed: ' . $e->getMessage());
+            Log::error('Zapier create_invoice failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeSendInvoice(array $data): array
     {
         try {
             $invoice = Invoice::findOrFail($data['invoice_id']);
             $invoice->update(['status' => 'sent']);
+
             return ['success' => true, 'data' => ['id' => $invoice->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeMarkInvoicePaid(array $data): array
     {
         try {
             $invoice = Invoice::findOrFail($data['invoice_id']);
-            $invoice->markPaid($data['payment_method'] ?? 'manual', 'zapier-' . time());
+            $invoice->markPaid($data['payment_method'] ?? 'manual', 'zapier-'.time());
+
             return ['success' => true, 'data' => ['id' => $invoice->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeCancelInvoice(array $data): array
     {
         try {
             $invoice = Invoice::findOrFail($data['invoice_id']);
             $invoice->update(['status' => 'cancelled']);
+
             return ['success' => true, 'data' => ['id' => $invoice->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeGetInvoice(array $data): array
     {
         try {
             $invoice = Invoice::findOrFail($data['invoice_id']);
+
             return ['success' => true, 'data' => ['id' => $invoice->id, 'total' => $invoice->total, 'status' => $invoice->status]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeRefundInvoice(array $data): array
     {
         try {
             $invoice = Invoice::findOrFail($data['invoice_id']);
             $invoice->update(['status' => 'refunded']);
+
             return ['success' => true, 'data' => ['id' => $invoice->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeGenerateReport(int $agencyId, array $data): array
     {
         try {
@@ -1495,13 +1656,19 @@ class ZapierIntegrationService
                 'agency_id' => $agencyId,
                 'status' => 'pending',
             ]));
+
             return ['success' => true, 'data' => ['id' => $report->id]];
         } catch (\Exception $e) {
-            Log::error('Zapier generate_report failed: ' . $e->getMessage());
+            Log::error('Zapier generate_report failed: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeScheduleReport(int $agencyId, array $data): array
     {
         try {
@@ -1509,37 +1676,53 @@ class ZapierIntegrationService
                 'agency_id' => $agencyId,
                 'status' => 'scheduled',
             ]));
+
             return ['success' => true, 'data' => ['id' => $report->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeExportReport(array $data): array
     {
         try {
             $report = Report::findOrFail($data['report_id']);
             $report->update(['status' => 'exporting']);
+
             return ['success' => true, 'data' => ['id' => $report->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeShareReport(array $data): array
     {
         try {
             $report = Report::findOrFail($data['report_id']);
+
             return ['success' => true, 'data' => ['id' => $report->id]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function executeGetReport(array $data): array
     {
         try {
             $report = Report::findOrFail($data['report_id']);
+
             return ['success' => true, 'data' => ['id' => $report->id, 'name' => $report->name]];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -1548,6 +1731,9 @@ class ZapierIntegrationService
 
     // Trigger data fetch methods
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentPublishedPosts(int $agencyId): array
     {
         return SocialPost::where('agency_id', $agencyId)
@@ -1558,6 +1744,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentFailedPosts(int $agencyId): array
     {
         return SocialPost::where('agency_id', $agencyId)
@@ -1568,6 +1757,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentScheduledPosts(int $agencyId): array
     {
         return SocialPost::where('agency_id', $agencyId)
@@ -1578,6 +1770,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentDraftPosts(int $agencyId): array
     {
         return SocialPost::where('agency_id', $agencyId)
@@ -1588,15 +1783,21 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentComments(int $agencyId): array
     {
-        return \App\Models\SocialComment::where('agency_id', $agencyId)
+        return SocialComment::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentCampaigns(int $agencyId): array
     {
         return Campaign::where('agency_id', $agencyId)
@@ -1606,6 +1807,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentPaidInvoices(int $agencyId): array
     {
         return Invoice::where('agency_id', $agencyId)
@@ -1616,6 +1820,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentInvoices(int $agencyId): array
     {
         return Invoice::where('agency_id', $agencyId)
@@ -1625,6 +1832,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentClients(int $agencyId): array
     {
         return Client::where('agency_id', $agencyId)
@@ -1634,6 +1844,9 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentReports(int $agencyId): array
     {
         return Report::where('agency_id', $agencyId)
@@ -1643,27 +1856,36 @@ class ZapierIntegrationService
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentInboxMessages(int $agencyId): array
     {
-        return \App\Models\InboxMessage::where('agency_id', $agencyId)
+        return InboxMessage::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentMentions(int $agencyId): array
     {
-        return \App\Models\SocialListening::where('agency_id', $agencyId)
+        return SocialListening::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->toArray();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     private function getRecentSocialAccounts(int $agencyId): array
     {
-        return \App\Models\SocialAccount::where('agency_id', $agencyId)
+        return SocialAccount::where('agency_id', $agencyId)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()

@@ -142,6 +142,10 @@ class ContentTranslationService
     /**
      * Translate social post content with hashtags.
      */
+    /**
+     * @param  array<string, mixed>  $post
+     * @return array<string, mixed>
+     */
     public function translateSocialPost(array $post, string $targetLang, ?Agency $agency = null): array
     {
         $sourceLang = $post['detected_lang'] ?? $post['source_lang'] ?? 'en';
@@ -171,6 +175,9 @@ class ContentTranslationService
     /**
      * Translate email subject and body.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function translateEmail(string $subject, string $body, string $targetLang, ?Agency $agency = null): array
     {
         $sourceLang = 'en'; // Default source for email, could be detected
@@ -191,6 +198,9 @@ class ContentTranslationService
 
     /**
      * Batch translation with rate limiting.
+     *
+     * @param  array<int, array<string, mixed>|string>  $items
+     * @return array<string, mixed>
      */
     public function translateBatch(array $items, string $sourceLang, string $targetLang, ?Agency $agency = null): array
     {
@@ -205,12 +215,13 @@ class ContentTranslationService
                     'index' => $index,
                     'error' => 'Rate limit exceeded. Please try again in a moment.',
                 ];
+
                 continue;
             }
 
             try {
-                $content = is_array($item) ? ($item['content'] ?? '') : $item;
-                $context = is_array($item) ? ($item['context'] ?? 'general') : 'general';
+                $content = is_array($item) ? (string) ($item['content'] ?? '') : (string) $item;
+                $context = is_array($item) ? (string) ($item['context'] ?? 'general') : 'general';
 
                 $result = $this->translateContent($content, $sourceLang, $targetLang, $context, $agency);
                 $result['index'] = $index;
@@ -289,7 +300,7 @@ class ContentTranslationService
         $content = preg_replace_callback(
             '/<[^>]+>/',
             function ($matches) use (&$placeholders) {
-                $key = '%%HTML_TAG_' . count($placeholders) . '%%';
+                $key = '%%HTML_TAG_'.count($placeholders).'%%';
                 $placeholders[$key] = $matches[0];
 
                 return $key;
@@ -301,7 +312,7 @@ class ContentTranslationService
         $content = preg_replace_callback(
             '/^(#{1,6}\s+.+)$/m',
             function ($matches) use (&$placeholders) {
-                $key = '%%MD_HEADER_' . count($placeholders) . '%%';
+                $key = '%%MD_HEADER_'.count($placeholders).'%%';
                 $placeholders[$key] = $matches[0];
 
                 return $key;
@@ -313,7 +324,7 @@ class ContentTranslationService
         $content = preg_replace_callback(
             '/(\*\*.*?\*\*|\*.*?\*|__.*?__|_.*?_)/',
             function ($matches) use (&$placeholders) {
-                $key = '%%MD_FMT_' . count($placeholders) . '%%';
+                $key = '%%MD_FMT_'.count($placeholders).'%%';
                 $placeholders[$key] = $matches[0];
 
                 return $key;
@@ -349,6 +360,8 @@ class ContentTranslationService
 
     /**
      * Get supported languages.
+     *
+     * @return array<string, string>
      */
     public static function getSupportedLanguages(): array
     {
@@ -366,9 +379,12 @@ class ContentTranslationService
     /**
      * Detect language from text content.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function detectLanguage(string $content, ?Agency $agency = null): array
     {
-        $prompt = "Detect the language of the following text. Return ONLY the ISO 639-1 language code (e.g., 'en', 'es', 'fr'). If uncertain, return 'unknown'.\n\nText: " . substr($content, 0, 500);
+        $prompt = "Detect the language of the following text. Return ONLY the ISO 639-1 language code (e.g., 'en', 'es', 'fr'). If uncertain, return 'unknown'.\n\nText: ".substr($content, 0, 500);
 
         try {
             $request = new AiRequest(
@@ -411,6 +427,10 @@ class ContentTranslationService
     /**
      * Translate hashtags.
      */
+    /**
+     * @param  array<int, string>  $hashtags
+     * @return array<int, string>
+     */
     protected function translateHashtags(array $hashtags, string $sourceLang, string $targetLang): array
     {
         $translated = [];
@@ -421,7 +441,7 @@ class ContentTranslationService
 
             try {
                 $result = $this->translateContent($tagText, $sourceLang, $targetLang, 'general');
-                $translatedTag = '#' . ltrim($result['translated'], '#');
+                $translatedTag = '#'.ltrim($result['translated'], '#');
                 $translated[] = $translatedTag;
             } catch (\Exception $e) {
                 // Keep original on failure
@@ -450,12 +470,12 @@ class ContentTranslationService
         $contextPrompt = $contextPrompts[$context] ?? $contextPrompts['general'];
 
         return "{$contextPrompt}\n\n"
-            . "Translate from {$sourceName} to {$targetName}.\n"
-            . "IMPORTANT:\n"
-            . "- Preserve all formatting, line breaks, and structure\n"
-            . "- Keep proper nouns, brand names, and URLs unchanged\n"
-            . "- Maintain the original tone and intent\n"
-            . "- Return ONLY the translated text, no explanations or notes.";
+            ."Translate from {$sourceName} to {$targetName}.\n"
+            ."IMPORTANT:\n"
+            ."- Preserve all formatting, line breaks, and structure\n"
+            ."- Keep proper nouns, brand names, and URLs unchanged\n"
+            ."- Maintain the original tone and intent\n"
+            .'- Return ONLY the translated text, no explanations or notes.';
     }
 
     /**
@@ -465,7 +485,7 @@ class ContentTranslationService
     {
         // Simple mock for contexts without agency
         return new AiResponse(
-            content: "[Translated] " . substr($request->prompt, 0, 200),
+            content: '[Translated] '.substr($request->prompt, 0, 200),
             model: 'mock',
             provider: 'mock',
             promptTokens: 100,

@@ -21,6 +21,10 @@ class TelegramBotService
     /**
      * Send a message to a Telegram chat.
      */
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
     public function sendMessage(int|string $chatId, string $text, array $options = []): array
     {
         $payload = array_merge([
@@ -34,6 +38,10 @@ class TelegramBotService
 
     /**
      * Send a message with inline keyboard.
+     */
+    /**
+     * @param  array<int, array<int, array<string, string>>>  $buttons
+     * @return array<string, mixed>
      */
     public function sendInlineKeyboard(int|string $chatId, string $text, array $buttons): array
     {
@@ -49,6 +57,10 @@ class TelegramBotService
 
     /**
      * Send a message with reply keyboard.
+     */
+    /**
+     * @param  array<int, array<int, array<string, string>>>  $buttons
+     * @return array<string, mixed>
      */
     public function sendKeyboard(int|string $chatId, string $text, array $buttons): array
     {
@@ -66,6 +78,9 @@ class TelegramBotService
 
     /**
      * Remove keyboard.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function removeKeyboard(int|string $chatId): array
     {
@@ -156,6 +171,9 @@ class TelegramBotService
      * every incoming update carries the `X-Telegram-Bot-Api-Secret-Token` header,
      * which the webhook controller verifies.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function setWebhook(string $url): array
     {
         $params = ['url' => $url];
@@ -171,6 +189,9 @@ class TelegramBotService
     /**
      * Get webhook info.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getWebhookInfo(): array
     {
         return $this->api('getWebhookInfo');
@@ -178,6 +199,10 @@ class TelegramBotService
 
     /**
      * Make an API call to Telegram.
+     */
+    /**
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
      */
     private function api(string $method, array $params = []): array
     {
