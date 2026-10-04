@@ -2989,36 +2989,6 @@ parameters:
 			path: app/Http/Controllers/FacebookController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\FacebookWebhookController\:\:handleComment\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/FacebookWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\FacebookWebhookController\:\:handleFeed\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/FacebookWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\FacebookWebhookController\:\:handleMention\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/FacebookWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\FacebookWebhookController\:\:handleRating\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/FacebookWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\FacebookWebhookController\:\:processPayload\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/FacebookWebhookController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\FeatureController\:\:create\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -5363,36 +5333,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/TikTokController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\TikTokWebhookController\:\:handleComment\(\) has parameter \$event with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/TikTokWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\TikTokWebhookController\:\:handleDirectMessage\(\) has parameter \$event with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/TikTokWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\TikTokWebhookController\:\:handleEvent\(\) has parameter \$event with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/TikTokWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\TikTokWebhookController\:\:handleMention\(\) has parameter \$event with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/TikTokWebhookController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\TikTokWebhookController\:\:processPayload\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Controllers/TikTokWebhookController.php
 
 		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
@@ -14227,36 +14167,6 @@ parameters:
 			path: app/Services/AI/Agent/Agents/CampaignAgent.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\ContentAgent\:\:estimateHashtagEngagement\(\) has parameter \$hashtags with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/ContentAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\ContentAgent\:\:extractTopHashtagsFromMemory\(\) has parameter \$pastResults with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/ContentAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\ContentAgent\:\:extractTopHashtagsFromMemory\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/ContentAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\ContentAgent\:\:parseHashtags\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/ContentAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\ContentAgent\:\:recordEngagementScore\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/ContentAgent.php
-
-		-
 			message: '#^Parameter \$output of static method App\\Services\\AI\\Agent\\AgentResult\:\:success\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -16093,38 +16003,8 @@ parameters:
 			path: app/Services/AI/Training/DatasetService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:getDatasetStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Training/DatasetService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:processCsvFile\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Training/DatasetService.php
-
-		-
 			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:processDataset\(\) should return App\\Models\\AiTrainingDataset but returns App\\Models\\AiTrainingDataset\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Services/AI/Training/DatasetService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:processJsonFile\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Training/DatasetService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:validateCsvStructure\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Training/DatasetService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Training\\DatasetService\:\:validateDataset\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/Training/DatasetService.php
 

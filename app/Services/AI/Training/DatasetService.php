@@ -3,6 +3,7 @@
 namespace App\Services\AI\Training;
 
 use App\Models\AiTrainingDataset;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -11,8 +12,11 @@ use Illuminate\Support\Str;
 class DatasetService
 {
     private const ALLOWED_EXTENSIONS = ['csv', 'json', 'jsonl', 'xlsx'];
+
     private const MAX_FILE_SIZE = 102400; // 100 MB in KB
+
     private const STORAGE_DISK = 'local';
+
     private const STORAGE_PATH = 'ai-training/datasets';
 
     /**
@@ -60,6 +64,9 @@ class DatasetService
     /**
      * Validate a dataset file for integrity and structure.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function validateDataset(int $datasetId): array
     {
         $dataset = AiTrainingDataset::findOrFail($datasetId);
@@ -73,6 +80,7 @@ class DatasetService
         if (! Storage::disk(self::STORAGE_DISK)->exists($dataset->file_path)) {
             $result['valid'] = false;
             $result['errors'][] = 'Dataset file not found.';
+
             return $result;
         }
 
@@ -146,6 +154,9 @@ class DatasetService
     /**
      * Get statistics for a dataset.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getDatasetStats(int $datasetId): array
     {
         $dataset = AiTrainingDataset::findOrFail($datasetId);
@@ -179,7 +190,7 @@ class DatasetService
     /**
      * Get all datasets for an agency.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, AiTrainingDataset>
+     * @return Collection<int, AiTrainingDataset>
      */
     public function getDatasetsForAgency(int $agencyId)
     {
@@ -195,13 +206,16 @@ class DatasetService
     {
         if (! in_array(strtolower($extension), self::ALLOWED_EXTENSIONS, true)) {
             throw new \InvalidArgumentException(
-                'Invalid file type. Allowed: ' . implode(', ', self::ALLOWED_EXTENSIONS)
+                'Invalid file type. Allowed: '.implode(', ', self::ALLOWED_EXTENSIONS)
             );
         }
     }
 
     /**
      * Validate CSV structure and return errors/warnings.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function validateCsvStructure(string $filePath): array
     {
@@ -210,6 +224,7 @@ class DatasetService
         $handle = fopen($filePath, 'r');
         if (! $handle) {
             $result['errors'][] = 'Cannot open CSV file.';
+
             return $result;
         }
 
@@ -222,7 +237,7 @@ class DatasetService
 
         $duplicateColumns = array_diff_assoc($header, array_unique($header));
         if (! empty($duplicateColumns)) {
-            $result['warnings'][] = 'Duplicate column names detected: ' . implode(', ', $duplicateColumns);
+            $result['warnings'][] = 'Duplicate column names detected: '.implode(', ', $duplicateColumns);
         }
 
         return $result;
@@ -230,6 +245,9 @@ class DatasetService
 
     /**
      * Process a CSV file and return stats.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function processCsvFile(string $filePath): array
     {
@@ -259,6 +277,9 @@ class DatasetService
 
     /**
      * Process a JSON/JSONL file and return stats.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function processJsonFile(string $filePath): array
     {

@@ -138,6 +138,9 @@ class ContentAgent extends AbstractAgent
      *
      * @return array<string, float>
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getTopPerformingPrompts(int $limit = 5): array
     {
         $patterns = $this->executionStats['prompt_patterns'] ?? [];
@@ -190,6 +193,9 @@ class ContentAgent extends AbstractAgent
 
     /**
      * Record engagement score and learn from it.
+     */
+    /**
+     * @param  array<string, mixed>  $meta
      */
     protected function recordEngagementScore(string $taskType, float $engagementScore, array $meta = []): void
     {
@@ -475,6 +481,9 @@ class ContentAgent extends AbstractAgent
     /**
      * Estimate hashtag engagement potential.
      */
+    /**
+     * @param  array<int, string>  $hashtags
+     */
     private function estimateHashtagEngagement(array $hashtags, string $platform): float
     {
         $count = count($hashtags);
@@ -502,6 +511,9 @@ class ContentAgent extends AbstractAgent
     /**
      * Parse hashtags from AI response.
      */
+    /**
+     * @return array<int, string>
+     */
     private function parseHashtags(string $content): array
     {
         $hashtags = [];
@@ -527,6 +539,10 @@ class ContentAgent extends AbstractAgent
 
     /**
      * Extract top performing hashtags from past results.
+     */
+    /**
+     * @param  array<int, array<string, mixed>>  $pastResults
+     * @return array<int, string>
      */
     private function extractTopHashtagsFromMemory(array $pastResults): array
     {

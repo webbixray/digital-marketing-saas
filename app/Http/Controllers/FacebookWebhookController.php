@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessWebhookJob;
 use App\Models\InboxMessage;
 use App\Models\SocialAccount;
 use App\Services\Webhooks\WebhookProcessor;
@@ -61,6 +60,9 @@ class FacebookWebhookController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     private function processPayload(array $payload): void
     {
         if (($payload['object'] ?? '') !== 'page') {
@@ -77,6 +79,7 @@ class FacebookWebhookController extends Controller
 
             if (! $account) {
                 Log::warning('Facebook webhook: account not found', ['page_id' => $pageId]);
+
                 continue;
             }
 
@@ -95,6 +98,9 @@ class FacebookWebhookController extends Controller
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $value
+     */
     private function handleFeed(SocialAccount $account, array $value): void
     {
         Log::info('Facebook feed webhook', ['item' => $value['item'] ?? null]);
@@ -115,6 +121,9 @@ class FacebookWebhookController extends Controller
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $value
+     */
     private function handleComment(SocialAccount $account, array $value): void
     {
         InboxMessage::create([
@@ -131,6 +140,9 @@ class FacebookWebhookController extends Controller
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $value
+     */
     private function handleMention(SocialAccount $account, array $value): void
     {
         InboxMessage::create([
@@ -146,6 +158,9 @@ class FacebookWebhookController extends Controller
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $value
+     */
     private function handleRating(SocialAccount $account, array $value): void
     {
         Log::info('Facebook rating webhook', ['rating' => $value['rating'] ?? null]);

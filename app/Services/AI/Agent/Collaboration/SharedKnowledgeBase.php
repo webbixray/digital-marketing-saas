@@ -26,7 +26,9 @@ class SharedKnowledgeBase
     }
 
     /**
-     * Get insights for an agency and category.
+     * * Get insights for an agency and category.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getInsights(int $agencyId, string $category): array
     {
@@ -46,7 +48,9 @@ class SharedKnowledgeBase
     }
 
     /**
-     * Get patterns learned across multiple agents.
+     * * Get patterns learned across multiple agents.
+     *
+     * * @return array<string, array<string, mixed>>
      */
     public function getCrossAgentPatterns(int $agencyId): array
     {
@@ -73,7 +77,9 @@ class SharedKnowledgeBase
     }
 
     /**
-     * Get best practices learned from cross-agent insights.
+     * * Get best practices learned from cross-agent insights.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getBestPractices(int $agencyId, string $domain): array
     {
@@ -130,7 +136,9 @@ class SharedKnowledgeBase
     }
 
     /**
-     * Get collaboration statistics for an agency.
+     * * Get collaboration statistics for an agency.
+     *
+     * * @return array<string, mixed>
      */
     public function getCollaborationStats(int $agencyId): array
     {
@@ -188,7 +196,9 @@ class SharedKnowledgeBase
     }
 
     /**
-     * Get insights filtered by minimum confidence threshold.
+     * * Get insights filtered by minimum confidence threshold.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getHighConfidenceInsights(int $agencyId, string $category, float $minConfidence = 0.8): array
     {

@@ -50,6 +50,9 @@ class TikTokWebhookController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     */
     private function processPayload(array $payload): void
     {
         foreach ($payload['data']['events'] ?? [] as $event) {
@@ -57,6 +60,9 @@ class TikTokWebhookController extends Controller
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
     private function handleEvent(array $event): void
     {
         $eventType = $event['event'] ?? '';
@@ -69,6 +75,9 @@ class TikTokWebhookController extends Controller
         };
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
     private function handleComment(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
@@ -86,6 +95,9 @@ class TikTokWebhookController extends Controller
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
     private function handleMention(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
@@ -103,6 +115,9 @@ class TikTokWebhookController extends Controller
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
     private function handleDirectMessage(array $event): void
     {
         $account = $this->getAccount($event['video_id'] ?? '');
