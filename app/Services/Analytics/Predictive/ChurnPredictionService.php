@@ -18,7 +18,9 @@ class ChurnPredictionService
     private const CACHE_TTL = 300;
 
     /**
-     * Predict churn probability for a specific client.
+     * * Predict churn probability for a specific client.
+     *
+     * * @return array<string, mixed>
      */
     public function predictChurn(int $clientId, int $agencyId): array
     {
@@ -43,7 +45,9 @@ class ChurnPredictionService
     }
 
     /**
-     * Get the specific risk factors contributing to churn.
+     * * Get the specific risk factors contributing to churn.
+     *
+     * * @return array<int, array<string, mixed>>
      */
     public function getChurnRiskFactors(int $clientId): array
     {
@@ -161,18 +165,20 @@ class ChurnPredictionService
             ->get();
 
         return $clients->map(function ($client) {
-                $client->churn_risk_score = $this->getChurnRiskScore($client->id);
-                $client->risk_level = $this->classifyRiskLevel($client->churn_risk_score);
+            $client->churn_risk_score = $this->getChurnRiskScore($client->id);
+            $client->risk_level = $this->classifyRiskLevel($client->churn_risk_score);
 
-                return $client;
-            })
+            return $client;
+        })
             ->filter(fn ($client) => $client->churn_risk_score >= $threshold)
             ->sortByDesc('churn_risk_score')
             ->values();
     }
 
     /**
-     * Get churn trend over time.
+     * * Get churn trend over time.
+     *
+     * * @return list<array<string, float|int<0, max>|string>>
      */
     public function getChurnTrends(int $agencyId, int $months = 6): array
     {
@@ -226,7 +232,9 @@ class ChurnPredictionService
     }
 
     /**
-     * Get a recommendation based on risk score and factors.
+     * * Get a recommendation based on risk score and factors.
+     *
+     * * @param  array<int, array<string, mixed>>  $factors
      */
     private function getRecommendation(float $score, array $factors): string
     {

@@ -2,8 +2,6 @@
 
 namespace App\Services\AI\Audit;
 
-use Illuminate\Support\Str;
-
 class BiasDetectionService
 {
     private array $biasCategories = [
@@ -83,6 +81,9 @@ class BiasDetectionService
     /**
      * Detect bias in the given text and return detailed findings.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function detectBias(string $text): array
     {
         $findings = [];
@@ -136,6 +137,9 @@ class BiasDetectionService
     /**
      * Get all bias categories with metadata.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getBiasCategories(): array
     {
         $categories = [];
@@ -154,6 +158,9 @@ class BiasDetectionService
 
     /**
      * Suggest mitigation strategies for a given bias type.
+     */
+    /**
+     * @return array<int, string>
      */
     public function suggestMitigation(string $biasType): array
     {

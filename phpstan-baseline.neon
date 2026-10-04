@@ -15187,24 +15187,6 @@ parameters:
 			path: app/Services/AI/Audit/AiAuditService.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Audit\\BiasDetectionService\:\:detectBias\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/BiasDetectionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\BiasDetectionService\:\:getBiasCategories\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/BiasDetectionService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Audit\\BiasDetectionService\:\:suggestMitigation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Audit/BiasDetectionService.php
-
-		-
 			message: '#^Property App\\Services\\AI\\Audit\\BiasDetectionService\:\:\$biasCategories type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
