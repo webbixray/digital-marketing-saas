@@ -3,8 +3,9 @@
 use App\Http\Controllers\TelegramLinkController;
 use App\Http\Controllers\TelegramWebhookController;
 
-// Public webhook endpoint (no auth)
+// Public webhook endpoint (no auth) — signature verified in the controller
 app('router')->post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])
+    ->middleware('throttle:120,1')
     ->name('telegram.webhook');
 
 // Webhook management (admin only)

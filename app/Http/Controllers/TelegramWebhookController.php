@@ -17,6 +17,18 @@ class TelegramWebhookController extends Controller
 
     public function handle(Request $request): JsonResponse
     {
+        // Verify the Telegram webhook secret token (fail closed when configured).
+        // Without this, anyone could POST forged updates and drive the bot.
+        $secret = (string) config('services.telegram.webhook_secret', '');
+        if ($secret !== '') {
+            $provided = (string) $request->header('X-Telegram-Bot-Api-Secret-Token', '');
+            if (! hash_equals($secret, $provided)) {
+                Log::warning('Telegram webhook rejected: invalid secret token');
+
+                abort(403, 'Invalid webhook signature.');
+            }
+        }
+
         $update = $request->all();
 
         Log::debug('Telegram webhook received', self::extractSafeMetadata($update));
@@ -26,7 +38,7 @@ class TelegramWebhookController extends Controller
             platform: 'telegram',
             eventType: 'update',
             payload: $update,
-            signature: null,
+            signature: $request->header('X-Telegram-Bot-Api-Secret-Token'),
             handler: function (array $update) {
                 $this->telegram->handleWebhook($update);
             },

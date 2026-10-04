@@ -3,8 +3,9 @@
 use App\Http\Controllers\InstagramController;
 use App\Http\Controllers\InstagramWebhookController;
 
-// Public webhook endpoint (no auth)
+// Public webhook endpoint (no auth) — signature verified in the controller
 Route::post('/instagram/webhook', [InstagramWebhookController::class, 'handle'])
+    ->middleware('throttle:120,1')
     ->name('instagram.webhook');
 
 // Instagram Business API integration (authenticated users)

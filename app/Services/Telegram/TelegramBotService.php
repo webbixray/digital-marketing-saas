@@ -151,10 +151,21 @@ class TelegramBotService
 
     /**
      * Set the webhook URL.
+     *
+     * When a webhook secret is configured it is registered with Telegram so that
+     * every incoming update carries the `X-Telegram-Bot-Api-Secret-Token` header,
+     * which the webhook controller verifies.
      */
     public function setWebhook(string $url): array
     {
-        return $this->api('setWebhook', ['url' => $url]);
+        $params = ['url' => $url];
+
+        $secret = (string) config('services.telegram.webhook_secret', '');
+        if ($secret !== '') {
+            $params['secret_token'] = $secret;
+        }
+
+        return $this->api('setWebhook', $params);
     }
 
     /**
