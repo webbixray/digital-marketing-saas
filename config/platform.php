@@ -138,7 +138,7 @@ return [
                 'max_tokens' => 4096,
             ],
             'nvidia_nim' => [
-                'model' => env('AI_NVIDIA_MODEL', 'nvidia/llama-3.1-nemotron-70b-instruct'),
+                'model' => env('AI_NVIDIA_MODEL', 'nvidia/nemotron-3-super-120b-a12b'),
                 'fallback_model' => 'mistralai/mistral-large',
                 'api_base_url' => 'https://integrate.api.nvidia.com/v1',
                 'temperature' => 0.7,

@@ -31,6 +31,7 @@ class NvidiaNimProvider implements AiProviderInterface
         'nvidia/llama-3.1-nemotron-51b-instruct' => ['input' => 0.00, 'output' => 0.00],
         'nvidia/mistral-nemo-12b-instruct' => ['input' => 0.00, 'output' => 0.00],
         'nvidia/nemotron-4-340b-instruct' => ['input' => 0.00, 'output' => 0.00],
+        'nvidia/nemotron-3-super-120b-a12b' => ['input' => 0.00, 'output' => 0.00],
     ];
 
     public function __construct()
