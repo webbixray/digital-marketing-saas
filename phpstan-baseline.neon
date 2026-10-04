@@ -1,6 +1,30 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Cannot access property \$email on array\<string, mixed\>\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: app/Console/Commands/SendWinBackEmailsCommand.php
+
+		-
+			message: '#^Cannot access property \$id on array\<string, mixed\>\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Console/Commands/SendWinBackEmailsCommand.php
+
+		-
+			message: '#^Cannot access property \$last_active_at on array\<string, mixed\>\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Console/Commands/SendWinBackEmailsCommand.php
+
+		-
+			message: '#^Parameter \$user of class App\\Mail\\WinBackEmail constructor expects App\\Models\\User, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SendWinBackEmailsCommand.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\AgentMarketplaceItem\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
@@ -17341,30 +17365,6 @@ parameters:
 			path: app/Services/ChurnPreventionService.php
 
 		-
-			message: '#^Method App\\Services\\ChurnPreventionService\:\:getChurnAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ChurnPreventionService.php
-
-		-
-			message: '#^Method App\\Services\\ChurnPreventionService\:\:getDormantUsers\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ChurnPreventionService.php
-
-		-
-			message: '#^Method App\\Services\\ChurnPreventionService\:\:getRetentionOffer\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ChurnPreventionService.php
-
-		-
-			message: '#^Method App\\Services\\ChurnPreventionService\:\:getUpgradePrompt\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ChurnPreventionService.php
-
-		-
 			message: '#^Comparison operation "\>" between int\<3, max\> and 2 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 1
@@ -17385,30 +17385,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>\=" between int\<0, max\> and 0 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: app/Services/ContentPerformancePredictor.php
-
-		-
-			message: '#^Method App\\Services\\ContentPerformancePredictor\:\:predict\(\) has parameter \$emojis with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ContentPerformancePredictor.php
-
-		-
-			message: '#^Method App\\Services\\ContentPerformancePredictor\:\:predict\(\) has parameter \$hashtags with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ContentPerformancePredictor.php
-
-		-
-			message: '#^Method App\\Services\\ContentPerformancePredictor\:\:scoreEmojis\(\) has parameter \$emojis with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/ContentPerformancePredictor.php
-
-		-
-			message: '#^Method App\\Services\\ContentPerformancePredictor\:\:scoreHashtags\(\) has parameter \$hashtags with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/ContentPerformancePredictor.php
 

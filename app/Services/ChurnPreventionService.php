@@ -61,6 +61,9 @@ class ChurnPreventionService
     /**
      * Get retention offer for churning user.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getRetentionOffer(Agency $agency): array
     {
         $risk = $this->getChurnRisk($agency);
@@ -87,6 +90,9 @@ class ChurnPreventionService
     /**
      * Get dormant users for re-engagement campaign.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getDormantUsers(int $daysInactive = 14): array
     {
         $cutoff = now()->subDays($daysInactive);
@@ -102,6 +108,9 @@ class ChurnPreventionService
 
     /**
      * Get upgrade prompt based on usage.
+     */
+    /**
+     * @return array<string, mixed>|null
      */
     public function getUpgradePrompt(Agency $agency): ?array
     {
@@ -168,6 +177,9 @@ class ChurnPreventionService
 
     /**
      * Get churn analytics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getChurnAnalytics(int $days = 30): array
     {

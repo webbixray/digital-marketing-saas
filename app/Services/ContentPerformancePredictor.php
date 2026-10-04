@@ -13,6 +13,10 @@ class ContentPerformancePredictor
      * @param  array  $emojis  Array of emojis used in content
      * @return int Predicted engagement score (0-100)
      */
+    /**
+     * @param  array<int, string>  $hashtags
+     * @param  array<int, string>  $emojis
+     */
     public function predict(string $content, string $platform, array $hashtags = [], array $emojis = []): int
     {
         $score = 0;
@@ -98,6 +102,9 @@ class ContentPerformancePredictor
     /**
      * Score hashtag usage based on platform-specific optimal counts.
      */
+    /**
+     * @param  array<int, string>  $hashtags
+     */
     protected function scoreHashtags(array $hashtags, string $platform): int
     {
         $count = count($hashtags);
@@ -160,6 +167,9 @@ class ContentPerformancePredictor
 
     /**
      * Score emoji usage based on platform-specific norms.
+     */
+    /**
+     * @param  array<int, string>  $emojis
      */
     protected function scoreEmojis(array $emojis, string $platform): int
     {
