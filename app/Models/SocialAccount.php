@@ -98,5 +98,6 @@ class SocialAccount extends Model
         'linkedin' => 'LinkedIn',
         'tiktok' => 'TikTok',
         'pinterest' => 'Pinterest',
+        'youtube' => 'YouTube',
     ];
 }

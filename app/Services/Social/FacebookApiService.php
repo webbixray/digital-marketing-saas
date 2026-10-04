@@ -399,4 +399,58 @@ class FacebookApiService
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
+
+    /**
+     * Get comments on a Facebook post.
+     */
+    public function getPostComments(string $postId, string $accessToken, int $limit = 100): array
+    {
+        try {
+            $response = Http::timeout(30)
+                ->get("{$this->baseUrl}/{$postId}/comments", [
+                    'fields' => 'id,message,from,created_time,like_count,comment_count,parent',
+                    'limit' => $limit,
+                    'access_token' => $accessToken,
+                ]);
+
+            if (! $response->successful()) {
+                Log::error('Facebook getPostComments failed', ['response' => $response->json()]);
+
+                return ['success' => false, 'error' => 'Failed to fetch comments'];
+            }
+
+            return ['success' => true, 'data' => $response->json()['data'] ?? []];
+        } catch (\Exception $e) {
+            Log::error('Facebook getPostComments failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Reply to a Facebook comment.
+     */
+    public function replyToComment(string $commentId, string $accessToken, string $message): array
+    {
+        try {
+            $response = Http::asForm()
+                ->timeout(30)
+                ->post("{$this->baseUrl}/{$commentId}/comments", [
+                    'message' => $message,
+                    'access_token' => $accessToken,
+                ]);
+
+            if (! $response->successful()) {
+                Log::error('Facebook replyToComment failed', ['response' => $response->json()]);
+
+                return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to reply'];
+            }
+
+            return ['success' => true, 'post_id' => $response->json()['id'] ?? null];
+        } catch (\Exception $e) {
+            Log::error('Facebook replyToComment failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
 }

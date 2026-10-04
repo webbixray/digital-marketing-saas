@@ -1,5 +1,13 @@
 <?php
 
+use App\Services\Social\Drivers\FacebookDriver;
+use App\Services\Social\Drivers\InstagramDriver;
+use App\Services\Social\Drivers\LinkedInDriver;
+use App\Services\Social\Drivers\PinterestDriver;
+use App\Services\Social\Drivers\TikTokDriver;
+use App\Services\Social\Drivers\TwitterDriver;
+use App\Services\Social\Drivers\YouTubeDriver;
+
 return [
 
     /*
@@ -81,6 +89,35 @@ return [
                 'pinterest.0.0020',
             ],
         ],
+        'youtube' => [
+            'base_url' => 'https://www.googleapis.com/youtube/v3',
+            'scopes' => [
+                'https://www.googleapis.com/auth/youtube.readonly',
+                'https://www.googleapis.com/auth/youtube.upload',
+            ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Social Platform Drivers
+    |--------------------------------------------------------------------------
+    |
+    | The single registry of publish/comment/metrics drivers. To add a platform:
+    | implement App\Services\Social\Contracts\SocialPlatformContract (extend
+    | AbstractPlatformDriver), register it here, and add it to
+    | SocialAccount::SUPPORTED_PLATFORMS. Nothing else needs to change.
+    |
+    */
+
+    'social_drivers' => [
+        'facebook' => FacebookDriver::class,
+        'instagram' => InstagramDriver::class,
+        'twitter' => TwitterDriver::class,
+        'linkedin' => LinkedInDriver::class,
+        'tiktok' => TikTokDriver::class,
+        'pinterest' => PinterestDriver::class,
+        'youtube' => YouTubeDriver::class,
     ],
 
     /*

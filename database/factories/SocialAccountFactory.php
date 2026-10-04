@@ -12,7 +12,7 @@ class SocialAccountFactory extends Factory
 
     public function definition(): array
     {
-        $platform = fake()->randomElement(['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest']);
+        $platform = fake()->randomElement(['facebook', 'instagram', 'twitter', 'linkedin', 'tiktok', 'pinterest', 'youtube']);
 
         return [
             'agency_id' => Agency::factory(),
@@ -46,5 +46,15 @@ class SocialAccountFactory extends Factory
     public function twitter(): static
     {
         return $this->state(['platform' => 'twitter']);
+    }
+
+    public function youtube(): static
+    {
+        return $this->state(['platform' => 'youtube']);
+    }
+
+    public function tiktok(): static
+    {
+        return $this->state(['platform' => 'tiktok']);
     }
 }

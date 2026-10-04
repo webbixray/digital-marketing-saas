@@ -534,4 +534,58 @@ class InstagramApiService
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
+
+    /**
+     * Get comments on an Instagram media object.
+     */
+    public function getMediaComments(string $mediaId, string $accessToken, int $limit = 100): array
+    {
+        try {
+            $response = Http::timeout(30)
+                ->get("{$this->baseUrl}/{$mediaId}/comments", [
+                    'fields' => 'id,text,username,timestamp,like_count,replies{id,text,username,timestamp}',
+                    'limit' => $limit,
+                    'access_token' => $accessToken,
+                ]);
+
+            if (! $response->successful()) {
+                Log::error('Instagram getMediaComments failed', ['response' => $response->json()]);
+
+                return ['success' => false, 'error' => 'Failed to fetch comments'];
+            }
+
+            return ['success' => true, 'data' => $response->json()['data'] ?? []];
+        } catch (\Exception $e) {
+            Log::error('Instagram getMediaComments failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Reply to an Instagram comment.
+     */
+    public function replyToComment(string $commentId, string $accessToken, string $message): array
+    {
+        try {
+            $response = Http::asForm()
+                ->timeout(30)
+                ->post("{$this->baseUrl}/{$commentId}/replies", [
+                    'message' => $message,
+                    'access_token' => $accessToken,
+                ]);
+
+            if (! $response->successful()) {
+                Log::error('Instagram replyToComment failed', ['response' => $response->json()]);
+
+                return ['success' => false, 'error' => $response->json()['error']['message'] ?? 'Failed to reply'];
+            }
+
+            return ['success' => true, 'post_id' => $response->json()['id'] ?? null];
+        } catch (\Exception $e) {
+            Log::error('Instagram replyToComment failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
 }

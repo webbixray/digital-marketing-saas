@@ -7,9 +7,9 @@ use App\Models\Client;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
-use App\Services\Social\SocialApiService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class UserWorkflowTest extends TestCase
@@ -299,27 +299,28 @@ class UserWorkflowTest extends TestCase
 
     public function test_post_publish_workflow(): void
     {
+        Http::fake([
+            'api.twitter.com/*' => Http::response(['data' => ['id' => 'mock_123']], 201),
+        ]);
+
         [$agency, $user] = $this->createAgencyWithUser();
-        $account = SocialAccount::factory()->create(['agency_id' => $agency->id]);
+        $account = SocialAccount::factory()->twitter()->create([
+            'agency_id' => $agency->id,
+            'access_token' => 'token',
+            'token_expires_at' => null,
+        ]);
         $this->actingAs($user);
 
         $post = SocialPost::factory()->create([
             'agency_id' => $agency->id,
             'social_account_id' => $account->id,
+            'platform' => 'twitter',
             'status' => 'draft',
         ]);
 
-        // Mock the SocialApiService to avoid real API calls
-        $mock = \Mockery::mock(SocialApiService::class);
-        $mock->shouldReceive('publish')->once()->andReturn([
-            'success' => true,
-            'platform_post_id' => 'mock_123',
-            'url' => 'https://example.com/mock',
-        ]);
-        $this->app->instance(SocialApiService::class, $mock);
-
         $response = $this->post("/social/posts/{$post->id}/publish");
         $response->assertRedirect('/social/posts');
+        $this->assertSame('mock_123', $post->fresh()->external_post_id);
     }
 
     public function test_client_filter_by_status(): void

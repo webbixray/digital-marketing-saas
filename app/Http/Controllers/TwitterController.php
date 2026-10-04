@@ -230,7 +230,7 @@ class TwitterController extends Controller
                 'social_account_id' => $account->id,
                 'platform' => 'twitter',
                 'content' => $request->text,
-                'platform_post_id' => $result['tweet_id'],
+                'external_post_id' => $result['tweet_id'],
                 'status' => 'published',
                 'published_at' => now(),
             ]);

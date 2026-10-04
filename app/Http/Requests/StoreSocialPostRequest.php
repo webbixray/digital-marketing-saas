@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\SocialAccount;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSocialPostRequest extends FormRequest
@@ -23,7 +24,7 @@ class StoreSocialPostRequest extends FormRequest
     {
         return [
             'social_account_id' => 'required|exists:social_accounts,id',
-            'platform' => 'sometimes|string|in:facebook,instagram,twitter,linkedin,tiktok,pinterest',
+            'platform' => 'sometimes|string|in:'.implode(',', array_keys(SocialAccount::SUPPORTED_PLATFORMS)),
             'content' => 'required|string|max:5000',
             'media' => 'nullable|array',
             'hashtags' => 'nullable|array',

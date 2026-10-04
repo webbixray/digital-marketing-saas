@@ -3,15 +3,15 @@
 namespace App\Services\Social;
 
 use App\Enums\PostStatus;
-use App\Events\PostPublished;
 use App\Events\PostFailed;
+use App\Events\PostPublished;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SocialPostService
 {
-    public function __construct(private SocialApiService $apiService) {}
+    public function __construct(private SocialPlatformManager $platforms) {}
 
     /**
      * Create a new social post (draft or scheduled).
@@ -65,7 +65,7 @@ class SocialPostService
             $post->update([
                 'status' => PostStatus::PUBLISHED->value,
                 'published_at' => now(),
-                'external_post_id' => $result['id'] ?? null,
+                'external_post_id' => $result['external_id'] ?? null,
                 'platform_response' => $result,
             ]);
 
@@ -107,13 +107,17 @@ class SocialPostService
             throw new \RuntimeException("Social account not found for post #{$post->id}");
         }
 
-        $result = $this->apiService->publish($account, $post);
-
-        if (! $result['success']) {
-            throw new \RuntimeException($result['error'] ?? 'Unknown error');
+        if ($account->isExpired()) {
+            throw new \RuntimeException("Access token for account #{$account->id} has expired. Please reconnect the account.");
         }
 
-        return $result;
+        $result = $this->platforms->for($post->platform)->publish($account, $post);
+
+        if (! $result->success) {
+            throw new \RuntimeException($result->error ?? 'Unknown error');
+        }
+
+        return $result->toArray();
     }
 
     /**

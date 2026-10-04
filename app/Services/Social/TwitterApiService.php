@@ -257,4 +257,76 @@ class TwitterApiService
     {
         return ! empty($this->bearerToken);
     }
+
+    /**
+     * Get replies to a tweet (conversation replies).
+     */
+    public function getTweetReplies(string $tweetId, int $maxResults = 100): array
+    {
+        try {
+            $url = "{$this->baseUrl}/2/tweets/search/recent";
+
+            $response = Http::withToken($this->bearerToken)
+                ->timeout(30)
+                ->get($url, [
+                    'query' => "conversation_id:{$tweetId}",
+                    'tweet.fields' => 'author_id,created_at,public_metrics,conversation_id',
+                    'max_results' => min($maxResults, 100),
+                ]);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'data' => $response->json()['data'] ?? [],
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json()['detail'] ?? 'Failed to fetch replies',
+                'status' => $response->status(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Twitter getTweetReplies failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Reply to a tweet using OAuth 1.0a user context.
+     */
+    public function replyToTweet(string $tweetId, string $text): array
+    {
+        try {
+            $url = "{$this->baseUrl}/2/tweets";
+
+            $oauthHeaders = $this->buildOAuth1Headers('POST', $url);
+
+            $response = Http::withHeaders($oauthHeaders)
+                ->timeout(30)
+                ->post($url, [
+                    'text' => $text,
+                    'reply' => ['in_reply_to_tweet_id' => $tweetId],
+                ]);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'post_id' => $response->json()['data']['id'] ?? null,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json()['detail'] ?? 'Reply failed',
+                'status' => $response->status(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Twitter replyToTweet failed: '.$e->getMessage());
+
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
 }

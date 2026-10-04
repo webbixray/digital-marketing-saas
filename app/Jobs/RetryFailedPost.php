@@ -6,13 +6,7 @@ use App\Events\PostFailed;
 use App\Events\PostPublished;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
-use App\Services\Social\FacebookApiService;
-use App\Services\Social\InstagramApiService;
-use App\Services\Social\LinkedInApiService;
-use App\Services\Social\PinterestApiService;
-use App\Services\Social\TikTokApiService;
-use App\Services\Social\TwitterApiService;
-use App\Services\Social\YouTubeApiService;
+use App\Services\Social\SocialPlatformManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -120,63 +114,21 @@ class RetryFailedPost implements ShouldQueue
     }
 
     /**
-     * Publish post based on platform.
+     * Publish post based on platform via the central driver registry.
      */
     private function publish(SocialPost $post, SocialAccount $account): array
     {
-        return match ($post->platform) {
-            'facebook' => app(FacebookApiService::class)->postText(
-                $account->platform_account_id,
-                $account->access_token,
-                $post->content,
-            ),
-            'instagram' => app(InstagramApiService::class)->post(
-                $account->platform_account_id,
-                $account->access_token,
-                ['caption' => $post->content, ...$this->getMediaOptions($post)],
-            ),
-            'twitter' => app(TwitterApiService::class)->postTweet($post->content),
-            'linkedin' => app(LinkedInApiService::class)->share(
-                $account->access_token,
-                'urn:li:person:'.$account->platform_account_id,
-                $post->content,
-            ),
-            'tiktok' => app(TikTokApiService::class)->publishVideo(
-                $account->access_token,
-                $post->media['video_url'] ?? '',
-                $post->content,
-            ),
-            'pinterest' => app(PinterestApiService::class)->createPin(
-                $account->access_token,
-                $post->metadata['board_id'] ?? '',
-                $post->content,
-                $post->content,
-                $post->media['image_url'] ?? '',
-            ),
-            'youtube' => app(YouTubeApiService::class)->uploadVideo(
-                $account->access_token,
-                $post->media['video'] ?? null,
-                $post->content,
-            ),
-            default => ['success' => false, 'error' => "Unsupported platform: {$post->platform}"],
-        };
-    }
-
-    /**
-     * Get media options for post.
-     */
-    private function getMediaOptions(SocialPost $post): array
-    {
-        $options = [];
-
-        if (! empty($post->media['image_url'])) {
-            $options['image_url'] = $post->media['image_url'];
-        }
-        if (! empty($post->media['video_url'])) {
-            $options['video_url'] = $post->media['video_url'];
+        if ($account->isExpired()) {
+            return ['success' => false, 'error' => "Access token for account #{$account->id} has expired. Please reconnect."];
         }
 
-        return $options;
+        try {
+            $result = app(SocialPlatformManager::class)->for($post->platform)->publish($account, $post);
+        } catch (\InvalidArgumentException $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+
+        return $result->toArray();
     }
 
     /**
