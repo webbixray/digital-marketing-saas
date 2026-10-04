@@ -149,6 +149,9 @@ class SupportAgent extends AbstractAgent
      *
      * @return array<string, float>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getResolutionStats(): array
     {
         return $this->executionStats['resolution_stats'] ?? [];
@@ -158,6 +161,9 @@ class SupportAgent extends AbstractAgent
      * Get common ticket categories and their resolution rates.
      *
      * @return array<string, array>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getCategoryStats(): array
     {
@@ -418,6 +424,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Get customer support history.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getCustomerHistory(Agency $agency, int $customerId): array
     {
         $messages = InboxMessage::where('agency_id', $agency->id)
@@ -470,6 +479,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Parse classification from AI response.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function parseClassification(string $content): array
     {
         $classification = [
@@ -499,6 +511,9 @@ class SupportAgent extends AbstractAgent
 
     /**
      * Parse sentiment from AI response.
+     */
+    /**
+     * @return array<string, mixed>
      */
     private function parseSentiment(string $content): array
     {
@@ -535,6 +550,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Parse escalation decision from AI response.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function parseEscalation(string $content): array
     {
         $escalation = [
@@ -565,6 +583,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Learn from ticket classification.
      */
+    /**
+     * @param  array<string, mixed>  $classification
+     */
     private function learnFromClassification(array $classification): void
     {
         $category = $classification['category'] ?? 'unknown';
@@ -589,6 +610,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Learn from sentiment analysis.
      */
+    /**
+     * @param  array<string, mixed>  $sentiment
+     */
     private function learnFromSentiment(array $sentiment, ?int $customerId): void
     {
         $sentimentHistory = $this->executionStats['sentiment_history'] ?? [];
@@ -612,6 +636,9 @@ class SupportAgent extends AbstractAgent
 
     /**
      * Learn from escalation patterns.
+     */
+    /**
+     * @param  array<string, mixed>  $escalation
      */
     private function learnFromEscalation(array $escalation, string $message, string $category): void
     {
@@ -652,6 +679,9 @@ class SupportAgent extends AbstractAgent
     /**
      * Extract escalation indicators from message.
      */
+    /**
+     * @return array<int, string>
+     */
     private function extractEscalationIndicators(string $message): array
     {
         $indicators = [];
@@ -674,6 +704,9 @@ class SupportAgent extends AbstractAgent
 
     /**
      * Record resolution score and learn from it.
+     */
+    /**
+     * @param  array<string, mixed>  $meta
      */
     private function recordResolutionScore(string $taskType, float $resolutionScore, array $meta = []): void
     {

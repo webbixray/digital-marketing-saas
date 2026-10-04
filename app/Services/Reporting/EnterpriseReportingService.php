@@ -3,19 +3,17 @@
 namespace App\Services\Reporting;
 
 use App\Jobs\GenerateReportJob;
+use App\Models\Campaign;
+use App\Models\Client;
 use App\Models\Report;
 use App\Models\ScheduledReport;
+use App\Models\SocialAccount;
+use App\Models\SocialPost;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
-use RuntimeException;
-use App\Models\SocialPost;
-use App\Models\Campaign;
-use App\Models\Client;
-use App\Models\SocialAccount;
-use Illuminate\Support\Facades\DB;
 
 class EnterpriseReportingService
 {
@@ -105,6 +103,9 @@ class EnterpriseReportingService
         return Storage::url($filename);
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
     public function getReportTypes(): array
     {
         return [
@@ -119,6 +120,9 @@ class EnterpriseReportingService
         ];
     }
 
+    /**
+     * @return array<string, list<string>>
+     */
     public function getAvailableMetrics(): array
     {
         return [
@@ -173,6 +177,10 @@ class EnterpriseReportingService
         };
     }
 
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<int, array<string, mixed>>
+     */
     private function collectExportData(int $agencyId, array $filters): array
     {
         $type = $filters['report_type'] ?? 'summary';
@@ -202,7 +210,7 @@ class EnterpriseReportingService
             ->get()
             ->toArray();
 
-        return match($type) {
+        return match ($type) {
             'social' => $socialData,
             'campaign' => $campaignData,
             'client' => $clientData,
@@ -211,6 +219,9 @@ class EnterpriseReportingService
         };
     }
 
+    /**
+     * @return array<int, array<string, float|int|string>>
+     */
     private function getSummaryReport(int $agencyId): array
     {
         $postsQuery = SocialPost::where('agency_id', $agencyId)->where('status', 'published');
@@ -233,7 +244,7 @@ class EnterpriseReportingService
         }
 
         $headers = array_keys($data[0]);
-        
+
         $html = '<html><head><meta charset="utf-8"><style>
             body { font-family: DejaVu Sans, sans-serif; margin: 20px; color: #1a1a1a; }
             h1 { color: #4f46e5; font-size: 24px; margin-bottom: 20px; }
@@ -248,17 +259,17 @@ class EnterpriseReportingService
         </style></head><body>';
         $html .= '<div class="header">';
         $html .= '<h1>📊 DigitalMarketingSaaS Report</h1>';
-        $html .= '<div class="generated">Generated: ' . now()->format('F j, Y \a\t g:i A') . '</div>';
+        $html .= '<div class="generated">Generated: '.now()->format('F j, Y \a\t g:i A').'</div>';
         $html .= '</div>';
         $html .= '<table><thead><tr>';
         foreach ($headers as $header) {
-            $html .= '<th>' . htmlspecialchars(ucwords(str_replace('_', ' ', $header))) . '</th>';
+            $html .= '<th>'.htmlspecialchars(ucwords(str_replace('_', ' ', $header))).'</th>';
         }
         $html .= '</tr></head><tbody>';
         foreach ($data as $row) {
             $html .= '<tr>';
             foreach ($row as $value) {
-                $html .= '<td>' . htmlspecialchars((string) $value) . '</td>';
+                $html .= '<td>'.htmlspecialchars((string) $value).'</td>';
             }
             $html .= '</tr>';
         }
@@ -279,7 +290,7 @@ class EnterpriseReportingService
         $clients = Client::where('agency_id', $agencyId);
         $accounts = SocialAccount::where('agency_id', $agencyId);
 
-        return match($metric) {
+        return match ($metric) {
             'total_posts', 'published_posts' => (int) $posts->count(),
             'total_reach' => (int) $postsAll->sum('reach'),
             'engagement_rate' => round((float) ($posts->avg('engagement_rate') ?? 0), 2),

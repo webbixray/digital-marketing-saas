@@ -138,6 +138,9 @@ class SocialMediaAgent extends AbstractAgent
      *
      * @return array<string, array>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getBestPostingTimes(): array
     {
         return $this->executionStats['best_posting_times'] ?? [];
@@ -147,6 +150,9 @@ class SocialMediaAgent extends AbstractAgent
      * Get engagement trend data.
      *
      * @return array<string, float>
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getEngagementTrends(): array
     {
@@ -234,7 +240,7 @@ class SocialMediaAgent extends AbstractAgent
         if (! empty($topPatterns)) {
             $prompt .= "\nBased on past successful optimizations, these patterns work well:\n";
             foreach ($topPatterns as $pattern) {
-                $prompt .= "- {$pattern}\n";
+                $prompt .= '- '.(string) $pattern."\n";
             }
         }
 
@@ -384,6 +390,9 @@ class SocialMediaAgent extends AbstractAgent
     /**
      * Gather engagement metrics from the database.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function gatherEngagementMetrics(Agency $agency, ?string $platform, string $dateRange): array
     {
         $days = (int) filter_var($dateRange, FILTER_SANITIZE_NUMBER_INT) ?: 30;
@@ -441,6 +450,9 @@ class SocialMediaAgent extends AbstractAgent
     /**
      * Learn from engagement data to improve posting strategies.
      */
+    /**
+     * @param  array<string, mixed>  $metrics
+     */
     private function learnFromEngagementData(array $metrics, ?string $platform): void
     {
         if (! $platform) {
@@ -469,6 +481,10 @@ class SocialMediaAgent extends AbstractAgent
     /**
      * Update best posting times for a platform.
      */
+    /**
+     * @param  array<int, int>  $bestHours
+     * @param  array<int, string>  $bestDays
+     */
     private function updateBestPostingTimes(string $platform, array $bestHours, array $bestDays): void
     {
         $current = $this->executionStats['best_posting_times'] ?? [];
@@ -486,6 +502,9 @@ class SocialMediaAgent extends AbstractAgent
 
     /**
      * Record engagement score and learn from it.
+     */
+    /**
+     * @param  array<string, mixed>  $meta
      */
     private function recordEngagementScore(string $taskType, float $engagementScore, array $meta = []): void
     {
@@ -568,6 +587,9 @@ class SocialMediaAgent extends AbstractAgent
 
     /**
      * Extract top optimization patterns from past results.
+     *
+     * @param  array<int, array<string, mixed>>  $pastResults
+     * @return array<int, string>
      */
     private function extractTopOptimizationPatterns(array $pastResults): array
     {
@@ -609,6 +631,10 @@ class SocialMediaAgent extends AbstractAgent
 
     /**
      * Calculate confidence score for posting times.
+     */
+    /**
+     * @param  array<int, int>  $bestHours
+     * @param  array<int, string>  $bestDays
      */
     private function calculateTimeConfidence(string $platform, array $bestHours, array $bestDays): float
     {

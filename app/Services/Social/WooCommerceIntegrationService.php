@@ -3,20 +3,27 @@
 namespace App\Services\Social;
 
 use App\Models\Agency;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class WooCommerceIntegrationService
 {
     private const CACHE_PREFIX = 'woocommerce_';
+
     private const CACHE_TTL = 300;
 
     private ?string $storeUrl = null;
+
     private ?string $consumerKey = null;
+
     private ?string $consumerSecret = null;
 
     /**
      * Connect an agency to WooCommerce.
+     */
+    /**
+     * @param  array<string, mixed>  $credentials
+     * @return array<string, mixed>
      */
     public function connect(int $agencyId, array $credentials): array
     {
@@ -59,6 +66,9 @@ class WooCommerceIntegrationService
     /**
      * Disconnect WooCommerce integration for an agency.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function disconnect(int $agencyId): array
     {
         $agency = Agency::find($agencyId);
@@ -92,6 +102,9 @@ class WooCommerceIntegrationService
     /**
      * Sync products from WooCommerce.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function syncProducts(int $agencyId): array
     {
         $this->loadCredentials($agencyId);
@@ -117,6 +130,8 @@ class WooCommerceIntegrationService
 
     /**
      * Get products from WooCommerce.
+     *
+     * @return array<string, mixed>
      */
     public function getProducts(int $agencyId): array
     {
@@ -129,7 +144,7 @@ class WooCommerceIntegrationService
             ];
         }
 
-        $cacheKey = self::CACHE_PREFIX . "products_{$agencyId}";
+        $cacheKey = self::CACHE_PREFIX."products_{$agencyId}";
 
         $cached = Cache::get($cacheKey);
         if ($cached) {
@@ -149,6 +164,10 @@ class WooCommerceIntegrationService
 
     /**
      * Create a product in WooCommerce.
+     */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
      */
     public function createProduct(int $agencyId, array $data): array
     {
@@ -175,6 +194,9 @@ class WooCommerceIntegrationService
     /**
      * Update inventory in WooCommerce.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function updateInventory(int $productId, int $quantity): array
     {
         Log::info('WooCommerce inventory update', ['product_id' => $productId, 'quantity' => $quantity]);
@@ -187,6 +209,8 @@ class WooCommerceIntegrationService
 
     /**
      * Get orders from WooCommerce.
+     *
+     * @return array<string, mixed>
      */
     public function getOrders(int $agencyId): array
     {
@@ -207,6 +231,9 @@ class WooCommerceIntegrationService
 
     /**
      * Get WooCommerce analytics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getAnalytics(int $agencyId): array
     {
@@ -256,7 +283,7 @@ class WooCommerceIntegrationService
      */
     private function clearCache(int $agencyId): void
     {
-        Cache::forget(self::CACHE_PREFIX . "products_{$agencyId}");
-        Cache::forget(self::CACHE_PREFIX . "orders_{$agencyId}");
+        Cache::forget(self::CACHE_PREFIX."products_{$agencyId}");
+        Cache::forget(self::CACHE_PREFIX."orders_{$agencyId}");
     }
 }

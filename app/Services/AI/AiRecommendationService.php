@@ -10,6 +10,9 @@ class AiRecommendationService
     /**
      * Get content recommendations for an agency.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getContentRecommendations(Agency $agency, string $platform, int $count = 5): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
@@ -41,6 +44,8 @@ class AiRecommendationService
 
     /**
      * Get optimal posting times for a platform.
+     *
+     * @return array<string, mixed>
      */
     public function getOptimalPostingTimes(Agency $agency, string $platform): array
     {
@@ -57,6 +62,9 @@ class AiRecommendationService
 
     /**
      * Generate hashtags for a topic.
+     */
+    /**
+     * @return array<int, string>
      */
     public function generateHashtags(Agency $agency, string $topic, string $platform, int $count = 10): array
     {
@@ -86,6 +94,9 @@ class AiRecommendationService
 
     /**
      * Analyze content quality.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function analyzeContentQuality(string $content, string $platform): array
     {
@@ -130,6 +141,9 @@ class AiRecommendationService
 
     /**
      * Get post performance analytics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getPostPerformanceAnalytics(Agency $agency, ?string $platform = null): array
     {
@@ -191,6 +205,9 @@ class AiRecommendationService
     /**
      * Extract hashtags from content.
      */
+    /**
+     * @return array<int, string>
+     */
     protected function extractHashtags(string $content): array
     {
         preg_match_all('/#(\w+)/', $content, $matches);
@@ -200,6 +217,8 @@ class AiRecommendationService
 
     /**
      * Get best hours for a platform.
+     *
+     * @return list<string>
      */
     protected function getBestHoursForPlatform(string $platform): array
     {
@@ -218,6 +237,8 @@ class AiRecommendationService
 
     /**
      * Get best days for a platform.
+     *
+     * @return list<string>
      */
     protected function getBestDaysForPlatform(string $platform): array
     {
@@ -236,6 +257,9 @@ class AiRecommendationService
 
     /**
      * Generate content improvement suggestions.
+     */
+    /**
+     * @return array<int, string>
      */
     protected function generateSuggestions(string $content, string $platform, float $score, int $hashtagCount, int $wordCount): array
     {
@@ -272,6 +296,9 @@ class AiRecommendationService
 
     /**
      * Get platform best practices.
+     */
+    /**
+     * @return array<int, string>
      */
     protected function getPlatformBestPractices(string $platform): array
     {

@@ -14299,54 +14299,6 @@ parameters:
 			path: app/Services/AI/Agent/AgentTask.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:calculateStatisticalSignificance\(\) has parameter \$statsA with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:calculateStatisticalSignificance\(\) has parameter \$statsB with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:calculateStatisticalSignificance\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:calculateVariantStats\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:calculateVariantStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:getCampaignTestData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:getTestPatterns\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:getVariationPerformance\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AbTestingAgent.php
-
-		-
 			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AbTestingAgent\:\:recordTestAccuracy\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -14383,68 +14335,8 @@ parameters:
 			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:calculateTimeConfidence\(\) has parameter \$bestDays with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:calculateTimeConfidence\(\) has parameter \$bestHours with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
 			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:calculateTrendDirection\(\) has parameter \$posts with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:extractTrendPredictions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:gatherPerformanceMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:getHistoricalEngagementData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:getLearnedOptimalTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:learnFromPerformanceData\(\) has parameter \$metrics with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:recordPrediction\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:updateOptimalPostingTimes\(\) has parameter \$bestDays with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\AnalyticsAgent\:\:updateOptimalPostingTimes\(\) has parameter \$bestHours with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/Agent/Agents/AnalyticsAgent.php
 
@@ -14821,66 +14713,6 @@ parameters:
 			path: app/Services/AI/Agent/Agents/SecurityAgent.php
 
 		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:calculateTimeConfidence\(\) has parameter \$bestDays with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:calculateTimeConfidence\(\) has parameter \$bestHours with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:extractTopOptimizationPatterns\(\) has parameter \$pastResults with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:extractTopOptimizationPatterns\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:gatherEngagementMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:getBestPostingTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:learnFromEngagementData\(\) has parameter \$metrics with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:recordEngagementScore\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:updateBestPostingTimes\(\) has parameter \$bestDays with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SocialMediaAgent\:\:updateBestPostingTimes\(\) has parameter \$bestHours with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SocialMediaAgent.php
-
-		-
 			message: '#^Undefined variable\: \$date$#'
 			identifier: variable.undefined
 			count: 1
@@ -14919,66 +14751,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:calculateSatisfactionTrend\(\) has parameter \$messages with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:extractEscalationIndicators\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:getCategoryStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:getCustomerHistory\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:learnFromClassification\(\) has parameter \$classification with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:learnFromEscalation\(\) has parameter \$escalation with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:learnFromSentiment\(\) has parameter \$sentiment with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:parseClassification\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:parseEscalation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:parseSentiment\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/Agent/Agents/SupportAgent.php
-
-		-
-			message: '#^Method App\\Services\\AI\\Agent\\Agents\\SupportAgent\:\:recordResolutionScore\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/Agent/Agents/SupportAgent.php
 
@@ -15593,66 +15365,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/AI/AiProviderManager.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:analyzeContentQuality\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:extractHashtags\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:generateHashtags\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:generateSuggestions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getBestDaysForPlatform\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getBestHoursForPlatform\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getContentRecommendations\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getOptimalPostingTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getPlatformBestPractices\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
-
-		-
-			message: '#^Method App\\Services\\AI\\AiRecommendationService\:\:getPostPerformanceAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AI/AiRecommendationService.php
 
 		-
 			message: '#^Offset 1 on array\{list\<string\>, list\<non\-empty\-string\>\} on left side of \?\? always exists and is not nullable\.$#'
@@ -19213,18 +18925,6 @@ parameters:
 			path: app/Services/ReferralService.php
 
 		-
-			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:collectExportData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
-			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:collectExportData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
 			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:exportData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -19249,32 +18949,14 @@ parameters:
 			path: app/Services/Reporting/EnterpriseReportingService.php
 
 		-
-			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:getAvailableMetrics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
 			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:getMetricValue\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
 			path: app/Services/Reporting/EnterpriseReportingService.php
 
 		-
-			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:getReportTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
 			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:getScheduledReports\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
-			message: '#^Method App\\Services\\Reporting\\EnterpriseReportingService\:\:getSummaryReport\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Reporting/EnterpriseReportingService.php
 
@@ -19627,61 +19309,7 @@ parameters:
 			path: app/Services/Social/LinkedInApiService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:exchangeCodeForToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
 			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:getAuthUrl\(\) has parameter \$scopes with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:getOrganizationStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:getOrganizations\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:getShareStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:getUserProfile\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:refreshToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:share\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:share\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/LinkedInApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\LinkedInApiService\:\:validateToken\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Social/LinkedInApiService.php
@@ -19705,61 +19333,7 @@ parameters:
 			path: app/Services/Social/PinterestApiService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:createPin\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:deletePin\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:exchangeCodeForToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
 			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:getAuthUrl\(\) has parameter \$scopes with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:getBoards\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:getPinAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:getPins\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:getUserProfile\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:refreshToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/PinterestApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\PinterestApiService\:\:validateToken\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Social/PinterestApiService.php
@@ -19787,66 +19361,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/Social/PlatformRateLimitService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:connect\(\) has parameter \$credentials with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:connect\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:createProduct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:createProduct\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:disconnect\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:getAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:getOrders\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:getProducts\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:syncProducts\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\ShopifyIntegrationService\:\:updateInventory\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/ShopifyIntegrationService.php
 
 		-
 			message: '#^Binary operation "/" between \(float\|int\) and array\|float\|int\<1, max\> results in an error\.$#'
@@ -20179,75 +19693,9 @@ parameters:
 			path: app/Services/Social/UnifiedInboxService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:connect\(\) has parameter \$credentials with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:connect\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:createProduct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:createProduct\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:disconnect\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:getAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:getOrders\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:getProducts\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:syncProducts\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\WooCommerceIntegrationService\:\:updateInventory\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/WooCommerceIntegrationService.php
-
-		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
 			count: 3
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:exchangeCodeForToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
 			path: app/Services/Social/YouTubeApiService.php
 
 		-
@@ -20257,56 +19705,8 @@ parameters:
 			path: app/Services/Social/YouTubeApiService.php
 
 		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:getChannelStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:getMyChannel\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:getMyVideos\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:getVideoAnalytics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:refreshToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
 			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:uploadVideo\(\) has parameter \$file with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:uploadVideo\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:uploadVideo\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Social/YouTubeApiService.php
-
-		-
-			message: '#^Method App\\Services\\Social\\YouTubeApiService\:\:validateToken\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Social/YouTubeApiService.php
 

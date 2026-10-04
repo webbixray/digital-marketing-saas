@@ -144,6 +144,9 @@ class AbTestingAgent extends AbstractAgent
      *
      * @return array<string, array>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getVariationPerformance(): array
     {
         return $this->executionStats['variation_performance'] ?? [];
@@ -153,6 +156,9 @@ class AbTestingAgent extends AbstractAgent
      * Get test design patterns that produce best results.
      *
      * @return array<string, array>
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function getTestPatterns(): array
     {
@@ -479,6 +485,9 @@ class AbTestingAgent extends AbstractAgent
     /**
      * Get campaign test data.
      */
+    /**
+     * @return array<string, mixed>|null
+     */
     private function getCampaignTestData(Agency $agency, int $campaignId): ?array
     {
         $campaign = Campaign::where('agency_id', $agency->id)->find($campaignId);
@@ -503,6 +512,10 @@ class AbTestingAgent extends AbstractAgent
     /**
      * Calculate variant statistics.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function calculateVariantStats(array $data): array
     {
         $sampleSize = $data['sample_size'] ?? count($data['observations'] ?? []);
@@ -522,6 +535,11 @@ class AbTestingAgent extends AbstractAgent
 
     /**
      * Calculate statistical significance using two-proportion z-test.
+     */
+    /**
+     * @param  array<string, mixed>  $statsA
+     * @param  array<string, mixed>  $statsB
+     * @return array<string, mixed>
      */
     private function calculateStatisticalSignificance(array $statsA, array $statsB): array
     {

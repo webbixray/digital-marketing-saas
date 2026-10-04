@@ -147,6 +147,9 @@ class AnalyticsAgent extends AbstractAgent
      *
      * @return array<string, array>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getLearnedOptimalTimes(): array
     {
         return $this->executionStats['optimal_posting_times'] ?? [];
@@ -157,6 +160,9 @@ class AnalyticsAgent extends AbstractAgent
      *
      * @return array<string, float>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getContentTypePerformance(): array
     {
         return $this->executionStats['content_type_performance'] ?? [];
@@ -164,6 +170,9 @@ class AnalyticsAgent extends AbstractAgent
 
     /**
      * Record prediction accuracy for learning.
+     */
+    /**
+     * @param  array<string, mixed>  $meta
      */
     protected function recordPrediction(string $type, float $predicted, float $actual, array $meta = []): void
     {
@@ -188,6 +197,10 @@ class AnalyticsAgent extends AbstractAgent
 
     /**
      * Update optimal posting times based on analysis.
+     */
+    /**
+     * @param  array<int, int>  $bestHours
+     * @param  array<int, string>  $bestDays
      */
     protected function updateOptimalPostingTimes(string $platform, array $bestHours, array $bestDays): void
     {
@@ -416,6 +429,9 @@ class AnalyticsAgent extends AbstractAgent
     /**
      * Gather performance metrics from the database.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function gatherPerformanceMetrics(Agency $agency, ?string $platform, string $dateRange): array
     {
         $days = (int) filter_var($dateRange, FILTER_SANITIZE_NUMBER_INT) ?: 30;
@@ -486,6 +502,9 @@ class AnalyticsAgent extends AbstractAgent
     /**
      * Get historical engagement data for trend analysis.
      */
+    /**
+     * @return array<string, mixed>
+     */
     private function getHistoricalEngagementData(Agency $agency, string $platform): array
     {
         $posts = SocialPost::where('agency_id', $agency->id)
@@ -519,6 +538,9 @@ class AnalyticsAgent extends AbstractAgent
 
     /**
      * Learn from performance data to improve future analysis.
+     */
+    /**
+     * @param  array<string, mixed>  $metrics
      */
     private function learnFromPerformanceData(array $metrics, ?string $platform): void
     {
@@ -567,6 +589,8 @@ class AnalyticsAgent extends AbstractAgent
 
     /**
      * Extract trend predictions from AI response.
+     *
+     * @return list<string>
      */
     private function extractTrendPredictions(string $content): array
     {
@@ -582,6 +606,10 @@ class AnalyticsAgent extends AbstractAgent
 
     /**
      * Calculate confidence score for optimal posting times.
+     */
+    /**
+     * @param  array<int, int>  $bestHours
+     * @param  array<int, string>  $bestDays
      */
     private function calculateTimeConfidence(string $platform, array $bestHours, array $bestDays): float
     {

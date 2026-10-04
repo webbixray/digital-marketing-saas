@@ -41,6 +41,9 @@ class PinterestApiService
     /**
      * Exchange authorization code for an access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -78,6 +81,9 @@ class PinterestApiService
     /**
      * Get Pinterest user profile.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getUserProfile(string $accessToken): array
     {
         try {
@@ -101,6 +107,9 @@ class PinterestApiService
 
     /**
      * Get user's boards.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getBoards(string $accessToken): array
     {
@@ -131,6 +140,9 @@ class PinterestApiService
     /**
      * Get pins from a board.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPins(string $accessToken, string $boardId, int $pageSize = 100): array
     {
         try {
@@ -159,6 +171,9 @@ class PinterestApiService
 
     /**
      * Create a pin.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function createPin(string $accessToken, string $boardId, string $title, string $description, string $imageUrl, ?string $link = null): array
     {
@@ -202,6 +217,9 @@ class PinterestApiService
     /**
      * Get pin analytics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getPinAnalytics(string $accessToken, string $pinId): array
     {
         try {
@@ -226,6 +244,9 @@ class PinterestApiService
     /**
      * Delete a pin.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function deletePin(string $accessToken, string $pinId): array
     {
         try {
@@ -249,6 +270,9 @@ class PinterestApiService
 
     /**
      * Refresh the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function refreshToken(string $refreshToken): array
     {
@@ -284,6 +308,9 @@ class PinterestApiService
 
     /**
      * Validate the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {

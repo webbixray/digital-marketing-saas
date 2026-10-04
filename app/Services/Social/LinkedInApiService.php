@@ -41,6 +41,9 @@ class LinkedInApiService
     /**
      * Exchange authorization code for an access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -78,6 +81,9 @@ class LinkedInApiService
     /**
      * Get LinkedIn user profile.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getUserProfile(string $accessToken): array
     {
         try {
@@ -101,6 +107,9 @@ class LinkedInApiService
 
     /**
      * Get LinkedIn organizations (companies) the user can manage.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getOrganizations(string $accessToken): array
     {
@@ -140,6 +149,10 @@ class LinkedInApiService
 
     /**
      * Share a post on behalf of the user or organization.
+     */
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
      */
     public function share(string $accessToken, string $authorUrn, string $text, array $options = []): array
     {
@@ -198,6 +211,9 @@ class LinkedInApiService
     /**
      * Get share/post statistics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getShareStats(string $accessToken, string $shareUrn): array
     {
         try {
@@ -219,6 +235,9 @@ class LinkedInApiService
 
     /**
      * Get organization statistics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getOrganizationStats(string $accessToken, string $organizationUrn): array
     {
@@ -247,6 +266,9 @@ class LinkedInApiService
 
     /**
      * Refresh the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function refreshToken(string $refreshToken): array
     {
@@ -282,6 +304,9 @@ class LinkedInApiService
 
     /**
      * Validate the access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {

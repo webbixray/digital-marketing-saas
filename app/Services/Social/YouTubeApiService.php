@@ -57,6 +57,9 @@ class YouTubeApiService
     /**
      * Exchange authorization code for access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function exchangeCodeForToken(string $code, string $redirectUri): array
     {
         try {
@@ -95,6 +98,9 @@ class YouTubeApiService
 
     /**
      * Get YouTube channel info for the authenticated user.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getMyChannel(string $accessToken): array
     {
@@ -144,6 +150,9 @@ class YouTubeApiService
     /**
      * Get channel statistics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getChannelStats(string $accessToken, string $channelId): array
     {
         try {
@@ -185,6 +194,9 @@ class YouTubeApiService
 
     /**
      * Get videos from the authenticated user's channel.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getMyVideos(string $accessToken, int $maxResults = 50, ?string $pageToken = null): array
     {
@@ -244,6 +256,10 @@ class YouTubeApiService
     /**
      * Upload video to YouTube.
      */
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
     public function uploadVideo(string $accessToken, $file, string $title, string $description = '', array $options = []): array
     {
         try {
@@ -290,6 +306,9 @@ class YouTubeApiService
     /**
      * Get video analytics.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getVideoAnalytics(string $accessToken, string $videoId): array
     {
         try {
@@ -332,6 +351,9 @@ class YouTubeApiService
     /**
      * Refresh access token.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function refreshToken(string $refreshToken): array
     {
         try {
@@ -366,6 +388,9 @@ class YouTubeApiService
 
     /**
      * Validate access token.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function validateToken(string $accessToken): array
     {

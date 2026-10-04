@@ -3,19 +3,25 @@
 namespace App\Services\Social;
 
 use App\Models\Agency;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ShopifyIntegrationService
 {
     private const CACHE_PREFIX = 'shopify_';
+
     private const CACHE_TTL = 300;
 
     private ?string $shopDomain = null;
+
     private ?string $accessToken = null;
 
     /**
      * Connect an agency to Shopify.
+     */
+    /**
+     * @param  array<string, mixed>  $credentials
+     * @return array<string, mixed>
      */
     public function connect(int $agencyId, array $credentials): array
     {
@@ -65,6 +71,9 @@ class ShopifyIntegrationService
     /**
      * Disconnect Shopify integration for an agency.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function disconnect(int $agencyId): array
     {
         $agency = Agency::find($agencyId);
@@ -96,6 +105,9 @@ class ShopifyIntegrationService
     /**
      * Sync products from Shopify.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function syncProducts(int $agencyId): array
     {
         $this->loadCredentials($agencyId);
@@ -123,6 +135,8 @@ class ShopifyIntegrationService
 
     /**
      * Get products from Shopify.
+     *
+     * @return array<string, mixed>
      */
     public function getProducts(int $agencyId): array
     {
@@ -135,7 +149,7 @@ class ShopifyIntegrationService
             ];
         }
 
-        $cacheKey = self::CACHE_PREFIX . "products_{$agencyId}";
+        $cacheKey = self::CACHE_PREFIX."products_{$agencyId}";
 
         $cached = Cache::get($cacheKey);
         if ($cached) {
@@ -156,6 +170,10 @@ class ShopifyIntegrationService
 
     /**
      * Create a product in Shopify.
+     */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
      */
     public function createProduct(int $agencyId, array $data): array
     {
@@ -182,6 +200,9 @@ class ShopifyIntegrationService
     /**
      * Update inventory in Shopify.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function updateInventory(int $productId, int $quantity): array
     {
         Log::info('Shopify inventory update', ['product_id' => $productId, 'quantity' => $quantity]);
@@ -194,6 +215,8 @@ class ShopifyIntegrationService
 
     /**
      * Get orders from Shopify.
+     *
+     * @return array<string, mixed>
      */
     public function getOrders(int $agencyId): array
     {
@@ -214,6 +237,9 @@ class ShopifyIntegrationService
 
     /**
      * Get Shopify analytics.
+     */
+    /**
+     * @return array<string, mixed>
      */
     public function getAnalytics(int $agencyId): array
     {
@@ -263,7 +289,7 @@ class ShopifyIntegrationService
      */
     private function clearCache(int $agencyId): void
     {
-        Cache::forget(self::CACHE_PREFIX . "products_{$agencyId}");
-        Cache::forget(self::CACHE_PREFIX . "orders_{$agencyId}");
+        Cache::forget(self::CACHE_PREFIX."products_{$agencyId}");
+        Cache::forget(self::CACHE_PREFIX."orders_{$agencyId}");
     }
 }
