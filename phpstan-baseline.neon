@@ -17035,20 +17035,8 @@ parameters:
 			path: app/Services/Billing/MeteredBillingService.php
 
 		-
-			message: '#^Method App\\Services\\Billing\\ResellerService\:\:createReseller\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/ResellerService.php
-
-		-
 			message: '#^Method App\\Services\\Billing\\ResellerService\:\:deleteReseller\(\) should return bool but returns bool\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Services/Billing/ResellerService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\ResellerService\:\:getCommissionSummary\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Billing/ResellerService.php
 
@@ -17061,18 +17049,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\Billing\\ResellerService\:\:getResellerCommissions\(\) return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Billing/ResellerService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\ResellerService\:\:getResellerStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Billing/ResellerService.php
-
-		-
-			message: '#^Method App\\Services\\Billing\\ResellerService\:\:updateReseller\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Billing/ResellerService.php
 
@@ -17275,18 +17251,6 @@ parameters:
 			path: app/Services/Calendar/ContentCalendarService.php
 
 		-
-			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:computeBestPostingTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Calendar/ContentCalendarService.php
-
-		-
-			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:getBestPostingTimes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Calendar/ContentCalendarService.php
-
-		-
 			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:getEvents\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
@@ -17295,18 +17259,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:getMonthEvents\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Services/Calendar/ContentCalendarService.php
-
-		-
-			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:getStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Calendar/ContentCalendarService.php
-
-		-
-			message: '#^Method App\\Services\\Calendar\\ContentCalendarService\:\:suggestOptimalSlots\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Calendar/ContentCalendarService.php
 

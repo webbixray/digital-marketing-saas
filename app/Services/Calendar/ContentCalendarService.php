@@ -80,6 +80,9 @@ class ContentCalendarService
     /**
      * Get posting statistics for a date range - optimized with single query.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getStats(int $agencyId, string $startDate, string $endDate): array
     {
         $cacheKey = "calendar:{$agencyId}:stats:".md5("{$startDate}:{$endDate}");
@@ -118,6 +121,9 @@ class ContentCalendarService
      * Get best posting times from the OptimalPostingTime model.
      * Falls back to historical post analysis when no OptimalPostingTime records exist.
      */
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getBestPostingTimes(int $agencyId): array
     {
         return Cache::remember("calendar:{$agencyId}:best_times", 3600, function () use ($agencyId) {
@@ -127,6 +133,9 @@ class ContentCalendarService
 
     /**
      * Compute best posting times - cache warming support.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function computeBestPostingTimes(int $agencyId): array
     {
@@ -284,6 +293,9 @@ class ContentCalendarService
     /**
      * Suggest optimal posting slots for a given platform using OptimalPostingTime model.
      * Returns top 3 slots for the next 7 days.
+     */
+    /**
+     * @return array<int, array<string, mixed>>
      */
     public function suggestOptimalSlots(int $agencyId, ?string $platform = null): array
     {

@@ -5,12 +5,16 @@ namespace App\Services\Billing;
 use App\Models\Agency;
 use App\Models\Reseller;
 use App\Models\ResellerCommission;
-use App\Models\WhiteLabelDomain;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ResellerService
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function createReseller(int $agencyId, array $data): Reseller
     {
         return DB::transaction(function () use ($agencyId, $data) {
@@ -40,6 +44,9 @@ class ResellerService
         });
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function updateReseller(int $id, array $data): Reseller
     {
         $reseller = Reseller::findOrFail($id);
@@ -66,7 +73,7 @@ class ResellerService
         return Reseller::with(['agency', 'domains'])->find($id);
     }
 
-    public function getResellerAgencies(int $resellerId): \Illuminate\Database\Eloquent\Collection
+    public function getResellerAgencies(int $resellerId): Collection
     {
         $reseller = Reseller::findOrFail($resellerId);
 
@@ -79,7 +86,7 @@ class ResellerService
         )->get();
     }
 
-    public function getResellerCommissions(int $resellerId): \Illuminate\Pagination\LengthAwarePaginator
+    public function getResellerCommissions(int $resellerId): LengthAwarePaginator
     {
         return ResellerCommission::with(['invoice', 'agency'])
             ->where('reseller_id', $resellerId)
@@ -87,6 +94,9 @@ class ResellerService
             ->paginate(25);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getResellerStats(int $resellerId): array
     {
         $commissions = ResellerCommission::where('reseller_id', $resellerId);
@@ -100,6 +110,9 @@ class ResellerService
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCommissionSummary(int $resellerId): array
     {
         $commissions = ResellerCommission::where('reseller_id', $resellerId);
