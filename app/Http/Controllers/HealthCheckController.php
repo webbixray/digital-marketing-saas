@@ -15,7 +15,7 @@ class HealthCheckController extends Controller
         private readonly QueueHealthService $queueService,
         private readonly SystemHealthCheckService $systemHealth,
     ) {
-        $this->middleware(['auth', 'role:owner|admin'])->except('check');
+        $this->middleware(['auth', 'role:owner|admin'])->except(['check', 'index', 'readiness', 'liveness', 'status', 'diskSpace']);
     }
 
     public function index(): JsonResponse
