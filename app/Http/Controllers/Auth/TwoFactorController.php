@@ -44,7 +44,7 @@ class TwoFactorController extends Controller
             margin: 10
         );
 
-        $writer = new SvgWriter();
+        $writer = new SvgWriter;
         $result = $writer->write($qrCode);
 
         return response()->json([

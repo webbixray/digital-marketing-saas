@@ -7,7 +7,6 @@ use App\Models\OptimalPostingTime;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,7 +15,9 @@ class CalendarControllerTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Agency $agency;
+
     protected SocialAccount $account;
 
     protected function setUp(): void

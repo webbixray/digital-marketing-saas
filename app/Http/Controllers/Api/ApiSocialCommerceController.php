@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\SocialCommercePost;
-use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -51,6 +50,7 @@ class ApiSocialCommerceController extends Controller
     public function show(int $id): JsonResponse
     {
         $post = SocialCommercePost::with(['socialPost', 'product'])->findOrFail($id);
+
         return response()->json(['data' => $post]);
     }
 

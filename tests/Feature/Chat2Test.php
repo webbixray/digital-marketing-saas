@@ -15,10 +15,15 @@ class Chat2Test extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private Agency $otherAgency;
+
     private User $user;
+
     private User $teamMember;
+
     private User $otherAgencyUser;
+
     private ChatChannel $channel;
 
     protected function setUp(): void
@@ -29,7 +34,7 @@ class Chat2Test extends TestCase
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
         $this->teamMember = User::factory()->create(['agency_id' => $this->agency->id]);
         $this->otherAgencyUser = User::factory()->create(['agency_id' => $this->otherAgency->id]);
-        
+
         $this->channel = ChatChannel::factory()->create([
             'agency_id' => $this->agency->id,
             'created_by' => $this->user->id,
@@ -109,13 +114,13 @@ class Chat2Test extends TestCase
 
     public function test_channel_requires_auth(): void
     {
-        $response = $this->get('/chat/v2/' . $this->channel->id);
+        $response = $this->get('/chat/v2/'.$this->channel->id);
         $response->assertStatus(302);
     }
 
     public function test_channel_returns_200_for_valid_channel(): void
     {
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $this->channel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$this->channel->id);
         $response->assertStatus(200);
         $response->assertViewIs('chat.channel');
     }
@@ -126,7 +131,7 @@ class Chat2Test extends TestCase
             'agency_id' => $this->otherAgency->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $otherChannel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$otherChannel->id);
         $response->assertStatus(403);
     }
 
@@ -137,20 +142,20 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $this->channel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$this->channel->id);
         $response->assertViewHas('messages');
     }
 
     public function test_channel_marks_as_read_on_view(): void
     {
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $this->channel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$this->channel->id);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('chat_channel_user', [
             'channel_id' => $this->channel->id,
             'user_id' => $this->user->id,
         ]);
-        
+
         $pivot = $this->channel->users()->where('user_id', $this->user->id)->first()->pivot;
         $this->assertNotNull($pivot->last_read_at);
     }
@@ -161,7 +166,7 @@ class Chat2Test extends TestCase
 
     public function test_send_message_requires_auth(): void
     {
-        $response = $this->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => 'Hello!',
         ]);
         $response->assertUnauthorized();
@@ -169,7 +174,7 @@ class Chat2Test extends TestCase
 
     public function test_send_message_validates_content(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => '',
         ]);
         $response->assertStatus(422);
@@ -178,7 +183,7 @@ class Chat2Test extends TestCase
 
     public function test_send_message_succeeds(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => 'Hello team!',
         ]);
         $response->assertCreated();
@@ -198,7 +203,7 @@ class Chat2Test extends TestCase
             'agency_id' => $this->otherAgency->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $otherChannel->id . '/send', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$otherChannel->id.'/send', [
             'content' => 'Hacked!',
         ]);
         $response->assertForbidden();
@@ -211,7 +216,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->teamMember)->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->actingAs($this->teamMember)->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => 'This is a reply',
             'reply_to_id' => $original->id,
         ]);
@@ -224,7 +229,7 @@ class Chat2Test extends TestCase
 
     public function test_send_message_with_file_data(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => 'Check this file',
             'file_url' => 'https://example.com/file.pdf',
             'file_name' => 'file.pdf',
@@ -245,7 +250,7 @@ class Chat2Test extends TestCase
 
     public function test_typing_requires_auth(): void
     {
-        $response = $this->postJson('/chat/v2/' . $this->channel->id . '/typing', [
+        $response = $this->postJson('/chat/v2/'.$this->channel->id.'/typing', [
             'typing' => true,
         ]);
         $response->assertUnauthorized();
@@ -253,7 +258,7 @@ class Chat2Test extends TestCase
 
     public function test_typing_succeeds(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/typing', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/typing', [
             'typing' => true,
         ]);
         $response->assertOk();
@@ -266,7 +271,7 @@ class Chat2Test extends TestCase
             'agency_id' => $this->otherAgency->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $otherChannel->id . '/typing', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$otherChannel->id.'/typing', [
             'typing' => true,
         ]);
         $response->assertForbidden();
@@ -278,13 +283,13 @@ class Chat2Test extends TestCase
 
     public function test_read_requires_auth(): void
     {
-        $response = $this->postJson('/chat/v2/' . $this->channel->id . '/read');
+        $response = $this->postJson('/chat/v2/'.$this->channel->id.'/read');
         $response->assertUnauthorized();
     }
 
     public function test_read_succeeds(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/read');
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/read');
         $response->assertOk();
         $response->assertJsonPath('success', true);
 
@@ -298,7 +303,7 @@ class Chat2Test extends TestCase
             'agency_id' => $this->otherAgency->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $otherChannel->id . '/read');
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$otherChannel->id.'/read');
         $response->assertForbidden();
     }
 
@@ -313,7 +318,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->postJson('/chat/v2/messages/' . $message->id . '/reactions', [
+        $response = $this->postJson('/chat/v2/messages/'.$message->id.'/reactions', [
             'emoji' => '👍',
         ]);
         $response->assertUnauthorized();
@@ -326,7 +331,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/' . $message->id . '/reactions', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/'.$message->id.'/reactions', [
             'emoji' => '',
         ]);
         $response->assertStatus(422);
@@ -340,7 +345,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/' . $message->id . '/reactions', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/'.$message->id.'/reactions', [
             'emoji' => '👍',
         ]);
         $response->assertOk();
@@ -363,7 +368,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->otherAgencyUser->id,
         ]);
 
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/' . $message->id . '/reactions', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/messages/'.$message->id.'/reactions', [
             'emoji' => '👍',
         ]);
         $response->assertForbidden();
@@ -376,8 +381,8 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $this->actingAs($this->user)->postJson('/chat/v2/messages/' . $message->id . '/reactions', ['emoji' => '👍']);
-        $this->actingAs($this->user)->postJson('/chat/v2/messages/' . $message->id . '/reactions', ['emoji' => '👍']);
+        $this->actingAs($this->user)->postJson('/chat/v2/messages/'.$message->id.'/reactions', ['emoji' => '👍']);
+        $this->actingAs($this->user)->postJson('/chat/v2/messages/'.$message->id.'/reactions', ['emoji' => '👍']);
 
         $this->assertDatabaseCount('chat_reactions', 1);
     }
@@ -393,7 +398,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->deleteJson('/chat/v2/messages/' . $message->id . '/reactions/' . urlencode('👍'));
+        $response = $this->deleteJson('/chat/v2/messages/'.$message->id.'/reactions/'.urlencode('👍'));
         $response->assertUnauthorized();
     }
 
@@ -409,7 +414,7 @@ class Chat2Test extends TestCase
             'emoji' => '👍',
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id . '/reactions/' . urlencode('👍'));
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id.'/reactions/'.urlencode('👍'));
         $response->assertOk();
         $response->assertJsonPath('success', true);
 
@@ -430,7 +435,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->otherAgencyUser->id,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id . '/reactions/' . urlencode('👍'));
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id.'/reactions/'.urlencode('👍'));
         $response->assertForbidden();
     }
 
@@ -441,7 +446,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id . '/reactions/' . urlencode('👍'));
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id.'/reactions/'.urlencode('👍'));
         $response->assertOk();
         $response->assertJsonPath('success', true);
     }
@@ -457,7 +462,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->putJson('/chat/v2/messages/' . $message->id, [
+        $response = $this->putJson('/chat/v2/messages/'.$message->id, [
             'content' => 'Updated',
         ]);
         $response->assertUnauthorized();
@@ -470,7 +475,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/' . $message->id, [
+        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/'.$message->id, [
             'content' => '',
         ]);
         $response->assertStatus(422);
@@ -485,7 +490,7 @@ class Chat2Test extends TestCase
             'content' => 'Original',
         ]);
 
-        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/' . $message->id, [
+        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/'.$message->id, [
             'content' => 'Updated content',
         ]);
         $response->assertOk();
@@ -509,7 +514,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->otherAgencyUser->id,
         ]);
 
-        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/' . $message->id, [
+        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/'.$message->id, [
             'content' => 'Hacked!',
         ]);
         $response->assertForbidden();
@@ -522,7 +527,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->teamMember->id,
         ]);
 
-        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/' . $message->id, [
+        $response = $this->actingAs($this->user)->putJson('/chat/v2/messages/'.$message->id, [
             'content' => 'Trying to edit',
         ]);
         $response->assertForbidden();
@@ -539,7 +544,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $response = $this->deleteJson('/chat/v2/messages/' . $message->id);
+        $response = $this->deleteJson('/chat/v2/messages/'.$message->id);
         $response->assertUnauthorized();
     }
 
@@ -551,7 +556,7 @@ class Chat2Test extends TestCase
             'content' => 'Original content',
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id);
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id);
         $response->assertOk();
         $response->assertJsonPath('success', true);
 
@@ -572,7 +577,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->otherAgencyUser->id,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id);
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id);
         $response->assertForbidden();
     }
 
@@ -583,7 +588,7 @@ class Chat2Test extends TestCase
             'user_id' => $this->teamMember->id,
         ]);
 
-        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/' . $message->id);
+        $response = $this->actingAs($this->user)->deleteJson('/chat/v2/messages/'.$message->id);
         $response->assertForbidden();
     }
 
@@ -593,7 +598,7 @@ class Chat2Test extends TestCase
 
     public function test_send_message_max_length_validation(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/chat/v2/' . $this->channel->id . '/send', [
+        $response = $this->actingAs($this->user)->postJson('/chat/v2/'.$this->channel->id.'/send', [
             'content' => str_repeat('a', 5001),
         ]);
         $response->assertStatus(422);
@@ -602,7 +607,7 @@ class Chat2Test extends TestCase
 
     public function test_channel_shows_typing_indicator_state(): void
     {
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $this->channel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$this->channel->id);
         $response->assertStatus(200);
         // The view includes typing indicator markup
         $response->assertSee('typing-indicator');
@@ -620,7 +625,7 @@ class Chat2Test extends TestCase
             'emoji' => '👍',
         ]);
 
-        $response = $this->actingAs($this->user)->get('/chat/v2/' . $this->channel->id);
+        $response = $this->actingAs($this->user)->get('/chat/v2/'.$this->channel->id);
         $response->assertStatus(200);
         $response->assertSee('👍');
     }

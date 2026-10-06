@@ -6,6 +6,7 @@ use App\Models\Agency;
 use App\Models\Invoice;
 use Stripe\Checkout\Session as CheckoutSession;
 use Stripe\Customer;
+use Stripe\Event;
 use Stripe\InvoiceItem;
 use Stripe\Stripe;
 use Stripe\Subscription;
@@ -109,7 +110,7 @@ class StripeGateway
     /**
      * Handle a verified webhook event (signature already validated by controller).
      */
-    public function handleWebhookEvent(\Stripe\Event $event): void
+    public function handleWebhookEvent(Event $event): void
     {
         match ($event->type) {
             'checkout.session.completed' => $this->handleCheckoutCompleted($event->data->object),
@@ -124,7 +125,7 @@ class StripeGateway
 
     /**
      * Handle webhook event.
-     * 
+     *
      * @deprecated Use handleWebhookEvent() after verifying signature in controller
      */
     public function handleWebhook(string $payload, string $sigHeader): void

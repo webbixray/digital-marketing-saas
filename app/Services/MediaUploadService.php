@@ -29,7 +29,7 @@ class MediaUploadService
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $realMimeType = $finfo->file($file->getRealPath());
 
-        if (!in_array($realMimeType, self::ALLOWED_MIME_TYPES, true)) {
+        if (! in_array($realMimeType, self::ALLOWED_MIME_TYPES, true)) {
             throw new \InvalidArgumentException("File type '{$realMimeType}' is not allowed. Allowed types: images, videos, PDF, Office documents, and ZIP archives.");
         }
 

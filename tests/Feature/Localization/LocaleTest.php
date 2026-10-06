@@ -5,6 +5,9 @@ namespace Tests\Feature\Localization;
 use App\Models\Agency;
 use App\Models\Language;
 use App\Models\User;
+use App\Services\Localization\LocaleService;
+use App\View\Composers\LanguageComposer;
+use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
@@ -22,7 +25,7 @@ class LocaleTest extends TestCase
         parent::setUp();
         $this->agency = Agency::factory()->create();
         $this->user = User::factory()->create(['agency_id' => $this->agency->id]);
-        $this->seed(\Database\Seeders\LanguageSeeder::class);
+        $this->seed(LanguageSeeder::class);
     }
 
     /**
@@ -62,7 +65,7 @@ class LocaleTest extends TestCase
     public function test_arabic_is_detected_as_rtl(): void
     {
         $this->assertTrue(
-            \App\View\Composers\LanguageComposer::isRTLLocale('ar')
+            LanguageComposer::isRTLLocale('ar')
         );
     }
 
@@ -72,10 +75,10 @@ class LocaleTest extends TestCase
     public function test_non_rtl_languages_return_ltr_direction(): void
     {
         $this->assertFalse(
-            \App\View\Composers\LanguageComposer::isRTLLocale('en')
+            LanguageComposer::isRTLLocale('en')
         );
         $this->assertFalse(
-            \App\View\Composers\LanguageComposer::isRTLLocale('es')
+            LanguageComposer::isRTLLocale('es')
         );
     }
 
@@ -151,7 +154,7 @@ class LocaleTest extends TestCase
      */
     public function test_fallback_locale_is_english(): void
     {
-        $service = app(\App\Services\Localization\LocaleService::class);
+        $service = app(LocaleService::class);
         $this->assertEquals('en', $service->getFallbackLocale());
     }
 
@@ -177,7 +180,7 @@ class LocaleTest extends TestCase
      */
     public function test_supported_locales_returns_active_codes(): void
     {
-        $service = app(\App\Services\Localization\LocaleService::class);
+        $service = app(LocaleService::class);
         $locales = $service->getSupportedLocales();
 
         $this->assertContains('en', $locales);
@@ -190,7 +193,7 @@ class LocaleTest extends TestCase
      */
     public function test_is_valid_locale_validates_correctly(): void
     {
-        $service = app(\App\Services\Localization\LocaleService::class);
+        $service = app(LocaleService::class);
         $this->assertTrue($service->isValidLocale('en'));
         $this->assertTrue($service->isValidLocale('ar'));
         $this->assertFalse($service->isValidLocale('xx'));

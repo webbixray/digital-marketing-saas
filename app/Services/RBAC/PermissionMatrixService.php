@@ -5,9 +5,9 @@ namespace App\Services\RBAC;
 use App\Models\PermissionCategory;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionMatrixService
 {
@@ -67,7 +67,7 @@ class PermissionMatrixService
     public function syncRolePermissions(Role $role, array $permissions): Role
     {
         $role->syncPermissions($permissions);
-        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return $role->load('permissions');
     }

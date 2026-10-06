@@ -55,6 +55,7 @@ class ApiDashboardController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API dashboard index failed', ['error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'error' => 'Failed to fetch dashboard data'], 500);
         }
     }

@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class TeamController extends Controller
 {
@@ -239,7 +240,7 @@ class TeamController extends Controller
         $invitation->update(['accepted_at' => now()]);
 
         // Assign Spatie role by name
-        $role = \Spatie\Permission\Models\Role::where('name', $invitation->role)
+        $role = Role::where('name', $invitation->role)
             ->where('agency_id', $invitation->team->agency_id)
             ->first();
         if (! $role) {

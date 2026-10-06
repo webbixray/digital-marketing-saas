@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
 
 class TwoFactorTest extends TestCase
@@ -57,7 +58,7 @@ class TwoFactorTest extends TestCase
         $this->assertNotEmpty($secret);
         $this->assertGreaterThanOrEqual(16, strlen($secret));
 
-        $google2fa = new \PragmaRX\Google2FA\Google2FA();
+        $google2fa = new Google2FA;
         $validCode = $google2fa->getCurrentOtp($secret);
         $this->assertNotEmpty($validCode);
 

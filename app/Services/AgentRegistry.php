@@ -29,6 +29,7 @@ class AgentRegistry
     ];
 
     private const DEFAULT_DESCRIPTION = 'An intelligent AI agent handling specialized tasks.';
+
     private const DEFAULT_CATEGORY = 'General';
 
     public static function getDescription(string $name): string

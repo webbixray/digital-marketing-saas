@@ -6,7 +6,7 @@ use App\Models\Agency;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ClientSubscription;
-use App\Models\SocialAccount;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -93,7 +93,7 @@ class ClientModelTest extends TestCase
             'last_contact_at' => '2024-01-15 10:00:00',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $client->last_contact_at);
+        $this->assertInstanceOf(Carbon::class, $client->last_contact_at);
     }
 
     public function test_posts_count_casts_to_integer(): void

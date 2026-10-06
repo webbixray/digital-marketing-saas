@@ -65,6 +65,7 @@ class YouTubeWebhookController extends Controller
 
         if (! $account) {
             Log::warning('YouTube webhook: account not found', ['channel_id' => $channelId]);
+
             return;
         }
 

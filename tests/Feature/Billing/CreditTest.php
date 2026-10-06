@@ -4,8 +4,8 @@ namespace Tests\Feature\Billing;
 
 use App\Models\Agency;
 use App\Models\CreditTransaction;
-use App\Models\User;
 use App\Models\UsageQuota;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +14,7 @@ class CreditTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void

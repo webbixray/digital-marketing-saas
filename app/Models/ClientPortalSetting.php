@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasAgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Concerns\HasAgency;
 
 class ClientPortalSetting extends Model
 {

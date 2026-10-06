@@ -33,6 +33,7 @@ class ApiClientPortalController extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getDashboardData($client->id);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 
@@ -40,6 +41,7 @@ class ApiClientPortalController extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getCampaigns($client->id, $request->only(['status', 'search']));
+
         return response()->json(['success' => true, 'data' => $data['campaigns']]);
     }
 
@@ -47,6 +49,7 @@ class ApiClientPortalController extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getInvoices($client->id, $request->only(['status']));
+
         return response()->json(['success' => true, 'data' => $data['invoices']]);
     }
 
@@ -54,6 +57,7 @@ class ApiClientPortalController extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getAnalytics($client->id);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 
@@ -61,6 +65,7 @@ class ApiClientPortalController extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getSettings($client->id);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 

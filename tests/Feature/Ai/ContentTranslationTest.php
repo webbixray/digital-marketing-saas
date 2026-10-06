@@ -28,7 +28,7 @@ class ContentTranslationTest extends TestCase
 
     public function test_translate_content_returns_translated_result(): void
     {
-        $service = new ContentTranslationService(new AiGateway());
+        $service = new ContentTranslationService(new AiGateway);
 
         $result = $service->translateContent(
             content: 'Hello world, this is a test.',
@@ -47,7 +47,7 @@ class ContentTranslationTest extends TestCase
 
     public function test_translate_social_post_returns_content_and_hashtags(): void
     {
-        $service = new ContentTranslationService(new AiGateway());
+        $service = new ContentTranslationService(new AiGateway);
 
         $post = [
             'content' => 'Check out our latest product!',
@@ -89,7 +89,7 @@ class ContentTranslationTest extends TestCase
 
     public function test_batch_translation_processes_all_items(): void
     {
-        $service = new ContentTranslationService(new AiGateway());
+        $service = new ContentTranslationService(new AiGateway);
 
         $items = [
             ['content' => 'First item', 'context' => 'general'],
@@ -108,7 +108,7 @@ class ContentTranslationTest extends TestCase
 
     public function test_quality_score_returns_valid_range(): void
     {
-        $service = new ContentTranslationService(new AiGateway());
+        $service = new ContentTranslationService(new AiGateway);
 
         $original = 'This is a sample text for translation quality testing.';
         $translated = 'Este es un texto de ejemplo para probar la calidad de la traducción.';

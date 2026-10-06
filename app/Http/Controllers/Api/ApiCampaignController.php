@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiCampaignController extends ApiController
@@ -33,6 +34,7 @@ class ApiCampaignController extends ApiController
             return CampaignResource::collection($campaigns)->response();
         } catch (\Exception $e) {
             Log::error('API campaign index failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch campaigns'], 500);
         }
     }
@@ -58,10 +60,11 @@ class ApiCampaignController extends ApiController
             return (new CampaignResource($campaign))
                 ->response()
                 ->setStatusCode(201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API campaign store failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to create campaign'], 500);
         }
     }
@@ -70,11 +73,13 @@ class ApiCampaignController extends ApiController
     {
         try {
             $this->authorizeAgencyResource($campaign, $request->user()->agency_id);
+
             return (new CampaignResource($campaign->load('posts')))->response();
         } catch (NotFoundHttpException $e) {
             return response()->json(['error' => 'Not found'], 404);
         } catch (\Exception $e) {
             Log::error('API campaign show failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch campaign'], 500);
         }
     }
@@ -97,10 +102,11 @@ class ApiCampaignController extends ApiController
             return (new CampaignResource($campaign))->response();
         } catch (NotFoundHttpException $e) {
             return response()->json(['error' => 'Not found'], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API campaign update failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to update campaign'], 500);
         }
     }
@@ -116,6 +122,7 @@ class ApiCampaignController extends ApiController
             return response()->json(['error' => 'Not found'], 404);
         } catch (\Exception $e) {
             Log::error('API campaign destroy failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to delete campaign'], 500);
         }
     }

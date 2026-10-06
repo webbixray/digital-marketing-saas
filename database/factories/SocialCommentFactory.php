@@ -55,7 +55,7 @@ class SocialCommentFactory extends Factory
         ]);
     }
 
-    public function reply(SocialComment $parent = null): static
+    public function reply(?SocialComment $parent = null): static
     {
         return $this->state(function (array $attributes) use ($parent) {
             $comment = $parent ?? SocialComment::factory()->create();

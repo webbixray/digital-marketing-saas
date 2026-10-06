@@ -3,8 +3,6 @@
 namespace Tests\Feature\Integrations;
 
 use App\Models\Agency;
-use App\Models\Client;
-use App\Models\Invoice;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
@@ -17,6 +15,7 @@ class ZapierTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void

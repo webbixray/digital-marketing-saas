@@ -57,7 +57,7 @@ class WhiteLabelDomain extends Model
 
     public function generateVerificationToken(): string
     {
-        $token = 'dms-verify=' . md5($this->domain . config('app.key'));
+        $token = 'dms-verify='.md5($this->domain.config('app.key'));
         $this->update(['verification_token' => $token]);
 
         return $token;

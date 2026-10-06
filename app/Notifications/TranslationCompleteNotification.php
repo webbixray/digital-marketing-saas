@@ -60,7 +60,7 @@ class TranslationCompleteNotification extends Notification implements ShouldQueu
             ->line('Your batch translation job has completed.')
             ->line("Target language: {$targetName}")
             ->line("Items processed: {$this->successCount} of {$this->totalItems}")
-            ->line('Cost: $' . number_format($this->totalCost, 4));
+            ->line('Cost: $'.number_format($this->totalCost, 4));
 
         if ($this->errorCount > 0) {
             $mail->line("Errors: {$this->errorCount} items failed");

@@ -31,6 +31,7 @@ class ClientAccessToken extends Model
         if ($this->expires_at && $this->expires_at->isPast()) {
             return false;
         }
+
         return true;
     }
 

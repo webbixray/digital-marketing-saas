@@ -94,8 +94,8 @@ class ApiAiAuditController extends Controller
 
         $explanation = $this->explainabilityService->explainDecision(
             $log->model_used ?? 'unknown',
-            'input-hash:' . $log->input_hash,
-            'output-hash:' . $log->output_hash,
+            'input-hash:'.$log->input_hash,
+            'output-hash:'.$log->output_hash,
         );
 
         return response()->json([

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 use App\Models\SocialAccount;
 use App\Services\Social\FacebookApiService;
 use Illuminate\Http\JsonResponse;
@@ -9,15 +10,17 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class FacebookController extends Controller
 {
     use SocialOAuthConnectTrait;
 
     protected string $oauthPlatform = 'facebook';
+
     protected string $oauthPlatformName = 'Facebook';
+
     protected string $oauthRoutePrefix = 'facebook';
+
     public function __construct(
         private readonly FacebookApiService $facebook,
     ) {

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reseller;
-use App\Services\Billing\ResellerService;
+use App\Models\ResellerCommission;
 use App\Services\Billing\CommissionService;
+use App\Services\Billing\ResellerService;
 use App\Services\Billing\WhiteLabelService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ResellerController extends Controller
 {
@@ -24,7 +24,7 @@ class ResellerController extends Controller
         $agencyId = $request->user()->agency_id;
         $resellers = Reseller::byAgency($agencyId)
             ->withCount(['commissions as pending_commissions_count' => function ($q) {
-                $q->where('status', \App\Models\ResellerCommission::STATUS_PENDING);
+                $q->where('status', ResellerCommission::STATUS_PENDING);
             }])
             ->orderByDesc('created_at')
             ->paginate(20);
@@ -77,8 +77,8 @@ class ResellerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:resellers,slug,' . $id,
-            'domain' => 'nullable|string|max:255|unique:resellers,domain,' . $id,
+            'slug' => 'nullable|string|max:255|unique:resellers,slug,'.$id,
+            'domain' => 'nullable|string|max:255|unique:resellers,domain,'.$id,
             'logo_url' => 'nullable|url|max:2048',
             'primary_color' => 'nullable|string|max:7',
             'is_active' => 'boolean',

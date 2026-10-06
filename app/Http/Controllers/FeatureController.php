@@ -14,6 +14,7 @@ class FeatureController extends Controller
             if (! $request->user()->isAdmin() && ! $request->user()->isOwner()) {
                 abort(403);
             }
+
             return $next($request);
         });
     }

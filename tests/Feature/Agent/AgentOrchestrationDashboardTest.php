@@ -17,6 +17,7 @@ class AgentOrchestrationDashboardTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $admin;
 
     protected function setUp(): void

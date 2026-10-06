@@ -29,6 +29,7 @@ class SocialListeningService
     public function removeKeyword(int $agencyId, int $keywordId): bool
     {
         $keyword = SocialListening::where('agency_id', $agencyId)->findOrFail($keywordId);
+
         return $keyword->delete();
     }
 
@@ -123,6 +124,7 @@ class SocialListeningService
             };
         } catch (\Exception $e) {
             Log::error("Social listening fetch failed for {$account->platform}: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -147,10 +149,12 @@ class SocialListeningService
                 return $response->json()['data'] ?? [];
             }
 
-            Log::warning("Twitter search failed: " . ($response->json()['detail'] ?? 'Unknown error'));
+            Log::warning('Twitter search failed: '.($response->json()['detail'] ?? 'Unknown error'));
+
             return [];
         } catch (\Exception $e) {
             Log::error("Twitter keyword search error: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -170,12 +174,14 @@ class SocialListeningService
 
             if ($response->successful()) {
                 $data = $response->json()['data'] ?? [];
+
                 return $this->filterByKeyword($data, $keyword);
             }
 
             return [];
         } catch (\Exception $e) {
             Log::error("Facebook keyword search error: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -195,12 +201,14 @@ class SocialListeningService
 
             if ($response->successful()) {
                 $data = $response->json()['data'] ?? [];
+
                 return $this->filterByKeyword($data, $keyword);
             }
 
             return [];
         } catch (\Exception $e) {
             Log::error("Instagram keyword search error: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -222,12 +230,14 @@ class SocialListeningService
 
             if ($response->successful()) {
                 $data = $response->json()['elements'] ?? [];
+
                 return $this->filterByKeyword($data, $keyword);
             }
 
             return [];
         } catch (\Exception $e) {
             Log::error("LinkedIn keyword search error: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -256,6 +266,7 @@ class SocialListeningService
             return [];
         } catch (\Exception $e) {
             Log::error("TikTok keyword search error: {$e->getMessage()}");
+
             return [];
         }
     }
@@ -267,6 +278,7 @@ class SocialListeningService
     {
         return array_filter($data, function ($item) use ($keyword) {
             $text = strtolower(json_encode($item));
+
             return str_contains($text, strtolower($keyword));
         });
     }
@@ -283,7 +295,7 @@ class SocialListeningService
                 return $service->analyze($text);
             }
         } catch (\Exception $e) {
-            Log::debug('AI sentiment service unavailable, using rule-based: ' . $e->getMessage());
+            Log::debug('AI sentiment service unavailable, using rule-based: '.$e->getMessage());
         }
 
         // Fallback to rule-based sentiment analysis
@@ -437,7 +449,7 @@ class SocialListeningService
                 'error' => $response->json()['detail'] ?? 'Failed to fetch mentions',
             ];
         } catch (\Exception $e) {
-            Log::error('Twitter mentions fetch failed: ' . $e->getMessage());
+            Log::error('Twitter mentions fetch failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -452,7 +464,7 @@ class SocialListeningService
             $url = "https://graph.facebook.com/v18.0/{$account->platform_account_id}/feed";
             $response = Http::timeout(30)->get($url, [
                 'access_token' => $account->access_token,
-                'fields' => 'message,comments.limit(' . $count . '){message,from,created_time}',
+                'fields' => 'message,comments.limit('.$count.'){message,from,created_time}',
                 'limit' => $count,
             ]);
 
@@ -468,7 +480,7 @@ class SocialListeningService
                 'error' => $response->json()['error']['message'] ?? 'Failed to fetch comments',
             ];
         } catch (\Exception $e) {
-            Log::error('Facebook comments fetch failed: ' . $e->getMessage());
+            Log::error('Facebook comments fetch failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -483,7 +495,7 @@ class SocialListeningService
             $url = "https://graph.facebook.com/v18.0/{$account->platform_account_id}/media";
             $response = Http::timeout(30)->get($url, [
                 'access_token' => $account->access_token,
-                'fields' => 'caption,comments.limit(' . $count . '){text,username,timestamp}',
+                'fields' => 'caption,comments.limit('.$count.'){text,username,timestamp}',
                 'limit' => $count,
             ]);
 
@@ -499,7 +511,7 @@ class SocialListeningService
                 'error' => $response->json()['error']['message'] ?? 'Failed to fetch comments',
             ];
         } catch (\Exception $e) {
-            Log::error('Instagram comments fetch failed: ' . $e->getMessage());
+            Log::error('Instagram comments fetch failed: '.$e->getMessage());
 
             return ['success' => false, 'error' => $e->getMessage()];
         }

@@ -60,6 +60,7 @@ class InstagramWebhookController extends Controller
                 Log::warning('Instagram webhook: account not found', [
                     'ig_user_id' => $igUserId,
                 ]);
+
                 continue;
             }
 

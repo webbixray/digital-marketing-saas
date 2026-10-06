@@ -5,9 +5,7 @@ namespace Tests\Feature\Billing;
 use App\Models\Agency;
 use App\Models\Reseller;
 use App\Models\ResellerCommission;
-use App\Models\WhiteLabelDomain;
 use App\Models\User;
-use Database\Factories\ResellerFactory;
 use Database\Factories\WhiteLabelDomainFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,6 +15,7 @@ class ResellerTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void
@@ -55,7 +54,7 @@ class ResellerTest extends TestCase
     {
         // Verify route is registered (controller may have pre-existing bugs)
         $routes = collect(\Route::getRoutes());
-        $route = $routes->first(fn($r) => $r->getName() === 'resellers.store');
+        $route = $routes->first(fn ($r) => $r->getName() === 'resellers.store');
         $this->assertNotNull($route);
         $this->assertTrue(in_array('POST', $route->methods()));
     }
@@ -85,7 +84,7 @@ class ResellerTest extends TestCase
 
         // Verify route is registered and accepts PUT
         $routes = collect(\Route::getRoutes());
-        $route = $routes->first(fn($r) => $r->getName() === 'resellers.update');
+        $route = $routes->first(fn ($r) => $r->getName() === 'resellers.update');
         $this->assertNotNull($route);
         $this->assertTrue(in_array('PUT', $route->methods()));
     }

@@ -50,7 +50,7 @@ class WebhookTest extends TestCase
         ];
 
         config(['services.facebook.webhook_secret' => 'test_secret']);
-        $signature = 'sha256=' . hash_hmac('sha256', json_encode($payload), 'test_secret');
+        $signature = 'sha256='.hash_hmac('sha256', json_encode($payload), 'test_secret');
 
         $response = $this->withHeaders(['X-Hub-Signature-256' => $signature])
             ->postJson('/webhook/facebook', $payload);

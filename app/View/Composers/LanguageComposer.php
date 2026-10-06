@@ -28,6 +28,8 @@ class LanguageComposer
     {
         $currentLocale = App::getLocale();
         $isRTL = $this->isRTLLocale($currentLocale);
+
+        // Fetch supported languages (cache validation in LocaleService handles corrupted cache)
         $supportedLanguages = $this->localeService->getSupportedLanguages();
 
         $view->with('currentLocale', $currentLocale);
@@ -117,7 +119,8 @@ class LanguageComposer
     {
         $service = app(LocaleService::class);
         $languages = $service->getSupportedLanguages();
-        $instance = new static($service, app(TranslationService::class));
+
+        $instance = app(static::class);
 
         return $instance->formatLanguagesForPicker($languages);
     }

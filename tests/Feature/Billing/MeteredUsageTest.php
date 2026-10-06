@@ -14,6 +14,7 @@ class MeteredUsageTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void
@@ -99,7 +100,7 @@ class MeteredUsageTest extends TestCase
 
         // Verify route is registered (controller may have pre-existing bugs)
         $routes = collect(\Route::getRoutes());
-        $route = $routes->first(fn($r) => $r->getName() === 'billing.usage.index');
+        $route = $routes->first(fn ($r) => $r->getName() === 'billing.usage.index');
         $this->assertNotNull($route);
         $this->assertTrue(in_array('GET', $route->methods()));
     }

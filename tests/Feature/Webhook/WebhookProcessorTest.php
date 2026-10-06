@@ -19,12 +19,12 @@ class WebhookProcessorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Clear deduplication cache between tests
         Cache::flush();
-        
+
         // Ensure the table exists (RefreshDatabase should handle this)
-        if (!Schema::hasTable('webhook_processing_logs')) {
+        if (! Schema::hasTable('webhook_processing_logs')) {
             $this->artisan('migrate', ['--force' => true]);
         }
     }
@@ -104,7 +104,7 @@ class WebhookProcessorTest extends TestCase
 
         $payload = ['object' => 'page'];
         $payloadJson = json_encode($payload);
-        $validSignature = 'sha256=' . hash_hmac('sha256', $payloadJson, 'test_secret');
+        $validSignature = 'sha256='.hash_hmac('sha256', $payloadJson, 'test_secret');
 
         $this->assertTrue($processor->verifyFacebookSignature($payloadJson, $validSignature));
         $this->assertFalse($processor->verifyFacebookSignature($payloadJson, 'invalid'));

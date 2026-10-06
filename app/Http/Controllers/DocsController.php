@@ -7,6 +7,11 @@ use Illuminate\Http\Response;
 
 class DocsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth:sanctum', 'role:owner|admin'])->except(['openapiYaml', 'openapiJson', 'swaggerUi']);
+    }
+
     /**
      * Serve the OpenAPI specification as YAML.
      */
@@ -19,6 +24,9 @@ class DocsController extends Controller
         }
 
         $yaml = file_get_contents($path);
+        if ($yaml === false) {
+            return response('Failed to read OpenAPI spec', 500);
+        }
 
         return response($yaml, 200, [
             'Content-Type' => 'application/x-yaml',
@@ -38,6 +46,10 @@ class DocsController extends Controller
         }
 
         $yaml = file_get_contents($path);
+        if ($yaml === false) {
+            return response()->json(['error' => 'Failed to read OpenAPI spec'], 500);
+        }
+
         $data = $this->yamlToArray($yaml);
 
         return response()->json($data);
@@ -97,11 +109,15 @@ HTML;
     /**
      * Simple YAML to array converter for JSON endpoint.
      * In production, install symfony/yaml for proper parsing.
+     *
+     * @return array<string, mixed>
      */
     private function yamlToArray(string $yaml): array
     {
         if (function_exists('yaml_parse')) {
-            return yaml_parse($yaml) ?: [];
+            $result = yaml_parse($yaml);
+
+            return is_array($result) ? $result : [];
         }
 
         // Fallback for systems without YAML extension

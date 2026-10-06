@@ -3,10 +3,8 @@
 namespace App\Services\AI;
 
 use App\Models\Agency;
-use App\Models\Campaign;
 use App\Models\ContentGenome;
 use App\Models\SocialPost;
-use App\Services\AI\Gateway\AiGateway;
 use App\Services\AI\Gateway\AiRequest;
 
 class ContentGenomeEngine
@@ -20,7 +18,7 @@ class ContentGenomeEngine
         $topPosts = SocialPost::where('agency_id', $agency->id)
             ->where('status', 'published')
             ->whereNotNull('engagement_rate')
-            ->when($platform !== 'all', fn($q) => $q->where('platform', $platform))
+            ->when($platform !== 'all', fn ($q) => $q->where('platform', $platform))
             ->orderByDesc('engagement_rate')
             ->limit(100)
             ->get();
@@ -68,7 +66,7 @@ class ContentGenomeEngine
             ->where('platform', $platform)
             ->first();
 
-        if (!$genome) {
+        if (! $genome) {
             $genome = $this->analyzeContentDNA($agency, $platform);
         }
 
@@ -99,7 +97,7 @@ class ContentGenomeEngine
         }
 
         if (isset($dna['best_hashtags'])) {
-            $prompt .= "- Best performing hashtags: " . implode(', ', array_slice($dna['best_hashtags'], 0, 5)) . "\n";
+            $prompt .= '- Best performing hashtags: '.implode(', ', array_slice($dna['best_hashtags'], 0, 5))."\n";
         }
 
         if (isset($dna['tone_patterns'])) {
@@ -128,8 +126,9 @@ class ContentGenomeEngine
      */
     private function analyzeOptimalLength($posts): string
     {
-        $avgLength = $posts->avg(fn($p) => strlen($p->content ?? ''));
-        return round($avgLength) . ' characters (range: ' . round($avgLength * 0.8) . '-' . round($avgLength * 1.2) . ')';
+        $avgLength = $posts->avg(fn ($p) => strlen($p->content ?? ''));
+
+        return round($avgLength).' characters (range: '.round($avgLength * 0.8).'-'.round($avgLength * 1.2).')';
     }
 
     /**
@@ -144,6 +143,7 @@ class ContentGenomeEngine
         }
         $counts = array_count_values($allHashtags);
         arsort($counts);
+
         return array_slice(array_keys($counts), 0, 10);
     }
 
@@ -160,6 +160,7 @@ class ContentGenomeEngine
         }
         $counts = array_count_values($hours);
         arsort($counts);
+
         return array_slice(array_keys($counts), 0, 3);
     }
 
@@ -169,8 +170,8 @@ class ContentGenomeEngine
     private function analyzeThemes($posts): string
     {
         $response = $this->aiGateway->send(new AiRequest(
-            prompt: "Analyze these posts and identify the top 3 content themes:\n\n" .
-                    $posts->map(fn($p) => substr($p->content ?? '', 0, 100))->implode("\n") .
+            prompt: "Analyze these posts and identify the top 3 content themes:\n\n".
+                    $posts->map(fn ($p) => substr($p->content ?? '', 0, 100))->implode("\n").
                     "\n\nRespond with ONLY the themes, comma-separated.",
             maxTokens: 100,
         ));

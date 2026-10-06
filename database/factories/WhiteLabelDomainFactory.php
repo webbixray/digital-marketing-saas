@@ -18,7 +18,7 @@ class WhiteLabelDomainFactory extends Factory
             'reseller_id' => Reseller::factory(),
             'domain' => $domain,
             'is_verified' => false,
-            'verification_token' => 'dms-verify=' . md5($domain . config('app.key')),
+            'verification_token' => 'dms-verify='.md5($domain.config('app.key')),
             'ssl_status' => WhiteLabelDomain::SSL_STATUS_PENDING,
             'status' => WhiteLabelDomain::STATUS_PENDING,
         ];

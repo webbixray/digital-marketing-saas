@@ -4,7 +4,7 @@ namespace App\Services\Agent\Marketplace;
 
 use App\Models\AgentMarketplaceItem;
 use App\Models\AgentMarketplaceReview;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AgentRatingService
 {
@@ -51,7 +51,7 @@ class AgentRatingService
         ];
     }
 
-    public function getReviews(int $itemId, array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    public function getReviews(int $itemId, array $filters = []): LengthAwarePaginator
     {
         $query = AgentMarketplaceReview::with('user')->byItem($itemId)->approved();
 

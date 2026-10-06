@@ -16,6 +16,7 @@ class ClientPortalController extends Controller
     {
         $this->middleware(['auth', 'agency']);
     }
+
     /**
      * Show the client portal settings page (agency admin)
      */

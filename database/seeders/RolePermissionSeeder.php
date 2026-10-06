@@ -3,15 +3,16 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create permissions
         $permissions = [
@@ -91,7 +92,7 @@ class RolePermissionSeeder extends Seeder
         $roles = [
             'owner' => $permissions, // All permissions
             'admin' => array_diff($permissions, ['delete agencies', 'manage subscription']),
-            'manager' => array_filter($permissions, fn($p) => in_array($p, [
+            'manager' => array_filter($permissions, fn ($p) => in_array($p, [
                 'view agencies', 'view social accounts', 'create social accounts', 'update social accounts',
                 'view campaigns', 'create campaigns', 'update campaigns',
                 'view clients', 'create clients', 'update clients',
@@ -103,7 +104,7 @@ class RolePermissionSeeder extends Seeder
                 'view workflows', 'create workflows', 'update workflows',
                 'view custom fields', 'create custom fields', 'update custom fields',
             ])),
-            'member' => array_filter($permissions, fn($p) => in_array($p, [
+            'member' => array_filter($permissions, fn ($p) => in_array($p, [
                 'view agencies', 'view social accounts',
                 'view campaigns',
                 'view clients',

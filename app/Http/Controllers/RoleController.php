@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermissionCategory;
 use App\Services\RBAC\EnterpriseRBACService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class RoleController extends Controller
     {
         $agencyId = $request->user()->agency_id;
         $permissions = Permission::all();
-        $categories = \App\Models\PermissionCategory::orderBy('sort_order')->get();
+        $categories = PermissionCategory::orderBy('sort_order')->get();
 
         return view('roles.create', compact('permissions', 'categories', 'agencyId'));
     }
@@ -71,7 +72,7 @@ class RoleController extends Controller
         $agencyId = $request->user()->agency_id;
         $permissions = Permission::all();
         $rolePermissions = $this->rbacService->getRolePermissions($role->id);
-        $categories = \App\Models\PermissionCategory::orderBy('sort_order')->get();
+        $categories = PermissionCategory::orderBy('sort_order')->get();
 
         return view('roles.edit', compact('role', 'permissions', 'rolePermissions', 'categories', 'agencyId'));
     }

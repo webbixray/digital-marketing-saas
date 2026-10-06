@@ -3,9 +3,9 @@
 namespace Tests\Feature\AI;
 
 use App\Models\Agency;
-use App\Services\AI\Gateway\AiGateway;
-use App\Services\AI\Gateway\AiRequest;
 use App\Services\AI\AiCacheService;
+use App\Services\AI\Gateway\AiRequest;
+use App\Services\AI\Gateway\AiResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,12 +14,13 @@ class AiCacheServiceTest extends TestCase
     use RefreshDatabase;
 
     private AiCacheService $cache;
+
     private Agency $agency;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->cache = new AiCacheService();
+        $this->cache = new AiCacheService;
         $this->agency = Agency::factory()->create();
     }
 
@@ -33,7 +34,7 @@ class AiCacheServiceTest extends TestCase
     public function test_cache_hit_returns_stored_response(): void
     {
         $request = new AiRequest(prompt: 'What is AI?', task: 'fast', model: 'gpt-4o');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'AI is artificial intelligence.',
             model: 'gpt-4o',
             provider: 'openai',
@@ -57,7 +58,7 @@ class AiCacheServiceTest extends TestCase
     {
         $agency2 = Agency::factory()->create();
         $request = new AiRequest(prompt: 'test prompt', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'Agency 1 response',
             model: 'gpt-4o',
             provider: 'openai',
@@ -76,7 +77,7 @@ class AiCacheServiceTest extends TestCase
     {
         $request1 = new AiRequest(prompt: '  What   is  AI?  ', task: 'fast');
         $request2 = new AiRequest(prompt: 'what is ai?', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'AI definition',
             model: 'gpt-4o',
             provider: 'openai',
@@ -98,7 +99,7 @@ class AiCacheServiceTest extends TestCase
     {
         $request1 = new AiRequest(prompt: 'test', model: 'gpt-4o', task: 'fast');
         $request2 = new AiRequest(prompt: 'test', model: 'gpt-4o-mini', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'Response',
             model: 'gpt-4o',
             provider: 'openai',
@@ -116,7 +117,7 @@ class AiCacheServiceTest extends TestCase
     public function test_cache_invalidation(): void
     {
         $request = new AiRequest(prompt: 'test', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'Response',
             model: 'gpt-4o',
             provider: 'openai',
@@ -135,7 +136,7 @@ class AiCacheServiceTest extends TestCase
     public function test_cache_metrics_tracking(): void
     {
         $request = new AiRequest(prompt: 'test', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: 'Response',
             model: 'gpt-4o',
             provider: 'openai',
@@ -160,7 +161,7 @@ class AiCacheServiceTest extends TestCase
     {
         $largeContent = str_repeat('x', 50001);
         $request = new AiRequest(prompt: 'test', task: 'fast');
-        $response = new \App\Services\AI\Gateway\AiResponse(
+        $response = new AiResponse(
             content: $largeContent,
             model: 'gpt-4o',
             provider: 'openai',

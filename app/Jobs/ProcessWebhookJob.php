@@ -2,8 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Models\SocialAccount;
 use App\Models\WebhookProcessingLog;
-use Illuminate\Bus\Batchable;
+use App\Models\Workflow;
+use App\Services\Telegram\TelegramBotService;
+use App\Services\Workflow\WorkflowEngine;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
+class ProcessWebhookJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,12 +38,13 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
 
     /**
      * Calculate the backoff delay for the current attempt.
-     * 
+     *
      * Returns exponential backoff: 60s, 300s, 900s, 3600s, 3600s
      */
     public function backoff(): int
     {
         $attempt = max($this->attempts() - 1, 0);
+
         return self::RETRY_DELAYS[min($attempt, count(self::RETRY_DELAYS) - 1)];
     }
 
@@ -54,16 +58,19 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
 
         if (! $log) {
             Log::warning("WebhookProcessingLog not found: {$this->webhookLogId}");
+
             return;
         }
 
         if ($log->isCompleted()) {
             Log::info("Webhook already completed: {$log->webhook_id}");
+
             return;
         }
 
         if (! $log->canRetry()) {
             Log::info("Webhook cannot be retried: {$log->webhook_id}");
+
             return;
         }
 
@@ -80,7 +87,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
 
             if ($result) {
                 $log->markAsCompleted();
-                Log::info("Webhook processed successfully", [
+                Log::info('Webhook processed successfully', [
                     'webhook_id' => $log->webhook_id,
                     'platform' => $log->platform,
                     'attempt' => $log->attempt,
@@ -93,7 +100,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             $responseTime = (int) round((microtime(true) - $startTime) * 1000);
             $errorMessage = $e->getMessage();
 
-            Log::error("Webhook processing failed", [
+            Log::error('Webhook processing failed', [
                 'webhook_id' => $log->webhook_id,
                 'platform' => $log->platform,
                 'attempt' => $log->attempt,
@@ -103,7 +110,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
 
             if ($log->attempt >= self::MAX_ATTEMPTS) {
                 $log->markAsDeadLetter("Max attempts reached: {$errorMessage}");
-                Log::critical("Webhook moved to dead letter queue", [
+                Log::critical('Webhook moved to dead letter queue', [
                     'webhook_id' => $log->webhook_id,
                     'platform' => $log->platform,
                     'attempts' => $log->attempt,
@@ -146,12 +153,13 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             $pageId = $entry['id'] ?? null;
             $changes = $entry['changes'] ?? [];
 
-            $account = \App\Models\SocialAccount::where('platform', 'facebook')
+            $account = SocialAccount::where('platform', 'facebook')
                 ->where('platform_account_id', $pageId)
                 ->first();
 
             if (! $account) {
                 Log::warning('Facebook webhook: account not found', ['page_id' => $pageId]);
+
                 continue;
             }
 
@@ -184,7 +192,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             $igUserId = $entry['id'] ?? null;
             $changes = $entry['changes'] ?? [];
 
-            $account = \App\Models\SocialAccount::where('platform', 'instagram')
+            $account = SocialAccount::where('platform', 'instagram')
                 ->where('platform_account_id', $igUserId)
                 ->first();
 
@@ -215,7 +223,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             $type = $event['type'] ?? '';
             $actor = $event['actor'] ?? '';
 
-            $account = \App\Models\SocialAccount::where('platform', 'linkedin')
+            $account = SocialAccount::where('platform', 'linkedin')
                 ->where('platform_account_id', $actor)
                 ->first();
 
@@ -257,7 +265,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
         $channelId = (string) ($payload['entry']['author']['uri'] ?? '');
 
         if ($videoId && $channelId) {
-            $account = \App\Models\SocialAccount::where('platform', 'youtube')
+            $account = SocialAccount::where('platform', 'youtube')
                 ->where('platform_account_id', $channelId)
                 ->first();
 
@@ -274,8 +282,9 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
         $payload = $log->payload;
 
         try {
-            $telegram = app(\App\Services\Telegram\TelegramBotService::class);
+            $telegram = app(TelegramBotService::class);
             $telegram->handleWebhook($payload);
+
             return true;
         } catch (\Throwable $e) {
             throw new \RuntimeException("Telegram webhook handling failed: {$e->getMessage()}");
@@ -291,7 +300,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             throw new \RuntimeException('Missing workflow_id in payload');
         }
 
-        $workflow = \App\Models\Workflow::find($workflowId);
+        $workflow = Workflow::find($workflowId);
 
         if (! $workflow) {
             throw new \RuntimeException("Workflow not found: {$workflowId}");
@@ -301,7 +310,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             throw new \RuntimeException("Workflow is not active: {$workflowId}");
         }
 
-        $engine = app(\App\Services\Workflow\WorkflowEngine::class);
+        $engine = app(WorkflowEngine::class);
         $engine->execute($workflow, $payload);
 
         return true;
@@ -313,6 +322,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
             'webhook_id' => $log->webhook_id,
             'platform' => $log->platform,
         ]);
+
         return true;
     }
 
@@ -342,7 +352,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
         ]);
     }
 
-    private function handleTikTokEvent(?\App\Models\SocialAccount $account, string $platform, string $type, array $event): void
+    private function handleTikTokEvent(?SocialAccount $account, string $platform, string $type, array $event): void
     {
         if (! $account) {
             return;
@@ -360,7 +370,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
 
         if ($log && ! $log->isDeadLetter()) {
             $log->markAsDeadLetter("Job failed after {$this->attempts()} attempts: {$exception->getMessage()}");
-            Log::critical("Webhook job failed permanently", [
+            Log::critical('Webhook job failed permanently', [
                 'webhook_log_id' => $this->webhookLogId,
                 'error' => $exception->getMessage(),
             ]);
@@ -381,6 +391,7 @@ class ProcessWebhookJob implements ShouldQueue, ShouldBeUnique
     public function tags(): array
     {
         $log = WebhookProcessingLog::find($this->webhookLogId);
+
         return ['webhook', $log->platform ?? 'unknown', "attempt:{$log->attempt}"];
     }
 }

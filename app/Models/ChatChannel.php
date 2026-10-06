@@ -58,7 +58,7 @@ class ChatChannel extends Model
 
     public function scopeForUser($query, User $user)
     {
-        return $query->whereHas('users', fn($q) => $q->where('user_id', $user->id));
+        return $query->whereHas('users', fn ($q) => $q->where('user_id', $user->id));
     }
 
     public function getLastMessageAttribute()
@@ -69,6 +69,7 @@ class ChatChannel extends Model
     public function getUnreadCountAttribute()
     {
         $lastRead = $this->users()->where('user_id', auth()->id())->first()?->pivot->last_read_at;
-        return $this->messages()->when($lastRead, fn($q) => $q->where('created_at', '>', $lastRead))->count();
+
+        return $this->messages()->when($lastRead, fn ($q) => $q->where('created_at', '>', $lastRead))->count();
     }
 }

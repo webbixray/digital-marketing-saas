@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\AgentSharedKnowledge;
 use App\Models\Agency;
+use App\Models\AgentSharedKnowledge;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AgentSharedKnowledgeFactory extends Factory

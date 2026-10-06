@@ -3,7 +3,6 @@
 namespace Tests\Feature\AI;
 
 use App\Models\Agency;
-use App\Models\AiProviderKey;
 use App\Services\AI\AiProviderManager;
 use App\Services\AI\Gateway\AiGateway;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,12 +13,13 @@ class AiProviderManagerTest extends TestCase
     use RefreshDatabase;
 
     private AiProviderManager $manager;
+
     private Agency $agency;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $gateway = new AiGateway();
+        $gateway = new AiGateway;
         $this->manager = new AiProviderManager($gateway);
         $this->agency = Agency::factory()->create();
     }

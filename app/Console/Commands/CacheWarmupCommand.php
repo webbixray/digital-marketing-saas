@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Agency;
 use App\Services\Analytics\AnalyticsService;
 use App\Services\Calendar\ContentCalendarService;
-use App\Services\AI\Agent\AgentOrchestrator;
-use App\Jobs\Email\SendEmailCampaign;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -61,7 +59,7 @@ class CacheWarmupCommand extends Command
                     $this->warmAgencyCache($analytics, $calendar, $agency);
                 }
             } catch (\Exception $e) {
-                Log::warning("Cache warmup failed for agency {$agency->id}: " . $e->getMessage());
+                Log::warning("Cache warmup failed for agency {$agency->id}: ".$e->getMessage());
             }
             $bar->advance();
         }

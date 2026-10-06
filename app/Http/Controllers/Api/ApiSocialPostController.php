@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\SocialPostRequest;
 use App\Http\Resources\SocialPostResource;
 use App\Models\SocialPost;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiSocialPostController extends ApiController
 {
@@ -37,6 +40,7 @@ class ApiSocialPostController extends ApiController
             return SocialPostResource::collection($posts)->response();
         } catch (\Exception $e) {
             Log::error('API social post index failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch social posts'], 500);
         }
     }
@@ -58,6 +62,7 @@ class ApiSocialPostController extends ApiController
                 ->setStatusCode(201);
         } catch (\Exception $e) {
             Log::error('API social post store failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to create social post'], 500);
         }
     }
@@ -66,13 +71,15 @@ class ApiSocialPostController extends ApiController
     {
         try {
             $this->authorizeAgencyResource($post, $request->user()->agency_id);
+
             return (new SocialPostResource($post->load('socialAccount')))->response();
-        } catch (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return response()->json(['error' => 'Not found'], 404);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social post show failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch social post'], 500);
         }
     }
@@ -91,12 +98,13 @@ class ApiSocialPostController extends ApiController
             $post->update($data);
 
             return (new SocialPostResource($post))->response();
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social post update failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to update social post'], 500);
         }
     }
@@ -108,10 +116,11 @@ class ApiSocialPostController extends ApiController
             $post->delete();
 
             return response()->json(null, 204);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social post destroy failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to delete social post'], 500);
         }
     }

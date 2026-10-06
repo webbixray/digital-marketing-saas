@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -138,7 +138,7 @@ return new class extends Migration
             Schema::table($table, function (Blueprint $table) use ($columns, $name) {
                 $table->index($columns, $name);
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Index may already exist
         }
     }
@@ -148,14 +148,14 @@ return new class extends Migration
      */
     private function dropIndexIfExists(string $table, string $index): void
     {
-        if (!$this->indexExists($table, $index)) {
+        if (! $this->indexExists($table, $index)) {
             return;
         }
         try {
             Schema::table($table, function (Blueprint $table) use ($index) {
                 $table->dropIndex($index);
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Index may not exist
         }
     }
@@ -166,7 +166,7 @@ return new class extends Migration
     private function indexExists(string $table, string $index): bool
     {
         $driver = DB::connection()->getDriverName();
-        
+
         if ($driver === 'sqlite') {
             $indexes = DB::select(
                 "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='{$table}'"
@@ -176,9 +176,10 @@ return new class extends Migration
                     return true;
                 }
             }
+
             return false;
         }
-        
+
         // MySQL
         $indexes = DB::select("SHOW INDEX FROM `{$table}`");
         foreach ($indexes as $idx) {
@@ -186,6 +187,7 @@ return new class extends Migration
                 return true;
             }
         }
+
         return false;
     }
 };

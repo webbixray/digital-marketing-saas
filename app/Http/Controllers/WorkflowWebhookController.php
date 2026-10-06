@@ -41,6 +41,7 @@ class WorkflowWebhookController extends Controller
             handler: function (array $payload) use ($workflow) {
                 $engine = $this->engine;
                 $execution = $engine->execute($workflow, $payload);
+
                 return $execution;
             },
         );

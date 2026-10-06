@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Laravel\Socialite\Facades\Socialite;
 use PragmaRX\Google2FA\Google2FA;
 use Tests\TestCase;
 
@@ -274,7 +275,7 @@ class AuthTest extends TestCase
         $enableResponse = $this->actingAs($user)->postJson(route('two-factor.enable'));
 
         $secret = $enableResponse->json('secret');
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
         $validCode = $google2fa->getCurrentOtp($secret);
 
         $response = $this->actingAs($user)->post(route('two-factor.verify'), [
@@ -334,7 +335,7 @@ class AuthTest extends TestCase
         $provider = \Mockery::mock('Laravel\Socialite\Contracts\Provider');
         $provider->shouldReceive('redirect')->once();
 
-        \Laravel\Socialite\Facades\Socialite::shouldReceive('driver')
+        Socialite::shouldReceive('driver')
             ->with('google')
             ->once()
             ->andReturn($provider);
@@ -364,7 +365,7 @@ class AuthTest extends TestCase
         $provider = \Mockery::mock('Laravel\Socialite\Contracts\Provider');
         $provider->shouldReceive('user')->once()->andReturn($socialUser);
 
-        \Laravel\Socialite\Facades\Socialite::shouldReceive('driver')
+        Socialite::shouldReceive('driver')
             ->with('google')
             ->once()
             ->andReturn($provider);
@@ -391,7 +392,7 @@ class AuthTest extends TestCase
         $provider = \Mockery::mock('Laravel\Socialite\Contracts\Provider');
         $provider->shouldReceive('user')->once()->andReturn($socialUser);
 
-        \Laravel\Socialite\Facades\Socialite::shouldReceive('driver')
+        Socialite::shouldReceive('driver')
             ->with('google')
             ->once()
             ->andReturn($provider);

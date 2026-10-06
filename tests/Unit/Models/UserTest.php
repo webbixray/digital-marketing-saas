@@ -25,28 +25,28 @@ class UserTest extends TestCase
 
     public function test_user_has_role_attribute(): void
     {
-        $user = new User();
+        $user = new User;
         $user->role = 'owner';
         $this->assertEquals('owner', $user->role);
     }
 
     public function test_user_is_owner_returns_true_for_owner(): void
     {
-        $user = new User();
+        $user = new User;
         $user->role = 'owner';
         $this->assertTrue($user->isOwner());
     }
 
     public function test_user_is_admin_returns_true_for_admin(): void
     {
-        $user = new User();
+        $user = new User;
         $user->role = 'admin';
         $this->assertTrue($user->isAdmin());
     }
 
     public function test_user_is_editor_returns_true_for_manager(): void
     {
-        $user = new User();
+        $user = new User;
         $user->role = 'manager';
         $this->assertTrue($user->isEditor());
     }
@@ -77,7 +77,7 @@ class UserTest extends TestCase
 
     public function test_enterprise_agency_has_all_features(): void
     {
-        $agency = new Agency();
+        $agency = new Agency;
         $agency->subscription_plan = 'enterprise';
         $this->assertTrue($agency->isFeatureAvailable('workflow_engine'));
     }

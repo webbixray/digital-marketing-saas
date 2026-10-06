@@ -5,8 +5,8 @@ namespace Tests\Feature\Middleware;
 use App\Http\Middleware\Enforce2FA;
 use App\Models\Agency;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class Enforce2FATest extends TestCase
@@ -17,7 +17,8 @@ class Enforce2FATest extends TestCase
     {
         $server = $expectsJson ? ['HTTP_ACCEPT' => 'application/json'] : [];
         $request = Request::create('/test', 'GET', [], [], [], $server);
-        $request->setUserResolver(fn() => $user);
+        $request->setUserResolver(fn () => $user);
+
         return $request;
     }
 
@@ -33,8 +34,8 @@ class Enforce2FATest extends TestCase
             'two_factor_enabled' => true,
         ]);
 
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest($user), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest($user), fn () => response('OK'));
 
         $this->assertEquals(200, $response->status());
     }
@@ -51,8 +52,8 @@ class Enforce2FATest extends TestCase
             'two_factor_enabled' => false,
         ]);
 
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest($user), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest($user), fn () => response('OK'));
 
         $this->assertEquals(302, $response->status());
     }
@@ -69,16 +70,16 @@ class Enforce2FATest extends TestCase
             'two_factor_enabled' => false,
         ]);
 
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest($user), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest($user), fn () => response('OK'));
 
         $this->assertEquals(200, $response->status());
     }
 
     public function test_enforce_2fa_requires_auth(): void
     {
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest(null), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest(null), fn () => response('OK'));
 
         $this->assertEquals(200, $response->status());
     }
@@ -95,8 +96,8 @@ class Enforce2FATest extends TestCase
             'two_factor_enabled' => false,
         ]);
 
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest($user, true), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest($user, true), fn () => response('OK'));
 
         $this->assertEquals(403, $response->status());
 
@@ -116,16 +117,16 @@ class Enforce2FATest extends TestCase
             'two_factor_enabled' => false,
         ]);
 
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest($user), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest($user), fn () => response('OK'));
 
         $this->assertEquals(200, $response->status());
     }
 
     public function test_enforce_2fa_passes_through_for_guests(): void
     {
-        $middleware = new Enforce2FA();
-        $response = $middleware->handle($this->makeRequest(null), fn() => response('OK'));
+        $middleware = new Enforce2FA;
+        $response = $middleware->handle($this->makeRequest(null), fn () => response('OK'));
 
         $this->assertEquals(200, $response->status());
     }

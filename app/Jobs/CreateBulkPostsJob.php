@@ -17,7 +17,9 @@ class CreateBulkPostsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 300;
+
     public int $backoff = 30;
 
     /**
@@ -45,12 +47,13 @@ class CreateBulkPostsJob implements ShouldQueue
             // Parse CSV
             $parseResult = $service->parseCSV($this->filePath);
 
-            if (!$parseResult['success']) {
+            if (! $parseResult['success']) {
                 $this->bulkSchedule->update([
                     'status' => 'failed',
                     'errors' => [$parseResult['error']],
                     'completed_at' => now(),
                 ]);
+
                 return;
             }
 
@@ -106,7 +109,7 @@ class CreateBulkPostsJob implements ShouldQueue
             Storage::disk('local')->delete($this->filePath);
 
         } catch (\Exception $e) {
-            Log::error("Bulk schedule job failed: " . $e->getMessage());
+            Log::error('Bulk schedule job failed: '.$e->getMessage());
 
             $this->bulkSchedule->update([
                 'status' => 'failed',

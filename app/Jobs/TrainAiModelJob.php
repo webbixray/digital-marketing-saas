@@ -56,11 +56,13 @@ class TrainAiModelJob implements ShouldQueue
 
             if (! $job) {
                 Log::error("TrainAiModelJob: training job #{$this->jobId} not found.");
+
                 return;
             }
 
             if (! in_array($job->status, ['queued', 'running'], true)) {
                 Log::warning("TrainAiModelJob: job #{$this->jobId} has status '{$job->status}', skipping.");
+
                 return;
             }
 

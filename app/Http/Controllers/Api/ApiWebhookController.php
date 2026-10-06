@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendWebhook;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
 use Illuminate\Http\JsonResponse;
@@ -18,9 +19,9 @@ class ApiWebhookController extends Controller
     public function index(): JsonResponse
     {
         $webhooks = Webhook::forCurrentAgency()
-            ->with(['logs' => fn($q) => $q->latest()->limit(5)])
+            ->with(['logs' => fn ($q) => $q->latest()->limit(5)])
             ->get()
-            ->map(fn($w) => [
+            ->map(fn ($w) => [
                 'id' => $w->id,
                 'name' => $w->name,
                 'url' => $w->url,
@@ -30,7 +31,7 @@ class ApiWebhookController extends Controller
                 'failed_calls' => $w->failed_calls,
                 'last_triggered_at' => $w->last_triggered_at?->toISOString(),
                 'created_at' => $w->created_at->toISOString(),
-                'recent_deliveries' => $w->logs->map(fn($d) => [
+                'recent_deliveries' => $w->logs->map(fn ($d) => [
                     'id' => $d->id,
                     'event_type' => $d->event_type,
                     'status' => $d->status,
@@ -69,7 +70,7 @@ class ApiWebhookController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'required|url|max:500',
             'events' => 'required|array|min:1',
-            'events.*' => 'in:' . implode(',', array_keys(Webhook::$availableEvents)),
+            'events.*' => 'in:'.implode(',', array_keys(Webhook::$availableEvents)),
         ]);
 
         if ($validator->fails()) {
@@ -103,7 +104,7 @@ class ApiWebhookController extends Controller
             'name' => 'sometimes|string|max:255',
             'url' => 'sometimes|url|max:500',
             'events' => 'sometimes|array|min:1',
-            'events.*' => 'in:' . implode(',', array_keys(Webhook::$availableEvents)),
+            'events.*' => 'in:'.implode(',', array_keys(Webhook::$availableEvents)),
             'is_active' => 'sometimes|boolean',
         ]);
 
@@ -190,7 +191,7 @@ class ApiWebhookController extends Controller
         ]);
 
         // Dispatch job to send webhook
-        \App\Jobs\SendWebhook::dispatch($webhook, $delivery);
+        SendWebhook::dispatch($webhook, $delivery);
 
         return response()->json([
             'success' => true,

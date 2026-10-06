@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Agency;
 use App\Models\AgentMarketplaceCategory;
 use App\Models\AgentMarketplaceItem;
-use App\Models\Agency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -15,14 +15,15 @@ class AgentMarketplaceItemFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->words(3, true);
+
         return [
             'agency_id' => Agency::factory(),
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(3),
+            'slug' => Str::slug($name).'-'.fake()->unique()->randomNumber(3),
             'description' => fake()->paragraph(),
             'category_id' => AgentMarketplaceCategory::factory(),
             'tags' => fake()->words(3),
-            'icon' => 'fas fa-' . fake()->word(),
+            'icon' => 'fas fa-'.fake()->word(),
             'screenshots' => [fake()->imageUrl(), fake()->imageUrl()],
             'demo_url' => fake()->url(),
             'pricing_type' => fake()->randomElement(['free', 'paid', 'pricing_tiers']),

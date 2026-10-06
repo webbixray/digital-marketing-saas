@@ -15,7 +15,7 @@ class TeamFactory extends Factory
     {
         return [
             'agency_id' => Agency::factory(),
-            'name' => fake()->words(2, true) . ' Team',
+            'name' => fake()->words(2, true).' Team',
             'description' => fake()->sentence(),
             'owner_id' => User::factory(),
             'is_active' => true,

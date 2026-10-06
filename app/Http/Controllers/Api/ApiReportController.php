@@ -8,6 +8,7 @@ use App\Services\Reporting\EnterpriseReportingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiReportController extends Controller
 {
@@ -31,6 +32,7 @@ class ApiReportController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API report index failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch reports'], 500);
         }
     }
@@ -54,10 +56,11 @@ class ApiReportController extends Controller
                 'message' => 'Report generation started',
                 'report' => $report,
             ], 202);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API report store failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to generate report'], 500);
         }
     }
@@ -74,6 +77,7 @@ class ApiReportController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API report show failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch report'], 500);
         }
     }
@@ -102,10 +106,11 @@ class ApiReportController extends Controller
                 'message' => 'Report scheduled successfully',
                 'scheduled_report' => $scheduledReport,
             ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API report schedule failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to schedule report'], 500);
         }
     }
@@ -122,6 +127,7 @@ class ApiReportController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API report scheduled failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch scheduled reports'], 500);
         }
     }
@@ -146,10 +152,11 @@ class ApiReportController extends Controller
                 'message' => 'Export ready',
                 'url' => $exportUrl,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API report export failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to export data'], 500);
         }
     }
@@ -163,6 +170,7 @@ class ApiReportController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API report types failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch report types'], 500);
         }
     }
@@ -177,6 +185,7 @@ class ApiReportController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('API report destroy failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to delete report'], 500);
         }
     }

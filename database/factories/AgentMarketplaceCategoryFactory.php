@@ -13,11 +13,12 @@ class AgentMarketplaceCategoryFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->word();
+
         return [
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(3),
+            'slug' => Str::slug($name).'-'.fake()->unique()->randomNumber(3),
             'description' => fake()->sentence(),
-            'icon' => 'fas fa-' . fake()->word(),
+            'icon' => 'fas fa-'.fake()->word(),
             'sort_order' => fake()->numberBetween(0, 100),
             'is_active' => true,
             'agent_count' => 0,

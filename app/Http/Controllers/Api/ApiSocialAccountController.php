@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\SocialAccount;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiSocialAccountController extends ApiController
 {
@@ -25,6 +27,7 @@ class ApiSocialAccountController extends ApiController
             return response()->json($accounts);
         } catch (\Exception $e) {
             Log::error('API social account index failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch social accounts'], 500);
         }
     }
@@ -46,10 +49,11 @@ class ApiSocialAccountController extends ApiController
             ]);
 
             return response()->json($account, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API social account store failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to create social account'], 500);
         }
     }
@@ -58,11 +62,13 @@ class ApiSocialAccountController extends ApiController
     {
         try {
             $this->authorizeAgencyResource($account, $request->user()->agency_id);
+
             return response()->json($account);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social account show failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to fetch social account'], 500);
         }
     }
@@ -80,12 +86,13 @@ class ApiSocialAccountController extends ApiController
             $account->update($data);
 
             return response()->json($account);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social account update failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to update social account'], 500);
         }
     }
@@ -97,10 +104,11 @@ class ApiSocialAccountController extends ApiController
             $account->delete();
 
             return response()->json(null, 204);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             return response()->json(['error' => 'Unauthorized'], 403);
         } catch (\Exception $e) {
             Log::error('API social account destroy failed', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Failed to delete social account'], 500);
         }
     }

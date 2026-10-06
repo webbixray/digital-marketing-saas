@@ -8,6 +8,7 @@ use App\Models\AiContentLog;
 use App\Services\AI\AiContentService;
 use App\Services\AI\Gateway\AiResponse;
 use App\Services\AI\Gateway\Exceptions\RateLimitException;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -149,7 +150,7 @@ class GenerateAiContentJobTest extends TestCase
             prompt: 'Test prompt',
         );
 
-        $this->assertInstanceOf(\Illuminate\Contracts\Queue\ShouldQueue::class, $job);
+        $this->assertInstanceOf(ShouldQueue::class, $job);
         $this->assertEquals(3, $job->tries);
         $this->assertEquals(120, $job->backoff);
         $this->assertEquals(300, $job->timeout);

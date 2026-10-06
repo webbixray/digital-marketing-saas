@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\SocialCommercePost;
 use App\Services\Social\CommerceIntegrationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiProductController extends Controller
 {
@@ -63,7 +63,7 @@ class ApiProductController extends Controller
             $product = $this->commerceService->createProduct($request->user()->agency_id, $validated);
 
             return response()->json(['data' => $product], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API product store failed', ['error' => $e->getMessage()]);
@@ -108,7 +108,7 @@ class ApiProductController extends Controller
             $updated = $this->commerceService->updateProduct($product->id, $validated);
 
             return response()->json(['data' => $updated]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             Log::error('API product update failed', ['error' => $e->getMessage()]);

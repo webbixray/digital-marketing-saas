@@ -4,6 +4,7 @@ namespace Tests\Feature\AI;
 
 use App\Models\Agency;
 use App\Models\AiProviderKey;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -94,7 +95,7 @@ class AiProviderKeyTest extends TestCase
         ]);
 
         // SQLite throws a QueryException for unique constraint violations
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         AiProviderKey::create([
             'agency_id' => $agency->id,

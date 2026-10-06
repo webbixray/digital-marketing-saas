@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\RBAC\EnterpriseRBACService;
 use App\Services\RBAC\PermissionMatrixService;
 use Database\Seeders\PermissionCategorySeeder;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -35,7 +36,7 @@ class PermissionMatrixTest extends TestCase
         parent::setUp();
 
         // Seed permissions and roles
-        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+        $this->seed(RolePermissionSeeder::class);
         $this->seed(PermissionCategorySeeder::class);
 
         $this->matrixService = app(PermissionMatrixService::class);

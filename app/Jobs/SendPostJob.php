@@ -45,6 +45,7 @@ class SendPostJob implements ShouldQueue
         if (! $this->post->socialAccount) {
             Log::warning("SendPostJob: Post #{$this->post->id} has no connected social account.");
             $this->fail('No connected social account.');
+
             return;
         }
 

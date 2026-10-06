@@ -42,6 +42,7 @@ class InboxTriage extends Model
             return [];
         }
         $decoded = json_decode($value, true);
+
         return is_array($decoded) ? $decoded : [];
     }
 
@@ -54,6 +55,7 @@ class InboxTriage extends Model
             return [];
         }
         $decoded = json_decode($value, true);
+
         return is_array($decoded) ? $decoded : [];
     }
 

@@ -24,10 +24,10 @@ class ApiChatController extends Controller
     {
         $channels = ChatChannel::forCurrentAgency()
             ->active()
-            ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
+            ->with(['users', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->withCount('users')
             ->get()
-            ->map(fn($c) => [
+            ->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
                 'slug' => $c->slug,
@@ -63,7 +63,7 @@ class ApiChatController extends Controller
         $channel = ChatChannel::create([
             'agency_id' => auth()->user()->agency_id,
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']) . '-' . Str::random(6),
+            'slug' => Str::slug($validated['name']).'-'.Str::random(6),
             'description' => $validated['description'] ?? null,
             'type' => $validated['type'],
             'created_by' => auth()->id(),

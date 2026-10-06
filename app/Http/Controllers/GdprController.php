@@ -6,8 +6,8 @@ use App\Models\ConsentRecord;
 use App\Models\DataDeletionRequest;
 use App\Models\DataExportRequest;
 use App\Services\GDPR\GDPRComplianceService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GdprController extends Controller

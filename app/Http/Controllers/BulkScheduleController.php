@@ -46,14 +46,15 @@ class BulkScheduleController extends Controller
         $agencyId = $request->user()->agency_id;
 
         // Store file with random name to prevent path traversal
-        $storedName = Str::random(40) . '.csv';
+        $storedName = Str::random(40).'.csv';
         $path = $file->storeAs('bulk-uploads', $storedName, 'local');
 
         // Parse CSV
         $parseResult = $this->bulkService->parseCSV($path);
 
-        if (!$parseResult['success']) {
+        if (! $parseResult['success']) {
             Storage::disk('local')->delete($path);
+
             return back()->with('error', $parseResult['error']);
         }
 
@@ -91,7 +92,7 @@ class BulkScheduleController extends Controller
                 'valid_rows' => count($validatedRows),
                 'invalid_rows' => count($parseResult['rows']) - count($validatedRows),
                 'row_results' => $rowResults,
-            ]
+            ],
         ]);
 
         return view('social.bulk.preview', [
@@ -115,15 +116,16 @@ class BulkScheduleController extends Controller
 
         $bulkData = session('bulk_upload');
 
-        if (!$bulkData) {
+        if (! $bulkData) {
             return redirect()->route('social.bulk.index')
                 ->with('error', 'No upload data found. Please upload a CSV file first.');
         }
 
         $filePath = $bulkData['path'];
 
-        if (!Storage::disk('local')->exists($filePath)) {
+        if (! Storage::disk('local')->exists($filePath)) {
             session()->forget('bulk_upload');
+
             return redirect()->route('social.bulk.index')
                 ->with('error', 'Uploaded file not found. Please try again.');
         }
@@ -190,14 +192,15 @@ class BulkScheduleController extends Controller
         $userId = $request->user()->id;
 
         // Store file with random name to prevent path traversal
-        $storedName = Str::random(40) . '.csv';
+        $storedName = Str::random(40).'.csv';
         $path = $file->storeAs('bulk-uploads', $storedName, 'local');
 
         // Parse CSV
         $parseResult = $this->bulkService->parseCSV($path);
 
-        if (!$parseResult['success']) {
+        if (! $parseResult['success']) {
             Storage::disk('local')->delete($path);
+
             return back()->with('error', $parseResult['error']);
         }
 

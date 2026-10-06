@@ -149,6 +149,7 @@ class FeatureFlagService
 
         if (! $feature) {
             Log::warning("Unknown feature flag: {$featureCode}");
+
             return false;
         }
 

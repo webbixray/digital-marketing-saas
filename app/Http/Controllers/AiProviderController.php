@@ -11,12 +11,16 @@ use App\Services\AI\SmartRoutingEngine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AiProviderController extends Controller
 {
     protected AiProviderManager $manager;
+
     protected AiCacheService $cache;
+
     protected SmartRoutingEngine $routing;
+
     protected CostOptimizationEngine $costEngine;
 
     public function __construct(
@@ -115,7 +119,7 @@ class AiProviderController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to save key: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to save key: '.$e->getMessage()], 500);
         }
     }
 
@@ -138,7 +142,7 @@ class AiProviderController extends Controller
             ->where('provider_name', $providerName)
             ->first();
 
-        if (!$existingKey) {
+        if (! $existingKey) {
             return response()->json(['message' => 'Provider key not found.'], 404);
         }
 
@@ -159,7 +163,7 @@ class AiProviderController extends Controller
                 'message' => "API key for {$providerName} updated successfully.",
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to update key: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to update key: '.$e->getMessage()], 500);
         }
     }
 
@@ -174,7 +178,7 @@ class AiProviderController extends Controller
             ->where('provider_name', $providerName)
             ->first();
 
-        if (!$existingKey) {
+        if (! $existingKey) {
             return response()->json(['message' => 'Provider key not found.'], 404);
         }
 
@@ -185,7 +189,7 @@ class AiProviderController extends Controller
                 'message' => "API key for {$providerName} deleted.",
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to delete key: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to delete key: '.$e->getMessage()], 500);
         }
     }
 
@@ -200,15 +204,15 @@ class AiProviderController extends Controller
             ->where('provider_name', $providerName)
             ->first();
 
-        if (!$key) {
+        if (! $key) {
             return response()->json(['message' => 'Provider key not found.'], 404);
         }
 
-        $key->is_active = !$key->is_active;
+        $key->is_active = ! $key->is_active;
         $key->save();
 
         // Invalidate cache
-        \Illuminate\Support\Facades\Cache::forget("ai_byok:{$agencyId}");
+        Cache::forget("ai_byok:{$agencyId}");
 
         return response()->json([
             'is_active' => $key->is_active,
@@ -227,7 +231,7 @@ class AiProviderController extends Controller
             ->where('provider_name', $providerName)
             ->first();
 
-        if (!$key) {
+        if (! $key) {
             return response()->json(['success' => false, 'message' => 'Provider key not found.'], 404);
         }
 
@@ -238,7 +242,7 @@ class AiProviderController extends Controller
             $providers = $gateway->getProviders();
             $provider = $providers->get($providerName);
 
-            if (!$provider) {
+            if (! $provider) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Provider not registered in gateway.',
@@ -256,7 +260,7 @@ class AiProviderController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Connection failed: ' . $e->getMessage(),
+                'message' => 'Connection failed: '.$e->getMessage(),
             ]);
         }
     }

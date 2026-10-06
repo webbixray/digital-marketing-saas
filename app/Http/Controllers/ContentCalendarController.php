@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Calendar\ContentCalendarService;
+use App\Models\SocialAccount;
 use App\Models\SocialPost;
+use App\Services\Calendar\ContentCalendarService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\JsonResponse;
 
 class ContentCalendarController extends Controller
 {
@@ -39,7 +40,7 @@ class ContentCalendarController extends Controller
             ->filter()
             ->values();
 
-        $accounts = \App\Models\SocialAccount::where('agency_id', $agencyId)
+        $accounts = SocialAccount::where('agency_id', $agencyId)
             ->where('is_active', true)
             ->get(['id', 'platform', 'platform_username', 'platform_display_name']);
 
@@ -82,7 +83,7 @@ class ContentCalendarController extends Controller
         ]);
 
         Log::info('Post rescheduled', ['post_id' => $post->id, 'agency_id' => $request->user()->agency_id]);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Post rescheduled successfully.',

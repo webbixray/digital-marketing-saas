@@ -5,7 +5,6 @@ namespace Tests\Feature\Agent;
 use App\Models\Agency;
 use App\Models\AgentMarketplaceCategory;
 use App\Models\AgentMarketplaceItem;
-use App\Models\AgentMarketplaceReview;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,9 +14,13 @@ class AgentMarketplaceTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private Agency $otherAgency;
+
     private User $user;
+
     private AgentMarketplaceCategory $category;
+
     private AgentMarketplaceItem $item;
 
     protected function setUp(): void

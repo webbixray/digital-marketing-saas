@@ -3,8 +3,6 @@
 namespace App\Services\AI\Agent;
 
 use App\Models\AgentFeedback;
-use App\Services\AI\Gateway\AiGateway;
-use App\Services\AI\Gateway\AiRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -68,8 +66,8 @@ class SelfLearningEngine
      */
     private function identifyPatterns(Collection $feedback): array
     {
-        $lowRatings = $feedback->filter(fn($f) => $f->isNegative());
-        $highRatings = $feedback->filter(fn($f) => $f->isPositive());
+        $lowRatings = $feedback->filter(fn ($f) => $f->isNegative());
+        $highRatings = $feedback->filter(fn ($f) => $f->isPositive());
 
         $patterns = [];
 

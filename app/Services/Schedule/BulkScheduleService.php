@@ -3,9 +3,9 @@
 namespace App\Services\Schedule;
 
 use App\Enums\PostStatus;
-use App\Models\BulkSchedule;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -90,7 +90,7 @@ class BulkScheduleService
                 }
             }
 
-            if (!empty(trim($currentLine))) {
+            if (! empty(trim($currentLine))) {
                 $lines[] = $currentLine;
             }
 
@@ -126,8 +126,8 @@ class BulkScheduleService
             $errors[] = 'Platform is required.';
         } else {
             $validPlatforms = array_keys(SocialAccount::SUPPORTED_PLATFORMS);
-            if (!in_array($platform, $validPlatforms)) {
-                $errors[] = 'Invalid platform. Must be one of: ' . implode(', ', $validPlatforms) . '.';
+            if (! in_array($platform, $validPlatforms)) {
+                $errors[] = 'Invalid platform. Must be one of: '.implode(', ', $validPlatforms).'.';
             } else {
                 $data['platform'] = $platform;
 
@@ -137,7 +137,7 @@ class BulkScheduleService
                     ->where('is_active', true)
                     ->first();
 
-                if (!$account) {
+                if (! $account) {
                     $errors[] = "No active social account found for platform: {$platform}.";
                 } else {
                     $data['social_account_id'] = $account->id;
@@ -162,8 +162,8 @@ class BulkScheduleService
 
         // Media URL (optional)
         $mediaUrl = $row['media_url'] ?? '';
-        if (!empty($mediaUrl)) {
-            if (!filter_var($mediaUrl, FILTER_VALIDATE_URL)) {
+        if (! empty($mediaUrl)) {
+            if (! filter_var($mediaUrl, FILTER_VALIDATE_URL)) {
                 $errors[] = 'Invalid media URL format.';
             } else {
                 $data['media_url'] = $mediaUrl;
@@ -198,7 +198,7 @@ class BulkScheduleService
                         'scheduled_at' => $row['scheduled_at'],
                     ];
 
-                    if (!empty($row['media_url'])) {
+                    if (! empty($row['media_url'])) {
                         $postData['media'] = [$row['media_url']];
                     }
 
@@ -215,7 +215,7 @@ class BulkScheduleService
                     'scheduled_at' => $post->scheduled_at->toDateTimeString(),
                 ];
             } catch (\Exception $e) {
-                Log::error("Bulk schedule failed for row {$index}: " . $e->getMessage());
+                Log::error("Bulk schedule failed for row {$index}: ".$e->getMessage());
 
                 $results['failed'][] = [
                     'row' => $index + 1,
@@ -236,10 +236,10 @@ class BulkScheduleService
         $platforms = implode(', ', array_keys(SocialAccount::SUPPORTED_PLATFORMS));
         $exampleDate = now()->addDay()->format('Y-m-d H:i:s');
 
-        $csv = implode(',', $headers) . "\n";
-        $csv .= '"Check out our new product launch!",facebook,"' . $exampleDate . '",https://example.com/image.jpg' . "\n";
-        $csv .= '"Join us for a live webinar.",twitter,"' . $exampleDate . '",' . "\n";
-        $csv .= '"Exciting news coming soon...",linkedin,"' . $exampleDate . '",' . "\n";
+        $csv = implode(',', $headers)."\n";
+        $csv .= '"Check out our new product launch!",facebook,"'.$exampleDate.'",https://example.com/image.jpg'."\n";
+        $csv .= '"Join us for a live webinar.",twitter,"'.$exampleDate.'",'."\n";
+        $csv .= '"Exciting news coming soon...",linkedin,"'.$exampleDate.'",'."\n";
 
         return $csv;
     }
@@ -276,7 +276,7 @@ class BulkScheduleService
     /**
      * Parse a date string to Carbon instance.
      */
-    private function parseDate(string $date): ?\Carbon\Carbon
+    private function parseDate(string $date): ?Carbon
     {
         $formats = [
             'Y-m-d H:i:s',
@@ -290,7 +290,7 @@ class BulkScheduleService
 
         foreach ($formats as $format) {
             try {
-                return \Carbon\Carbon::createFromFormat($format, $date);
+                return Carbon::createFromFormat($format, $date);
             } catch (\Exception $e) {
                 continue;
             }

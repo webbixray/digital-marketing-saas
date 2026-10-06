@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\AiModelVersion;
-use App\Models\AiTrainingDataset;
 use App\Models\AiTrainingJob;
 use App\Services\AI\Training\DatasetService;
 use App\Services\AI\Training\ModelEvaluationService;
 use App\Services\AI\Training\TrainingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -59,7 +59,7 @@ class AiTrainingController extends Controller
     /**
      * Store a new training job.
      */
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $agency = $request->user()->agency;
 
@@ -92,7 +92,7 @@ class AiTrainingController extends Controller
                 ->with('success', 'Training job queued successfully.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Failed to start training: ' . $e->getMessage())
+                ->with('error', 'Failed to start training: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -151,7 +151,7 @@ class AiTrainingController extends Controller
     /**
      * Upload a training dataset.
      */
-    public function uploadDataset(Request $request): \Illuminate\Http\RedirectResponse
+    public function uploadDataset(Request $request): RedirectResponse
     {
         $agency = $request->user()->agency;
 
@@ -174,7 +174,7 @@ class AiTrainingController extends Controller
                 ->with('success', 'Dataset uploaded successfully.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Upload failed: ' . $e->getMessage())
+                ->with('error', 'Upload failed: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -238,7 +238,7 @@ class AiTrainingController extends Controller
     /**
      * Activate a model version.
      */
-    public function activate(Request $request, int $version): \Illuminate\Http\RedirectResponse
+    public function activate(Request $request, int $version): RedirectResponse
     {
         $agency = $request->user()->agency;
 
@@ -253,14 +253,14 @@ class AiTrainingController extends Controller
                 ->route('ai-training.index')
                 ->with('success', 'Model activated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Activation failed: ' . $e->getMessage());
+            return back()->with('error', 'Activation failed: '.$e->getMessage());
         }
     }
 
     /**
      * Cancel a training job.
      */
-    public function cancelJob(Request $request, int $job): \Illuminate\Http\RedirectResponse
+    public function cancelJob(Request $request, int $job): RedirectResponse
     {
         $agency = $request->user()->agency;
 
@@ -275,7 +275,7 @@ class AiTrainingController extends Controller
                 ->route('ai-training.jobs')
                 ->with('success', 'Training job cancelled.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Cancel failed: ' . $e->getMessage());
+            return back()->with('error', 'Cancel failed: '.$e->getMessage());
         }
     }
 

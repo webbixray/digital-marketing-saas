@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasAgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AgentAccessToken extends Model
 {
@@ -27,7 +28,7 @@ class AgentAccessToken extends Model
         'expires_at' => 'datetime',
     ];
 
-    public function agency(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }
@@ -46,14 +47,19 @@ class AgentAccessToken extends Model
     {
         return $query->where(function ($q) {
             $q->whereNull('expires_at')
-              ->orWhere('expires_at', '>', now());
+                ->orWhere('expires_at', '>', now());
         });
     }
 
     public function isValid(): bool
     {
-        if (!$this->is_active) return false;
-        if ($this->expires_at && $this->expires_at->isPast()) return false;
+        if (! $this->is_active) {
+            return false;
+        }
+        if ($this->expires_at && $this->expires_at->isPast()) {
+            return false;
+        }
+
         return true;
     }
 

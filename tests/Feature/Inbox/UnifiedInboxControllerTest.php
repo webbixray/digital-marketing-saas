@@ -14,7 +14,9 @@ class UnifiedInboxControllerTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
+
     private SocialAccount $account;
 
     protected function setUp(): void

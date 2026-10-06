@@ -43,7 +43,7 @@ class OnboardingController extends Controller
 
         $agency = auth()->user()->agency;
 
-        if (!array_key_exists($step, OnboardingEngine::STEPS)) {
+        if (! array_key_exists($step, OnboardingEngine::STEPS)) {
             return response()->json(['error' => 'Invalid step'], 422);
         }
 

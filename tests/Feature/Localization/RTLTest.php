@@ -4,6 +4,8 @@ namespace Tests\Feature\Localization;
 
 use App\Models\Language;
 use App\Models\User;
+use App\View\Composers\LanguageComposer;
+use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 use Tests\TestCase;
@@ -15,7 +17,7 @@ class RTLTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\LanguageSeeder::class);
+        $this->seed(LanguageSeeder::class);
     }
 
     /**
@@ -24,8 +26,8 @@ class RTLTest extends TestCase
     public function test_rtl_detection_for_arabic_locale(): void
     {
         App::setLocale('ar');
-        $this->assertTrue(\App\View\Composers\LanguageComposer::isRTLLocale('ar'));
-        $this->assertTrue(\App\View\Composers\LanguageComposer::isRTLLocale());
+        $this->assertTrue(LanguageComposer::isRTLLocale('ar'));
+        $this->assertTrue(LanguageComposer::isRTLLocale());
     }
 
     /**
@@ -35,7 +37,7 @@ class RTLTest extends TestCase
     {
         foreach (['en', 'es', 'fr'] as $locale) {
             App::setLocale($locale);
-            $this->assertFalse(\App\View\Composers\LanguageComposer::isRTLLocale($locale));
+            $this->assertFalse(LanguageComposer::isRTLLocale($locale));
         }
     }
 

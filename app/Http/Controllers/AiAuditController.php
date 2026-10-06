@@ -80,7 +80,7 @@ class AiAuditController extends Controller
         $filePath = $this->auditService->exportAuditLog($agencyId, $format);
 
         $fullPath = Storage::disk('local')->path($filePath);
-        $downloadName = "ai-audit-{$agencyId}-" . now()->format('Y-m-d') . ".{$format}";
+        $downloadName = "ai-audit-{$agencyId}-".now()->format('Y-m-d').".{$format}";
 
         return response()->download($fullPath, $downloadName);
     }
@@ -93,8 +93,8 @@ class AiAuditController extends Controller
 
         $explanation = $this->explainabilityService->explainDecision(
             $log->model_used ?? 'unknown',
-            'input-hash:' . $log->input_hash,
-            'output-hash:' . $log->output_hash,
+            'input-hash:'.$log->input_hash,
+            'output-hash:'.$log->output_hash,
         );
 
         return view('ai-audit.explain', compact('log', 'explanation'));

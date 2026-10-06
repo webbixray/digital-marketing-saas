@@ -91,12 +91,12 @@ class GDPRComplianceAuditFactory extends Factory
         return $this->state(['severity' => 'warning']);
     }
 
-    public function forAgency(Agency $agency = null): static
+    public function forAgency(?Agency $agency = null): static
     {
         return $this->state(fn () => ['agency_id' => $agency ?? Agency::factory()]);
     }
 
-    public function forUser(User $user = null): static
+    public function forUser(?User $user = null): static
     {
         return $this->state(fn () => ['user_id' => $user ?? User::factory()]);
     }

@@ -49,7 +49,7 @@ class LanguageController extends Controller
         if (! $localeService->isValidLocale($locale)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unsupported locale: ' . $locale,
+                'message' => 'Unsupported locale: '.$locale,
             ], 422);
         }
 

@@ -68,4 +68,3 @@ class AiTrainingJob extends Model
         return $query->where('status', 'failed');
     }
 }
-

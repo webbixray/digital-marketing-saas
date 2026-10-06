@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ClientSubscription extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'agency_id',
         'client_id',

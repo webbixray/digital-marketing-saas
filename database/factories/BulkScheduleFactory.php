@@ -19,7 +19,7 @@ class BulkScheduleFactory extends Factory
         return [
             'agency_id' => Agency::factory(),
             'user_id' => null,
-            'filename' => fake()->word() . '.csv',
+            'filename' => fake()->word().'.csv',
             'total_rows' => $totalRows,
             'successful_rows' => $processedRows,
             'failed_rows' => $failedRows,

@@ -45,4 +45,3 @@ class AiTrainingDataset extends Model
         return $query->where('status', 'ready');
     }
 }
-

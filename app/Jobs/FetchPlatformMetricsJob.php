@@ -16,7 +16,9 @@ class FetchPlatformMetricsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $backoff = 60;
+
     public int $timeout = 120;
 
     public function __construct(
@@ -31,6 +33,7 @@ class FetchPlatformMetricsJob implements ShouldQueue
                     'account_id' => $this->account->id,
                     'platform' => $this->account->platform,
                 ]);
+
                 return;
             }
 
@@ -48,8 +51,8 @@ class FetchPlatformMetricsJob implements ShouldQueue
     public function tags(): array
     {
         return [
-            'platform:' . $this->account->platform,
-            'account:' . $this->account->id,
+            'platform:'.$this->account->platform,
+            'account:'.$this->account->id,
             'job:metrics-sync',
         ];
     }

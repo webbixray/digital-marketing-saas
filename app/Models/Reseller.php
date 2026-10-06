@@ -73,8 +73,8 @@ class Reseller extends Model
     public static function generateSlug(string $name): string
     {
         $slug = Str::slug($name);
-        $count = static::where('slug', 'LIKE', $slug . '%')->count();
+        $count = static::where('slug', 'LIKE', $slug.'%')->count();
 
-        return $count > 0 ? "{$slug}-" . ($count + 1) : $slug;
+        return $count > 0 ? "{$slug}-".($count + 1) : $slug;
     }
 }

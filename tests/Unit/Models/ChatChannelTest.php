@@ -274,7 +274,7 @@ class ChatChannelTest extends TestCase
     #[Test]
     public function fillable_attributes_are_correct(): void
     {
-        $channel = new ChatChannel();
+        $channel = new ChatChannel;
 
         $this->assertEquals([
             'agency_id',
@@ -290,7 +290,7 @@ class ChatChannelTest extends TestCase
     #[Test]
     public function casts_are_correct(): void
     {
-        $channel = new ChatChannel();
+        $channel = new ChatChannel;
 
         $this->assertArrayHasKey('is_archived', $channel->getCasts());
         $this->assertEquals('boolean', $channel->getCasts()['is_archived']);
@@ -322,7 +322,7 @@ class ChatChannelTest extends TestCase
             'agency_id' => $agency->id,
             'created_by' => $user->id,
             'name' => 'General',
-            'slug' => 'general-' . uniqid(),
+            'slug' => 'general-'.uniqid(),
             'type' => 'public',
         ]);
 

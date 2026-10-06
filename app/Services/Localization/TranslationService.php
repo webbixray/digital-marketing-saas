@@ -84,7 +84,7 @@ class TranslationService
     public function getSupportedLanguages(): Collection
     {
         $cached = Cache::get('supported_languages');
-        if ($cached !== null) {
+        if ($cached !== null && $cached instanceof Collection) {
             return $cached;
         }
 

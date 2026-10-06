@@ -141,13 +141,13 @@ class ChatMessageModelTest extends TestCase
 
     public function test_scope_recent_orders_by_desc_created_at(): void
     {
-        ChatMessage::factory()->create(['created_at' => now()->subHours(3)]);
-        ChatMessage::factory()->create(['created_at' => now()->subHours(1)]);
-        ChatMessage::factory()->create(['created_at' => now()->subHours(2)]);
+        ChatMessage::factory()->create(['created_at' => now()->subHours(3)->second(0)]);
+        ChatMessage::factory()->create(['created_at' => now()->subHours(1)->second(0)]);
+        ChatMessage::factory()->create(['created_at' => now()->subHours(2)->second(0)]);
 
         $messages = ChatMessage::recent()->get();
 
-        $this->assertEquals(now()->subHours(1)->timestamp, $messages->first()->created_at->timestamp);
+        $this->assertEquals(now()->subHours(1)->second(0)->timestamp, $messages->first()->created_at->timestamp);
     }
 
     public function test_scope_in_channel_filters_by_channel(): void

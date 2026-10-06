@@ -5,7 +5,6 @@ namespace Tests\Feature\Search;
 use App\Models\Agency;
 use App\Models\Campaign;
 use App\Models\Client;
-use App\Models\ContentAsset;
 use App\Models\SearchHistory;
 use App\Models\SocialPost;
 use App\Models\User;
@@ -17,6 +16,7 @@ class GlobalSearchTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
 
     protected function setUp(): void

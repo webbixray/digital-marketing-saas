@@ -2,6 +2,11 @@
 
 namespace App\Listeners;
 
+use App\Events\AiGenerationCompleted;
+use App\Events\CampaignCreated;
+use App\Events\PostPublished;
+use App\Events\SocialAccountCreated;
+use App\Events\TeamMemberInvited;
 use App\Services\OnboardingEngine;
 use Illuminate\Support\Facades\Log;
 
@@ -79,11 +84,11 @@ class OnboardingProgressListener
     public function subscribe($events): array
     {
         return [
-            \App\Events\SocialAccountCreated::class => 'handleSocialAccountConnected',
-            \App\Events\TeamMemberInvited::class => 'handleTeamMemberInvited',
-            \App\Events\CampaignCreated::class => 'handleCampaignCreated',
-            \App\Events\PostPublished::class => 'handlePostPublished',
-            \App\Events\AiGenerationCompleted::class => 'handleAiGenerated',
+            SocialAccountCreated::class => 'handleSocialAccountConnected',
+            TeamMemberInvited::class => 'handleTeamMemberInvited',
+            CampaignCreated::class => 'handleCampaignCreated',
+            PostPublished::class => 'handlePostPublished',
+            AiGenerationCompleted::class => 'handleAiGenerated',
         ];
     }
 }

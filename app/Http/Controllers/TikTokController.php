@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 use App\Models\SocialAccount;
 use App\Services\Social\TikTokApiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class TikTokController extends Controller
 {
     use SocialOAuthConnectTrait;
 
     protected string $oauthPlatform = 'tiktok';
+
     protected string $oauthPlatformName = 'TikTok';
+
     protected string $oauthRoutePrefix = 'tiktok';
+
     public function __construct(
         private readonly TikTokApiService $tiktok,
     ) {

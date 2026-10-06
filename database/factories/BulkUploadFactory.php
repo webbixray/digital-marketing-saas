@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Agency;
-use App\Models\User;
 use App\Models\BulkUpload;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BulkUploadFactory extends Factory
@@ -16,8 +16,8 @@ class BulkUploadFactory extends Factory
         return [
             'agency_id' => Agency::factory(),
             'user_id' => User::factory(),
-            'original_filename' => fake()->word() . '.csv',
-            'stored_path' => 'uploads/' . fake()->uuid() . '.csv',
+            'original_filename' => fake()->word().'.csv',
+            'stored_path' => 'uploads/'.fake()->uuid().'.csv',
             'file_type' => 'csv',
             'total_rows' => fake()->numberBetween(10, 1000),
             'processed_rows' => 0,

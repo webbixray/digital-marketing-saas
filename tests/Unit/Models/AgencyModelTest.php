@@ -8,6 +8,7 @@ use App\Models\ChatChannel;
 use App\Models\Client;
 use App\Models\SocialAccount;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -168,7 +169,7 @@ class AgencyModelTest extends TestCase
             'subscription_start' => '2024-01-01 00:00:00',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $agency->subscription_start);
+        $this->assertInstanceOf(Carbon::class, $agency->subscription_start);
     }
 
     public function test_agency_casts_subscription_end_to_datetime(): void
@@ -177,7 +178,7 @@ class AgencyModelTest extends TestCase
             'subscription_end' => '2025-01-01 00:00:00',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $agency->subscription_end);
+        $this->assertInstanceOf(Carbon::class, $agency->subscription_end);
     }
 
     // =========================================================================

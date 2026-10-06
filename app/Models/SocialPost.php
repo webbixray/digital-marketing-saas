@@ -15,8 +15,6 @@ class SocialPost extends Model
 {
     use HasAgency, HasFactory, SoftDeletes;
 
-
-
     protected $fillable = [
         'agency_id',
         'social_account_id',

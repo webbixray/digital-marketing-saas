@@ -14,8 +14,11 @@ class AdminDashboardControllerTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $owner;
+
     private User $admin;
+
     private User $manager;
 
     protected function setUp(): void

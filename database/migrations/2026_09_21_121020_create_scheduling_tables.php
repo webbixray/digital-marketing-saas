@@ -64,9 +64,15 @@ return new class extends Migration
     {
         if (Schema::hasColumn('social_posts', 'is_bulk_upload') || Schema::hasColumn('social_posts', 'bulk_upload_id') || Schema::hasColumn('social_posts', 'optimal_scheduled_at')) {
             Schema::table('social_posts', function (Blueprint $table) {
-                if (Schema::hasColumn('social_posts', 'is_bulk_upload')) $table->dropColumn('is_bulk_upload');
-                if (Schema::hasColumn('social_posts', 'bulk_upload_id')) $table->dropColumn('bulk_upload_id');
-                if (Schema::hasColumn('social_posts', 'optimal_scheduled_at')) $table->dropColumn('optimal_scheduled_at');
+                if (Schema::hasColumn('social_posts', 'is_bulk_upload')) {
+                    $table->dropColumn('is_bulk_upload');
+                }
+                if (Schema::hasColumn('social_posts', 'bulk_upload_id')) {
+                    $table->dropColumn('bulk_upload_id');
+                }
+                if (Schema::hasColumn('social_posts', 'optimal_scheduled_at')) {
+                    $table->dropColumn('optimal_scheduled_at');
+                }
             });
         }
         Schema::dropIfExists('bulk_uploads');

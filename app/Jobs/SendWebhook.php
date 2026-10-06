@@ -17,6 +17,7 @@ class SendWebhook implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $backoff = 60;
 
     public function __construct(
@@ -49,7 +50,7 @@ class SendWebhook implements ShouldQueue
                 $this->webhook->update(['last_triggered_at' => now()]);
             } else {
                 $this->webhook->increment('failed_calls');
-                Log::warning("Webhook delivery failed", [
+                Log::warning('Webhook delivery failed', [
                     'webhook_id' => $this->webhook->id,
                     'status' => $response->status(),
                     'response' => $response->body(),
@@ -63,7 +64,7 @@ class SendWebhook implements ShouldQueue
 
             $this->webhook->increment('failed_calls');
 
-            Log::error("Webhook delivery exception", [
+            Log::error('Webhook delivery exception', [
                 'webhook_id' => $this->webhook->id,
                 'error' => $e->getMessage(),
             ]);

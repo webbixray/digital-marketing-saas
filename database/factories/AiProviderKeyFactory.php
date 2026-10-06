@@ -15,7 +15,7 @@ class AiProviderKeyFactory extends Factory
         return [
             'agency_id' => Agency::factory(),
             'provider_name' => $this->faker->randomElement(['openai', 'anthropic', 'google', 'mistral', 'groq']),
-            'api_key' => 'sk-' . $this->faker->sha256(),
+            'api_key' => 'sk-'.$this->faker->sha256(),
             'api_base_url' => null,
             'is_active' => true,
             'priority' => $this->faker->numberBetween(1, 5),

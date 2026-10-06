@@ -140,7 +140,7 @@ class WhiteLabelMiddlewareTest extends TestCase
             'status' => 'published',
         ]);
 
-        $response = $this->get('/r/' . $report->slug . '/' . $report->access_token);
+        $response = $this->get('/r/'.$report->slug.'/'.$report->access_token);
 
         $response->assertOk();
         $response->assertSee('Report Brand');
@@ -160,7 +160,7 @@ class WhiteLabelMiddlewareTest extends TestCase
             'status' => 'published',
         ]);
 
-        $response = $this->get('/r/' . $report->slug . '/' . $report->access_token);
+        $response = $this->get('/r/'.$report->slug.'/'.$report->access_token);
 
         $response->assertOk();
         $response->assertSee('body { background: red; }');

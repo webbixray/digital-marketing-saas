@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\ActivityLog;
-use App\Models\WebhookLog;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +40,7 @@ class DatabaseCleanupCommand extends Command
         if (! $dryRun && ! $force) {
             if (! $this->confirm("This will delete webhook_logs older than {$webhookDays} days and activity_logs older than {$activityDays} days. Continue?")) {
                 $this->warn('Cleanup cancelled.');
+
                 return self::SUCCESS;
             }
         }

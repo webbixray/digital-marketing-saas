@@ -6,6 +6,7 @@ use App\Models\Concerns\HasAgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Models\Permission;
 
 class PermissionCategory extends Model
 {
@@ -28,6 +29,6 @@ class PermissionCategory extends Model
 
     public function permissions(): HasMany
     {
-        return $this->hasMany(\Spatie\Permission\Models\Permission::class, 'category_id');
+        return $this->hasMany(Permission::class, 'category_id');
     }
 }

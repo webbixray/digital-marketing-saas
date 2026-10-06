@@ -5,18 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\ChatChannel;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class ChatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'agency']);
+    }
+
     /**
      * Show chat index page
      */
-    public function index()
+    public function index(): View
     {
         $channels = ChatChannel::forCurrentAgency()
             ->active()
-            ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
+            ->with(['users', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->withCount('users')
             ->orderByDesc('updated_at')
             ->get();
@@ -29,16 +34,17 @@ class ChatController extends Controller
     /**
      * Show a specific channel
      */
-    public function show(ChatChannel $channel)
+    public function show(ChatChannel $channel, Request $request): View
     {
         // Verify channel belongs to user's agency
-        if ($channel->agency_id !== auth()->user()->agency_id) {
+        $user = auth()->user();
+        if ($user === null || $channel->agency_id !== $user->agency_id) {
             abort(403);
         }
 
         $channels = ChatChannel::forCurrentAgency()
             ->active()
-            ->with(['users', 'messages' => fn($q) => $q->latest()->limit(1)])
+            ->with(['users', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->withCount('users')
             ->orderByDesc('updated_at')
             ->get();

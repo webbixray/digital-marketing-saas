@@ -5,6 +5,9 @@ namespace App\Services\Billing;
 use App\Models\Invoice;
 use App\Models\Reseller;
 use App\Models\ResellerCommission;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -72,7 +75,7 @@ class CommissionService
         return true;
     }
 
-    public function getPendingCommissions(int $resellerId): \Illuminate\Database\Eloquent\Collection
+    public function getPendingCommissions(int $resellerId): Collection
     {
         return ResellerCommission::with(['invoice', 'agency'])
             ->where('reseller_id', $resellerId)
@@ -107,7 +110,7 @@ class CommissionService
         return true;
     }
 
-    public function getCommissionHistory(int $resellerId): \Illuminate\Pagination\LengthAwarePaginator
+    public function getCommissionHistory(int $resellerId): LengthAwarePaginator
     {
         return ResellerCommission::with(['invoice', 'agency'])
             ->where('reseller_id', $resellerId)
@@ -115,10 +118,10 @@ class CommissionService
             ->paginate(25);
     }
 
-    public function getMonthlyCommissions(int $resellerId, string $month): \Illuminate\Database\Eloquent\Collection
+    public function getMonthlyCommissions(int $resellerId, string $month): Collection
     {
-        $start = \Carbon\Carbon::parse($month)->startOfMonth();
-        $end = \Carbon\Carbon::parse($month)->endOfMonth();
+        $start = Carbon::parse($month)->startOfMonth();
+        $end = Carbon::parse($month)->endOfMonth();
 
         return ResellerCommission::with(['invoice', 'agency'])
             ->where('reseller_id', $resellerId)

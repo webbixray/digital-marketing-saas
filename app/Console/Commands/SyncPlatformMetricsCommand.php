@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class SyncPlatformMetricsCommand extends Command
 {
     protected $signature = 'metrics:sync {platform?} {--all : Sync all active accounts}';
+
     protected $description = 'Sync platform metrics for social accounts';
 
     public function handle(): int
@@ -23,6 +24,7 @@ class SyncPlatformMetricsCommand extends Command
 
         if ($accounts->isEmpty()) {
             $this->warn('No active social accounts found.');
+
             return self::SUCCESS;
         }
 
@@ -34,6 +36,7 @@ class SyncPlatformMetricsCommand extends Command
         }
 
         $this->info('Metrics sync jobs dispatched successfully.');
+
         return self::SUCCESS;
     }
 }

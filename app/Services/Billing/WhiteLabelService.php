@@ -2,7 +2,6 @@
 
 namespace App\Services\Billing;
 
-use App\Models\Agency;
 use App\Models\Reseller;
 use App\Models\WhiteLabelDomain;
 use App\Models\WhiteLabelSetting;

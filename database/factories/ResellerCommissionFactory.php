@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Agency;
 use App\Models\Reseller;
 use App\Models\ResellerCommission;
 use Illuminate\Database\Eloquent\Factories\Factory;

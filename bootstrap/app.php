@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\ApplyWhiteLabel;
 use App\Http\Middleware\AgentRateLimit;
+use App\Http\Middleware\ApplyWhiteLabel;
 use App\Http\Middleware\CacheWithEtag;
 use App\Http\Middleware\Enforce2FA;
 use App\Http\Middleware\EnforceAiCredits;

@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Agency;
 use App\Models\AgentWorkflowExecution;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AgentWorkflowExecutionFactory extends Factory
@@ -20,8 +22,8 @@ class AgentWorkflowExecutionFactory extends Factory
         return [
             'execution_id' => fake()->uuid(),
             'workflow_name' => fake()->randomElement(['content', 'analytics', 'security', 'social', 'support', 'campaign']),
-            'agency_id' => \App\Models\Agency::factory(),
-            'user_id' => \App\Models\User::factory(),
+            'agency_id' => Agency::factory(),
+            'user_id' => User::factory(),
             'status' => $status,
             'input_data' => ['prompt' => fake()->sentence()],
             'output_data' => $status === 'success' ? ['result' => fake()->sentence()] : null,

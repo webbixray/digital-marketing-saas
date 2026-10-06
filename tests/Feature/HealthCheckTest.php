@@ -12,14 +12,25 @@ class HealthCheckTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $agency;
+
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
         Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
+        $this->agency = Agency::factory()->create();
+        $this->user = User::factory()->create([
+            'agency_id' => $this->agency->id,
+            'role' => 'owner',
+        ]);
+        $this->user->assignRole('owner');
     }
 
     public function test_health_endpoint_returns_200(): void
     {
+        $this->actingAs($this->user);
         $response = $this->get('/health');
         $response->assertStatus(200);
         $response->assertJson(['status' => 'ok']);
@@ -27,12 +38,14 @@ class HealthCheckTest extends TestCase
 
     public function test_readiness_endpoint_returns_200(): void
     {
+        $this->actingAs($this->user);
         $response = $this->get('/ready');
         $response->assertStatus(200);
     }
 
     public function test_liveness_endpoint_returns_200(): void
     {
+        $this->actingAs($this->user);
         $response = $this->get('/live');
         $response->assertStatus(200);
         $response->assertJson(['status' => 'alive']);
@@ -40,6 +53,7 @@ class HealthCheckTest extends TestCase
 
     public function test_status_endpoint_returns_200(): void
     {
+        $this->actingAs($this->user);
         $response = $this->get('/status');
         $response->assertStatus(200);
     }

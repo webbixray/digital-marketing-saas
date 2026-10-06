@@ -112,7 +112,7 @@ class LocaleService
     public function getSupportedLanguages()
     {
         $cached = Cache::get('supported_languages_collection');
-        if ($cached !== null) {
+        if ($cached !== null && $cached instanceof Collection) {
             return $cached;
         }
 

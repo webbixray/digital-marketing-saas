@@ -18,7 +18,7 @@ class SocialCommercePostFactory extends Factory
             'agency_id' => Agency::factory(),
             'social_post_id' => SocialPost::factory(),
             'product_id' => Product::factory(),
-            'shop_url' => fake()->url() . '/shop',
+            'shop_url' => fake()->url().'/shop',
             'discount_code' => fake()->optional()->bothify('SAVE##'),
             'utm_params' => [
                 'utm_source' => 'social',

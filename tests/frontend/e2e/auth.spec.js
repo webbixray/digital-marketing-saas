@@ -6,9 +6,9 @@ test.describe('Authentication Flow', () => {
     test('shows login page with form', async ({ page }) => {
         await page.goto(`${BASE_URL}/login`)
         await expect(page.locator('h1')).toContainText('Welcome Back')
-        await expect(page.locator('input[name="email"]')).toBeVisible()
-        await expect(page.locator('input[name="password"]')).toBeVisible()
-        await expect(page.locator('button[type="submit"]')).toBeVisible()
+        await expect(page.locator('form[action*="login"] input[name="email"]')).toBeVisible()
+        await expect(page.locator('form[action*="login"] input[name="password"]')).toBeVisible()
+        await expect(page.locator('form[action*="login"] button[type="submit"]')).toBeVisible()
     })
 
     test('shows registration page with form', async ({ page }) => {

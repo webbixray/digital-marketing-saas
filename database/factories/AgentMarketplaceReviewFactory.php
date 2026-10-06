@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Agency;
 use App\Models\AgentMarketplaceItem;
 use App\Models\AgentMarketplaceReview;
-use App\Models\Agency;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

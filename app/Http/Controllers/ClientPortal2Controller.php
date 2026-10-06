@@ -30,6 +30,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = Client::where('agency_id', $this->getAgencyId())
             ->findOrFail($request->route('client'));
+
         return $client;
     }
 
@@ -37,6 +38,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getDashboardData($client->id);
+
         return view('client-portal.dashboard', $data);
     }
 
@@ -44,6 +46,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getCampaigns($client->id, $request->only(['status', 'client_id', 'search']));
+
         return view('client-portal.campaigns', $data);
     }
 
@@ -51,6 +54,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getAnalytics($client->id);
+
         return view('client-portal.analytics', $data);
     }
 
@@ -58,6 +62,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getInvoices($client->id, $request->only(['status', 'client_id', 'date_from', 'date_to']));
+
         return view('client-portal.invoices', $data);
     }
 
@@ -65,6 +70,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getSettings($client->id);
+
         return view('client-portal.settings', $data);
     }
 
@@ -94,6 +100,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getActivityFeed($client->id);
+
         return view('client-portal.activity', $data);
     }
 
@@ -145,6 +152,7 @@ class ClientPortal2Controller extends Controller
     {
         $client = $this->getClient($request);
         $data = $this->service->getApprovalQueue($client->id);
+
         return view('client-portal.approvals', $data);
     }
 
@@ -186,7 +194,7 @@ class ClientPortal2Controller extends Controller
         ]);
 
         $user = auth()->user();
-        if (!Hash::check($validated['current_password'], $user->password)) {
+        if (! Hash::check($validated['current_password'], $user->password)) {
             return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
 

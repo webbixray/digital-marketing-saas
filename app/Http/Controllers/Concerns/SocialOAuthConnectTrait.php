@@ -23,7 +23,7 @@ trait SocialOAuthConnectTrait
     /**
      * Connect an account via OAuth — generates state and redirects to platform auth URL.
      *
-     * @param callable $authUrlFn function(string $redirectUri, string $state): string
+     * @param  callable  $authUrlFn  function(string $redirectUri, string $state): string
      */
     protected function oauthConnect(Request $request, callable $authUrlFn): RedirectResponse
     {
@@ -50,6 +50,7 @@ trait SocialOAuthConnectTrait
             Log::warning("{$this->oauthPlatformName} OAuth: invalid state", [
                 'agency_id' => $request->user()->agency_id,
             ]);
+
             return redirect()->route("{$this->oauthRoutePrefix}.index")
                 ->with('error', 'Invalid OAuth state. Please try again.');
         }
@@ -60,8 +61,9 @@ trait SocialOAuthConnectTrait
                 'description' => $request->get('error_description'),
                 'agency_id' => $request->user()->agency_id,
             ]);
+
             return redirect()->route("{$this->oauthRoutePrefix}.index")
-                ->with('error', "{$this->oauthPlatformName} authorization failed: " . $request->get('error_description'));
+                ->with('error', "{$this->oauthPlatformName} authorization failed: ".$request->get('error_description'));
         }
 
         $code = $request->get('code');

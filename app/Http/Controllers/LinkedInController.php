@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 use App\Models\SocialAccount;
 use App\Services\Social\LinkedInApiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class LinkedInController extends Controller
 {
     use SocialOAuthConnectTrait;
 
     protected string $oauthPlatform = 'linkedin';
+
     protected string $oauthPlatformName = 'LinkedIn';
+
     protected string $oauthRoutePrefix = 'linkedin';
+
     public function __construct(
         private readonly LinkedInApiService $linkedin,
     ) {

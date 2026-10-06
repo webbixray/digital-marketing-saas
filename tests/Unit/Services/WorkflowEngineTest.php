@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Models\Agency;
 use App\Models\Workflow;
 use App\Services\AI\AiContentService;
+use App\Services\AI\Gateway\AiResponse;
 use App\Services\Workflow\WorkflowEngine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
@@ -23,7 +24,7 @@ class WorkflowEngineTest extends TestCase
     {
         parent::setUp();
         $this->engine = new WorkflowEngine(
-            \Mockery::mock(AiContentService::class)
+            Mockery::mock(AiContentService::class)
         );
         $this->agency = Agency::factory()->create();
     }
@@ -118,8 +119,8 @@ class WorkflowEngineTest extends TestCase
 
         $mockAiContent = Mockery::mock(AiContentService::class);
         $mockAiContent->shouldReceive('generate')->withArgs(function ($agency, $prompt, $type) {
-            return $agency instanceof \App\Models\Agency && $prompt === 'Generate something' && $type === 'social_post';
-        })->andReturn(new \App\Services\AI\Gateway\AiResponse(content: 'Generated content', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
+            return $agency instanceof Agency && $prompt === 'Generate something' && $type === 'social_post';
+        })->andReturn(new AiResponse(content: 'Generated content', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
         $engine = new WorkflowEngine($mockAiContent);
 
         $execution = $engine->execute($workflow, ['platform' => 'instagram', 'agency' => $this->agency]);
@@ -171,8 +172,8 @@ class WorkflowEngineTest extends TestCase
 
         $mockAiContent = Mockery::mock(AiContentService::class);
         $mockAiContent->shouldReceive('generate')->withArgs(function ($agency, $prompt, $type) {
-            return $agency instanceof \App\Models\Agency && $prompt === 'Second' && $type === 'social_post';
-        })->andReturn(new \App\Services\AI\Gateway\AiResponse(content: 'Generated', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
+            return $agency instanceof Agency && $prompt === 'Second' && $type === 'social_post';
+        })->andReturn(new AiResponse(content: 'Generated', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
         $engine = new WorkflowEngine($mockAiContent);
 
         $execution = $engine->execute($workflow, ['agency' => $this->agency]);
@@ -210,8 +211,8 @@ class WorkflowEngineTest extends TestCase
 
         $mockAiContent = Mockery::mock(AiContentService::class);
         $mockAiContent->shouldReceive('generate')->withArgs(function ($agency, $prompt, $type) {
-            return $agency instanceof \App\Models\Agency && $prompt === 'Write a blog post about marketing' && $type === 'blog_post';
-        })->andReturn(new \App\Services\AI\Gateway\AiResponse(content: 'Blog post content', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
+            return $agency instanceof Agency && $prompt === 'Write a blog post about marketing' && $type === 'blog_post';
+        })->andReturn(new AiResponse(content: 'Blog post content', model: 'test', provider: 'test', promptTokens: 10, completionTokens: 20, totalTokens: 30, costUsd: 0.01));
         $engine = new WorkflowEngine($mockAiContent);
 
         $execution = $engine->execute($workflow, ['agency' => $this->agency]);

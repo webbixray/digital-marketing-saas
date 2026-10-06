@@ -18,6 +18,7 @@ class Chat2Controller extends Controller
     {
         $this->middleware(['auth', 'agency']);
     }
+
     /**
      * Show chat index page with sidebar
      */

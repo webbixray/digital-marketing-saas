@@ -26,7 +26,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 class DemoSeeder extends Seeder
 {

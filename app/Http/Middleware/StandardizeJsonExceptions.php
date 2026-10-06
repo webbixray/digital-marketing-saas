@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -19,6 +19,7 @@ class StandardizeJsonExceptions
     {
         try {
             $response = $next($request);
+
             return $response;
         } catch (\Throwable $e) {
             if ($this->isApiRequest($request)) {
@@ -41,7 +42,7 @@ class StandardizeJsonExceptions
             $statusCode = $e->getStatusCode();
             $message = $e->getMessage() ?: $this->defaultMessage($statusCode);
 
-            Log::warning("API exception standardized", [
+            Log::warning('API exception standardized', [
                 'status' => $statusCode,
                 'message' => $message,
             ]);
@@ -52,12 +53,13 @@ class StandardizeJsonExceptions
             ], $statusCode);
         }
 
-        Log::error("API unhandled exception", [
+        Log::error('API unhandled exception', [
             'exception' => get_class($e),
             'message' => $e->getMessage(),
         ]);
 
         $statusCode = $e instanceof \Exception ? 500 : 400;
+
         return response()->json([
             'error' => config('app.debug') ? $e->getMessage() : 'An unexpected error occurred.',
             'status_code' => $statusCode,

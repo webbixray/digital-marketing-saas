@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Agency;
-use App\Models\AiContentLog;
 use App\Models\User;
 use App\Notifications\TranslationCompleteNotification;
 use App\Services\AI\ContentTranslationService;

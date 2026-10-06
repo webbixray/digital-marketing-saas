@@ -6,6 +6,7 @@ use App\Models\AbTest;
 use App\Models\AbTestLog;
 use App\Models\Agency;
 use App\Models\SocialAccount;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -159,8 +160,8 @@ class AbTestModelTest extends TestCase
             'ended_at' => '2024-02-15 10:00:00',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $abTest->started_at);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $abTest->ended_at);
+        $this->assertInstanceOf(Carbon::class, $abTest->started_at);
+        $this->assertInstanceOf(Carbon::class, $abTest->ended_at);
     }
 
     // =========================================================================

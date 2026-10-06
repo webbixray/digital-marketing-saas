@@ -18,7 +18,7 @@ class ProductFactory extends Factory
         return [
             'agency_id' => Agency::factory(),
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . uniqid(),
+            'slug' => Str::slug($name).'-'.uniqid(),
             'description' => fake()->sentence(),
             'sku' => fake()->unique()->bothify('???-#####'),
             'price' => fake()->randomFloat(2, 5, 500),

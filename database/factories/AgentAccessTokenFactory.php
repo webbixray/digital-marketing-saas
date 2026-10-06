@@ -15,7 +15,7 @@ class AgentAccessTokenFactory extends Factory
     {
         return [
             'agency_id' => Agency::factory(),
-            'name' => fake()->word() . '-token',
+            'name' => fake()->word().'-token',
             'token' => Str::random(64),
             'abilities' => ['read', 'write'],
             'last_used_at' => null,

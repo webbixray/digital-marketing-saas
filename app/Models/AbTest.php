@@ -53,8 +53,11 @@ class AbTest extends Model
 
     // Test types
     public const TYPE_CONTENT = 'content';
+
     public const TYPE_TIMING = 'timing';
+
     public const TYPE_HASHTAG = 'hashtag';
+
     public const TYPE_MEDIA = 'media';
 
     public const TYPES = [
@@ -66,8 +69,11 @@ class AbTest extends Model
 
     // Statuses
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_RUNNING = 'running';
+
     public const STATUS_PAUSED = 'paused';
+
     public const STATUS_COMPLETED = 'completed';
 
     public function agency(): BelongsTo
@@ -122,7 +128,7 @@ class AbTest extends Model
     {
         $impressions = $this->{"variant_{$variant}_impressions"};
         $engagement = $this->{"variant_{$variant}_engagement"};
-        
+
         return $impressions > 0 ? round(($engagement / $impressions) * 100, 2) : 0;
     }
 
@@ -133,7 +139,7 @@ class AbTest extends Model
     {
         $impressions = $this->{"variant_{$variant}_impressions"};
         $clicks = $this->{"variant_{$variant}_clicks"};
-        
+
         return $impressions > 0 ? round(($clicks / $impressions) * 100, 2) : 0;
     }
 
@@ -228,7 +234,7 @@ class AbTest extends Model
     {
         $chiSq = $this->chiSquared();
 
-        if (!$chiSq['significant']) {
+        if (! $chiSq['significant']) {
             return 'inconclusive';
         }
 
@@ -293,11 +299,11 @@ class AbTest extends Model
      */
     private function generateRecommendation(string $winner, bool $significant, bool $sampleAdequate): string
     {
-        if (!$sampleAdequate) {
+        if (! $sampleAdequate) {
             return 'Continue running the test. Sample size is not yet adequate for reliable conclusions.';
         }
 
-        if (!$significant) {
+        if (! $significant) {
             return 'No statistically significant difference detected. Either the variants perform similarly or more data is needed.';
         }
 
@@ -306,6 +312,7 @@ class AbTest extends Model
         }
 
         $winnerLabel = $winner === 'a' ? 'Control (A)' : 'Treatment (B)';
+
         return "{$winnerLabel} is the winner with statistical significance. Consider implementing this variant for future campaigns.";
     }
 
@@ -314,6 +321,7 @@ class AbTest extends Model
         if ($expected <= 0) {
             return 0;
         }
+
         return pow($observed - $expected, 2) / $expected;
     }
 
@@ -328,6 +336,7 @@ class AbTest extends Model
 
         // For df=1: p-value = 2 * (1 - normalCDF(sqrt(chiSq)))
         $z = sqrt($chiSq);
+
         return 2 * (1 - $this->normalCDF($z));
     }
 

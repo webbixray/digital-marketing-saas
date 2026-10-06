@@ -4,8 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Agency;
 use App\Models\MediaAsset;
-use App\Services\Media\AiImageGenerationService;
 use App\Services\AI\Gateway\Exceptions\RateLimitException;
+use App\Services\Media\AiImageGenerationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -105,6 +105,7 @@ class GenerateAiImageJob implements ShouldQueue
 
             if ($imageData === false) {
                 Log::warning("Failed to download generated image for agency #{$this->agency->id}");
+
                 return;
             }
 

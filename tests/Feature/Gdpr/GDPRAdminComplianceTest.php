@@ -18,8 +18,11 @@ class GDPRAdminComplianceTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $adminUser;
+
     private User $regularUser;
+
     private GDPRComplianceService $gdprService;
 
     protected function setUp(): void

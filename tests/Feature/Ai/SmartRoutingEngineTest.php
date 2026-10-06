@@ -12,12 +12,13 @@ class SmartRoutingEngineTest extends TestCase
     use RefreshDatabase;
 
     private SmartRoutingEngine $engine;
+
     private Agency $agency;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new SmartRoutingEngine();
+        $this->engine = new SmartRoutingEngine;
         $this->agency = Agency::factory()->create();
     }
 

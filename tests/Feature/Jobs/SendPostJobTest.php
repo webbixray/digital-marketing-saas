@@ -8,6 +8,7 @@ use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
 use App\Services\Social\SocialPostService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -17,7 +18,9 @@ class SendPostJobTest extends TestCase
     use RefreshDatabase;
 
     private Agency $agency;
+
     private User $user;
+
     private SocialAccount $account;
 
     protected function setUp(): void
@@ -131,7 +134,7 @@ class SendPostJobTest extends TestCase
 
         $job = new SendPostJob($post);
 
-        $this->assertInstanceOf(\Illuminate\Contracts\Queue\ShouldQueue::class, $job);
+        $this->assertInstanceOf(ShouldQueue::class, $job);
         $this->assertEquals(120, $job->timeout);
     }
 

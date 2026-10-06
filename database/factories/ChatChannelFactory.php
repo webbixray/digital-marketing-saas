@@ -19,7 +19,7 @@ class ChatChannelFactory extends Factory
         return [
             'agency_id' => Agency::factory(),
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . uniqid(),
+            'slug' => Str::slug($name).'-'.uniqid(),
             'description' => fake()->sentence(),
             'type' => 'public',
             'created_by' => User::factory(),

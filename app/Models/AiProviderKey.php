@@ -30,8 +30,11 @@ class AiProviderKey extends Model
     public function getMaskedKeyAttribute(): string
     {
         $key = $this->api_key;
-        if (strlen($key) <= 8) return '****';
-        return substr($key, 0, 4) . '...' . substr($key, -4);
+        if (strlen($key) <= 8) {
+            return '****';
+        }
+
+        return substr($key, 0, 4).'...'.substr($key, -4);
     }
 
     public function scopeByAgency($query, int $agencyId)

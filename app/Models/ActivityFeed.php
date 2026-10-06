@@ -12,8 +12,6 @@ class ActivityFeed extends Model
 {
     use HasAgency, HasFactory;
 
-
-
     protected $fillable = [
         'agency_id',
         'user_id',

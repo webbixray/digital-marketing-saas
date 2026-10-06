@@ -113,7 +113,7 @@ class MultilingualEngine
         string $targetLanguage,
         array $options = []
     ): string {
-        if (!isset(self::LANGUAGES[$targetLanguage])) {
+        if (! isset(self::LANGUAGES[$targetLanguage])) {
             $targetLanguage = 'en';
         }
 
@@ -124,7 +124,7 @@ class MultilingualEngine
             "IMPORTANT: Generate the ENTIRE response in {$languageName} ({$nativeName}).",
             "Use natural, native-quality {$languageName} that sounds like a native speaker.",
             "Adapt cultural references, idioms, and expressions appropriately for {$languageName}-speaking audiences.",
-            "Maintain the same meaning and intent as the original prompt.",
+            'Maintain the same meaning and intent as the original prompt.',
         ];
 
         if (isset($options['tone'])) {
@@ -135,7 +135,7 @@ class MultilingualEngine
             $instructions[] = "Formality level: {$options['formality']}.";
         }
 
-        $fullPrompt = implode("\n", $instructions) . "\n\n" . $prompt;
+        $fullPrompt = implode("\n", $instructions)."\n\n".$prompt;
 
         $response = $this->aiGateway->send(new AiRequest(
             prompt: $fullPrompt,
@@ -170,11 +170,12 @@ class MultilingualEngine
 
         // Use AI for ambiguous cases
         $response = $this->aiGateway->send(new AiRequest(
-            prompt: "Detect the language of this text. Respond with ONLY the ISO 639-1 code (en, es, fr, de, etc.):\n\n" . substr($text, 0, 200),
+            prompt: "Detect the language of this text. Respond with ONLY the ISO 639-1 code (en, es, fr, de, etc.):\n\n".substr($text, 0, 200),
             maxTokens: 10,
         ));
 
         $detected = trim(strtolower($response->content));
+
         return isset(self::LANGUAGES[$detected]) ? $detected : 'en';
     }
 

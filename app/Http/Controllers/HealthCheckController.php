@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Billing\StripeDunningService;
 use App\Services\Email\MailDeliverabilityService;
 use App\Services\Queue\QueueHealthService;
 use App\Services\SystemHealthCheckService;
@@ -14,9 +13,10 @@ class HealthCheckController extends Controller
     public function __construct(
         private readonly MailDeliverabilityService $mailService,
         private readonly QueueHealthService $queueService,
-        private readonly StripeDunningService $stripeService,
         private readonly SystemHealthCheckService $systemHealth,
-    ) {}
+    ) {
+        $this->middleware(['auth', 'role:owner|admin'])->except('check');
+    }
 
     public function index(): JsonResponse
     {

@@ -10,6 +10,7 @@ use App\Models\ContentGenome;
 use App\Models\OnboardingProgress;
 use App\Models\OptimalPostingTime;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -62,8 +63,8 @@ class NewModelsTest extends TestCase
         $this->assertEquals(['read', 'write'], $token->abilities);
         $this->assertIsBool($token->is_active);
         $this->assertTrue($token->is_active);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $token->last_used_at);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $token->expires_at);
+        $this->assertInstanceOf(Carbon::class, $token->last_used_at);
+        $this->assertInstanceOf(Carbon::class, $token->expires_at);
     }
 
     public function test_agent_access_token_belongs_to_agency(): void
@@ -213,7 +214,7 @@ class NewModelsTest extends TestCase
         $this->assertIsArray($genome->cta_patterns);
         $this->assertIsArray($genome->engagement_prediction);
         $this->assertIsArray($genome->genome_data);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $genome->last_updated_at);
+        $this->assertInstanceOf(Carbon::class, $genome->last_updated_at);
     }
 
     public function test_content_genome_belongs_to_agency(): void
@@ -321,7 +322,7 @@ class NewModelsTest extends TestCase
         $this->assertIsInt($upload->processed_rows);
         $this->assertIsInt($upload->success_count);
         $this->assertIsInt($upload->error_count);
-        $this->assertInstanceOf(\Carbon\Carbon::class, $upload->processed_at);
+        $this->assertInstanceOf(Carbon::class, $upload->processed_at);
     }
 
     public function test_bulk_upload_belongs_to_agency(): void
@@ -640,7 +641,7 @@ class NewModelsTest extends TestCase
             'data' => ['key' => 'value'],
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $progress->completed_at);
+        $this->assertInstanceOf(Carbon::class, $progress->completed_at);
         $this->assertIsArray($progress->data);
         $this->assertEquals(['key' => 'value'], $progress->data);
     }

@@ -3,12 +3,9 @@
 namespace Tests\Feature\Social;
 
 use App\Models\Agency;
-use App\Models\Client;
 use App\Models\Product;
 use App\Models\ProductTag;
-use App\Models\SocialAccount;
 use App\Models\SocialCommercePost;
-use App\Models\SocialPost;
 use App\Models\User;
 use App\Services\Social\CommerceIntegrationService;
 use App\Services\Social\ShopifyIntegrationService;

@@ -85,7 +85,7 @@ class AuditLogFactory extends Factory
         ]);
     }
 
-    public function forModel(string $modelType, int $modelId = null): static
+    public function forModel(string $modelType, ?int $modelId = null): static
     {
         return $this->state([
             'model_type' => $modelType,
@@ -93,7 +93,7 @@ class AuditLogFactory extends Factory
         ]);
     }
 
-    public function byUser(User $user = null): static
+    public function byUser(?User $user = null): static
     {
         return $this->state([
             'user_id' => $user ?? User::factory(),

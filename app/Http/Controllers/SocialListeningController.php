@@ -125,7 +125,7 @@ class SocialListeningController extends Controller
     {
         $this->authorize('update', $socialListening);
 
-        $socialListening->update(['is_active' => !$socialListening->is_active]);
+        $socialListening->update(['is_active' => ! $socialListening->is_active]);
 
         return response()->json([
             'success' => true,

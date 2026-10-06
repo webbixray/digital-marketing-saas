@@ -84,6 +84,7 @@ class BulkUpload extends Model
         if ($this->total_rows === 0) {
             return 0;
         }
+
         return (int) round(($this->processed_rows / $this->total_rows) * 100);
     }
 }

@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 use App\Models\SocialAccount;
 use App\Services\Social\YouTubeApiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Http\Controllers\Concerns\SocialOAuthConnectTrait;
 
 class YouTubeController extends Controller
 {
     use SocialOAuthConnectTrait;
 
     protected string $oauthPlatform = 'youtube';
+
     protected string $oauthPlatformName = 'YouTube';
+
     protected string $oauthRoutePrefix = 'youtube';
+
     public function __construct(
         private readonly YouTubeApiService $youtube,
     ) {

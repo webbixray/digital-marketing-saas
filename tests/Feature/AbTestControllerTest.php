@@ -14,7 +14,9 @@ class AbTestControllerTest extends TestCase
     use RefreshDatabase;
 
     private $agency;
+
     private $user;
+
     private $account;
 
     protected function setUp(): void
