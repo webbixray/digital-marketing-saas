@@ -24,7 +24,7 @@
         "vitest": "^5.0.1"
     },
     "optionalDependencies": {
-        "@laravel/multiplex": "^0.4.1"
+        "@laravel/multiplex": "^0.4.5"
     },
     "dependencies": {
         "@alpinejs/focus": "^3.17.3",
