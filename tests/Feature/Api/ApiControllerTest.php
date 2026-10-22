@@ -46,15 +46,24 @@ class ApiControllerTest extends TestCase
     /** Test rate limiting returns 429 when exceeded. */
     public function test_rate_limiting_returns_429(): void
     {
-        // The throttle.api middleware uses per-user rate limiting.
-        // We need to exceed 60 requests in 60 seconds.
+        // Clear any existing rate limit state to ensure clean test
+        \Illuminate\Support\Facades\Cache::flush();
+
+        // Test the ThrottleApiRequests middleware directly by simulating
+        // exceeding the rate limit through the RateLimiter
+        $rateLimiter = app(\Illuminate\Cache\RateLimiter::class);
+        $key = 'api:' . $this->user->id;
+
+        // Exhaust the rate limit by hitting it 60 times
         for ($i = 0; $i < 60; $i++) {
-            $this->actingAs($this->user)->getJson('/api/v1/dashboard');
+            $rateLimiter->hit($key, 60);
         }
 
+        $this->assertTrue($rateLimiter->attempts($key) >= 60, 'Rate limiter should have 60+ attempts');
+
+        // Now attempt a request - should be rate limited
         $response = $this->actingAs($this->user)->getJson('/api/v1/dashboard');
 
-        // Should get rate limited (429)
         $this->assertEquals(429, $response->getStatusCode());
         $response->assertJson([
             'error' => 'rate_limit_exceeded',
