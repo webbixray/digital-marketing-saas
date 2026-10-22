@@ -1,0 +1,1105 @@
+openapi: 3.0.3
+info:
+  title: Digital Marketing SaaS API
+  description: |
+    RESTful API for the Digital Marketing Agency SaaS platform.
+    
+    ## Authentication
+    This API uses token-based authentication. Include your API token in the `Authorization` header:
+    ```
+    Authorization: Bearer {your-api-token}
+    ```
+    
+    ## Rate Limiting
+    API requests are limited to 120 requests per minute per IP address.
+    
+    ## Multi-tenancy
+    All endpoints are scoped to the authenticated user's agency. You can only access resources belonging to your agency.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api@digitalsaas.local
+  license:
+    name: MIT
+
+servers:
+  - url: /api/v1
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /status:
+    get:
+      summary: API status check
+      description: Returns the current API status. Does not require authentication.
+      security: []
+      tags:
+        - System
+      responses:
+        '200':
+          description: API is operational
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /dashboard:
+    get:
+      summary: Get dashboard statistics
+      description: Returns cached analytics data for the authenticated agency including overview, social, email, financial, and AI stats.
+      tags:
+        - Dashboard
+      responses:
+        '200':
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /posts:
+    get:
+      summary: List social posts
+      description: Returns a paginated list of social posts for the authenticated agency.
+      tags:
+        - Social Posts
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, scheduled, published, failed]
+        - name: platform
+          in: query
+          schema:
+            type: string
+            enum: [facebook, instagram, twitter, linkedin, tiktok, pinterest]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Paginated list of social posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSocialPosts'
+    post:
+      summary: Create a social post
+      description: Creates a new social post for the authenticated agency.
+      tags:
+        - Social Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialPostInput'
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialPost'
+        '422':
+          $ref: '#/components/responses/ValidationErrors'
+
+  /posts/{id}:
+    get:
+      summary: Get a social post
+      description: Returns details of a specific social post.
+      tags:
+        - Social Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Social post details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialPost'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update a social post
+      description: Updates an existing social post.
+      tags:
+        - Social Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialPostInput'
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialPost'
+    delete:
+      summary: Delete a social post
+      description: Soft-deletes a social post.
+      tags:
+        - Social Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Post deleted successfully
+
+  /accounts:
+    get:
+      summary: List social accounts
+      description: Returns a list of connected social media accounts.
+      tags:
+        - Social Accounts
+      responses:
+        '200':
+          description: List of social accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialAccount'
+
+  /campaigns:
+    get:
+      summary: List campaigns
+      description: Returns a paginated list of marketing campaigns.
+      tags:
+        - Campaigns
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, active, paused, completed]
+      responses:
+        '200':
+          description: Paginated list of campaigns
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCampaigns'
+    post:
+      summary: Create a campaign
+      description: Creates a new marketing campaign.
+      tags:
+        - Campaigns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+      responses:
+        '201':
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+
+  /clients:
+    get:
+      summary: List clients
+      description: Returns a paginated list of clients.
+      tags:
+        - Clients
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, lead]
+      responses:
+        '200':
+          description: Paginated list of clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClients'
+    post:
+      summary: Create a client
+      description: Creates a new client.
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+
+  /invoices:
+    get:
+      summary: List invoices
+      description: Returns a paginated list of invoices.
+      tags:
+        - Invoices
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, pending, paid, overdue, cancelled]
+      responses:
+        '200':
+          description: Paginated list of invoices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvoices'
+    post:
+      summary: Create an invoice
+      description: Creates a new invoice.
+      tags:
+        - Invoices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceInput'
+      responses:
+        '201':
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+
+  /ai/generate:
+    post:
+      summary: Generate AI content
+      description: Generates AI-powered content (posts, captions, hashtags, etc.).
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiGenerateInput'
+      responses:
+        '200':
+          description: Content generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiGenerateResponse'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /agency/settings:
+    get:
+      summary: Get agency settings
+      description: Returns the authenticated agency's settings.
+      tags:
+        - Agency
+      responses:
+        '200':
+          description: Agency settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+    put:
+      summary: Update agency settings
+      description: Updates the authenticated agency's settings.
+      tags:
+        - Agency
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgencySettingsInput'
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agency'
+
+  /agency/team:
+    get:
+      summary: Get team members
+      description: Returns a list of team members for the authenticated agency.
+      tags:
+        - Agency
+      responses:
+        '200':
+          description: List of team members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /agency/billing:
+    get:
+      summary: Get billing information
+      description: Returns billing and subscription information for the authenticated agency.
+      tags:
+        - Agency
+      responses:
+        '200':
+          description: Billing information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingInfo'
+
+  /analytics:
+    get:
+      summary: Get analytics data
+      description: Returns comprehensive analytics data for the authenticated agency.
+      tags:
+        - Analytics
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: 30d
+      responses:
+        '200':
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsData'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Token
+
+  schemas:
+    DashboardStats:
+      type: object
+      properties:
+        overview:
+          $ref: '#/components/schemas/OverviewStats'
+        social:
+          $ref: '#/components/schemas/SocialStats'
+        email:
+          $ref: '#/components/schemas/EmailStats'
+        financial:
+          $ref: '#/components/schemas/FinancialStats'
+        ai:
+          $ref: '#/components/schemas/AiStats'
+
+    OverviewStats:
+      type: object
+      properties:
+        total_clients:
+          type: integer
+          example: 42
+        total_posts:
+          type: integer
+          example: 156
+        total_campaigns:
+          type: integer
+          example: 8
+        total_revenue:
+          type: number
+          format: float
+          example: 12500.00
+        pending_invoices:
+          type: integer
+          example: 3
+        active_social_accounts:
+          type: integer
+          example: 5
+
+    SocialStats:
+      type: object
+      properties:
+        total_posts:
+          type: integer
+        published:
+          type: integer
+        scheduled:
+          type: integer
+        failed:
+          type: integer
+        draft:
+          type: integer
+        average_engagement:
+          type: number
+          format: float
+        total_engagement:
+          type: number
+          format: float
+        by_platform:
+          type: object
+          additionalProperties:
+            type: integer
+
+    EmailStats:
+      type: object
+      properties:
+        total_campaigns:
+          type: integer
+        sent_campaigns:
+          type: integer
+        draft_campaigns:
+          type: integer
+        scheduled_campaigns:
+          type: integer
+        total_sent:
+          type: integer
+        total_opened:
+          type: integer
+        total_clicked:
+          type: integer
+        average_open_rate:
+          type: number
+          format: float
+        average_click_rate:
+          type: number
+          format: float
+
+    FinancialStats:
+      type: object
+      properties:
+        total_invoices:
+          type: integer
+        paid_invoices:
+          type: integer
+        pending_invoices:
+          type: integer
+        overdue_invoices:
+          type: integer
+        total_revenue:
+          type: number
+          format: float
+        pending_amounts:
+          type: number
+          format: float
+        overdue_amounts:
+          type: number
+          format: float
+
+    AiStats:
+      type: object
+      properties:
+        total_generations:
+          type: integer
+        successful_generations:
+          type: integer
+        failed_generations:
+          type: integer
+        total_tokens_used:
+          type: integer
+        total_cost_usd:
+          type: number
+          format: float
+        by_action:
+          type: object
+          additionalProperties:
+            type: integer
+        last_7_days:
+          type: integer
+
+    SocialPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        agency_id:
+          type: integer
+        social_account_id:
+          type: integer
+        platform:
+          type: string
+        content:
+          type: string
+        media:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, scheduled, published, failed]
+        scheduled_at:
+          type: string
+          format: date-time
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        engagement_rate:
+          type: number
+          format: float
+          nullable: true
+        views_count:
+          type: integer
+        likes_count:
+          type: integer
+        comments_count:
+          type: integer
+        shares_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SocialPostInput:
+      type: object
+      required:
+        - platform
+        - content
+      properties:
+        platform:
+          type: string
+          enum: [facebook, instagram, twitter, linkedin, tiktok, pinterest]
+        content:
+          type: string
+          maxLength: 5000
+        media:
+          type: array
+          items:
+            type: string
+            format: uri
+        hashtags:
+          type: array
+          items:
+            type: string
+        scheduled_at:
+          type: string
+          format: date-time
+
+    PaginatedSocialPosts:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialPost'
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+
+    SocialAccount:
+      type: object
+      properties:
+        id:
+          type: integer
+        platform:
+          type: string
+        account_name:
+          type: string
+        account_handle:
+          type: string
+        is_connected:
+          type: boolean
+        followers_count:
+          type: integer
+
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        posts_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    CampaignInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        type:
+          type: string
+          enum: [general, social, email, mixed]
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+
+    PaginatedCampaigns:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Campaign'
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        total:
+          type: integer
+
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        industry:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive, lead]
+        posts_count:
+          type: integer
+        campaigns_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    ClientInput:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        company:
+          type: string
+        industry:
+          type: string
+        notes:
+          type: string
+
+    PaginatedClients:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client'
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        total:
+          type: integer
+
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: integer
+        invoice_number:
+          type: string
+        client_id:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          enum: [draft, pending, paid, overdue, cancelled]
+        subtotal:
+          type: number
+          format: float
+        tax_rate:
+          type: number
+          format: float
+        total:
+          type: number
+          format: float
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        paid_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    InvoiceInput:
+      type: object
+      required:
+        - total
+      properties:
+        client_id:
+          type: integer
+        total:
+          type: number
+          format: float
+          minimum: 0
+        tax_rate:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        due_date:
+          type: string
+          format: date
+        notes:
+          type: string
+
+    PaginatedInvoices:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invoice'
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        total:
+          type: integer
+
+    AiGenerateInput:
+      type: object
+      required:
+        - action
+        - prompt
+      properties:
+        action:
+          type: string
+          enum: [generate, rewrite, summarize, translate, hashtags, ideas]
+        prompt:
+          type: string
+          maxLength: 10000
+        content_type:
+          type: string
+          enum: [post, email, article, caption, hashtags, ideas]
+        provider:
+          type: string
+          enum: [openai, google, anthropic, azure]
+        model:
+          type: string
+
+    AiGenerateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        content:
+          type: string
+        tokens_used:
+          type: integer
+        cost_usd:
+          type: number
+          format: float
+        provider:
+          type: string
+        model:
+          type: string
+
+    Agency:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        email:
+          type: string
+          format: email
+        website:
+          type: string
+          nullable: true
+        timezone:
+          type: string
+        currency:
+          type: string
+        status:
+          type: string
+        subscription_plan:
+          type: string
+        subscription_status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AgencySettingsInput:
+      type: object
+      properties:
+        name:
+          type: string
+        website:
+          type: string
+        timezone:
+          type: string
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [owner, admin, manager, member]
+        avatar:
+          type: string
+          nullable: true
+        last_active_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    BillingInfo:
+      type: object
+      properties:
+        plan:
+          type: string
+        status:
+          type: string
+        price:
+          type: number
+          format: float
+        interval:
+          type: string
+        subscription_start:
+          type: string
+          format: date-time
+          nullable: true
+        subscription_end:
+          type: string
+          format: date-time
+          nullable: true
+        quotas:
+          type: object
+          properties:
+            posts:
+              $ref: '#/components/schemas/QuotaInfo'
+            ai_generations:
+              $ref: '#/components/schemas/QuotaInfo'
+            campaigns:
+              $ref: '#/components/schemas/QuotaInfo'
+            clients:
+              $ref: '#/components/schemas/QuotaInfo'
+            users:
+              $ref: '#/components/schemas/QuotaInfo'
+
+    QuotaInfo:
+      type: object
+      properties:
+        used:
+          type: integer
+        limit:
+          type: integer
+        percentage:
+          type: number
+          format: float
+
+    AnalyticsData:
+      type: object
+      properties:
+        range:
+          type: string
+        overview:
+          $ref: '#/components/schemas/OverviewStats'
+        social:
+          $ref: '#/components/schemas/SocialStats'
+        email:
+          $ref: '#/components/schemas/EmailStats'
+        financial:
+          $ref: '#/components/schemas/FinancialStats'
+        ai:
+          $ref: '#/components/schemas/AiStats'
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        status:
+          type: integer
+        errors:
+          type: object
+          nullable: true
+          description: Validation errors keyed by field name
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: Authentication required.
+            status: 401
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: The requested resource was not found.
+            status: 404
+
+    ValidationErrors:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: Validation failed.
+            status: 422
+            errors:
+              email: ["The email field is required."]
+
+    RateLimited:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: Rate limit exceeded. Please try again later.
+            status: 429
+
+tags:
+  - name: System
+    description: System status and health endpoints
+  - name: Dashboard
+    description: Dashboard statistics and overview
+  - name: Social Posts
+    description: Social media post management
+  - name: Social Accounts
+    description: Connected social media accounts
+  - name: Campaigns
+    description: Marketing campaign management
+  - name: Clients
+    description: Client management
+  - name: Invoices
+    description: Invoice and billing management
+  - name: AI
+    description: AI content generation
+  - name: Agency
+    description: Agency settings, team, and billing
+  - name: Analytics
+    description: Analytics and reporting data

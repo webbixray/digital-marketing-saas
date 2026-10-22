@@ -1,0 +1,51 @@
+name: Load Testing
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Target base URL for load tests'
+        required: false
+        default: 'http://localhost:8000'
+      api_key:
+        description: 'API token for authenticated endpoints'
+        required: false
+
+jobs:
+  load-test:
+    name: k6 Load Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install k6
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gnupg2 software-properties-common apt-transport-https
+        sudo mkdir -p /etc/apt/keyrings/
+        curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/k6-archive-keyring.gpg
+        echo "deb [signed-by=/etc/apt/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install -y k6
+
+    - name: Run smoke load test
+      run: |
+        k6 run \
+          --env BASE_URL="${{ github.event.inputs.base_url || 'http://localhost:8000' }}" \
+          --env API_KEY="${{ github.event.inputs.api_key || '' }}" \
+          tests/performance/load-test.js
+
+    - name: Upload load test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: k6-results
+        path: |
+          results.json
+        retention-days: 30

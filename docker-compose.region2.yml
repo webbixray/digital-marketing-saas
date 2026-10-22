@@ -1,0 +1,116 @@
+version: '3.8'
+
+# Multi-region deployment: Region 2 (failover/DR)
+#
+# Usage:
+#   docker-compose -f docker-compose.prod.yml -f docker-compose.region2.yml up -d
+#
+# Region 2 runs a read replica of the database and a read-only app instance.
+# Traffic can be routed to region 2 via DNS failover or a global load balancer
+# when region 1 is degraded or unavailable.
+
+services:
+  # ---------------------------------------------------------------
+  # Region 2 - App (read-only)
+  # ---------------------------------------------------------------
+  app-region2:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: digitalmarketingsaas/app:latest
+    container_name: dmsaas-app-region2
+    restart: unless-stopped
+    working_dir: /var/www/html
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://region2.digitalmarketingsaas.com
+      - DB_HOST=db-region2
+      - DB_DATABASE=digitalmarketingsaas
+      - DB_USERNAME=dmsaas
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis-region2
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - READ_REPLICA_HOST=db-region2
+      - REGION=region2
+      - IS_READ_ONLY=true
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    networks:
+      - dmsaas-network-region2
+    depends_on:
+      - db-region2
+      - redis-region2
+
+  # ---------------------------------------------------------------
+  # Region 2 - Nginx (read-only, SSL termination)
+  # ---------------------------------------------------------------
+  webserver-region2:
+    image: nginx:alpine
+    container_name: dmsaas-nginx-region2
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+      - "8444:443"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - dmsaas-network-region2
+    depends_on:
+      - app-region2
+
+  # ---------------------------------------------------------------
+  # Region 2 - MySQL Read Replica
+  # ---------------------------------------------------------------
+  db-region2:
+    image: mysql:8.0
+    container_name: dmsaas-db-region2
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: digitalmarketingsaas
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: dmsaas
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata-region2:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    command: >
+      mysqld
+      --server-id=2
+      --read-only=1
+      --skip-slave-start
+      --relay-log=relay-bin
+    networks:
+      - dmsaas-network-region2
+
+  # ---------------------------------------------------------------
+  # Region 2 - Redis (read cache)
+  # ---------------------------------------------------------------
+  redis-region2:
+    image: redis:7-alpine
+    container_name: dmsaas-redis-region2
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata-region2:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - dmsaas-network-region2
+
+networks:
+  dmsaas-network-region2:
+    driver: bridge
+
+volumes:
+  dbdata-region2:
+    driver: local
+  redisdata-region2:
+    driver: local

@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "codename": "Phoenix",
+  "release_date": "2026-09-05",
+  "php_min": "8.4",
+  "laravel_min": "13.0",
+  "database_version": "20260905",
+  "services": {
+    "ai_assistant": {
+      "version": "1.0.0",
+      "class": "App\\Services\\AI\\AgencyAIAssistantService",
+      "status": "active"
+    },
+    "telegram_bot": {
+      "version": "1.0.0",
+      "class": "App\\Services\\Telegram\\TelegramBotService",
+      "status": "active"
+    }
+  },
+  "endpoints": {
+    "webhooks": ["/telegram/webhook"],
+    "api_public": ["/api/version", "/api/version/check"]
+  }
+}

@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Agency;
+use App\Services\QuotaService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class QuotaController extends Controller
+{
+    public function __construct(
+        private readonly QuotaService $quotaService,
+    ) {
+        $this->middleware(['auth:sanctum', 'agency']);
+    }
+
+    /**
+     * Get current quota status for the agency
+     */
+    public function status(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', \App\Models\Agency::class);
+
+        /** @var Agency $agency */
+        $agency = $request->user()->agency;
+
+        return response()->json([
+            'plan' => $agency->subscription_plan,
+            'quotas' => $this->quotaService->getQuotaStatus($agency),
+            'upgrade_available' => $agency->subscription_plan === 'free',
+        ]);
+    }
+
+    /**
+     * Check if a specific action is allowed
+     */
+    public function check(Request $request): JsonResponse
+    {
+        $feature = $request->input('feature');
+
+        if (! $feature) {
+            return response()->json(['error' => 'Feature is required.'], 422);
+        }
+
+        /** @var Agency $agency */
+        $agency = $request->user()->agency;
+
+        $isOverQuota = $this->quotaService->isOverQuota($agency, $feature);
+
+        if ($isOverQuota) {
+            Log::warning('Quota exceeded', [
+                'agency_id' => $agency->id,
+                'feature' => $feature,
+                'usage' => $this->quotaService->getUsage($agency, $feature),
+                'limit' => $this->quotaService->getLimit($agency, $feature),
+            ]);
+        }
+
+        return response()->json([
+            'allowed' => ! $isOverQuota,
+            'feature' => $feature,
+            'usage' => $this->quotaService->getUsage($agency, $feature),
+            'limit' => $this->quotaService->getLimit($agency, $feature),
+        ]);
+    }
+}

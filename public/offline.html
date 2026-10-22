@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Offline | DigitalMarketingSaaS</title>
+    <meta name="theme-color" content="#6366f1">
+    <link rel="icon" href="/icons/icon-192x192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 400px;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #fff;
+            color: #6366f1;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .status {
+            margin-top: 1.5rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        .status.online { background: rgba(16, 185, 129, 0.2); }
+        .status.offline { background: rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry — your work is safe and will be synced when you're back online.</p>
+        <button class="btn" onclick="window.location.reload()">
+            <span>🔄</span> Try Again
+        </button>
+        <div id="status" class="status offline">
+            <span id="statusText">Checking connection...</span>
+        </div>
+    </div>
+    <script>
+        const statusEl = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+
+        function updateStatus() {
+            if (navigator.onLine) {
+                statusEl.className = 'status online';
+                statusText.textContent = 'Back online! Refreshing...';
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                statusEl.className = 'status offline';
+                statusText.textContent = 'Still offline — will auto-reconnect';
+            }
+        }
+
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+        updateStatus();
+    </script>
+</body>
+</html>

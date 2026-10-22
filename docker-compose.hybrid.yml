@@ -1,0 +1,44 @@
+# docker-compose.hybrid.yml
+# Hybrid: Databases in Docker, App on host (fast, reliable, no build needed)
+# App runs locally via artisan serve or xampp, connects to Docker databases
+
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: dmsaas-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: digitalmarketingsaas
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_PASSWORD: dmspassword
+      MYSQL_USER: dmsaas
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - dmsaas-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dmsaas-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - dmsaas-network
+
+networks:
+  dmsaas-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local

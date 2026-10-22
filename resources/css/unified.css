@@ -1,0 +1,491 @@
+@import 'tailwindcss';
+
+/* Font Awesome (self-hosted, replaces cdnjs CDN blocked by tracking prevention) */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../../resources/views/**/*.blade.php';
+
+/* Custom CSS Variables */
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+}
+
+/* Font */
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Stat Card */
+.stat-card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6;
+}
+
+.stat-label {
+    @apply text-sm font-medium text-gray-500 dark:text-gray-400;
+}
+
+.stat-value {
+    @apply text-2xl font-bold text-gray-900 dark:text-white mt-1;
+}
+
+/* Navigation Link Styles */
+.nav-link {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800;
+}
+
+.nav-link.active {
+    @apply bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400 border-l-4 border-indigo-600;
+    border-left-width: 4px;
+}
+
+/* Card Styles */
+.card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+}
+
+.card-header {
+    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700;
+}
+
+.card-body {
+    @apply p-6;
+}
+
+/* Button Styles */
+.btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+}
+
+.btn-secondary {
+    @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+}
+
+.btn-success {
+    @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+}
+
+.btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+}
+
+.btn-outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+}
+
+/* Form Styles */
+.form-input {
+    @apply w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+
+.form-error {
+    @apply text-sm text-red-600 mt-1;
+}
+
+/* Table Styles */
+.table {
+    @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+}
+
+.table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100;
+}
+
+/* Badge Styles */
+.badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+    @apply bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400;
+}
+
+.badge-success {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+}
+
+.badge-warning {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+}
+
+.badge-danger {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+}
+
+/* Alert Styles */
+.alert {
+    @apply rounded-lg p-4 mb-4;
+}
+
+.alert-success {
+    @apply bg-green-50 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-200;
+}
+
+.alert-error {
+    @apply bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-200;
+}
+
+.alert-warning {
+    @apply bg-yellow-50 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200;
+}
+
+.alert-info {
+    @apply bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-200;
+}
+
+/* Sidebar Mini (Collapsed) */
+.sidebar-mini {
+    @apply w-16 transition-all duration-300 ease-in-out;
+}
+
+.sidebar-mini .sidebar-text {
+    @apply hidden;
+}
+
+.sidebar-mini .sidebar-icon {
+    @apply mx-auto;
+}
+
+.sidebar-mini .sidebar-link {
+    @apply justify-center px-2;
+}
+
+/* Sidebar Expanded */
+.sidebar-expanded {
+    @apply w-64 transition-all duration-300 ease-in-out;
+}
+
+.sidebar-expanded .sidebar-text {
+    @apply inline-block;
+}
+
+.sidebar-expanded .sidebar-link {
+    @apply px-3;
+}
+
+/* Sidebar Tooltip (Mini Mode) */
+.sidebar-tooltip {
+    @apply absolute left-full ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm rounded-md whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 z-50;
+}
+
+.sidebar-mini .sidebar-link:hover .sidebar-tooltip {
+    @apply opacity-100;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    @apply absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 z-50 py-2;
+}
+
+.dropdown-item {
+    @apply block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left;
+}
+
+.dropdown-item.active {
+    @apply bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400;
+}
+
+/* Search Modal */
+.search-modal {
+    @apply fixed inset-0 z-50 flex items-start justify-center pt-24 px-4;
+}
+
+.search-modal-overlay {
+    @apply absolute inset-0 bg-gray-900/50 backdrop-blur-sm;
+}
+
+.search-modal-content {
+    @apply relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden;
+}
+
+/* Toast Notifications */
+.toast-container {
+    @apply fixed top-4 right-4 z-50 flex flex-col gap-2;
+}
+
+.toast {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-72 max-w-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+}
+
+.toast-success {
+    @apply border-l-4 border-l-green-500;
+}
+
+.toast-error {
+    @apply border-l-4 border-l-red-500;
+}
+
+.toast-warning {
+    @apply border-l-4 border-l-yellow-500;
+}
+
+.toast-info {
+    @apply border-l-4 border-l-blue-500;
+}
+
+/* Progress Bar (Page Loading) */
+.progress-bar {
+    @apply fixed top-0 left-0 h-1 bg-indigo-600 z-50 transition-all duration-300 ease-out;
+}
+
+.progress-bar-loading {
+    @apply animate-pulse;
+}
+
+/* Quick Action (Prominent Sidebar Button) */
+.quick-action {
+    @apply flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg transition-all duration-200 hover:scale-105;
+}
+
+.quick-action-icon {
+    @apply w-5 h-5;
+}
+
+/* Nav Section Toggle */
+.nav-section-toggle {
+    @apply flex items-center justify-between w-full px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer;
+}
+
+.nav-section-toggle-icon {
+    @apply w-4 h-4 transition-transform duration-200;
+}
+
+.nav-section-toggle.collapsed .nav-section-toggle-icon {
+    @apply rotate-[-90deg];
+}
+
+/* Plan Badge (Sidebar Footer) */
+.plan-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.plan-badge-free {
+    @apply bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300;
+}
+
+.plan-badge-pro {
+    @apply bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400;
+}
+
+.plan-badge-enterprise {
+    @apply bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400;
+}
+
+/* Smooth Transitions for Sidebar State */
+.sidebar-transition {
+    @apply transition-all duration-300 ease-in-out;
+}
+
+.sidebar-transition-fast {
+    @apply transition-all duration-150 ease-in-out;
+}
+
+.sidebar-content-fade {
+    @apply transition-opacity duration-200 ease-in-out;
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+    .sidebar-mini {
+        @apply w-14;
+    }
+
+    .sidebar-expanded {
+        @apply fixed inset-y-0 left-0 z-40 w-64;
+    }
+
+    .dropdown-menu {
+        @apply w-48;
+    }
+
+    .toast-container {
+        @apply left-4 right-4;
+    }
+
+    .toast {
+        @apply min-w-0 max-w-full;
+    }
+
+    .search-modal {
+        @apply pt-16 px-2;
+    }
+
+    .search-modal-content {
+        @apply rounded-xl;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .sidebar-mini {
+        @apply w-16;
+    }
+
+    .sidebar-expanded {
+        @apply w-56;
+    }
+
+    .toast-container {
+        @apply top-2 right-2;
+    }
+}
+
+@media (min-width: 1025px) {
+    .sidebar-expanded {
+        @apply w-64;
+    }
+
+    .hide-on-desktop {
+        @apply hidden;
+    }
+}
+
+@media (min-width: 1280px) {
+    .sidebar-expanded {
+        @apply w-72;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .auto-dark {
+        color-scheme: dark;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Prevent horizontal scroll */
+html, body {
+    overflow-x: hidden;
+}
+
+/* Form overflow protection */
+form, .form-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Grid overflow protection */
+.grid, .flex {
+    min-width: 0;
+}
+
+/* Break long words */
+.break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Form input protection */
+input, select, textarea {
+    max-width: 100%;
+}
+
+/* Button overflow protection */
+button, .btn {
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* Card overflow protection */
+.card, [class*="card"] {
+    overflow-x: hidden;
+}
+
+/* Content area overflow protection */
+#main-content {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Mobile-specific overflow fixes */
+@media (max-width: 640px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Prevent overflow on mobile forms */
+    .space-y-4, .space-y-6 {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Fix form inputs overflow */
+    input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="datetime-local"], select, textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Flex containers should wrap, not overflow */
+    .flex.flex-wrap {
+        flex-wrap: wrap;
+    }
+    
+    /* Ensure cards don't overflow */
+    [class*="rounded-xl"] {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Fix for forms with flex layout */
+    form.flex, form .flex {
+        flex-wrap: wrap;
+    }
+    
+    /* Grid children should shrink */
+    [class*="col-span"] {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+}

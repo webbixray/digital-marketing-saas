@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Node modules (will be installed in container)
+node_modules
+
+# Vendor (will be installed in container)
+vendor
+
+# Storage (ephemeral)
+storage/app/public
+storage/framework/cache
+storage/framework/sessions
+storage/framework/testing
+storage/framework/views
+storage/logs/*.log
+
+# Environment files
+.env
+.env.backup
+.env.production
+docker.env
+
+# IDE
+.idea
+.vscode
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Build artifacts (will be rebuilt)
+public/build
+public/hot
+public/storage
+
+# Cache
+.phpunit.result.cache
+.phpunit.cache
+
+# Documentation
+*.md
+LICENSE
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+CHANGELOG.md
+SECURITY_REMEDIATION.md

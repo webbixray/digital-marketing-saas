@@ -1,0 +1,13 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 8
+    paths:
+        - app
+        - config
+        - routes
+    excludePaths:
+        - app/Providers/*
+    reportUnmatchedIgnoredErrors: false

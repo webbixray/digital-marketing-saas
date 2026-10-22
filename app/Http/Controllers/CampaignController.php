@@ -1,0 +1,446 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Enums\CampaignStatus;
+use App\Models\Campaign;
+use App\Models\Client;
+use App\Services\AI\Agent\AgentContext;
+use App\Services\AI\Agent\AgentOrchestrator;
+use App\Services\AI\Agent\AgentTask;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
+class CampaignController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware(['auth', 'agency']);
+    }
+
+    public function index(Request $request)
+    {
+        $agencyId = $request->user()->agency_id;
+        $tags = ['agency_'.$agencyId, 'campaigns'];
+
+        $cacheKey = "campaigns:{$agencyId}:index:".md5(serialize($request->query()));
+
+        $campaigns = Cache::remember($cacheKey, 300, function () use ($request, $agencyId) {
+            $query = Campaign::where('agency_id', $agencyId)
+                ->with(['client:id,name,email']);
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+
+            return $query->orderBy('created_at', 'desc')->paginate(15);
+        });
+
+        return view('campaigns.index', [
+            'agency' => $request->user()->agency,
+            'campaigns' => $campaigns,
+        ]);
+    }
+
+    public function create(Request $request)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        return view('campaigns.create', [
+            'agency' => $request->user()->agency,
+            'clients' => Client::where('agency_id', $agencyId)->active()->get(),
+            'types' => Campaign::CAMPAIGN_TYPES,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:'.implode(',', array_keys(Campaign::CAMPAIGN_TYPES)),
+            'description' => 'nullable|string',
+            'objective' => 'nullable|string|max:255',
+            'target_audience' => 'nullable|string|max:255',
+            'client_id' => 'nullable|exists:clients,id',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        $campaign = Campaign::create([
+            'agency_id' => $agencyId,
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']).'-'.uniqid(),
+            'type' => $validated['type'],
+            'description' => $validated['description'] ?? null,
+            'objective' => $validated['objective'] ?? null,
+            'target_audience' => $validated['target_audience'] ?? null,
+            'client_id' => $validated['client_id'] ?? null,
+            'start_date' => $validated['start_date'] ?? null,
+            'end_date' => $validated['end_date'] ?? null,
+            'status' => CampaignStatus::DRAFT->value,
+        ]);
+
+        DB::table('agencies')->where('id', $agencyId)->increment('campaigns_count');
+
+        // Clear campaign cache
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
+        return redirect()->route('campaigns.show', $campaign)
+            ->with('success', 'Campaign created successfully.');
+    }
+
+    public function show(Request $request, $campaignId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Cache::remember("campaign:{$campaignId}", 300, function () use ($campaignId) {
+            return Campaign::with(['client:id,name,email'])->findOrFail($campaignId);
+        });
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $posts = $campaign->posts()
+            ->with(['socialAccount:id,platform,platform_username,platform_display_name'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('campaigns.show', [
+            'agency' => $request->user()->agency,
+            'campaign' => $campaign,
+            'posts' => $posts,
+        ]);
+    }
+
+    public function edit(Request $request, $campaignId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        return view('campaigns.edit', [
+            'agency' => $request->user()->agency,
+            'campaign' => $campaign,
+            'clients' => Client::where('agency_id', $agencyId)->active()->get(),
+            'types' => Campaign::CAMPAIGN_TYPES,
+        ]);
+    }
+
+    public function update(Request $request, $campaignId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:'.implode(',', array_keys(Campaign::CAMPAIGN_TYPES)),
+            'description' => 'nullable|string',
+            'objective' => 'nullable|string|max:255',
+            'target_audience' => 'nullable|string|max:255',
+            'client_id' => 'nullable|exists:clients,id',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        $campaign->update($validated);
+
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
+        return redirect()->route('campaigns.show', $campaign)
+            ->with('success', 'Campaign updated successfully.');
+    }
+
+    public function destroy(Request $request, $campaignId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $campaign->delete();
+
+        DB::table('agencies')->where('id', $agencyId)->decrement('campaigns_count');
+
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
+        Log::info('Campaign operation', ['agency_id' => $request->user()->agency_id]);
+
+        return redirect()->route('campaigns.index')
+            ->with('success', 'Campaign deleted.');
+    }
+
+    public function changeStatus(Request $request, $campaignId)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:draft,active,paused,completed,cancelled',
+        ]);
+
+        $campaign->update(['status' => $validated['status']]);
+
+        // Clear campaign cache
+        Cache::forget("campaign:{$campaignId}");
+        Cache::forget("campaigns:{$agencyId}:index:");
+        Cache::forget("campaigns:{$agencyId}:stats");
+
+        return back()->with('success', 'Campaign status updated.');
+    }
+
+    /**
+     * Optimize a campaign using the CampaignAgent.
+     */
+    public function optimizeWithAgent(Request $request, $campaignId, AgentOrchestrator $orchestrator)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'goals' => 'nullable|array',
+            'goals.*' => 'string|in:engagement,reach,conversion,awareness,retention',
+        ]);
+
+        $user = $request->user();
+        $context = AgentContext::fromUser($user);
+
+        $task = new AgentTask(
+            id: 'campaign_opt_'.uniqid(),
+            type: 'campaign_optimize',
+            prompt: 'Optimize campaign performance',
+            data: [
+                'campaign_id' => $campaign->id,
+                'goals' => $validated['goals'] ?? ['engagement', 'reach'],
+            ],
+        );
+
+        $result = $orchestrator->dispatch($task, $context);
+
+        if ($result->success) {
+            return response()->json([
+                'success' => true,
+                'optimization' => $result->output,
+                'metadata' => $result->metadata,
+                'cost_usd' => $result->costUsd,
+                'tokens_used' => $result->tokensUsed,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'error' => $result->error ?? 'Agent failed to optimize campaign',
+        ], 500);
+    }
+
+    /**
+     * Create an A/B test for a campaign using the AbTestingAgent.
+     */
+    public function abTestWithAgent(Request $request, $campaignId, AgentOrchestrator $orchestrator)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'test_type' => 'required|in:creative,audience,copy,cta,timing,budget',
+            'hypothesis' => 'nullable|string|max:500',
+            'platform' => 'nullable|string|in:instagram,facebook,twitter,linkedin,tiktok',
+        ]);
+
+        $user = $request->user();
+        $context = AgentContext::fromUser($user);
+
+        $task = new AgentTask(
+            id: 'ab_test_'.uniqid(),
+            type: 'ab_test_design',
+            prompt: 'Design an A/B test for campaign',
+            data: [
+                'test_type' => $validated['test_type'],
+                'campaign_id' => $campaign->id,
+                'hypothesis' => $validated['hypothesis'] ?? '',
+                'platform' => $validated['platform'] ?? 'instagram',
+            ],
+        );
+
+        $result = $orchestrator->dispatch($task, $context);
+
+        if ($result->success) {
+            return response()->json([
+                'success' => true,
+                'test_design' => $result->output,
+                'metadata' => $result->metadata,
+                'cost_usd' => $result->costUsd,
+                'tokens_used' => $result->tokensUsed,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'error' => $result->error ?? 'Agent failed to design A/B test',
+        ], 500);
+    }
+
+    /**
+     * Get AI insights for campaign performance.
+     */
+    public function getAgentInsights(Request $request, $campaignId, AgentOrchestrator $orchestrator)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $campaign = Campaign::findOrFail($campaignId);
+
+        if ($campaign->agency_id !== $agencyId) {
+            abort(403);
+        }
+
+        $user = $request->user();
+        $context = AgentContext::fromUser($user);
+
+        // Use analytics agent for performance insights
+        $task = new AgentTask(
+            id: 'campaign_insights_'.uniqid(),
+            type: 'performance_analysis',
+            prompt: 'Analyze campaign performance and provide insights',
+            data: [
+                'campaign_id' => $campaign->id,
+                'platform' => null,
+                'date_range' => '30 days',
+            ],
+        );
+
+        $result = $orchestrator->dispatch($task, $context);
+
+        if ($result->success) {
+            return response()->json([
+                'success' => true,
+                'insights' => $result->output,
+                'metadata' => $result->metadata,
+                'cost_usd' => $result->costUsd,
+                'tokens_used' => $result->tokensUsed,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'error' => $result->error ?? 'Agent failed to provide insights',
+        ], 500);
+    }
+
+    /**
+     * Warm campaign cache for an agency.
+     */
+    public function warmCache(int $agencyId): void
+    {
+        // Pre-compute campaign list
+        $campaigns = Campaign::where('agency_id', $agencyId)
+            ->with(['client:id,name,email'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        Cache::put("campaigns:{$agencyId}:index:", $campaigns, 600);
+
+        // Pre-compute individual campaign data
+        Campaign::where('agency_id', $agencyId)
+            ->with(['client:id,name,email'])
+            ->chunk(100, function ($campaign) {
+                foreach ($campaign as $c) {
+                    Cache::put("campaign:{$c->id}", $c, 600);
+                }
+            });
+
+        // Pre-compute campaign statistics
+        $stats = Campaign::where('agency_id', $agencyId)
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = "paused" THEN 1 ELSE 0 END) as paused,
+                SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
+            ')
+            ->first();
+
+        Cache::put("campaigns:{$agencyId}:stats", [
+            'total' => (int) $stats->total,
+            'active' => (int) $stats->active,
+            'draft' => (int) $stats->draft,
+            'completed' => (int) $stats->completed,
+            'paused' => (int) $stats->paused,
+            'cancelled' => (int) $stats->cancelled,
+        ], 600);
+    }
+
+    /**
+     * Get campaign statistics.
+     */
+    public function getStats(Request $request)
+    {
+        $agencyId = $request->user()->agency_id;
+
+        $stats = Cache::remember("campaigns:{$agencyId}:stats", 300, function () use ($agencyId) {
+            $stats = Campaign::where('agency_id', $agencyId)
+                ->selectRaw('
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) as active,
+                    SUM(CASE WHEN status = "draft" THEN 1 ELSE 0 END) as draft,
+                    SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN status = "paused" THEN 1 ELSE 0 END) as paused,
+                    SUM(CASE WHEN status = "cancelled" THEN 1 ELSE 0 END) as cancelled
+                ')
+                ->first();
+
+            return [
+                'total' => (int) $stats->total,
+                'active' => (int) $stats->active,
+                'draft' => (int) $stats->draft,
+                'completed' => (int) $stats->completed,
+                'paused' => (int) $stats->paused,
+                'cancelled' => (int) $stats->cancelled,
+            ];
+        });
+
+        return response()->json($stats);
+    }
+}

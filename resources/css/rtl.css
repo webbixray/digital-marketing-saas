@@ -1,0 +1,361 @@
+/* RTL-specific styles for Digital Marketing SaaS v7.0 */
+/* Uses [dir='rtl'] selector to flip layouts when locale is Arabic */
+
+/* ============================================
+   BASE RTL DIRECTION & TEXT ALIGNMENT
+   ============================================ */
+
+[dir='rtl'] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir='rtl'] body {
+    direction: rtl;
+}
+
+/* ============================================
+   SIDEBAR - MOVE TO RIGHT SIDE
+   ============================================ */
+
+[dir='rtl'] aside.fixed.inset-y-0.left-0 {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.dark [dir='rtl'] aside.fixed.inset-y-0.left-0 {
+    border-left-color: #1f2937; /* gray-800 */
+}
+
+[dir='rtl'] .-translate-x-full {
+    --tw-translate-x: 100%;
+}
+
+[dir='rtl'] .translate-x-0 {
+    --tw-translate-x: 0;
+}
+
+/* Sidebar tooltip positioning */
+[dir='rtl'] .sidebar-tooltip {
+    left: auto;
+    right: 100%;
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+[dir='rtl'] .sidebar-tooltip::before {
+    left: auto;
+    right: -4px;
+    border-right-color: transparent;
+    border-left-color: #1f2937;
+}
+
+/* ============================================
+   MAIN CONTENT - ADJUST MARGINS
+   ============================================ */
+
+[dir='rtl'] .lg\:ml-64 {
+    margin-left: 0;
+    margin-right: 16rem;
+}
+
+[dir='rtl'] .lg\:ml-16 {
+    margin-left: 0;
+    margin-right: 4rem;
+}
+
+[dir='rtl'] .lg\:pl-64 {
+    padding-left: 0;
+    padding-right: 16rem;
+}
+
+[dir='rtl'] .lg\:pl-16 {
+    padding-left: 0;
+    padding-right: 4rem;
+}
+
+/* ============================================
+   DROPDOWN MENUS - ALIGN RIGHT EDGE TO RIGHT EDGE OF BUTTON
+   ============================================ */
+
+[dir='rtl'] .absolute.right-0 {
+    right: auto;
+    left: 0;
+}
+
+[dir='rtl'] .right-0 {
+    right: auto;
+    left: 0;
+}
+
+[dir='rtl'] .-right-1 {
+    right: auto;
+    left: -0.25rem;
+}
+
+/* ============================================
+   ICON FLIPPING
+   ============================================ */
+
+[dir='rtl'] .rtl-flip {
+    transform: scaleX(-1);
+}
+
+/* Icons that should be flipped in RTL */
+[dir='rtl'] .fa-arrow-left,
+[dir='rtl'] .fa-arrow-right,
+[dir='rtl'] .fa-chevron-left,
+[dir='rtl'] .fa-chevron-right,
+[dir='rtl'] .fa-caret-left,
+[dir='rtl'] .fa-caret-right,
+[dir='rtl'] .fa-angle-left,
+[dir='rtl'] .fa-angle-right,
+[dir='rtl'] .fa-sign-out-alt,
+[dir='rtl'] .fa-reply,
+[dir='rtl'] .fa-share,
+[dir='rtl'] .fa-external-link-alt,
+[dir='rtl'] .fa-paper-plane,
+[dir='rtl'] .fa-angle-double-left,
+[dir='rtl'] .fa-angle-double-right {
+    transform: scaleX(-1);
+}
+
+/* ============================================
+   MARGIN / PADDING FLIPPING UTILITIES
+   ============================================ */
+
+/* Margin left becomes margin right */
+[dir='rtl'] .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+[dir='rtl'] .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+[dir='rtl'] .ml-1 { margin-left: 0; margin-right: 0.25rem; }
+[dir='rtl'] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+[dir='rtl'] .ml-3 { margin-left: 0; margin-right: 0.75rem; }
+[dir='rtl'] .ml-4 { margin-left: 0; margin-right: 1rem; }
+[dir='rtl'] .ml-6 { margin-left: 0; margin-right: 1.5rem; }
+[dir='rtl'] .ml-8 { margin-left: 0; margin-right: 2rem; }
+
+[dir='rtl'] .mr-1 { margin-right: 0; margin-left: 0.25rem; }
+[dir='rtl'] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+[dir='rtl'] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+[dir='rtl'] .mr-4 { margin-right: 0; margin-left: 1rem; }
+[dir='rtl'] .mr-6 { margin-right: 0; margin-left: 1.5rem; }
+[dir='rtl'] .mr-8 { margin-right: 0; margin-left: 2rem; }
+
+/* Padding left becomes padding right */
+[dir='rtl'] .pl-1 { padding-left: 0; padding-right: 0.25rem; }
+[dir='rtl'] .pl-2 { padding-left: 0; padding-right: 0.5rem; }
+[dir='rtl'] .pl-3 { padding-left: 0; padding-right: 0.75rem; }
+[dir='rtl'] .pl-4 { padding-left: 0; padding-right: 1rem; }
+[dir='rtl'] .pl-6 { padding-left: 0; padding-right: 1.5rem; }
+[dir='rtl'] .pl-8 { padding-left: 0; padding-right: 2rem; }
+
+[dir='rtl'] .pr-1 { padding-right: 0; padding-left: 0.25rem; }
+[dir='rtl'] .pr-2 { padding-right: 0; padding-left: 0.5rem; }
+[dir='rtl'] .pr-3 { padding-right: 0; padding-left: 0.75rem; }
+[dir='rtl'] .pr-4 { padding-right: 0; padding-left: 1rem; }
+[dir='rtl'] .pr-6 { padding-right: 0; padding-left: 1.5rem; }
+[dir='rtl'] .pr-8 { padding-right: 0; padding-left: 2rem; }
+
+/* ============================================
+   FLEX DIRECTION ADJUSTMENTS
+   ============================================ */
+
+[dir='rtl] .flex-row {
+    flex-direction: row-reverse;
+}
+
+[dir='rtl'] .flex-row-reverse {
+    flex-direction: row;
+}
+
+/* ============================================
+   BREADCRUMB SEPARATORS
+   ============================================ */
+
+[dir='rtl'] .fa-chevron-right {
+    transform: scaleX(-1);
+}
+
+/* ============================================
+   TEXT ALIGNMENT
+   ============================================ */
+
+[dir='rtl'] .text-left {
+    text-align: right;
+}
+
+[dir='rtl'] .text-right {
+    text-align: left;
+}
+
+[dir='rtl'] .lg\:text-left {
+    text-align: right;
+}
+
+[dir='rtl'] .lg\:text-right {
+    text-align: left;
+}
+
+[dir='rtl'] .md\:text-left {
+    text-align: right;
+}
+
+[dir='rtl'] .md\:text-right {
+    text-align: left;
+}
+
+/* ============================================
+   BORDER RADIUS CORNERS
+   ============================================ */
+
+[dir='rtl'] .rounded-l-lg {
+    border-radius: 0;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+[dir='rtl'] .rounded-r-lg {
+    border-radius: 0;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+[dir='rtl'] .rounded-l-md {
+    border-radius: 0;
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+[dir='rtl'] .rounded-r-md {
+    border-radius: 0;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+/* ============================================
+   BORDER SIDES
+   ============================================ */
+
+[dir='rtl'] .border-l {
+    border-left: none;
+    border-right: 1px solid;
+}
+
+[dir='rtl'] .border-r {
+    border-right: none;
+    border-left: 1px solid;
+}
+
+[dir='rtl'] .border-l-2 {
+    border-left: none;
+    border-right-width: 2px;
+}
+
+[dir='rtl'] .border-r-2 {
+    border-right: none;
+    border-left-width: 2px;
+}
+
+/* ============================================
+   LOADING BAR - ANIMATE FROM RIGHT
+   ============================================ */
+
+[dir='rtl'] #loading-bar {
+    left: auto;
+    right: 0;
+}
+
+/* ============================================
+   SEARCH MODAL
+   ============================================ */
+
+[dir='rtl'] .rtl-kbd-flip {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+[dir='rtl'] input[type='text'],
+[dir='rtl'] input[type='email'],
+[dir='rtl'] input[type='password'],
+[dir='rtl'] input[type='search'],
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+    text-align: right;
+}
+
+[dir='rtl'] input::placeholder,
+[dir='rtl'] textarea::placeholder {
+    text-align: right;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+[dir='rtl'] table {
+    direction: rtl;
+}
+
+[dir='rtl'] th,
+[dir='rtl'] td {
+    text-align: right;
+}
+
+/* ============================================
+   NOTIFICATION BADGE
+   ============================================ */
+
+[dir='rtl'] .top-1.right-1 {
+    right: auto;
+    left: 0.25rem;
+}
+
+/* ============================================
+   LANGUAGE PICKER SPECIFIC
+   ============================================ */
+
+[dir='rtl'] .language-picker-dropdown {
+    right: auto;
+    left: 0;
+    transform-origin: top left;
+}
+
+[dir='rtl'] .language-picker-item .rtl-badge {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* ============================================
+   SKIP LINK
+   ============================================ */
+
+[dir='rtl'] .focus\:left-4:focus {
+    left: auto;
+    right: 1rem;
+}
+
+/* ============================================
+   FLOATING ACTIONS
+   ============================================ */
+
+[dir='rtl'] .float-right {
+    float: left;
+}
+
+[dir='rtl'] .float-left {
+    float: right;
+}

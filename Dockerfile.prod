@@ -1,0 +1,81 @@
+# Production Dockerfile
+# Multi-stage build for optimized production image
+
+# Stage 1: Build frontend assets
+FROM node:22-alpine AS frontend
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY resources/ ./resources/
+COPY vite.config.js ./
+RUN npm run build
+
+# Stage 2: Production PHP image
+FROM php:8.4-fpm-alpine
+
+# Install system dependencies and PHP extension build requirements
+RUN apk add --no-cache \
+    nginx \
+    curl \
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    icu-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    mysql-client \
+    redis \
+    pcre-dev \
+    $PHPIZE_DEPS
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-configure mbstring \
+    && docker-php-ext-configure xml \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-configure bcmath \
+    && docker-php-ext-configure fileinfo \
+    && docker-php-ext-configure opcache \
+    && docker-php-ext-install -j$(nproc) \
+    pdo_mysql \
+    mysqli \
+    gd \
+    intl \
+    mbstring \
+    xml \
+    zip \
+    bcmath \
+    fileinfo \
+    opcache
+
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application files
+COPY . .
+
+# Copy frontend assets from build stage
+COPY --from=frontend /app/public/build ./public/build
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx and php-fpm
+CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
