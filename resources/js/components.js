@@ -6,11 +6,11 @@
 // Component Registry
 const components = {};
 
-function registerComponent(name, config) {
+export function registerComponent(name, config) {
     components[name] = config;
 }
 
-function initComponents() {
+export function initComponents() {
     document.querySelectorAll('[data-component]').forEach(el => {
         const name = el.dataset.component;
         if (components[name]) {
@@ -19,7 +19,7 @@ function initComponents() {
     });
 }
 
-class Component {
+export class Component {
     constructor(element) {
         this.element = element;
         this.init();
@@ -44,7 +44,7 @@ class Component {
     }
 }
 
-class Modal extends Component {
+export class Modal extends Component {
     init() {
         this.modal = this.find('[data-modal]');
         this.closeBtn = this.find('[data-modal-close]');
@@ -69,7 +69,7 @@ class Modal extends Component {
     }
 }
 
-class Dropdown extends Component {
+export class Dropdown extends Component {
     init() {
         this.button = this.find('[data-dropdown-button]');
         this.menu = this.find('[data-dropdown-menu]');
@@ -91,7 +91,7 @@ class Dropdown extends Component {
     }
 }
 
-class Tabs extends Component {
+export class Tabs extends Component {
     init() {
         this.tabButtons = this.findAll('[data-tab-button]');
         this.tabContents = this.findAll('[data-tab-content]');
@@ -114,7 +114,7 @@ class Tabs extends Component {
     }
 }
 
-class Accordion extends Component {
+export class Accordion extends Component {
     init() {
         this.items = this.findAll('[data-accordion-item]');
 
@@ -137,7 +137,7 @@ class Accordion extends Component {
     }
 }
 
-class Tooltip extends Component {
+export class Tooltip extends Component {
     init() {
         this.tooltip = this.find('[data-tooltip]');
         if (this.tooltip) {
@@ -165,7 +165,7 @@ class Tooltip extends Component {
     }
 }
 
-class ConfirmDialog extends Component {
+export class ConfirmDialog extends Component {
     init() {
         this.buttons = this.findAll('[data-confirm]');
         this.buttons.forEach(btn => {
@@ -179,7 +179,7 @@ class ConfirmDialog extends Component {
     }
 }
 
-class AutoDismissAlert extends Component {
+export class AutoDismissAlert extends Component {
     init() {
         this.alerts = this.findAll('[data-auto-dismiss]');
         this.alerts.forEach(alert => {
@@ -191,7 +191,7 @@ class AutoDismissAlert extends Component {
     }
 }
 
-class FormValidator extends Component {
+export class FormValidator extends Component {
     init() {
         this.form = this.element;
         this.errorClass = 'text-sm text-red-600 mt-1';
@@ -281,7 +281,7 @@ class FormValidator extends Component {
     }
 }
 
-class ToggleSwitch extends Component {
+export class ToggleSwitch extends Component {
     init() {
         this.toggle = this.find('[data-toggle]');
         if (this.toggle) {
@@ -296,7 +296,7 @@ class ToggleSwitch extends Component {
     }
 }
 
-class SearchSelect extends Component {
+export class SearchSelect extends Component {
     init() {
         this.input = this.find('[data-search-select]');
         this.options = this.find('[data-search-options]');
