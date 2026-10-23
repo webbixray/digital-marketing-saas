@@ -20,11 +20,6 @@ class GenerateAiImageJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The queue the job should be dispatched to.
-     */
-    public string $queue = 'ai';
-
-    /**
      * The number of times the job may be attempted.
      */
     public int $tries = 3;
@@ -54,7 +49,10 @@ class GenerateAiImageJob implements ShouldQueue
         public string $size = '1024x1024',
         public ?int $userId = null,
         public ?string $folder = null,
-    ) {}
+    ) {
+        // Queueable::$queue is defined by the trait; assign (do not redeclare).
+        $this->queue = 'ai';
+    }
 
     /**
      * Execute the job.

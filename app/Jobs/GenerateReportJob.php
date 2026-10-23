@@ -19,18 +19,16 @@ class GenerateReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * The queue the job should be dispatched to.
-     */
-    public string $queue = 'exports';
-
     public int $backoff = 60;
 
     public int $timeout = 300;
 
     public function __construct(
         public readonly Report $report,
-    ) {}
+    ) {
+        // Queueable::$queue is defined (untyped) by the trait; assign, don't redeclare.
+        $this->queue = 'exports';
+    }
 
     public function handle(): void
     {

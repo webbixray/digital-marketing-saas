@@ -18,11 +18,6 @@ class GenerateAiContentJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The queue the job should be dispatched to.
-     */
-    public string $queue = 'ai';
-
-    /**
      * The number of times the job may be attempted.
      */
     public int $tries = 3;
@@ -55,7 +50,10 @@ class GenerateAiContentJob implements ShouldQueue
         public float $temperature = 0.7,
         public int $maxTokens = 2048,
         public ?int $logId = null,
-    ) {}
+    ) {
+        // Queueable::$queue is defined by the trait; assign (do not redeclare).
+        $this->queue = 'ai';
+    }
 
     /**
      * Execute the job.
