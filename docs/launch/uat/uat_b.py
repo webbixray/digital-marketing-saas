@@ -211,7 +211,7 @@ def s04_ai_generation(token_a):
         "content_type": "caption", "tone": "friendly", "length": "short",
     }, timeout=120)
     data = body.get("data", body) if isinstance(body, dict) else {}
-    content = data.get("content") or data.get("result") or data.get("text") or ""
+    content = data.get("content") or data.get("result") or data.get("text") or data.get("output") or ""
     ok = st == 200 and len(content) > 20
     record("UAT-04", "AI content generation (live provider)", "PASS" if ok else "REVIEW",
            f"status={st}, len={len(content)}, sample={content[:80]!r}, err={str(body.get('error', body.get('message','')))[:80]}")

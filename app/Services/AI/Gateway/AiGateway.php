@@ -51,6 +51,24 @@ class AiGateway
             throw new NoProviderAvailableException;
         }
 
+        // Extract model from routing if available
+        $routing = config("platform.ai.routing.{$request->task}");
+        $model = null;
+        if (is_array($routing) && ! empty($routing)) {
+            // Format: "provider:model" - extract model part
+            foreach ($routing as $entry) {
+                if (str_starts_with($entry, $providerChain->first() . ':')) {
+                    $model = substr($entry, strpos($entry, ':') + 1);
+                    break;
+                }
+            }
+        }
+
+        // Apply model to request if found and request doesn't already have a non-default model
+        if ($model && $request->model === 'gpt-4o') {
+            $request = $request->withModel($model);
+        }
+
         $lastException = null;
 
         foreach ($providerChain as $providerName) {

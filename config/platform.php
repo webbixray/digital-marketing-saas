@@ -176,7 +176,7 @@ return [
                 'max_tokens' => 4096,
             ],
             'nvidia_nim' => [
-                'model' => env('AI_NVIDIA_MODEL', 'nvidia/nemotron-3-super-120b-a12b'),
+                'model' => env('AI_NVIDIA_MODEL', 'nvidia/nemotron-3-ultra-550b-a55b'),
                 'fallback_model' => 'mistralai/mistral-large',
                 'api_base_url' => 'https://integrate.api.nvidia.com/v1',
                 'temperature' => 0.7,
@@ -206,9 +206,10 @@ return [
         'routing' => [
             'reasoning' => ['nous_portal:hermes-3-llama-3.1-70b', 'openai:gpt-4o', 'anthropic:claude-3-5-sonnet-20241022', 'google:gemini-1.5-pro'],
             'fast' => ['nous_portal:hermes-3-llama-3.1-8b', 'groq:llama-3.1-8b', 'openai:gpt-4o-mini', 'anthropic:claude-3-haiku-20240307', 'google:gemini-1.5-flash'],
-            'creative' => ['nous_portal:hermes-3-llama-3.1-70b', 'openai:gpt-4o', 'anthropic:claude-3-5-sonnet-20241022', 'google:gemini-1.5-pro'],
-            'analysis' => ['nous_portal:hermes-3-llama-3.1-70b', 'openai:gpt-4o', 'anthropic:claude-3-5-sonnet-20241022', 'google:gemini-1.5-pro'],
+            'creative' => ['nvidia_nim:nvidia/nemotron-3-ultra-550b-a55b'],
+            'analysis' => ['nvidia_nim:nvidia/nemotron-3-ultra-550b-a55b'],
             'embedding' => ['openai:text-embedding-3-small', 'google:text-embedding-004'],
+            'content_generate' => ['nvidia_nim:nvidia/nemotron-3-ultra-550b-a55b'],
         ],
     ],
 
