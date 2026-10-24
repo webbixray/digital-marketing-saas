@@ -112,9 +112,9 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'agency', 'plan.rate_limit', 't
 
     // Agency
     Route::get('/agency/settings', [ApiAgencyController::class, 'settings'])->name('agency.settings');
-    Route::put('/agency/settings', [ApiAgencyController::class, 'updateSettings'])->name('agency.settings.update');
+    Route::put('/agency/settings', [ApiAgencyController::class, 'updateSettings'])->middleware(\App\Http\Middleware\RoleMiddleware::class . ':owner,admin')->name('agency.settings.update');
     Route::get('/agency/team', [ApiAgencyController::class, 'team'])->name('agency.team');
-    Route::get('/agency/billing', [ApiAgencyController::class, 'billing'])->name('agency.billing');
+    Route::get('/agency/billing', [ApiAgencyController::class, 'billing'])->middleware(\App\Http\Middleware\RoleMiddleware::class . ':owner,admin')->name('agency.billing');
 
     // Enterprise RBAC
     Route::prefix('rbac')->name('rbac.')->group(function () {
@@ -221,17 +221,17 @@ Route::prefix('v1/onboarding')->middleware(['auth:sanctum', 'agency', 'throttle:
 
 // Client Portal 2.0 API
 Route::prefix('v1/client-portal')->middleware(['auth:sanctum', 'agency', 'throttle:60,1'])->name('api.client-portal.')->group(function () {
-    Route::get('/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
-    Route::get('/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
-    Route::get('/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
-    Route::get('/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
-    Route::get('/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
-    Route::get('/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
-    Route::get('/activity', [ApiClientPortalController::class, 'activity'])->name('activity');
-    Route::get('/profile', [ApiClientPortalController::class, 'profile'])->name('profile');
-    Route::put('/profile', [ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
-    Route::post('/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
+    Route::get('/{client}/dashboard', [ApiClientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/{client}/campaigns', [ApiClientPortalController::class, 'campaigns'])->name('campaigns');
+    Route::get('/{client}/invoices', [ApiClientPortalController::class, 'invoices'])->name('invoices');
+    Route::get('/{client}/analytics', [ApiClientPortalController::class, 'analytics'])->name('analytics');
+    Route::get('/{client}/settings', [ApiClientPortalController::class, 'settings'])->name('settings');
+    Route::get('/{client}/notifications', [ApiClientPortalController::class, 'notifications'])->name('notifications');
+    Route::get('/{client}/activity', [ApiClientPortalController::class, 'activity'])->name('activity');
+    Route::get('/{client}/profile', [ApiClientPortalController::class, 'profile'])->name('profile');
+    Route::put('/{client}/profile', [ApiClientPortalController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/{client}/approvals/{approval}/approve', [ApiClientPortalController::class, 'approve'])->name('approve')->middleware('throttle:20,1');
+    Route::post('/{client}/approvals/{approval}/reject', [ApiClientPortalController::class, 'reject'])->name('reject')->middleware('throttle:20,1');
 });
 
 // Team Chat routes

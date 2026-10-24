@@ -424,14 +424,16 @@ Route::middleware(['auth', 'agency'])->group(function () {
     });
 
     // Billing & Subscription
-    Route::get('agency/billing', [BillingController::class, 'index'])->name('agency.billing');
-    Route::get('agency/billing/upgrade', [BillingController::class, 'upgrade'])->name('billing.upgrade');
-    Route::get('agency/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
-    Route::get('agency/billing/success', [BillingController::class, 'success'])->name('billing.success');
-    Route::get('agency/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
-    Route::post('agency/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription')->middleware('throttle:5,1');
-    Route::get('agency/invoices', [BillingController::class, 'invoices'])->name('agency.invoices');
-    Route::get('agency/invoices/{invoice}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoice.download');
+    Route::middleware([\App\Http\Middleware\RoleMiddleware::class . ':owner,admin'])->group(function () {
+        Route::get('agency/billing', [BillingController::class, 'index'])->name('agency.billing');
+        Route::get('agency/billing/upgrade', [BillingController::class, 'upgrade'])->name('billing.upgrade');
+        Route::get('agency/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
+        Route::get('agency/billing/success', [BillingController::class, 'success'])->name('billing.success');
+        Route::get('agency/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+        Route::post('agency/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription')->middleware('throttle:5,1');
+        Route::get('agency/invoices', [BillingController::class, 'invoices'])->name('agency.invoices');
+    });
+    Route::get('agency/invoices/{invoice}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoice.download')->middleware(\App\Http\Middleware\RoleMiddleware::class . ':owner,admin');
 
     // Billing Health Monitor
     Route::get('/billing/health', [BillingHealthController::class, 'index'])->name('billing.health');

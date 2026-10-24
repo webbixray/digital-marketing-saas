@@ -193,7 +193,6 @@ class EnterpriseReportingService
             ->toArray();
 
         $campaignData = Campaign::where('agency_id', $agencyId)
-            ->withCount('socialPosts')
             ->orderByDesc('created_at')
             ->limit(500)
             ->get()

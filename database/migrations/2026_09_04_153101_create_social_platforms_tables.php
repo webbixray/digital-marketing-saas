@@ -47,7 +47,7 @@ return new class extends Migration
         Schema::create('social_posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('agency_id')->constrained('agencies')->cascadeOnDelete();
-            $table->foreignId('social_account_id')->constrained('social_accounts')->cascadeOnDelete();
+            $table->foreignId('social_account_id')->nullable()->constrained('social_accounts')->nullOnDelete();
             $table->string('platform');
             $table->string('content')->nullable();
             $table->json('media')->nullable(); // array of media URLs / IDs

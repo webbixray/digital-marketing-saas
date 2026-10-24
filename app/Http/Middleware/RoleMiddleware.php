@@ -16,7 +16,13 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (! in_array($user->role, $roles)) {
+        // Use the raw column value: Spatie's HasRoles trait overrides the
+        // "role" attribute accessor to return the first Spatie role name,
+        // which is NULL for users whose agency role lives in the column only
+        // (all agency members registered before Spatie role sync).
+        $userRole = $user->getOriginal('role');
+
+        if (! in_array($userRole, $roles, true)) {
             abort(403, 'Unauthorized role.');
         }
 
