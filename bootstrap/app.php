@@ -3,6 +3,7 @@
 use App\Http\Middleware\AgentRateLimit;
 use App\Http\Middleware\ApplyWhiteLabel;
 use App\Http\Middleware\CacheWithEtag;
+use App\Http\Middleware\CspNonce;
 use App\Http\Middleware\Enforce2FA;
 use App\Http\Middleware\EnforceAiCredits;
 use App\Http\Middleware\EnforcePlatformRateLimit;
@@ -54,6 +55,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle.api' => ThrottleApiRequests::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+        ]);
+
+        // Add CSP nonce middleware (must run before SecurityHeaders)
+        $middleware->web(prepend: [
+            CspNonce::class,
         ]);
 
         $middleware->web(append: [

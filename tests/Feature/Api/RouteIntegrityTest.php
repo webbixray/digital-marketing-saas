@@ -48,15 +48,16 @@ class RouteIntegrityTest extends TestCase
     {
         // Regression: an unauthenticated duplicate group previously shadowed the
         // authenticated one, exposing these endpoints publicly.
-        $response = $this->getJson('/api/v1/client-portal/dashboard');
+        // Use client ID 1 (exists in test DB via RefreshDatabase factories)
+        $response = $this->getJson('/api/v1/client-portal/1/dashboard');
 
         $response->assertUnauthorized();
     }
 
     public function test_client_portal_api_profile_requires_authentication(): void
     {
-        $this->getJson('/api/v1/client-portal/profile')->assertUnauthorized();
-        $this->putJson('/api/v1/client-portal/profile')->assertUnauthorized();
+        $this->getJson('/api/v1/client-portal/1/profile')->assertUnauthorized();
+        $this->putJson('/api/v1/client-portal/1/profile')->assertUnauthorized();
     }
 
     public function test_authenticated_api_groups_are_rate_limited(): void

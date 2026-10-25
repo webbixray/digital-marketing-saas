@@ -295,7 +295,7 @@ class ClientPortalService
         $monthlyTrend = (new Collection(SocialPost::where('agency_id', $agencyId)
             ->where('created_at', '>=', now()->subMonths(6))
             ->select(
-                DB::raw("({$monthExpr}) as month"),
+                DB::raw("strftime('%Y-%m', created_at) as month"),
                 DB::raw('COUNT(*) as post_count'),
                 DB::raw('SUM(views_count) as total_views'),
                 DB::raw('SUM(likes_count) as total_likes'),

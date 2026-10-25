@@ -25,25 +25,25 @@ parameters:
 			path: app/Console/Commands/SendWinBackEmailsCommand.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\AgentMarketplaceItem\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AgentMarketplaceItem\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/AgentMarketplaceController.php
 
 		-
-			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:configure\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\AgentMarketplaceItem\> given\.$#'
+			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:configure\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AgentMarketplaceItem\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/AgentMarketplaceController.php
 
 		-
-			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:install\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\AgentMarketplaceItem\> given\.$#'
+			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:install\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AgentMarketplaceItem\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/AgentMarketplaceController.php
 
 		-
-			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:uninstall\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\AgentMarketplaceItem\> given\.$#'
+			message: '#^Parameter \#1 \$item of method App\\Services\\Agent\\Marketplace\\AgentInstallerService\:\:uninstall\(\) expects App\\Models\\AgentMarketplaceItem, App\\Models\\AgentMarketplaceItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AgentMarketplaceItem\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/AgentMarketplaceController.php
@@ -83,48 +83,6 @@ parameters:
 			identifier: argument.type
 			count: 3
 			path: app/Http/Controllers/AiAuditController.php
-
-		-
-			message: '#^Cannot access property \$agency on App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\AiContentController\:\:generate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\AiContentController\:\:hashtags\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\AiContentController\:\:ideas\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\AiContentController\:\:recordUsage\(\) has parameter \$agency with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Method App\\Http\\Controllers\\AiContentController\:\:rewrite\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Http/Controllers/AiContentController.php
-
-		-
-			message: '#^Parameter \#1 \$user of static method App\\Services\\AI\\Agent\\AgentContext\:\:fromUser\(\) expects App\\Models\\User, App\\Models\\User\|null given\.$#'
-			identifier: argument.type
-			count: 4
-			path: app/Http/Controllers/AiContentController.php
 
 		-
 			message: '#^Cannot access property \$agency_id on App\\Models\\User\|null\.$#'
@@ -433,12 +391,6 @@ parameters:
 			path: app/Http/Controllers/Api/ApiChatController.php
 
 		-
-			message: '#^Cannot access property \$agency_id on App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/ApiChatController.php
-
-		-
 			message: '#^Cannot call method toISOString\(\) on Carbon\\Carbon\|null\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -517,7 +469,7 @@ parameters:
 			path: app/Http/Controllers/Api/ApiClientPortalController.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\Api\\ApiClientPortalController\:\:getClient\(\) should return App\\Models\\Client but returns App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\.$#'
+			message: '#^Method App\\Http\\Controllers\\Api\\ApiClientPortalController\:\:getClient\(\) should return App\\Models\\Client but returns App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/Api/ApiClientPortalController.php
@@ -1357,31 +1309,31 @@ parameters:
 			path: app/Http/Controllers/CalendarController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 8
 			path: app/Http/Controllers/CampaignController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Http/Controllers/CampaignController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/CampaignController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:posts\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:posts\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/CampaignController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Http/Controllers/CampaignController.php
@@ -1777,7 +1729,7 @@ parameters:
 			path: app/Http/Controllers/ClientPortal2Controller.php
 
 		-
-			message: '#^Method App\\Http\\Controllers\\ClientPortal2Controller\:\:getClient\(\) should return App\\Models\\Client but returns App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\.$#'
+			message: '#^Method App\\Http\\Controllers\\ClientPortal2Controller\:\:getClient\(\) should return App\\Models\\Client but returns App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Http/Controllers/ClientPortal2Controller.php
@@ -1969,19 +1921,19 @@ parameters:
 			path: app/Http/Controllers/CommentController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/ContentCalendarController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$scheduled_at\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$scheduled_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/ContentCalendarController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/ContentCalendarController.php
@@ -2023,19 +1975,19 @@ parameters:
 			path: app/Http/Controllers/ContentCalendarController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\ContentAsset\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ContentAsset\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 4
 			path: app/Http/Controllers/ContentLibraryController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\ContentAsset\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ContentAsset\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/ContentLibraryController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\ContentAsset\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\ContentAsset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ContentAsset\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/ContentLibraryController.php
@@ -2113,7 +2065,7 @@ parameters:
 			path: app/Http/Controllers/ContentLibraryController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\ContentTemplate\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\ContentTemplate\>\:\:forceDelete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\ContentTemplate\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ContentTemplate\>\:\:forceDelete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/ContentTemplateController.php
@@ -2335,7 +2287,7 @@ parameters:
 			path: app/Http/Controllers/CreditController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\CustomField\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\CustomField\>\:\:forceDelete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\CustomField\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\CustomField\>\:\:forceDelete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/CustomFieldController.php
@@ -2989,13 +2941,13 @@ parameters:
 			path: app/Http/Controllers/InboxController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$access_token\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$access_token\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/InstagramController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$platform_account_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$platform_account_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/InstagramController.php
@@ -4129,7 +4081,7 @@ parameters:
 			path: app/Http/Controllers/RoleController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SearchHistory\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SearchHistory\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SearchHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SearchHistory\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/SearchController.php
@@ -4165,55 +4117,55 @@ parameters:
 			path: app/Http/Controllers/SearchController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$access_token\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$access_token\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 4
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$is_active\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$is_active\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$platform_account_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$platform_account_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$platform_display_name\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$platform_display_name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$platform_username\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$platform_username\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$refresh_token\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$refresh_token\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/SocialAccountController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Http/Controllers/SocialAccountController.php
@@ -4399,67 +4351,67 @@ parameters:
 			path: app/Http/Controllers/SocialListeningController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$platform\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$platform\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 10
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$content\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$content\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$hashtags\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$hashtags\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$media\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$media\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$platform\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$platform\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$scheduled_at\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$scheduled_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Http/Controllers/SocialPostController.php
@@ -4615,25 +4567,19 @@ parameters:
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),App\\Models\\SocialPost\>\:\:load\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Http/Controllers/SocialPostController.php
-
-		-
-			message: '#^Parameter \#1 \$post of method App\\Services\\ContentQualityScorer\:\:score\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\> given\.$#'
+			message: '#^Parameter \#1 \$post of method App\\Services\\ContentQualityScorer\:\:score\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:publishPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\> given\.$#'
+			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:publishPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
 
 		-
-			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:retryPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\> given\.$#'
+			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:retryPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/SocialPostController.php
@@ -5011,25 +4957,25 @@ parameters:
 			path: app/Http/Controllers/WebhookController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Webhook\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Webhook\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 5
 			path: app/Http/Controllers/WebhookController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Webhook\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Webhook\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WebhookController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Webhook\>\:\:logs\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Webhook\>\:\:logs\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WebhookController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Webhook\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Webhook\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Webhook\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WebhookController.php
@@ -5179,25 +5125,25 @@ parameters:
 			path: app/Http/Controllers/WhiteLabelController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 11
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:\$description\.$#'
+			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:\$description\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:\$webhook_secret\.$#'
+			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:\$webhook_secret\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
@@ -5209,49 +5155,49 @@ parameters:
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:createVersion\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:createVersion\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:executions\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:executions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:generateWebhookSecret\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:generateWebhookSecret\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:restoreFromVersion\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:restoreFromVersion\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:versions\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:versions\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:webhookLogs\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:webhookLogs\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Http/Controllers/WorkflowController.php
@@ -5431,7 +5377,7 @@ parameters:
 			path: app/Http/Controllers/WorkflowController.php
 
 		-
-			message: '#^Parameter \#1 \$workflow of method App\\Services\\Workflow\\WorkflowEngine\:\:execute\(\) expects App\\Models\\Workflow, App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\> given\.$#'
+			message: '#^Parameter \#1 \$workflow of method App\\Services\\Workflow\\WorkflowEngine\:\:execute\(\) expects App\\Models\\Workflow, App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/WorkflowController.php
@@ -6397,25 +6343,25 @@ parameters:
 			path: app/Jobs/CheckForUpdates.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\EmailCampaignRecipient\>\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\EmailCampaignRecipient\>\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Jobs/Email/SendEmailBatch.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\EmailCampaignRecipient\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\EmailCampaignRecipient\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Jobs/Email/SendEmailBatch.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\EmailCampaignRecipient\>\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\EmailCampaignRecipient\>\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Jobs/Email/SendEmailBatch.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\EmailCampaignRecipient\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\EmailCampaignRecipient\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Jobs/Email/SendEmailBatch.php
@@ -6433,7 +6379,7 @@ parameters:
 			path: app/Jobs/Email/SendEmailBatch.php
 
 		-
-			message: '#^Parameter \#2 \$recipient of method App\\Services\\Email\\SmtpEmailService\:\:sendToRecipient\(\) expects App\\Models\\EmailCampaignRecipient, App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\EmailCampaignRecipient\> given\.$#'
+			message: '#^Parameter \#2 \$recipient of method App\\Services\\Email\\SmtpEmailService\:\:sendToRecipient\(\) expects App\\Models\\EmailCampaignRecipient, App\\Models\\EmailCampaignRecipient\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\EmailCampaignRecipient\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Jobs/Email/SendEmailBatch.php
@@ -6529,7 +6475,7 @@ parameters:
 			path: app/Jobs/GenerateReportJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\>\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\>\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Jobs/ProcessWebhookJob.php
@@ -6565,7 +6511,7 @@ parameters:
 			path: app/Jobs/ProcessWebhookJob.php
 
 		-
-			message: '#^Parameter \#1 \$workflow of method App\\Services\\Workflow\\WorkflowEngine\:\:execute\(\) expects App\\Models\\Workflow, App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Workflow\> given\.$#'
+			message: '#^Parameter \#1 \$workflow of method App\\Services\\Workflow\\WorkflowEngine\:\:execute\(\) expects App\\Models\\Workflow, App\\Models\\Workflow\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Workflow\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Jobs/ProcessWebhookJob.php
@@ -13699,7 +13645,7 @@ parameters:
 			path: app/Services/AI/Agent/Agents/CampaignAgent.php
 
 		-
-			message: '#^Parameter \#2 \$campaign of method App\\Services\\AI\\Agent\\Agents\\CampaignAgent\:\:getCampaignData\(\) expects App\\Models\\Campaign, App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\> given\.$#'
+			message: '#^Parameter \#2 \$campaign of method App\\Services\\AI\\Agent\\Agents\\CampaignAgent\:\:getCampaignData\(\) expects App\\Models\\Campaign, App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Services/AI/Agent/Agents/CampaignAgent.php
@@ -13735,43 +13681,55 @@ parameters:
 			path: app/Services/AI/Agent/Agents/ContentAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$client\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$client\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$engagement_rate\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$end_date\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$estimated_roi\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$engagement_rate\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$estimated_roi\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/Agent/Agents/ReportAgent.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$start_date\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AI/Agent/Agents/ReportAgent.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/AI/Agent/Agents/ReportAgent.php
@@ -14469,49 +14427,49 @@ parameters:
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\AgentWorkflowTemplate\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/AgentWorkflowTemplate.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\CampaignOptimizationWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/CampaignOptimizationWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\ClientOnboardingWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/ClientOnboardingWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\ContentCalendarWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/ContentCalendarWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\EmailMarketingWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/EmailMarketingWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\LeadGenerationWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/LeadGenerationWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\SocialMediaStrategyWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/SocialMediaStrategyWorkflow.php
 
 		-
 			message: '#^Method App\\Services\\AI\\Agent\\Workflows\\WeeklyReportWorkflow\:\:getTasks\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 2
+			count: 1
 			path: app/Services/AI/Agent/Workflows/WeeklyReportWorkflow.php
 
 		-
@@ -14680,12 +14638,6 @@ parameters:
 			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\AiAuditLog\>\:\:map\(\) contains unresolvable type\.$#'
 			identifier: method.unresolvableReturnType
 			count: 1
-			path: app/Services/AI/Audit/AiAuditService.php
-
-		-
-			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<int,App\\Models\\AiAuditLog\>\:\:sum\(\)$#'
-			identifier: argument.templateType
-			count: 3
 			path: app/Services/AI/Audit/AiAuditService.php
 
 		-
@@ -15751,6 +15703,12 @@ parameters:
 			path: app/Services/Agent/Marketplace/AgentInstallerService.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:approved\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Agent/Marketplace/AgentMarketplaceService.php
+
+		-
 			message: '#^Method App\\Services\\Agent\\Marketplace\\AgentMarketplaceService\:\:getCategories\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
@@ -16221,7 +16179,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Client\:\:\$churn_risk_score\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Services/Analytics/Predictive/ChurnPredictionService.php
 
 		-
@@ -16297,20 +16255,8 @@ parameters:
 			path: app/Services/Analytics/Predictive/OptimalTimeService.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
 			message: '#^Method App\\Services\\Analytics\\Predictive\\OptimalTimeService\:\:calculateActivityScore\(\) has parameter \$row with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: app/Services/Analytics/Predictive/OptimalTimeService.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
 			count: 1
 			path: app/Services/Analytics/Predictive/OptimalTimeService.php
 
@@ -16419,12 +16365,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\AuditLogService\:\:log\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AuditLogService.php
-
-		-
-			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<int,App\\Models\\ActivityLog\>\:\:sum\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: app/Services/AuditLogService.php
 
@@ -16579,19 +16519,19 @@ parameters:
 			path: app/Services/Billing/StripeDunningService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Agency\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Agency\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Agency\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Agency\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Billing/StripeGateway.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:markPaid\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:markPaid\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Billing/StripeGateway.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Billing/StripeGateway.php
@@ -16807,7 +16747,7 @@ parameters:
 			path: app/Services/Calendar/ContentCalendarService.php
 
 		-
-			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, array\<string, mixed\>\|bool\|int\<0, max\>\|string\|null\>\>\:\:all\(\) contains unresolvable type\.$#'
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, array\<string, mixed\>\|bool\|int\|string\|null\>\>\:\:all\(\) contains unresolvable type\.$#'
 			identifier: method.unresolvableReturnType
 			count: 1
 			path: app/Services/Calendar/ContentCalendarService.php
@@ -17125,12 +17065,6 @@ parameters:
 			path: app/Services/GDPR/GDPRComplianceService.php
 
 		-
-			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getDataRequests\(\) should return Illuminate\\Database\\Eloquent\\Collection but returns Illuminate\\Support\\Collection\<int, mixed\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/GDPR/GDPRComplianceService.php
-
-		-
 			message: '#^Method App\\Services\\GDPR\\GDPRComplianceService\:\:getPendingRequests\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -17144,6 +17078,24 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\DataExportRequest\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/GDPR/GDPRComplianceService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,\(object\{id\: int, type\: string, status\: string, created_at\: Carbon\\Carbon\|null, user_name\: mixed, user_email\: mixed, scheduled_at\: Carbon\\Carbon\|null\}&stdClass\)\|\(object\{id\: int, type\: string, status\: string, created_at\: Carbon\\Carbon\|null, user_name\: mixed, user_email\: mixed\}&stdClass\)\>\:\:sortByDesc\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/GDPR/GDPRComplianceService.php
+
+		-
+			message: '#^Parameter \#1 \$items of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\DataExportRequest\>\:\:merge\(\) expects iterable\<\(int\|string\), App\\Models\\DataExportRequest\>, Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\DataDeletionRequest\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/GDPR/GDPRComplianceService.php
+
+		-
+			message: '#^Parameter \#1 \$items of method Illuminate\\Support\\Collection\<int,object\{id\: int, type\: string, status\: string, created_at\: Carbon\\Carbon\|null, user_name\: mixed, user_email\: mixed\}&stdClass\>\:\:merge\(\) contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 1
 			path: app/Services/GDPR/GDPRComplianceService.php
@@ -17167,127 +17119,127 @@ parameters:
 			path: app/Services/GDPR/GDPRComplianceService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 5
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 5
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:\$total\.$#'
+			message: '#^Access to an undefined property App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:\$total\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$comments_count\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$comments_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$engagement_rate\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$engagement_rate\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$likes_count\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$likes_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$shares_count\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$shares_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:\$views_count\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:\$views_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:posts\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:posts\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Campaign\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Campaign\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Campaign\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 5
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Client\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Client\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Client\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 2
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:markPaid\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:markPaid\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\Invoice\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\Invoice\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Invoice\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:delete\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:delete\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\>\:\:update\(\)\.$#'
+			message: '#^Call to an undefined method App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\>\:\:update\(\)\.$#'
 			identifier: method.notFound
 			count: 3
 			path: app/Services/Integrations/ZapierIntegrationService.php
@@ -17311,7 +17263,7 @@ parameters:
 			path: app/Services/Integrations/ZapierIntegrationService.php
 
 		-
-			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:publishPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialPost\> given\.$#'
+			message: '#^Parameter \#1 \$post of method App\\Services\\Social\\SocialPostService\:\:publishPost\(\) expects App\\Models\\SocialPost, App\\Models\\SocialPost\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialPost\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Services/Integrations/ZapierIntegrationService.php
@@ -17497,6 +17449,12 @@ parameters:
 			path: app/Services/QuotaService.php
 
 		-
+			message: '#^Match arm comparison between ''clients'' and ''clients'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Services/QuotaService.php
+
+		-
 			message: '#^Method App\\Services\\QuotaService\:\:getQuotaStatus\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -17577,7 +17535,7 @@ parameters:
 		-
 			message: '#^Method App\\Services\\RBAC\\PermissionMatrixService\:\:getMatrix\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 2
+			count: 1
 			path: app/Services/RBAC/PermissionMatrixService.php
 
 		-
@@ -17697,12 +17655,6 @@ parameters:
 		-
 			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, int\|string given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Services/Reporting/EnterpriseReportingService.php
-
-		-
-			message: '#^Relation ''socialPosts'' is not found in App\\Models\\Campaign model\.$#'
-			identifier: larastan.relationExistence
 			count: 1
 			path: app/Services/Reporting/EnterpriseReportingService.php
 
@@ -18343,13 +18295,13 @@ parameters:
 			path: app/Services/WhiteLabel/WhiteLabelService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$agency_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Services/Workflow/WorkflowEngine.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\SocialAccount\>\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SocialAccount\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SocialAccount\>\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Services/Workflow/WorkflowEngine.php

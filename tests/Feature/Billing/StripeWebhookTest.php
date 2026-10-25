@@ -14,6 +14,9 @@ class StripeWebhookTest extends TestCase
 
     public function test_stripe_webhook_rejects_invalid_signature(): void
     {
+        // Ensure webhook secret is configured for test
+        config(['services.stripe.webhook_secret' => 'whsec_test_secret']);
+
         $agency = Agency::factory()->create([
             'customer_id' => 'cus_test123',
             'subscription_id' => 'sub_test123',
